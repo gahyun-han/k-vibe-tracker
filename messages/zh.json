@@ -1,0 +1,76 @@
+{
+  "landing": {
+    "subtitle": "像当地人一样探索韩国\n基于K-内容的旅行策划",
+    "trending_now": "韩国当下热门",
+    "start_btn": "探索K-Vibe",
+    "login_btn": "登录",
+    "guest_notice": "无需登录即可使用核心功能",
+    "feature_map": "实时地图",
+    "feature_analyze": "SNS分析",
+    "feature_persona": "我的路线",
+    "feature_docent": "AI讲解",
+    "feature_radar": "雷达"
+  },
+  "map": {
+    "title": "K-Vibe地图",
+    "filter_all": "全部",
+    "filter_cafe": "咖啡",
+    "filter_photo": "拍照",
+    "filter_fun": "娱乐",
+    "filter_culture": "文化",
+    "trending_spots": "热门地点"
+  },
+  "analyze": {
+    "title": "SNS分析",
+    "guide_title": "从K-内容中找到地点",
+    "guide_desc": "粘贴YouTube旅行视频或K-pop MV的URL，AI将提取位置并显示在地图上",
+    "analyze_btn": "开始分析",
+    "analyzing": "分析中...",
+    "ai_warmup": "AI正在启动... (首次使用最多需要60秒 ☕)",
+    "error_invalid_url": "请输入有效的YouTube URL",
+    "result_title": "找到地点！",
+    "detected_place": "检测到的地点",
+    "vibe_tags": "氛围标签",
+    "show_on_map": "在地图上显示",
+    "example_label": "试试这些例子"
+  },
+  "persona": {
+    "title": "我的路线",
+    "step1_title": "选择你的K-明星",
+    "step1_desc": "选择激发你路线灵感的K-内容人物",
+    "step2_title": "今天的心情是？",
+    "step2_desc": "选择符合你旅行风格的心情（可多选）",
+    "step3_title": "你想做什么？",
+    "step3_desc": "为你的K-Vibe一日游选择活动",
+    "next_btn": "下一步",
+    "generate_btn": "生成我的路线"
+  },
+  "route": {
+    "title": "我的路线",
+    "empty_title": "还没有路线",
+    "empty_desc": "根据你的心情生成个性化的K-Vibe路线",
+    "create_btn": "创建路线",
+    "start_nav": "开始导航"
+  },
+  "radar": {
+    "title": "设施雷达",
+    "guide_title": "寻找附近设施",
+    "guide_desc": "无需韩语即可轻松找到您附近的洗手间、药房和便利设施",
+    "filter_all": "全部",
+    "navigate_btn": "导航"
+  },
+  "profile": {
+    "title": "个人资料",
+    "login_required_title": "登录以保存您的行程",
+    "login_required_desc": "创建账户即可保存路线、分享行程和查看历史记录",
+    "login_btn": "使用Google登录",
+    "guest_features": "地图、分析和路线无需登录即可使用",
+    "saved_routes": "已保存的路线",
+    "no_routes": "还没有保存的路线",
+    "create_route_hint": "生成路线并保存在这里",
+    "language": "语言设置",
+    "notifications": "通知设置",
+    "offline_mode": "离线地图",
+    "logout": "退出登录"
+  }
+}

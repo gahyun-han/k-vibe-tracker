@@ -1,0 +1,76 @@
+{
+  "landing": {
+    "subtitle": "Discover Korea like a local\nK-content powered travel curation",
+    "trending_now": "Trending in Korea",
+    "start_btn": "Explore K-Vibe",
+    "login_btn": "Sign in",
+    "guest_notice": "Core features available without login",
+    "feature_map": "Live Map",
+    "feature_analyze": "SNS Analyze",
+    "feature_persona": "My Route",
+    "feature_docent": "AI Docent",
+    "feature_radar": "Radar"
+  },
+  "map": {
+    "title": "K-Vibe Map",
+    "filter_all": "All",
+    "filter_cafe": "Cafe",
+    "filter_photo": "Photo",
+    "filter_fun": "Fun",
+    "filter_culture": "Culture",
+    "trending_spots": "Trending Spots"
+  },
+  "analyze": {
+    "title": "SNS Analyzer",
+    "guide_title": "Find spots from K-content",
+    "guide_desc": "Paste a YouTube travel vlog or K-pop MV URL. Our AI will extract the location and show it on the map.",
+    "analyze_btn": "Analyze",
+    "analyzing": "Analyzing...",
+    "ai_warmup": "AI is warming up... (up to 60s on first use ☕)",
+    "error_invalid_url": "Please enter a valid YouTube URL (youtube.com or youtu.be)",
+    "result_title": "Location Found!",
+    "detected_place": "Detected Place",
+    "vibe_tags": "Vibe Tags",
+    "show_on_map": "Show on Map",
+    "example_label": "Try these examples"
+  },
+  "persona": {
+    "title": "My Route",
+    "step1_title": "Who's your K-star?",
+    "step1_desc": "Choose a K-content persona to inspire your route",
+    "step2_title": "What's your vibe?",
+    "step2_desc": "Select moods that match your travel style (pick multiple)",
+    "step3_title": "What do you want to do?",
+    "step3_desc": "Choose activities for your K-Vibe day",
+    "next_btn": "Next",
+    "generate_btn": "Generate My Route"
+  },
+  "route": {
+    "title": "My Route",
+    "empty_title": "No route yet",
+    "empty_desc": "Generate a personalized K-Vibe route based on your mood",
+    "create_btn": "Create Route",
+    "start_nav": "Start Navigation"
+  },
+  "radar": {
+    "title": "Facility Radar",
+    "guide_title": "Find nearby facilities",
+    "guide_desc": "Locate restrooms, pharmacies, and convenience spots around you — no Korean needed",
+    "filter_all": "All",
+    "navigate_btn": "Navigate"
+  },
+  "profile": {
+    "title": "Profile",
+    "login_required_title": "Sign in to save your trips",
+    "login_required_desc": "Create an account to save routes, share itineraries, and access your history",
+    "login_btn": "Sign in with Google",
+    "guest_features": "Map, Analyze, and Route work without login",
+    "saved_routes": "Saved Routes",
+    "no_routes": "No saved routes yet",
+    "create_route_hint": "Generate a route and save it here",
+    "language": "Language",
+    "notifications": "Notifications",
+    "offline_mode": "Offline Maps",
+    "logout": "Sign out"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "landing": {
+    "subtitle": "地元の人のように韓国を旅する\nKコンテンツ発 旅行キュレーション",
+    "trending_now": "今韓国でホット",
+    "start_btn": "K-Vibeを探す",
+    "login_btn": "ログイン",
+    "guest_notice": "ログインなしでも主要機能が利用できます",
+    "feature_map": "ライブマップ",
+    "feature_analyze": "SNS分析",
+    "feature_persona": "マイルート",
+    "feature_docent": "AIガイド",
+    "feature_radar": "レーダー"
+  },
+  "map": {
+    "title": "K-Vibeマップ",
+    "filter_all": "すべて",
+    "filter_cafe": "カフェ",
+    "filter_photo": "フォト",
+    "filter_fun": "楽しみ",
+    "filter_culture": "文化",
+    "trending_spots": "トレンドスポット"
+  },
+  "analyze": {
+    "title": "SNS分析",
+    "guide_title": "Kコンテンツからスポットを探す",
+    "guide_desc": "YouTube旅行ブログやK-pop MVのURLを貼り付けてください。AIが場所を抽出してマップに表示します。",
+    "analyze_btn": "分析する",
+    "analyzing": "分析中...",
+    "ai_warmup": "AIが準備中... (初回起動は最大60秒かかる場合があります ☕)",
+    "error_invalid_url": "有効なYouTube URLを入力してください",
+    "result_title": "場所が見つかりました！",
+    "detected_place": "検出された場所",
+    "vibe_tags": "バイブタグ",
+    "show_on_map": "マップで表示",
+    "example_label": "例を試してみる"
+  },
+  "persona": {
+    "title": "マイルート",
+    "step1_title": "K-スターを選んで",
+    "step1_desc": "ルートのインスピレーションになるKコンテンツペルソナを選んでください",
+    "step2_title": "今日の雰囲気は？",
+    "step2_desc": "旅行スタイルに合ったムードを選んでください（複数選択可）",
+    "step3_title": "何をしたいですか？",
+    "step3_desc": "K-Vibeな1日のアクティビティを選んでください",
+    "next_btn": "次へ",
+    "generate_btn": "ルートを生成"
+  },
+  "route": {
+    "title": "マイルート",
+    "empty_title": "まだルートがありません",
+    "empty_desc": "あなたの気分に合ったK-Vibeルートを作成しましょう",
+    "create_btn": "ルートを作成",
+    "start_nav": "ナビを開始"
+  },
+  "radar": {
+    "title": "施設レーダー",
+    "guide_title": "近くの施設を探す",
+    "guide_desc": "現在地周辺のトイレ、薬局、便利な施設を韓国語なしで簡単に見つけられます",
+    "filter_all": "すべて",
+    "navigate_btn": "案内する"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "login_required_title": "ログインして旅を保存",
+    "login_required_desc": "アカウントを作成するとルート保存、共有、履歴確認ができます",
+    "login_btn": "Googleでログイン",
+    "guest_features": "マップ・分析・ルートはログインなしで利用可能",
+    "saved_routes": "保存したルート",
+    "no_routes": "まだ保存したルートはありません",
+    "create_route_hint": "ルートを生成してここに保存しましょう",
+    "language": "言語設定",
+    "notifications": "通知設定",
+    "offline_mode": "オフラインマップ",
+    "logout": "ログアウト"
+  }
+}

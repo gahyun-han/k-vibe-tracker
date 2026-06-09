@@ -1,0 +1,76 @@
+{
+  "landing": {
+    "subtitle": "한국인처럼 여행하기\nK-콘텐츠 기반 여행 큐레이션",
+    "trending_now": "지금 한국에서 핫한",
+    "start_btn": "시작하기",
+    "login_btn": "로그인",
+    "guest_notice": "로그인 없이도 핵심 기능 이용 가능",
+    "feature_map": "실시간 지도",
+    "feature_analyze": "SNS 분석",
+    "feature_persona": "내 루트",
+    "feature_docent": "AI 도슨트",
+    "feature_radar": "레이더"
+  },
+  "map": {
+    "title": "K-Vibe 지도",
+    "filter_all": "전체",
+    "filter_cafe": "카페",
+    "filter_photo": "포토",
+    "filter_fun": "놀거리",
+    "filter_culture": "문화",
+    "trending_spots": "트렌딩 스팟"
+  },
+  "analyze": {
+    "title": "SNS 분석기",
+    "guide_title": "K-콘텐츠에서 장소 찾기",
+    "guide_desc": "YouTube 여행 브이로그나 K-팝 MV URL을 붙여넣으세요. AI가 장소를 추출해서 지도에 표시합니다.",
+    "analyze_btn": "분석하기",
+    "analyzing": "분석 중...",
+    "ai_warmup": "AI가 준비 중입니다... (첫 사용 시 최대 60초 소요 ☕)",
+    "error_invalid_url": "유효한 YouTube URL을 입력해주세요 (youtube.com 또는 youtu.be)",
+    "result_title": "장소 발견!",
+    "detected_place": "감지된 장소",
+    "vibe_tags": "바이브 태그",
+    "show_on_map": "지도에 표시",
+    "example_label": "예시 URL 써보기"
+  },
+  "persona": {
+    "title": "내 루트",
+    "step1_title": "K-스타를 선택해요",
+    "step1_desc": "루트의 영감이 될 K-콘텐츠 페르소나를 선택하세요",
+    "step2_title": "오늘의 바이브는?",
+    "step2_desc": "여행 스타일에 맞는 무드를 선택하세요 (여러 개 선택 가능)",
+    "step3_title": "뭘 하고 싶어요?",
+    "step3_desc": "K-Vibe 하루를 위한 활동을 선택하세요",
+    "next_btn": "다음",
+    "generate_btn": "루트 생성하기"
+  },
+  "route": {
+    "title": "내 루트",
+    "empty_title": "아직 루트가 없어요",
+    "empty_desc": "내 무드 기반 맞춤 K-Vibe 루트를 만들어보세요",
+    "create_btn": "루트 만들기",
+    "start_nav": "내비게이션 시작"
+  },
+  "radar": {
+    "title": "편의시설 레이더",
+    "guide_title": "주변 편의시설 찾기",
+    "guide_desc": "현재 위치 주변의 화장실, 약국, 편의시설을 한국어 없이도 쉽게 찾을 수 있어요",
+    "filter_all": "전체",
+    "navigate_btn": "길안내"
+  },
+  "profile": {
+    "title": "프로필",
+    "login_required_title": "로그인하고 여행을 저장해요",
+    "login_required_desc": "계정을 만들면 루트 저장, 공유, 기록을 확인할 수 있어요",
+    "login_btn": "Google로 로그인",
+    "guest_features": "지도, 분석, 루트는 로그인 없이 이용 가능",
+    "saved_routes": "저장된 루트",
+    "no_routes": "아직 저장된 루트가 없어요",
+    "create_route_hint": "루트를 생성하고 여기에 저장하세요",
+    "language": "언어 설정",
+    "notifications": "알림 설정",
+    "offline_mode": "오프라인 지도",
+    "logout": "로그아웃"
+  }
+}
