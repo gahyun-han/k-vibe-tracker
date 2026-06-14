@@ -1,104 +1,165 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useState, useCallback } from 'react';
+import { GripVertical, X, Clock, MapPin, Plus, Share2, Navigation } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
-import { useState } from 'react';
+import { CrowdBadge, CrowdLevel } from '@/components/route/CrowdBadge';
+import { totalRouteMinutes } from '@/lib/haversine';
 
-const MOCK_ROUTE = {
-  title: 'BTS 감성 성수 하루',
-  spots: [
-    { order: 1, name: '성수동 카페거리',  category: '☕', time: '10:00', duration: '1.5h', walk: '도보 8분' },
-    { order: 2, name: '어반소스 빈티지샵', category: '🛍',  time: '11:40', duration: '45min', walk: '도보 5분' },
-    { order: 3, name: '레코드샵 Vinyl',   category: '🎵', time: '12:30', duration: '30min', walk: '도보 12분' },
-    { order: 4, name: '서울숲 피크닉',    category: '🌿', time: '13:30', duration: '1h', walk: '도보 15분' },
-  ],
-  totalTime: '3.5h',
-  totalDist: '2.4km',
-};
+interface RouteSpot {
+  id: string;
+  name: string;
+  category: string;
+  address: string;
+  crowdLevel: CrowdLevel;
+  lat: number;
+  lng: number;
+  stayMinutes: number; // 예상 체류 시간
+}
+
+const INITIAL_SPOTS: RouteSpot[] = [
+  { id: '1', name: '경복궁', category: '🏛️ 문화', address: '서울 종로구', crowdLevel: 'high', lat: 37.5796, lng: 126.977, stayMinutes: 90 },
+  { id: '2', name: '광장시장', category: '🍜 맛집', address: '서울 종로구', crowdLevel: 'mid', lat: 37.570, lng: 126.999, stayMinutes: 60 },
+  { id: '3', name: '남산타워', category: '📸 포토', address: '서울 용산구', crowdLevel: 'low', lat: 37.5512, lng: 126.988, stayMinutes: 60 },
+];
 
 export default function RoutePage() {
-  const t = useTranslations('route');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [route, setRoute] = useState<typeof MOCK_ROUTE | null>(null);
+  const [spots, setSpots] = useState<RouteSpot[]>(INITIAL_SPOTS);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
-  async function handleGenerate() {
-    setIsGenerating(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    setRoute(MOCK_ROUTE);
-    setIsGenerating(false);
-  }
+  // ─── 간단한 drag-and-drop (HTML5 DnD API) ──────────────────────────────────
+  const onDragStart = useCallback((id: string) => setDraggingId(id), []);
+  const onDragOver = useCallback((e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    setDragOverId(id);
+  }, []);
+  const onDrop = useCallback((targetId: string) => {
+    if (!draggingId || draggingId === targetId) return;
+    setSpots((prev) => {
+      const arr = [...prev];
+      const fromIdx = arr.findIndex((s) => s.id === draggingId);
+      const toIdx = arr.findIndex((s) => s.id === targetId);
+      const [item] = arr.splice(fromIdx, 1);
+      arr.splice(toIdx, 0, item);
+      return arr;
+    });
+    setDraggingId(null);
+    setDragOverId(null);
+  }, [draggingId]);
+  const onDragEnd = useCallback(() => {
+    setDraggingId(null);
+    setDragOverId(null);
+  }, []);
+
+  const removeSpot = (id: string) => setSpots((p) => p.filter((s) => s.id !== id));
+
+  // ─── 통계 ────────────────────────────────────────────────────────────────────
+  const walkMin = totalRouteMinutes(spots.map((s) => ({ lat: s.lat, lng: s.lng })));
+  const stayMin = spots.reduce((acc, s) => acc + s.stayMinutes, 0);
+  const totalMin = walkMin + stayMin;
+  const totalH = Math.floor(totalMin / 60);
+  const totalM = totalMin % 60;
 
   return (
-    <AppLayout activeTab="route" title={t('title')}>
-      <div className="px-4 pt-4 pb-24">
+    <AppLayout>
+      <div className="flex flex-col h-full bg-[#0D0D1A] overflow-y-auto pb-24">
+        {/* 헤더 */}
+        <div className="px-4 pt-4 pb-3">
+          <h2 className="text-base font-bold text-white">내 루트</h2>
+          <p className="text-xs text-white/40 mt-0.5">드래그로 순서를 바꿀 수 있어요</p>
+        </div>
 
-        {!route && !isGenerating && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-5">
-            <div className="text-6xl">🧭</div>
-            <div>
-              <h3 className="text-white font-bold text-lg mb-1">{t('empty_title')}</h3>
-              <p className="text-[#8B8BA8] text-sm">{t('empty_desc')}</p>
+        {/* 통계 카드 */}
+        <div className="mx-4 mb-4 grid grid-cols-3 gap-2">
+          {[
+            { label: '장소', value: `${spots.length}곳`, icon: MapPin },
+            { label: '이동', value: `${walkMin}분`, icon: Navigation },
+            { label: '총 시간', value: `${totalH}h ${totalM}m`, icon: Clock },
+          ].map(({ label, value, icon: Icon }) => (
+            <div key={label} className="bg-white/5 rounded-xl p-3 text-center">
+              <Icon size={14} className="text-[#FF3A5C] mx-auto mb-1" />
+              <p className="text-sm font-bold text-white">{value}</p>
+              <p className="text-[10px] text-white/40">{label}</p>
             </div>
-            <button
-              onClick={handleGenerate}
-              className="px-8 py-3.5 bg-[#FF3A5C] text-white font-bold rounded-2xl"
+          ))}
+        </div>
+
+        {/* 루트 스팟 리스트 */}
+        <div className="px-4 space-y-2">
+          {spots.map((spot, idx) => (
+            <div
+              key={spot.id}
+              draggable
+              onDragStart={() => onDragStart(spot.id)}
+              onDragOver={(e) => onDragOver(e, spot.id)}
+              onDrop={() => onDrop(spot.id)}
+              onDragEnd={onDragEnd}
+              className={`relative flex items-center gap-3 bg-white/5 border rounded-xl p-3 transition-all cursor-grab active:cursor-grabbing
+                ${dragOverId === spot.id ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5' : 'border-white/10'}
+                ${draggingId === spot.id ? 'opacity-40' : 'opacity-100'}`}
             >
-              {t('create_btn')}
-            </button>
-          </div>
-        )}
-
-        {isGenerating && (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-            <div className="w-12 h-12 border-4 border-[#FF3A5C]/30 border-t-[#FF3A5C] rounded-full animate-spin" />
-            <p className="text-white font-semibold">AI가 루트를 만들고 있어요...</p>
-            <p className="text-[#8B8BA8] text-sm">선택한 무드 분석 중</p>
-          </div>
-        )}
-
-        {route && (
-          <div className="animate-fade-in">
-            {/* 루트 헤더 */}
-            <div className="bg-gradient-to-r from-[#FF3A5C]/20 to-[#7C3AED]/20 rounded-2xl p-4 border border-[#2E2E4A] mb-5">
-              <p className="text-[#FF3A5C] text-xs font-bold mb-1">AI GENERATED</p>
-              <h3 className="text-white font-bold text-lg">{route.title}</h3>
-              <div className="flex gap-4 mt-2">
-                <span className="text-[#8B8BA8] text-xs">⏱ {route.totalTime}</span>
-                <span className="text-[#8B8BA8] text-xs">📍 {route.totalDist}</span>
-                <span className="text-[#8B8BA8] text-xs">🏠 {route.spots.length} spots</span>
+              {/* 순서 번호 */}
+              <div className="w-7 h-7 rounded-full bg-[#FF3A5C] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                {idx + 1}
               </div>
-            </div>
 
-            {/* 스팟 타임라인 */}
-            <div className="relative">
-              <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-[#2E2E4A]" />
-              {route.spots.map((spot, i) => (
-                <div key={spot.order} className="flex gap-4 mb-4 last:mb-0 relative">
-                  <div className="w-12 h-12 rounded-full bg-[#FF3A5C] flex items-center justify-center text-white font-bold text-sm z-10 shrink-0">
-                    {spot.order}
-                  </div>
-                  <div className="flex-1 bg-[#1E1E30] rounded-2xl p-3 border border-[#2E2E4A]">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-white font-semibold text-sm">{spot.category} {spot.name}</p>
-                        <p className="text-[#8B8BA8] text-xs mt-0.5">{spot.time} · {spot.duration}</p>
-                      </div>
-                    </div>
-                    {i < route.spots.length - 1 && (
-                      <p className="text-[#8B8BA8] text-xs mt-2 pt-2 border-t border-[#2E2E4A]">→ {spot.walk}</p>
-                    )}
-                  </div>
+              {/* 정보 */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="text-sm font-semibold text-white">{spot.name}</p>
+                  <CrowdBadge level={spot.crowdLevel} size="sm" />
                 </div>
-              ))}
-            </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-white/40">{spot.category}</span>
+                  <span className="text-white/20">·</span>
+                  <span className="text-xs text-white/40">체류 {spot.stayMinutes}분</span>
+                </div>
+              </div>
 
-            {/* 액션 버튼 */}
-            <div className="flex gap-3 mt-5">
-              <button className="flex-1 py-3.5 bg-[#FF3A5C] text-white font-bold text-sm rounded-2xl">
-                🗺 {t('start_nav')}
+              {/* 드래그 핸들 + 삭제 */}
+              <div className="flex items-center gap-1 shrink-0">
+                <GripVertical size={16} className="text-white/20" />
+                <button
+                  onClick={() => removeSpot(spot.id)}
+                  className="p-1 rounded-lg hover:bg-white/10 text-white/30 hover:text-white/70 transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {/* 이동 시간 (다음 스팟까지) */}
+              {idx < spots.length - 1 && (
+                <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-10">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1A1A2E] border border-white/10 text-white/40 whitespace-nowrap">
+                    도보 {Math.ceil(totalRouteMinutes([
+                      { lat: spots[idx].lat, lng: spots[idx].lng },
+                      { lat: spots[idx + 1].lat, lng: spots[idx + 1].lng },
+                    ]))}분
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* 장소 추가 버튼 */}
+          <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-white/20 text-white/40 hover:border-[#FF3A5C]/50 hover:text-[#FF3A5C]/70 transition-colors text-sm mt-3">
+            <Plus size={16} />
+            장소 추가
+          </button>
+        </div>
+
+        {/* 하단 액션 버튼 */}
+        {spots.length > 0 && (
+          <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-4">
+            <div className="flex gap-2">
+              <button className="flex-1 py-3 rounded-xl bg-[#FF3A5C] text-white font-semibold text-sm hover:bg-[#e02e4e] transition-colors flex items-center justify-center gap-2">
+                <Navigation size={16} />
+                길 안내 시작
               </button>
-              <button className="px-5 py-3.5 bg-[#1E1E30] text-[#8B8BA8] text-sm rounded-2xl border border-[#2E2E4A]">
-                🔗 Share
+              <button className="px-4 py-3 rounded-xl bg-white/10 text-white/70 font-semibold text-sm hover:bg-white/20 transition-colors flex items-center gap-1.5">
+                <Share2 size={16} />
+                공유
               </button>
             </div>
           </div>
