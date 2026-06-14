@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import LoginModal from '@/components/auth/LoginModal';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import type { User } from '@supabase/supabase-js';
 
 interface TopBarProps {
@@ -29,26 +30,30 @@ export default function TopBar({ title, showBack }: TopBarProps) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 max-w-md mx-auto h-14 bg-[#1A1A2E]/95 backdrop-blur-sm border-b border-[#2E2E4A] flex items-center px-4 z-30">
+      <header className="fixed top-0 left-0 right-0 max-w-md mx-auto h-14 bg-[#1A1A2E]/95 backdrop-blur-sm border-b border-[#2E2E4A] flex items-center px-4 z-30 gap-2">
         {showBack ? (
-          <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center text-[#8B8BA8] hover:text-white mr-2">
+          <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center text-[#8B8BA8] hover:text-white">
             ←
           </button>
         ) : (
-          <span className="text-[#FF3A5C] font-black text-lg mr-2">K</span>
+          <span className="text-[#FF3A5C] font-black text-lg">K</span>
         )}
 
         <h1 className="flex-1 text-white font-bold text-sm truncate">
           {title ?? 'K-Vibe Tracker'}
         </h1>
 
-        {/* 우측: 유저 아바타 or 로그인 버튼 */}
+        {/* 언어 전환 드롭다운 */}
+        <LanguageSwitcher />
+
+        {/* 유저 아바타 or 로그인 버튼 */}
         {user ? (
           <button
             onClick={() => router.push(`/${locale}/profile`)}
-            className="w-8 h-8 rounded-full overflow-hidden border border-[#FF3A5C]/50"
+            className="w-8 h-8 rounded-full overflow-hidden border border-[#FF3A5C]/50 shrink-0"
           >
             {user.user_metadata?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img src={user.user_metadata.avatar_url} alt="avatar" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-[#FF3A5C]/20 flex items-center justify-center text-xs text-white font-bold">
@@ -59,7 +64,7 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         ) : (
           <button
             onClick={() => setShowLogin(true)}
-            className="text-xs px-3 py-1.5 rounded-full border border-[#2E2E4A] text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white transition-colors"
+            className="text-xs px-3 py-1.5 rounded-full border border-[#2E2E4A] text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white transition-colors shrink-0"
           >
             Sign in
           </button>
