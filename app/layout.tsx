@@ -1,25 +1,39 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'K-Vibe Tracker',
-  description: 'Discover Korea like a local — K-content powered travel curation',
+  description: 'AI 기반 K-컬처 관광 가이드 — SNS 트렌드 장소 발견, 페르소나 루트 생성',
   manifest: '/manifest.json',
-  themeColor: '#0D0D1A',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-  icons: { icon: '/favicon.ico' },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'K-Vibe',
+  },
+  openGraph: {
+    type: 'website',
+    title: 'K-Vibe Tracker',
+    description: 'AI가 찾아주는 K-컬처 핫플레이스',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#FF3A5C',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning>
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body>{children}</body>
+      <body className="bg-[#0D0D1A] text-white antialiased">{children}</body>
     </html>
   );
 }

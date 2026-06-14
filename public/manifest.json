@@ -1,0 +1,29 @@
+{
+  "name": "K-Vibe Tracker",
+  "short_name": "K-Vibe",
+  "description": "AI 기반 K-컬처 관광 가이드 — SNS 트렌드 장소 발견, 페르소나 루트 생성",
+  "start_url": "/ko",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0D0D1A",
+  "theme_color": "#FF3A5C",
+  "lang": "ko",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["travel", "entertainment", "lifestyle"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "지도 보기",
+      "url": "/ko/map",
+      "icons": [{ "src": "/icons/shortcut-map.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "SNS 분석",
+      "url": "/ko/analyze",
+      "icons": [{ "src": "/icons/shortcut-analyze.png", "sizes": "96x96" }]
+    }
+  ]
+}
