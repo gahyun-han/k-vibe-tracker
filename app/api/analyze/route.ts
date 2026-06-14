@@ -4,10 +4,13 @@ import { extractVideoId } from '@/lib/youtube';
 const AI_WORKER_URL = process.env.AI_WORKER_URL ?? 'http://localhost:8000';
 
 export async function POST(req: NextRequest) {
-  try {
-    const { youtube_url } = await req.json();
+  let youtube_url = '';
+  let videoId: string | null = null;
 
-    const videoId = extractVideoId(youtube_url ?? '');
+  try {
+    ({ youtube_url } = await req.json());
+
+    videoId = extractVideoId(youtube_url ?? '');
     if (!videoId) {
       return NextResponse.json({ error: 'INVALID_YOUTUBE_URL' }, { status: 400 });
     }
@@ -31,9 +34,8 @@ export async function POST(req: NextRequest) {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (e: unknown) {
-    // AI 워커 미배포 상태 — 목 응답 반환
+    // AI 워커 미배포 상태 — 목 응답 반환 (req body는 이미 소비되어 재사용 불가, videoId 변수 재사용)
     if (e instanceof TypeError && e.message.includes('fetch')) {
-      const videoId = extractVideoId((await req.clone().json().catch(() => ({ youtube_url: '' }))).youtube_url ?? '');
       return NextResponse.json({
         video_id: videoId ?? 'unknown',
         title: '[AI 워커 미연결 — 목 데이터]',
