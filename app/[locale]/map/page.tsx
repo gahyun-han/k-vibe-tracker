@@ -1,10 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
+import {
+  createLocalRoutePlan,
+  CURRENT_ROUTE_STORAGE_KEY,
+  type RoutePlan,
+  type RouteStop,
+} from '@/lib/routes';
 import type { NormalizedPlace } from '@/lib/tourapi';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
@@ -46,6 +53,25 @@ const CATEGORY_ICON: Record<string, string> = {
   stay: 'Stay',
 };
 
+const CATEGORY_LABEL: Record<string, string> = {
+  all: 'Spot',
+  cafe: 'Cafe',
+  photo: 'Photo',
+  fun: 'Fun',
+  culture: 'Culture',
+  food: 'Food',
+  stay: 'Stay',
+};
+
+const DEFAULT_STAY_MINUTES: Record<string, number> = {
+  cafe: 75,
+  photo: 45,
+  fun: 75,
+  culture: 90,
+  food: 70,
+  stay: 60,
+};
+
 function toCrowdLevel(value: number | null): Place['crowdLevel'] {
   if (value === null) return undefined;
   if (value < 40) return 'low';
@@ -81,7 +107,28 @@ function pinPosition(place: Place, center: Coordinates) {
   return { left: `${x}%`, top: `${y}%` };
 }
 
+function toRouteStop(place: Place): RouteStop {
+  const category = CATEGORY_LABEL[place.category] ?? place.category;
+
+  return {
+    id: `map-${place.id}`,
+    name: place.name,
+    category,
+    address: place.address,
+    crowdLevel: place.crowdLevel ?? 'mid',
+    lat: place.lat,
+    lng: place.lng,
+    stayMinutes: DEFAULT_STAY_MINUTES[place.category] ?? 60,
+    startTime: 'Flexible',
+    description: `Added from the map as a ${category.toLowerCase()} stop.`,
+    tags: place.tags ?? [category],
+  };
+}
+
 export default function MapPage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = (params.locale as string) ?? 'en';
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
@@ -92,6 +139,41 @@ export default function MapPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
+
+  const addPlaceToRoute = useCallback((place: Place) => {
+    try {
+      const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
+      let existingPlan: Partial<RoutePlan> | null = null;
+      let existingStops: RouteStop[] = [];
+
+      if (stored) {
+        existingPlan = JSON.parse(stored) as Partial<RoutePlan>;
+        if (Array.isArray(existingPlan.stops)) {
+          existingStops = existingPlan.stops as RouteStop[];
+        }
+      }
+
+      const routeStop = toRouteStop(place);
+      const nextStops = [
+        ...existingStops.filter((stop) => stop.id !== routeStop.id),
+        routeStop,
+      ];
+      const title = existingPlan?.title ?? 'Map Saved Route';
+      const plan = createLocalRoutePlan({
+        id: existingPlan?.id ?? 'map-saved-route',
+        title,
+        theme: existingPlan?.theme ?? 'mood',
+        detail: existingPlan?.detail ?? 'map',
+        summary: existingPlan?.summary ?? 'Custom route assembled from map selections.',
+        stops: nextStops,
+      });
+
+      window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
+      router.push(`/${locale}/route`);
+    } catch {
+      setError('ROUTE_SAVE_FAILED');
+    }
+  }, [locale, router]);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -316,7 +398,11 @@ export default function MapPage() {
           </div>
         </div>
 
-        <PlaceDetailModal place={selectedPlace} onClose={() => setSelectedPlace(null)} />
+        <PlaceDetailModal
+          place={selectedPlace}
+          onClose={() => setSelectedPlace(null)}
+          onAddToRoute={addPlaceToRoute}
+        />
       </div>
     </AppLayout>
   );

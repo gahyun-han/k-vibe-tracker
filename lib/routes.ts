@@ -1,6 +1,7 @@
 import { haversineKm, walkingMinutes } from '@/lib/haversine';
 
 export const ROUTE_THEMES = ['kpop', 'drama', 'mood'] as const;
+export const CURRENT_ROUTE_STORAGE_KEY = 'k-vibe-current-route';
 export type RouteTheme = (typeof ROUTE_THEMES)[number];
 export type CrowdLevel = 'low' | 'mid' | 'high';
 
@@ -50,6 +51,15 @@ interface GenerateRoutePlanInput {
   theme: RouteTheme;
   detail: string;
   startTime?: string;
+}
+
+interface CreateLocalRoutePlanInput {
+  id: string;
+  title: string;
+  theme?: RouteTheme;
+  detail?: string;
+  summary: string;
+  stops: RouteStop[];
 }
 
 type StopTemplate = Omit<RouteStop, 'startTime'>;
@@ -280,20 +290,14 @@ export function generateMockRoutePlan({ theme, detail, startTime = '10:00' }: Ge
   const stay = stops.reduce((total, stop) => total + stop.stayMinutes, 0);
   const title = `${detailOption?.label ?? themeOption.label} Seoul Route`;
 
-  return {
+  return createLocalRoutePlan({
     id: `${theme}-${detail}`,
     title,
     theme,
     detail,
     summary: `${themeOption.description} Planned as a ${formatDuration(walking + stay)} local preview route.`,
-    source: 'mock',
     stops,
-    walkingMinutes: walking,
-    stayMinutes: stay,
-    totalMinutes: walking + stay,
-    generatedAt: new Date().toISOString(),
-    shareText: `${title}: ${stops.map((stop) => stop.name).join(' -> ')}`,
-  };
+  });
 }
 
 export function calculateWalkingMinutes(stops: Pick<RouteStop, 'lat' | 'lng'>[]) {
@@ -302,6 +306,33 @@ export function calculateWalkingMinutes(stops: Pick<RouteStop, 'lat' | 'lng'>[])
     total += walkingMinutes(haversineKm(stops[i].lat, stops[i].lng, stops[i + 1].lat, stops[i + 1].lng));
   }
   return total;
+}
+
+export function createLocalRoutePlan({
+  id,
+  title,
+  theme = 'mood',
+  detail = 'custom',
+  summary,
+  stops,
+}: CreateLocalRoutePlanInput): RoutePlan {
+  const walking = calculateWalkingMinutes(stops);
+  const stay = stops.reduce((total, stop) => total + stop.stayMinutes, 0);
+
+  return {
+    id,
+    title,
+    theme,
+    detail,
+    summary,
+    source: 'mock',
+    stops,
+    walkingMinutes: walking,
+    stayMinutes: stay,
+    totalMinutes: walking + stay,
+    generatedAt: new Date().toISOString(),
+    shareText: `${title}: ${stops.map((stop) => stop.name).join(' -> ')}`,
+  };
 }
 
 export function formatDuration(minutes: number) {

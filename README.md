@@ -79,10 +79,10 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 ## Frontend Flow
 
 - `/[locale]`: landing and language entry point with local-first development status and quick access to the map.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins, icon-based category filters, place details, and a bottom list.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, renders a lightweight map preview with pins, icon-based category filters, place details, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
-- `/[locale]/route`: editable route timeline. It reads the saved route plan from `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
+- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode account state when Supabase is not configured.
 
@@ -210,10 +210,11 @@ ai-worker/      # FastAPI prototype
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
+  - Map place details can add a selected place into the shared local route plan and open the route editor.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.
-  - Persona and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
+  - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.

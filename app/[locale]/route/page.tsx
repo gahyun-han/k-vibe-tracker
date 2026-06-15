@@ -6,13 +6,21 @@ import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import {
   calculateWalkingMinutes,
+  createLocalRoutePlan,
+  CURRENT_ROUTE_STORAGE_KEY,
   formatDuration,
   generateMockRoutePlan,
   type RoutePlan,
   type RouteStop,
+  type RouteTheme,
 } from '@/lib/routes';
 
-const STORAGE_KEY = 'k-vibe-current-route';
+interface RoutePlanMeta {
+  id: string;
+  theme: RouteTheme;
+  detail: string;
+  summary: string;
+}
 
 const EXTRA_STOP: RouteStop = {
   id: 'cheonggyecheon-stream',
@@ -30,35 +38,74 @@ const EXTRA_STOP: RouteStop = {
 
 export default function RoutePage() {
   const [planTitle, setPlanTitle] = useState('Cafe day Seoul Route');
+  const [planMeta, setPlanMeta] = useState<RoutePlanMeta>({
+    id: 'mood-cafe',
+    theme: 'mood',
+    detail: 'cafe',
+    summary: 'Editable local route.',
+  });
   const [spots, setSpots] = useState<RouteStop[]>([]);
+  const [hydrated, setHydrated] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [status, setStatus] = useState('');
 
   useEffect(() => {
     const fallback = generateMockRoutePlan({ theme: 'mood', detail: 'cafe' });
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
+
+    function applyPlan(plan: RoutePlan) {
+      setPlanTitle(plan.title);
+      setPlanMeta({
+        id: plan.id,
+        theme: plan.theme,
+        detail: plan.detail,
+        summary: plan.summary,
+      });
+      setSpots(plan.stops);
+      setHydrated(true);
+    }
 
     if (!stored) {
-      setPlanTitle(fallback.title);
-      setSpots(fallback.stops);
+      applyPlan(fallback);
       return;
     }
 
     try {
       const parsed = JSON.parse(stored) as Partial<RoutePlan>;
       if (Array.isArray(parsed.stops) && parsed.stops.length > 0) {
-        setPlanTitle(parsed.title ?? fallback.title);
-        setSpots(parsed.stops as RouteStop[]);
+        applyPlan({
+          ...fallback,
+          ...parsed,
+          id: parsed.id ?? fallback.id,
+          title: parsed.title ?? fallback.title,
+          theme: parsed.theme ?? fallback.theme,
+          detail: parsed.detail ?? fallback.detail,
+          summary: parsed.summary ?? fallback.summary,
+          stops: parsed.stops as RouteStop[],
+        });
         return;
       }
     } catch {
-      window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(CURRENT_ROUTE_STORAGE_KEY);
     }
 
-    setPlanTitle(fallback.title);
-    setSpots(fallback.stops);
+    applyPlan(fallback);
   }, []);
+
+  useEffect(() => {
+    if (!hydrated || spots.length === 0) return;
+
+    const plan = createLocalRoutePlan({
+      id: planMeta.id,
+      title: planTitle,
+      theme: planMeta.theme,
+      detail: planMeta.detail,
+      summary: planMeta.summary,
+      stops: spots,
+    });
+    window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
+  }, [hydrated, planMeta, planTitle, spots]);
 
   const stats = useMemo(() => {
     const walking = calculateWalkingMinutes(spots);

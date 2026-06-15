@@ -23,6 +23,7 @@ export interface Place {
 interface PlaceDetailModalProps {
   place: Place | null;
   onClose: () => void;
+  onAddToRoute?: (place: Place) => void;
 }
 
 const CROWD_CONFIG = {
@@ -41,7 +42,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   stay: 'Stay',
 };
 
-export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
+export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailModalProps) {
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
@@ -67,8 +68,8 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
     <>
       <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-lg">
-        <div className="animate-slide-up rounded-t-2xl border border-white/10 bg-[#1A1A2E] shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md">
+        <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-t-2xl border border-white/10 bg-[#1A1A2E] pb-[env(safe-area-inset-bottom)] shadow-2xl">
           <div className="flex justify-center pb-1 pt-3">
             <div className="h-1 w-10 rounded-full bg-white/20" />
           </div>
@@ -151,7 +152,10 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
             </div>
 
             <div className="flex gap-2 pt-1">
-              <button className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]">
+              <button
+                onClick={() => onAddToRoute?.(place)}
+                className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+              >
                 Add to Route
               </button>
               {place.tourApiUrl && (

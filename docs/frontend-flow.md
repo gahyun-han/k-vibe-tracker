@@ -28,6 +28,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
+- `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
 
 ### Analysis
 
@@ -52,6 +53,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/routes.ts`
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Local persistence key: `k-vibe-current-route`
+- Route editor mutations are written back to the same local persistence key.
 
 ## Expected Page States
 

@@ -17,12 +17,11 @@ import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import {
   ROUTE_THEME_OPTIONS,
+  CURRENT_ROUTE_STORAGE_KEY,
   formatDuration,
   type RoutePlan,
   type RouteTheme,
 } from '@/lib/routes';
-
-const STORAGE_KEY = 'k-vibe-current-route';
 
 type Step = 1 | 2;
 
@@ -88,7 +87,7 @@ export default function PersonaPage() {
 
   function saveAndEditRoute() {
     if (!plan) return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(plan));
+    window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
     router.push(`/${locale}/route`);
   }
 
