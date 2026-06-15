@@ -101,7 +101,7 @@ export default function PersonaPage() {
 
   // ── 루트 결과 화면 ──────────────────────────────────────────────────────────
   if (done) return (
-    <AppLayout>
+    <AppLayout activeTab="route">
       <div className="flex flex-col h-full bg-[#0D0D1A] overflow-y-auto pb-24">
         <div className="px-4 pt-4 space-y-4">
           {/* 헤더 */}
@@ -178,7 +178,7 @@ export default function PersonaPage() {
 
   // ── 스텝 UI ─────────────────────────────────────────────────────────────────
   return (
-    <AppLayout>
+    <AppLayout activeTab="route">
       <div className="flex flex-col h-full bg-[#0D0D1A] pb-24">
         {/* 스텝 인디케이터 */}
         <div className="px-4 pt-4">

@@ -84,7 +84,7 @@ export default function MapPage() {
   });
 
   return (
-    <AppLayout>
+    <AppLayout activeTab="map">
       <div className="flex flex-col h-full bg-[#0D0D1A]">
         {/* 지도 영역 — Kakao Maps JS API 연동 시 교체 */}
         <div className="relative flex-1 min-h-0 bg-[#111122]">

@@ -63,7 +63,7 @@ export default function AnalyzePage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout activeTab="analyze">
       <div className="flex flex-col h-full bg-[#0D0D1A] overflow-y-auto pb-24">
         <div className="px-4 pt-4 pb-6 space-y-4">
           {/* 헤더 */}
