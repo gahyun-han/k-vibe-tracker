@@ -72,19 +72,21 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/facilities` also uses deterministic local mock data until live facility sources are approved.
+`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/facilities` and `/api/routes/generate` also use deterministic local mock data until live facility sources or AI route generation are approved.
 
 ## Frontend Flow
 
 - `/[locale]`: landing and language entry point.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins and a bottom list.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` and falls back to mock analysis if the AI worker is unavailable.
-- `/[locale]/persona`: K-content persona route generator prototype.
-- `/[locale]/route`: editable route timeline prototype.
+- `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
+- `/[locale]/route`: editable route timeline. It reads the saved route plan from `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile and saved route entry.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
+
+Additional frontend flow notes are in [docs/frontend-flow.md](docs/frontend-flow.md).
 
 ## API Notes
 
@@ -130,6 +132,26 @@ Facility types:
 all, restroom, pharmacy, cafe_toilet, convenience, popup
 ```
 
+### `POST /api/routes/generate`
+
+Accepts:
+
+```json
+{ "theme": "mood", "detail": "cafe", "start_time": "10:00" }
+```
+
+Behavior:
+
+- Validates theme, detail, and optional start time.
+- Returns a deterministic local route plan with stops, crowd levels, stay minutes, walking minutes, total duration, and share text.
+- Keeps the route generation contract stable so an AI-backed planner can replace the mock implementation later.
+
+Themes:
+
+```text
+kpop, drama, mood
+```
+
 ### `POST /api/analyze`
 
 Accepts:
@@ -154,6 +176,7 @@ app/
   api/
     places/     # TourAPI-backed place endpoint
     facilities/ # mock-backed facility radar endpoint
+    routes/     # mock-backed route generation endpoint
     analyze/    # AI worker proxy
 components/
   common/
@@ -163,6 +186,7 @@ components/
   route/
 lib/
   facilities.ts # facility types, cache-key, and local mock source
+  routes.ts     # route themes, mock plans, duration helpers
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
   youtube.ts
   haversine.ts
@@ -180,6 +204,8 @@ ai-worker/      # FastAPI prototype
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
+  - `/api/routes/generate` now supports validated mock-backed route generation.
+  - Persona and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 
 ## Collaboration Workflow
