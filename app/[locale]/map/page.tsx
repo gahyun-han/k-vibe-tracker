@@ -5,6 +5,7 @@ import { MapPin, Navigation, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, Category } from '@/components/map/CategoryFilter';
 import { PlaceDetailModal, Place } from '@/components/map/PlaceDetailModal';
+import { useToast } from '@/components/common/Toast';
 
 // ─── Mock data (TourAPI 연동 시 교체) ────────────────────────────────────────
 const MOCK_PLACES: Place[] = [
@@ -58,10 +59,23 @@ const CAT_EMOJI: Record<string, string> = {
   cafe: '☕', culture: '🏛️', photo: '📸', fun: '🎮', food: '🍜', stay: '🏨', all: '📍',
 };
 
+const ROUTE_STORAGE_KEY = 'kvibe:route-spots';
+
 export default function MapPage() {
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [search, setSearch] = useState('');
+  const { toast } = useToast();
+
+  function handleAddToRoute(place: Place) {
+    const existing = JSON.parse(localStorage.getItem(ROUTE_STORAGE_KEY) ?? '[]') as Place[];
+    if (existing.some((p) => p.id === place.id)) {
+      toast(`이미 루트에 추가된 장소예요`, 'warning');
+      return;
+    }
+    localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify([...existing, place]));
+    toast(`${place.name} 루트에 추가됐어요 🗺️`, 'success');
+  }
 
   const filtered = MOCK_PLACES.filter((p) => {
     const matchCat = categories.includes('all') || categories.includes(p.category as Category);
@@ -139,7 +153,11 @@ export default function MapPage() {
         </div>
 
         {/* 장소 상세 모달 */}
-        <PlaceDetailModal place={selectedPlace} onClose={() => setSelectedPlace(null)} />
+        <PlaceDetailModal
+          place={selectedPlace}
+          onClose={() => setSelectedPlace(null)}
+          onAddToRoute={handleAddToRoute}
+        />
       </div>
     </AppLayout>
   );

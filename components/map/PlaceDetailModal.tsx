@@ -23,6 +23,7 @@ export interface Place {
 interface PlaceDetailModalProps {
   place: Place | null;
   onClose: () => void;
+  onAddToRoute?: (place: Place) => void;
 }
 
 const CROWD_CONFIG = {
@@ -35,7 +36,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
   cafe: '☕', photo: '📸', fun: '🎮', culture: '🏛️', food: '🍜', stay: '🏨', all: '📍',
 };
 
-export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
+export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailModalProps) {
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
@@ -149,7 +150,10 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
 
             {/* Actions */}
             <div className="flex gap-2 pt-1">
-              <button className="flex-1 py-2.5 rounded-xl bg-[#FF3A5C] text-white text-sm font-semibold hover:bg-[#e02e4e] transition-colors">
+              <button
+                onClick={() => { onAddToRoute?.(place); onClose(); }}
+                className="flex-1 py-2.5 rounded-xl bg-[#FF3A5C] text-white text-sm font-semibold hover:bg-[#e02e4e] transition-colors"
+              >
                 루트에 추가
               </button>
               {place.tourApiUrl && (

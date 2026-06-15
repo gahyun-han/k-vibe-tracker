@@ -5,6 +5,9 @@ import { ChevronRight, Sparkles, RotateCcw, Share2, MapPin, Clock } from 'lucide
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge, CrowdLevel } from '@/components/route/CrowdBadge';
 import { totalRouteMinutes } from '@/lib/haversine';
+import { useToast } from '@/components/common/Toast';
+
+const ROUTE_STORAGE_KEY = 'kvibe:route-spots';
 
 // ─── 스텝 1: 카테고리 ─────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -58,8 +61,24 @@ export default function PersonaPage() {
   const [generating, setGenerating] = useState(false);
   const [done, setDone] = useState(false);
 
+  const { toast } = useToast();
   const walkMin = totalRouteMinutes(MOCK_ROUTE.map((s) => ({ lat: s.lat, lng: s.lng })));
   const totalMin = walkMin + MOCK_ROUTE.reduce((a, s) => a + s.stayMin, 0);
+
+  function saveRoute() {
+    const spots = MOCK_ROUTE.map((s) => ({
+      id: s.id,
+      name: s.name,
+      category: s.emoji + ' 기타',
+      address: s.address,
+      crowdLevel: s.crowdLevel,
+      lat: s.lat,
+      lng: s.lng,
+      stayMinutes: s.stayMin,
+    }));
+    localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(spots));
+    toast('루트가 저장됐어요! Route 탭에서 확인하세요', 'success');
+  }
 
   function generate() {
     setGenerating(true);
@@ -137,7 +156,10 @@ export default function PersonaPage() {
 
           {/* 공유 / 루트 저장 */}
           <div className="flex gap-2">
-            <button className="flex-1 py-3 rounded-xl bg-[#FF3A5C] text-white font-semibold text-sm flex items-center justify-center gap-2">
+            <button
+              onClick={saveRoute}
+              className="flex-1 py-3 rounded-xl bg-[#FF3A5C] text-white font-semibold text-sm flex items-center justify-center gap-2"
+            >
               <MapPin size={16} />
               루트 저장
             </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { GripVertical, X, Clock, MapPin, Plus, Share2, Navigation } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge, CrowdLevel } from '@/components/route/CrowdBadge';
@@ -17,16 +17,58 @@ interface RouteSpot {
   stayMinutes: number; // 예상 체류 시간
 }
 
-const INITIAL_SPOTS: RouteSpot[] = [
-  { id: '1', name: '경복궁', category: '🏛️ 문화', address: '서울 종로구', crowdLevel: 'high', lat: 37.5796, lng: 126.977, stayMinutes: 90 },
-  { id: '2', name: '광장시장', category: '🍜 맛집', address: '서울 종로구', crowdLevel: 'mid', lat: 37.570, lng: 126.999, stayMinutes: 60 },
-  { id: '3', name: '남산타워', category: '📸 포토', address: '서울 용산구', crowdLevel: 'low', lat: 37.5512, lng: 126.988, stayMinutes: 60 },
-];
+const ROUTE_STORAGE_KEY = 'kvibe:route-spots';
+
+function loadSpotsFromStorage(): RouteSpot[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(ROUTE_STORAGE_KEY);
+    if (!raw) return [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (JSON.parse(raw) as any[]).map((p) => ({
+      id: p.id,
+      name: p.name,
+      category: p.category ?? '📍 기타',
+      address: p.address ?? '',
+      crowdLevel: (p.crowdLevel ?? 'low') as CrowdLevel,
+      lat: p.lat,
+      lng: p.lng,
+      stayMinutes: p.stayMinutes ?? 60,
+    }));
+  } catch {
+    return [];
+  }
+}
 
 export default function RoutePage() {
-  const [spots, setSpots] = useState<RouteSpot[]>(INITIAL_SPOTS);
+  const [spots, setSpots] = useState<RouteSpot[]>([]);
+
+  useEffect(() => {
+    setSpots(loadSpotsFromStorage());
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(ROUTE_STORAGE_KEY, JSON.stringify(spots));
+  }, [spots]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const sharingRef = useRef(false);
+
+  async function handleShare() {
+    if (sharingRef.current) return; // 중복 호출 방지
+    sharingRef.current = true;
+    try {
+      const names = spots.map((s, i) => `${i + 1}. ${s.name}`).join('\n');
+      await navigator.share({
+        title: 'K-Vibe 루트 공유',
+        text: `내 K-Vibe 루트 (${spots.length}곳)\n${names}`,
+      });
+    } catch {
+      // 사용자가 취소한 경우 무시
+    } finally {
+      sharingRef.current = false;
+    }
+  }
 
   // ─── 간단한 drag-and-drop (HTML5 DnD API) ──────────────────────────────────
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
@@ -157,7 +199,10 @@ export default function RoutePage() {
                 <Navigation size={16} />
                 길 안내 시작
               </button>
-              <button className="px-4 py-3 rounded-xl bg-white/10 text-white/70 font-semibold text-sm hover:bg-white/20 transition-colors flex items-center gap-1.5">
+              <button
+                onClick={handleShare}
+                className="px-4 py-3 rounded-xl bg-white/10 text-white/70 font-semibold text-sm hover:bg-white/20 transition-colors flex items-center gap-1.5"
+              >
                 <Share2 size={16} />
                 공유
               </button>
