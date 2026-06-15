@@ -5,8 +5,7 @@ import type { Database } from '@/types/database';
 interface CookieToSet {
   name: string;
   value: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options?: any;
+  options?: Record<string, unknown>;
 }
 
 export async function createClient() {

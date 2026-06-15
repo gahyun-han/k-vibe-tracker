@@ -24,7 +24,6 @@ function loadSpotsFromStorage(): RouteSpot[] {
   try {
     const raw = localStorage.getItem(ROUTE_STORAGE_KEY);
     if (!raw) return [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (JSON.parse(raw) as any[]).map((p) => ({
       id: p.id,
       name: p.name,
