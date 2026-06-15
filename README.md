@@ -72,7 +72,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable.
+`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/facilities` also uses deterministic local mock data until live facility sources are approved.
 
 ## Frontend Flow
 
@@ -81,7 +81,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` and falls back to mock analysis if the AI worker is unavailable.
 - `/[locale]/persona`: K-content persona route generator prototype.
 - `/[locale]/route`: editable route timeline prototype.
-- `/[locale]/radar`: convenience facility radar prototype.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile and saved route entry.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
@@ -110,6 +110,26 @@ Categories:
 all, cafe, photo, fun, culture, food, stay
 ```
 
+### `GET /api/facilities`
+
+Query:
+
+```text
+/api/facilities?lat=37.5665&lng=126.978&radius=500&type=all
+```
+
+Behavior:
+
+- Validates coordinates, radius, and facility type.
+- Returns deterministic local mock data sorted by walking distance.
+- Builds a stable cache key so future external facility sources or Redis can be added without changing the route contract.
+
+Facility types:
+
+```text
+all, restroom, pharmacy, cafe_toilet, convenience, popup
+```
+
 ### `POST /api/analyze`
 
 Accepts:
@@ -133,6 +153,7 @@ app/
     profile/    # auth/profile UI
   api/
     places/     # TourAPI-backed place endpoint
+    facilities/ # mock-backed facility radar endpoint
     analyze/    # AI worker proxy
 components/
   common/
@@ -141,6 +162,7 @@ components/
   radar/
   route/
 lib/
+  facilities.ts # facility types, cache-key, and local mock source
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
   youtube.ts
   haversine.ts
@@ -156,6 +178,8 @@ ai-worker/      # FastAPI prototype
 - Sprint 1 is in progress:
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
+  - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 
 ## Collaboration Workflow

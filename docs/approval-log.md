@@ -6,9 +6,10 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 ## Deferred Items
 
-- Claude CLI focused review: skipped for the current map/env change unless a specific risk remains after local verification, because it may consume a paid plan or quota.
+- Claude CLI focused review: skipped for the current local-only changes unless a specific risk remains after local verification, because it may consume a paid plan or quota.
 - Supabase project credentials and Google OAuth setup: required for real login/session/profile persistence. Local guest flows run without these keys.
 - TourAPI key: required for live public-place data. `/api/places` uses mock fallback without the key.
+- Live facility data sources: required for production restroom, pharmacy, convenience store, and pop-up data. `/api/facilities` uses local mock data until source terms, quotas, and any costs are approved.
 - YouTube Data API key: required for live K-content video metadata.
 - OpenAI API key: required for AI-generated route or recommendation features.
 - Kakao Maps JavaScript key: required for the production map SDK.
