@@ -19,6 +19,14 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
 
+### Analysis
+
+- UI: `app/[locale]/analyze/page.tsx`
+- API: `app/api/analyze/route.ts`
+- Helpers: `lib/analysis.ts`, `lib/youtube.ts`
+- Development fallback: deterministic mock spot extraction.
+- AI worker calls are disabled unless `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is configured.
+
 ### Facilities
 
 - UI: `app/[locale]/radar/page.tsx`
@@ -43,6 +51,7 @@ Every data-backed page should expose:
 - Empty state when filters remove all items.
 - Error state with a retry path.
 - Mock/source hint while the app is running without external integrations.
+- Clear copy that tells developers whether a local mock or external source produced the result.
 
 ## Approval-Gated Work
 

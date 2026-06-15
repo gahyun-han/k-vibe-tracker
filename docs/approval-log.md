@@ -11,6 +11,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - TourAPI key: required for live public-place data. `/api/places` uses mock fallback without the key.
 - Live facility data sources: required for production restroom, pharmacy, convenience store, and pop-up data. `/api/facilities` uses local mock data until source terms, quotas, and any costs are approved.
 - YouTube Data API key: required for live K-content video metadata.
+- AI worker analysis: disabled by default. `/api/analyze` only calls `AI_WORKER_URL` when `ENABLE_AI_WORKER_ANALYSIS=true`, because the worker may consume OpenAI or hosting quota.
 - OpenAI API key: required for AI-generated route or recommendation features. `/api/routes/generate` uses local deterministic route plans until this is approved.
 - Kakao Maps JavaScript key: required for the production map SDK.
 - Upstash Redis credentials: required for external Redis caching.

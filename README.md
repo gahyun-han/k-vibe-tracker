@@ -56,6 +56,8 @@ Optional server-side integrations:
 
 ```env
 TOUR_API_KEY=
+ENABLE_AI_WORKER_ANALYSIS=false
+AI_WORKER_URL=
 YOUTUBE_API_KEY=
 OPENAI_API_KEY=
 KAKAO_MAP_KEY=
@@ -72,13 +74,13 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/facilities` and `/api/routes/generate` also use deterministic local mock data until live facility sources or AI route generation are approved.
+`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
 ## Frontend Flow
 
 - `/[locale]`: landing and language entry point.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins and a bottom list.
-- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` and falls back to mock analysis if the AI worker is unavailable.
+- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads the saved route plan from `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
@@ -160,7 +162,11 @@ Accepts:
 { "youtube_url": "https://www.youtube.com/watch?v=..." }
 ```
 
-Validates YouTube URLs, calls the AI worker when available, and returns mock analysis on local worker connection failures.
+Behavior:
+
+- Validates YouTube URLs and returns deterministic local spot extraction by default.
+- Calls the AI worker only when `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is set.
+- Falls back to local mock analysis if the enabled worker cannot be reached.
 
 ## Project Structure
 
@@ -185,6 +191,7 @@ components/
   radar/
   route/
 lib/
+  analysis.ts   # local SNS analysis fallback and AI worker gate
   facilities.ts # facility types, cache-key, and local mock source
   routes.ts     # route themes, mock plans, duration helpers
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
@@ -206,6 +213,8 @@ ai-worker/      # FastAPI prototype
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.
   - Persona and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
+  - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
+  - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 
 ## Collaboration Workflow

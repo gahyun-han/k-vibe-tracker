@@ -1,48 +1,41 @@
-import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { POST } from '@/app/api/analyze/route';
 
-// fetch를 전역 mock
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
-// POST를 동적으로 import (전역 mock 설정 후)
-let POST: typeof import('@/app/api/analyze/route').POST;
-
-beforeAll(async () => {
-  ({ POST } = await import('@/app/api/analyze/route'));
-});
-
-function makeRequest(body: object) {
+function makeRequest(body: object | string) {
   return new NextRequest('http://localhost/api/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: typeof body === 'string' ? body : JSON.stringify(body),
   });
 }
 
 describe('POST /api/analyze', () => {
-  beforeEach(() => vi.resetAllMocks());
-  afterEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.resetAllMocks();
+    delete process.env.ENABLE_AI_WORKER_ANALYSIS;
+    delete process.env.AI_WORKER_URL;
+  });
 
-  it('유효한 YouTube URL → AI 워커 응답 200', async () => {
-    mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({
-        video_id: 'dQw4w9WgXcQ',
-        title: '테스트 영상',
-        places: [{ name: '성수동', lat: 37.5447, lng: 127.0564, confidence: 0.9 }],
-        cached: false,
-      }), { status: 200 }),
-    );
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
+  it('returns local mock analysis by default without calling the worker', async () => {
     const res = await POST(makeRequest({ youtube_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(data.video_id).toBe('dQw4w9WgXcQ');
-    expect(data.places).toHaveLength(1);
+    expect(data.source).toBe('mock');
+    expect(data.places).toHaveLength(3);
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it('잘못된 URL → 400 INVALID_YOUTUBE_URL', async () => {
+  it('rejects invalid YouTube URLs', async () => {
     const res = await POST(makeRequest({ youtube_url: 'https://google.com' }));
     const data = await res.json();
 
@@ -51,19 +44,53 @@ describe('POST /api/analyze', () => {
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it('빈 문자열 URL → 400', async () => {
-    const res = await POST(makeRequest({ youtube_url: '' }));
-    expect(res.status).toBe(400);
-  });
-
-  it('youtube_url 키 없음 → 400', async () => {
+  it('rejects missing YouTube URLs', async () => {
     const res = await POST(makeRequest({}));
+    const data = await res.json();
+
     expect(res.status).toBe(400);
+    expect(data.error).toBe('INVALID_YOUTUBE_URL');
   });
 
-  it('AI 워커 500 에러 → 상위로 전달', async () => {
+  it('rejects malformed JSON', async () => {
+    const res = await POST(makeRequest('{'));
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toBe('INVALID_BODY');
+  });
+
+  it('calls the worker only when explicitly enabled', async () => {
+    process.env.ENABLE_AI_WORKER_ANALYSIS = 'true';
+    process.env.AI_WORKER_URL = 'http://localhost:8000';
     mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({ detail: 'WORKER_CRASH' }), { status: 500 }),
+      new Response(
+        JSON.stringify({
+          video_id: 'short1',
+          title: 'Worker result',
+          places: [{ name: 'Seongsu', lat: 37.5447, lng: 127.0564, confidence: 0.9 }],
+          cached: true,
+        }),
+        { status: 200 }
+      )
+    );
+
+    const res = await POST(makeRequest({ youtube_url: 'https://youtu.be/short1' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(String(mockFetch.mock.calls[0][0])).toBe('http://localhost:8000/analyze');
+    expect(data.source).toBe('worker');
+    expect(data.cached).toBe(true);
+    expect(data.title).toBe('Worker result');
+  });
+
+  it('passes worker errors through when the worker is enabled', async () => {
+    process.env.ENABLE_AI_WORKER_ANALYSIS = 'true';
+    process.env.AI_WORKER_URL = 'http://localhost:8000';
+    mockFetch.mockResolvedValue(
+      new Response(JSON.stringify({ detail: 'WORKER_CRASH' }), { status: 500 })
     );
 
     const res = await POST(makeRequest({ youtube_url: 'https://youtu.be/abc123' }));
@@ -73,34 +100,17 @@ describe('POST /api/analyze', () => {
     expect(data.error).toBe('WORKER_CRASH');
   });
 
-  it('AI 워커 미연결(TypeError) → 목 응답 반환', async () => {
+  it('falls back to mock analysis when the enabled worker cannot be reached', async () => {
+    process.env.ENABLE_AI_WORKER_ANALYSIS = 'true';
+    process.env.AI_WORKER_URL = 'http://localhost:8000';
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     mockFetch.mockRejectedValue(new TypeError('fetch failed'));
 
     const res = await POST(makeRequest({ youtube_url: 'https://www.youtube.com/watch?v=mocktest1' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
-    expect(data.title).toContain('목 데이터');
-    expect(Array.isArray(data.places)).toBe(true);
+    expect(data.source).toBe('mock');
     expect(data.places.length).toBeGreaterThan(0);
-  });
-
-  it('youtu.be 단축 URL도 정상 처리', async () => {
-    mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({ video_id: 'short1', title: 'Short', places: [], cached: false }), { status: 200 }),
-    );
-
-    const res = await POST(makeRequest({ youtube_url: 'https://youtu.be/short1' }));
-    expect(res.status).toBe(200);
-  });
-
-  it('AI 워커 비-TypeError 예외 → 500 INTERNAL_ERROR', async () => {
-    mockFetch.mockRejectedValue(new Error('network timeout'));
-
-    const res = await POST(makeRequest({ youtube_url: 'https://www.youtube.com/watch?v=errtest' }));
-    const data = await res.json();
-
-    expect(res.status).toBe(500);
-    expect(data.error).toBe('INTERNAL_ERROR');
   });
 });
