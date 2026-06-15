@@ -79,7 +79,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 ## Frontend Flow
 
 - `/[locale]`: landing and language entry point with local-first development status and quick access to the map.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins and a bottom list.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins, icon-based category filters, place details, and a bottom list.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads the saved route plan from `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
@@ -209,6 +209,7 @@ ai-worker/      # FastAPI prototype
 - Sprint 1 is in progress:
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.

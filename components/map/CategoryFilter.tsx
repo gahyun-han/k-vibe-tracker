@@ -1,5 +1,7 @@
 'use client';
 
+import { Building2, Camera, Coffee, Landmark, Map, ShoppingBag, Utensils } from 'lucide-react';
+
 export type Category = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay';
 
 interface CategoryFilterProps {
@@ -7,15 +9,15 @@ interface CategoryFilterProps {
   onChange: (cats: Category[]) => void;
 }
 
-const CATEGORIES: { id: Category; label: string; emoji: string }[] = [
-  { id: 'all',     label: 'All',     emoji: '🗺️' },
-  { id: 'cafe',    label: 'Cafe',    emoji: '☕' },
-  { id: 'photo',   label: 'Photo',   emoji: '📸' },
-  { id: 'fun',     label: 'Fun',     emoji: '🎮' },
-  { id: 'culture', label: 'Culture', emoji: '🏛️' },
-  { id: 'food',    label: 'Food',    emoji: '🍜' },
-  { id: 'stay',    label: 'Stay',    emoji: '🏨' },
-];
+const CATEGORIES = [
+  { id: 'all', label: 'All', icon: Map },
+  { id: 'cafe', label: 'Cafe', icon: Coffee },
+  { id: 'photo', label: 'Photo', icon: Camera },
+  { id: 'fun', label: 'Fun', icon: ShoppingBag },
+  { id: 'culture', label: 'Culture', icon: Landmark },
+  { id: 'food', label: 'Food', icon: Utensils },
+  { id: 'stay', label: 'Stay', icon: Building2 },
+] satisfies { id: Category; label: string; icon: typeof Map }[];
 
 export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
   function toggle(id: Category) {
@@ -23,27 +25,28 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
       onChange(['all']);
       return;
     }
+
     const next = selected.includes(id)
-      ? selected.filter((c) => c !== id)
-      : [...selected.filter((c) => c !== 'all'), id];
+      ? selected.filter((category) => category !== id)
+      : [...selected.filter((category) => category !== 'all'), id];
     onChange(next.length === 0 ? ['all'] : next);
   }
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-      {CATEGORIES.map(({ id, label, emoji }) => {
+      {CATEGORIES.map(({ id, label, icon: Icon }) => {
         const active = selected.includes(id) || (id === 'all' && selected.includes('all'));
         return (
           <button
             key={id}
             onClick={() => toggle(id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all
-              ${active
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
+              active
                 ? 'bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30'
                 : 'bg-white/10 text-white/70 hover:bg-white/20'
-              }`}
+            }`}
           >
-            <span>{emoji}</span>
+            <Icon size={14} />
             <span>{label}</span>
           </button>
         );

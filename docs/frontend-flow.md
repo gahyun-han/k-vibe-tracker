@@ -27,6 +27,7 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/places/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
+- Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
 
 ### Analysis
 

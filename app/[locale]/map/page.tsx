@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertCircle, LocateFixed, MapPin, Navigation, RefreshCw, Search } from 'lucide-react';
+import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';

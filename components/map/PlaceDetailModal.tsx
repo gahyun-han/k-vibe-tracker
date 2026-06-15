@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { X, MapPin, Clock, Phone, ExternalLink, Star } from 'lucide-react';
+import { Clock, ExternalLink, MapPin, Phone, Star, Tags, X } from 'lucide-react';
 
 export interface Place {
   id: string;
@@ -26,20 +26,28 @@ interface PlaceDetailModalProps {
 }
 
 const CROWD_CONFIG = {
-  low:  { label: 'Quiet', color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
-  mid:  { label: 'Normal', color: 'text-yellow-400',  bg: 'bg-yellow-400/10',  dot: 'bg-yellow-400'  },
-  high: { label: 'Busy', color: 'text-red-400',     bg: 'bg-red-400/10',     dot: 'bg-red-400'     },
+  low: { label: 'Quiet', color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
+  mid: { label: 'Normal', color: 'text-yellow-400', bg: 'bg-yellow-400/10', dot: 'bg-yellow-400' },
+  high: { label: 'Busy', color: 'text-red-400', bg: 'bg-red-400/10', dot: 'bg-red-400' },
 };
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  cafe: '☕', photo: '📸', fun: '🎮', culture: '🏛️', food: '🍜', stay: '🏨', all: '📍',
+const CATEGORY_LABEL: Record<string, string> = {
+  all: 'Spot',
+  cafe: 'Cafe',
+  photo: 'Photo',
+  fun: 'Fun',
+  culture: 'Culture',
+  food: 'Food',
+  stay: 'Stay',
 };
 
 export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [place]);
 
   useEffect(() => {
@@ -53,81 +61,76 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
   if (!place) return null;
 
   const crowd = place.crowdLevel ? CROWD_CONFIG[place.crowdLevel] : null;
-  const emoji = CATEGORY_EMOJI[place.category] ?? '📍';
+  const categoryLabel = CATEGORY_LABEL[place.category] ?? place.category;
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Bottom sheet */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
-        <div className="bg-[#1A1A2E] rounded-t-2xl border border-white/10 shadow-2xl animate-slide-up">
-          {/* Drag handle */}
-          <div className="flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 rounded-full bg-white/20" />
+      <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-lg">
+        <div className="animate-slide-up rounded-t-2xl border border-white/10 bg-[#1A1A2E] shadow-2xl">
+          <div className="flex justify-center pb-1 pt-3">
+            <div className="h-1 w-10 rounded-full bg-white/20" />
           </div>
 
-          {/* Image */}
           {place.imageUrl ? (
-            <div className="relative mx-4 mt-2 rounded-xl overflow-hidden h-44">
+            <div className="relative mx-4 mt-2 h-44 overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={place.imageUrl} alt={place.name} className="w-full h-full object-cover" />
+              <img src={place.imageUrl} alt={place.name} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
           ) : (
-            <div className="mx-4 mt-2 rounded-xl h-36 bg-white/5 flex items-center justify-center">
-              <span className="text-5xl">{emoji}</span>
+            <div className="mx-4 mt-2 flex h-36 items-center justify-center rounded-xl bg-white/5">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FF3A5C]/15 text-[#FF3A5C]">
+                <Tags size={34} />
+              </div>
             </div>
           )}
 
-          {/* Content */}
-          <div className="p-4 space-y-3">
-            {/* Header */}
+          <div className="space-y-3 p-4">
             <div className="flex items-start justify-between gap-2">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#FF3A5C]/20 text-[#FF3A5C] font-semibold">
-                    {emoji} {place.category}
+              <div className="min-w-0">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[#FF3A5C]/20 px-2 py-0.5 text-xs font-semibold text-[#FF3A5C]">
+                    {categoryLabel}
                   </span>
                   {crowd && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-semibold flex items-center gap-1 ${crowd.bg} ${crowd.color}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${crowd.dot}`} />
+                    <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${crowd.bg} ${crowd.color}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${crowd.dot}`} />
                       {crowd.label}
                     </span>
                   )}
                 </div>
                 <h2 className="text-lg font-bold text-white">{place.name}</h2>
                 {place.rating && (
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                    <span className="text-sm text-yellow-400 font-semibold">{place.rating}</span>
+                  <div className="mt-0.5 flex items-center gap-1">
+                    <Star size={12} className="fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm font-semibold text-yellow-400">{place.rating}</span>
                     {place.reviewCount && (
                       <span className="text-xs text-white/40">({place.reviewCount.toLocaleString()})</span>
                     )}
                   </div>
                 )}
               </div>
-              <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/10 text-white/60">
+              <button
+                onClick={onClose}
+                aria-label="Close place detail"
+                className="rounded-lg p-1.5 text-white/60 hover:bg-white/10"
+              >
                 <X size={18} />
               </button>
             </div>
 
-            {/* Tags */}
             {place.tags && place.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {place.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+                  <span key={tag} className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/60">
                     #{tag}
                   </span>
                 ))}
               </div>
             )}
 
-            {/* Info rows */}
             <div className="space-y-2">
               <div className="flex items-start gap-2.5 text-sm text-white/70">
                 <MapPin size={14} className="mt-0.5 shrink-0 text-[#FF3A5C]" />
@@ -147,9 +150,8 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
               )}
             </div>
 
-            {/* Actions */}
             <div className="flex gap-2 pt-1">
-              <button className="flex-1 py-2.5 rounded-xl bg-[#FF3A5C] text-white text-sm font-semibold hover:bg-[#e02e4e] transition-colors">
+              <button className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]">
                 Add to Route
               </button>
               {place.tourApiUrl && (
@@ -157,7 +159,7 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
                   href={place.tourApiUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 rounded-xl bg-white/10 text-white/70 text-sm font-semibold hover:bg-white/20 transition-colors flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
                 >
                   <ExternalLink size={14} />
                   Details
