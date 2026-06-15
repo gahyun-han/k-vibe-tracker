@@ -1,6 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/places/route';
+
+const originalTourApiKey = process.env.TOUR_API_KEY;
+const mockFetch = vi.fn();
+
+vi.stubGlobal('fetch', mockFetch);
 
 function makeRequest(params: Record<string, string>) {
   const url = new URL('http://localhost/api/places');
@@ -9,58 +14,154 @@ function makeRequest(params: Record<string, string>) {
 }
 
 describe('GET /api/places', () => {
-  it('lat, lng 모두 제공 → 200 + places 배열', async () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    delete process.env.TOUR_API_KEY;
+  });
+
+  afterEach(() => {
+    if (originalTourApiKey === undefined) {
+      delete process.env.TOUR_API_KEY;
+    } else {
+      process.env.TOUR_API_KEY = originalTourApiKey;
+    }
+    vi.restoreAllMocks();
+    vi.stubGlobal('fetch', mockFetch);
+  });
+
+  it('returns credential-less mock places for valid coordinates', async () => {
     const res = await GET(makeRequest({ lat: '37.5665', lng: '126.978' }));
     const data = await res.json();
 
     expect(res.status).toBe(200);
     expect(Array.isArray(data.places)).toBe(true);
     expect(data.places.length).toBeGreaterThan(0);
+    expect(data.source).toBe('mock');
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it('lat 없음 → 400', async () => {
-    const res = await GET(makeRequest({ lng: '126.978' }));
-    expect(res.status).toBe(400);
+  it('rejects missing coordinates', async () => {
+    expect((await GET(makeRequest({ lng: '126.978' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '37.5665' }))).status).toBe(400);
+    expect((await GET(makeRequest({}))).status).toBe(400);
   });
 
-  it('lng 없음 → 400', async () => {
-    const res = await GET(makeRequest({ lat: '37.5665' }));
-    expect(res.status).toBe(400);
+  it('rejects invalid coordinate ranges', async () => {
+    expect((await GET(makeRequest({ lat: 'abc', lng: '127.0' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '91', lng: '127.0' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '37.5', lng: '181' }))).status).toBe(400);
   });
 
-  it('둘 다 없음 → 400', async () => {
-    const res = await GET(makeRequest({}));
-    expect(res.status).toBe(400);
+  it('rejects invalid radius and category params', async () => {
+    expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', radius: '0' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', radius: '20001' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', category: 'unknown' }))).status).toBe(400);
   });
 
-  it('mock 응답에 content_id, name_en, lat, lng 포함', async () => {
-    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
-    const data = await res.json();
-    const place = data.places[0];
-
-    expect(place).toHaveProperty('content_id');
-    expect(place).toHaveProperty('name_en');
-    expect(place).toHaveProperty('lat');
-    expect(place).toHaveProperty('lng');
-  });
-
-  it('응답의 lat/lng는 입력 기준 오프셋 값', async () => {
+  it('keeps legacy mock offsets stable', async () => {
     const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
     const data = await res.json();
 
-    // mock은 +0.001/-0.002 오프셋 사용
     expect(data.places[0].lat).toBeCloseTo(37.501, 3);
     expect(data.places[1].lng).toBeCloseTo(127.002, 3);
   });
 
-  it('category 파라미터 없어도 동작', async () => {
-    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
+  it('filters mock places by category when no TourAPI key exists', async () => {
+    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0', category: 'food' }));
+    const data = await res.json();
+
     expect(res.status).toBe(200);
+    expect(data.places).toHaveLength(1);
+    expect(data.places[0].category).toBe('food');
   });
 
-  it('source 필드가 mock', async () => {
-    const res = await GET(makeRequest({ lat: '37.0', lng: '127.0' }));
+  it('calls TourAPI locationBasedList2 and normalizes the response when a key exists', async () => {
+    process.env.TOUR_API_KEY = 'encoded%2Bkey';
+    mockFetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          response: {
+            body: {
+              items: {
+                item: [
+                  {
+                    contentid: '264337',
+                    contenttypeid: '39',
+                    title: 'Gwangjang Market',
+                    mapx: '126.9996',
+                    mapy: '37.57',
+                    addr1: '88 Changgyeonggung-ro, Jongno-gu',
+                    firstimage: 'https://example.com/market.jpg',
+                    dist: '120',
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        { status: 200 }
+      )
+    );
+
+    const res = await GET(
+      makeRequest({ lat: '37.5701', lng: '126.9995', radius: '1000', category: 'food' })
+    );
     const data = await res.json();
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
+
+    expect(res.status).toBe(200);
+    expect(data.source).toBe('tourapi');
+    expect(calledUrl).toContain('locationBasedList2');
+    expect(calledUrl).toContain('serviceKey=encoded%2Bkey');
+    expect(calledUrl).toContain('mapX=126.9995');
+    expect(calledUrl).toContain('mapY=37.5701');
+    expect(calledUrl).toContain('contentTypeId=39');
+    expect(data.places[0]).toMatchObject({
+      content_id: '264337',
+      content_type: 39,
+      name: 'Gwangjang Market',
+      name_ko: 'Gwangjang Market',
+      category: 'food',
+      image_url: 'https://example.com/market.jpg',
+      distance_m: 120,
+    });
+    expect(JSON.stringify(data)).not.toContain('encoded%2Bkey');
+  });
+
+  it('falls back to mock places when TourAPI fails', async () => {
+    process.env.TOUR_API_KEY = 'test-key';
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockFetch.mockRejectedValue(new TypeError('fetch failed'));
+
+    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.source).toBe('mock');
+    expect(data.places[0].content_id).toBe('mock_1');
+  });
+
+  it('falls back to mock places when TourAPI returns a non-OK response', async () => {
+    process.env.TOUR_API_KEY = 'test-key';
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockFetch.mockResolvedValue(new Response('server error', { status: 500 }));
+
+    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.source).toBe('mock');
+  });
+
+  it('falls back to mock places when TourAPI returns invalid JSON', async () => {
+    process.env.TOUR_API_KEY = 'test-key';
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    mockFetch.mockResolvedValue(new Response('<OpenAPI_ServiceResponse />', { status: 200 }));
+
+    const res = await GET(makeRequest({ lat: '37.5', lng: '127.0' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
     expect(data.source).toBe('mock');
   });
 });
