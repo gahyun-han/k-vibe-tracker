@@ -62,7 +62,7 @@ export default function RoutePage() {
   const totalM = totalMin % 60;
 
   return (
-    <AppLayout>
+    <AppLayout activeTab="route">
       <div className="flex flex-col h-full bg-[#0D0D1A] overflow-y-auto pb-24">
         {/* 헤더 */}
         <div className="px-4 pt-4 pb-3">

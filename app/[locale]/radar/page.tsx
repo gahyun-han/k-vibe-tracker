@@ -68,7 +68,7 @@ export default function RadarPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout activeTab="radar">
       <div className="flex flex-col h-full bg-[#0D0D1A] overflow-y-auto pb-20">
         {/* 헤더 */}
         <div className="px-4 pt-4 pb-3 space-y-3">

@@ -1,7 +1,17 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
+function getMetadataBase() {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  try {
+    return new URL(appUrl ?? 'http://localhost:3000');
+  } catch {
+    return new URL('http://localhost:3000');
+  }
+}
+
 export const metadata: Metadata = {
+  metadataBase: getMetadataBase(),
   title: 'K-Vibe Tracker',
   description: 'AI 기반 K-컬처 관광 가이드 — SNS 트렌드 장소 발견, 페르소나 루트 생성',
   manifest: '/manifest.json',

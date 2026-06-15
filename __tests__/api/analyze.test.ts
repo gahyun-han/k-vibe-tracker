@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // fetch를 전역 mock
@@ -6,7 +6,11 @@ const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
 // POST를 동적으로 import (전역 mock 설정 후)
-const { POST } = await import('@/app/api/analyze/route');
+let POST: typeof import('@/app/api/analyze/route').POST;
+
+beforeAll(async () => {
+  ({ POST } = await import('@/app/api/analyze/route'));
+});
 
 function makeRequest(body: object) {
   return new NextRequest('http://localhost/api/analyze', {
