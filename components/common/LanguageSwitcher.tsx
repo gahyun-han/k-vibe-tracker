@@ -1,16 +1,16 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState, useRef, useEffect } from 'react';
-import { Globe } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { Check, Globe2 } from 'lucide-react';
 
 const LOCALES = [
-  { code: 'ko', label: '한국어', flag: '🇰🇷' },
-  { code: 'en', label: 'English', flag: '🇺🇸' },
-  { code: 'ja', label: '日本語', flag: '🇯🇵' },
-  { code: 'zh', label: '中文', flag: '🇨🇳' },
-];
+  { code: 'en', label: 'English' },
+  { code: 'ko', label: 'Korean' },
+  { code: 'ja', label: 'Japanese' },
+  { code: 'zh', label: 'Chinese' },
+] as const;
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -19,7 +19,7 @@ export function LanguageSwitcher() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const current = LOCALES.find((l) => l.code === locale) ?? LOCALES[0];
+  const current = LOCALES.find((item) => item.code === locale) ?? LOCALES[0];
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -32,7 +32,6 @@ export function LanguageSwitcher() {
   }, []);
 
   function switchLocale(code: string) {
-    // /ko/map → /en/map
     const segments = pathname.split('/');
     segments[1] = code;
     router.push(segments.join('/'));
@@ -42,30 +41,34 @@ export function LanguageSwitcher() {
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors text-sm text-white"
+        onClick={() => setOpen((value) => !value)}
+        aria-label="Change language"
+        className="flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1.5 text-sm text-white transition-colors hover:bg-white/20"
       >
-        <Globe size={14} />
-        <span>{current.flag}</span>
-        <span className="hidden sm:inline">{current.label}</span>
+        <Globe2 size={14} />
+        <span className="font-semibold uppercase">{current.code}</span>
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-40 rounded-xl bg-[#1A1A2E] border border-white/10 shadow-xl overflow-hidden z-50">
-          {LOCALES.map((l) => (
-            <button
-              key={l.code}
-              onClick={() => switchLocale(l.code)}
-              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm transition-colors
-                ${l.code === locale
-                  ? 'bg-[#FF3A5C]/20 text-[#FF3A5C] font-semibold'
-                  : 'text-white/80 hover:bg-white/10'
+        <div className="absolute right-0 top-full z-50 mt-1.5 w-40 overflow-hidden rounded-xl border border-white/10 bg-[#1A1A2E] shadow-xl">
+          {LOCALES.map((item) => {
+            const active = item.code === locale;
+            return (
+              <button
+                key={item.code}
+                onClick={() => switchLocale(item.code)}
+                className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm transition-colors ${
+                  active
+                    ? 'bg-[#FF3A5C]/20 font-semibold text-[#FF3A5C]'
+                    : 'text-white/80 hover:bg-white/10'
                 }`}
-            >
-              <span className="text-base">{l.flag}</span>
-              <span>{l.label}</span>
-            </button>
-          ))}
+              >
+                <span className="w-5 text-xs font-bold uppercase">{item.code}</span>
+                <span className="flex-1 text-left">{item.label}</span>
+                {active && <Check size={14} />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

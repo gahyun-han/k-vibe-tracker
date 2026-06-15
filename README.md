@@ -78,13 +78,13 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 ## Frontend Flow
 
-- `/[locale]`: landing and language entry point.
+- `/[locale]`: landing and language entry point with local-first development status and quick access to the map.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins and a bottom list.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads the saved route plan from `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
-- `/[locale]/profile`: Supabase auth-backed profile and saved route entry.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode account state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -215,6 +215,7 @@ ai-worker/      # FastAPI prototype
   - Persona and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
+  - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 
 ## Collaboration Workflow

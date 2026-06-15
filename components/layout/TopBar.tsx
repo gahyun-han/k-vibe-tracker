@@ -1,10 +1,11 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { createClient } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
 interface TopBarProps {
@@ -15,7 +16,7 @@ interface TopBarProps {
 export default function TopBar({ title, showBack }: TopBarProps) {
   const router = useRouter();
   const params = useParams();
-  const locale = params.locale as string;
+  const locale = (params.locale as string) ?? 'en';
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
@@ -24,7 +25,9 @@ export default function TopBar({ title, showBack }: TopBarProps) {
     if (!supabase) return;
 
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
@@ -32,33 +35,36 @@ export default function TopBar({ title, showBack }: TopBarProps) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 max-w-md mx-auto h-14 bg-[#1A1A2E]/95 backdrop-blur-sm border-b border-[#2E2E4A] flex items-center px-4 z-30 gap-2">
+      <header className="fixed left-0 right-0 top-0 z-30 mx-auto flex h-14 max-w-md items-center gap-2 border-b border-[#2E2E4A] bg-[#1A1A2E]/95 px-4 backdrop-blur-sm">
         {showBack ? (
-          <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center text-[#8B8BA8] hover:text-white">
-            ←
+          <button
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <ArrowLeft size={18} />
           </button>
         ) : (
-          <span className="text-[#FF3A5C] font-black text-lg">K</span>
+          <span className="text-lg font-black text-[#FF3A5C]">K</span>
         )}
 
-        <h1 className="flex-1 text-white font-bold text-sm truncate">
+        <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-white">
           {title ?? 'K-Vibe Tracker'}
         </h1>
 
-        {/* 언어 전환 드롭다운 */}
         <LanguageSwitcher />
 
-        {/* 유저 아바타 or 로그인 버튼 */}
         {user ? (
           <button
             onClick={() => router.push(`/${locale}/profile`)}
-            className="w-8 h-8 rounded-full overflow-hidden border border-[#FF3A5C]/50 shrink-0"
+            aria-label="Open profile"
+            className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[#FF3A5C]/50"
           >
             {user.user_metadata?.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.user_metadata.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+              <img src={user.user_metadata.avatar_url} alt="avatar" className="h-full w-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-[#FF3A5C]/20 flex items-center justify-center text-xs text-white font-bold">
+              <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/20 text-xs font-bold text-white">
                 {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? 'U').toUpperCase()}
               </div>
             )}
@@ -66,16 +72,14 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         ) : (
           <button
             onClick={() => setShowLogin(true)}
-            className="text-xs px-3 py-1.5 rounded-full border border-[#2E2E4A] text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white transition-colors shrink-0"
+            className="shrink-0 rounded-full border border-[#2E2E4A] px-3 py-1.5 text-xs text-[#8B8BA8] transition-colors hover:border-[#FF3A5C] hover:text-white"
           >
             Sign in
           </button>
         )}
       </header>
 
-      {showLogin && (
-        <LoginModal onClose={() => setShowLogin(false)} redirectTo={`/${locale}/map`} />
-      )}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} redirectTo={`/${locale}/map`} />}
     </>
   );
 }

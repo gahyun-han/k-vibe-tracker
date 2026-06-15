@@ -7,8 +7,17 @@ This project is in local-first development mode. Pages should remain usable with
 ## Navigation
 
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
+- Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
+- The landing page at `/[locale]` presents the local-first development status and sends users to `/[locale]/map`.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
+
+## Account Flow
+
+- Login UI lives in `components/auth/LoginModal.tsx`.
+- Browser and server Supabase clients return `null` when public Supabase env vars are missing.
+- Profile stays usable without Supabase credentials and explains that account sync is disabled in local development.
+- Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
 
