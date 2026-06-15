@@ -1,97 +1,174 @@
-# K-Vibe Tracker 🇰🇷
+# K-Vibe Tracker
 
-> 외국인 관광객을 위한 K-콘텐츠 기반 여행 큐레이션 서비스
+K-Vibe Tracker is a mobile-first travel curation service for foreign visitors in Korea. It connects K-content inspired discovery, nearby place search, route planning, and convenience facility radar features.
 
-## 빠른 시작
+## Current Development Branch
+
+Use the `hslee` branch for active development.
 
 ```bash
-# 1. 의존성 설치
+git switch hslee
+git pull --ff-only hslee-origin hslee
+```
+
+Writable remote:
+
+```text
+hslee-origin: https://github.com/hslee1026/k-vibe-tracker.git
+```
+
+The original upstream repository is still kept as `origin` for reference.
+
+## Quick Start
+
+```bash
 npm install
-
-# 2. 환경 변수 설정
 cp .env.example .env.local
-# .env.local 파일 열어서 Supabase 키 입력
-
-# 3. 개발 서버 실행
 npm run dev
 ```
 
-브라우저에서 [http://localhost:3000/en](http://localhost:3000/en) 열기
+Open:
 
----
+```text
+http://localhost:3000/en
+```
 
-## 환경 변수 설정 (.env.local)
+Useful checks:
+
+```bash
+npm run type-check
+npm test
+npm run build
+```
+
+## Environment Variables
+
+Required for Supabase auth/session features:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=         # Supabase Project URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY=    # Supabase Anon Key
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-> **Supabase 무료 계정 만들기:** [supabase.com](https://supabase.com)
-> 프로젝트 생성 후 Settings → API 에서 URL과 anon key 복사
+Without these Supabase values, local development still supports guest browsing flows. Login, profile persistence, and saved routes are disabled until credentials are provided.
 
----
+Optional server-side integrations:
 
-## Supabase 설정
+```env
+TOUR_API_KEY=
+YOUTUBE_API_KEY=
+OPENAI_API_KEY=
+KAKAO_MAP_KEY=
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
 
-### 1. Google OAuth 활성화
-- Supabase Dashboard → Authentication → Providers → Google
-- Google Cloud Console에서 OAuth 2.0 Client ID 발급
-- Redirect URL: `https://[your-project].supabase.co/auth/v1/callback`
+Potentially paid or permission-gated services are tracked in [docs/approval-log.md](docs/approval-log.md). Do not enable those services until the user approves them.
 
-### 2. DB 마이그레이션 실행
+Client-side app settings:
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_KAKAO_MAP_KEY=
+```
+
+`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable.
+
+## Frontend Flow
+
+- `/[locale]`: landing and language entry point.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, and renders a lightweight map preview with pins and a bottom list.
+- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` and falls back to mock analysis if the AI worker is unavailable.
+- `/[locale]/persona`: K-content persona route generator prototype.
+- `/[locale]/route`: editable route timeline prototype.
+- `/[locale]/radar`: convenience facility radar prototype.
+- `/[locale]/profile`: Supabase auth-backed profile and saved route entry.
+
+Supported locales are `ko`, `en`, `ja`, and `zh`.
+
+## API Notes
+
+### `GET /api/places`
+
+Query:
+
+```text
+/api/places?lat=37.5665&lng=126.978&radius=2000&category=all
+```
+
+Behavior:
+
+- Validates coordinates, radius, and category.
+- Uses TourAPI `locationBasedList2` when `TOUR_API_KEY` exists.
+- Falls back to local mock data when the key is missing, TourAPI fails, or TourAPI returns invalid JSON.
+- Normalizes TourAPI responses into a frontend-friendly place shape.
+- Builds a stable cache key now so Redis can be added later without changing the route contract.
+
+Categories:
+
+```text
+all, cafe, photo, fun, culture, food, stay
+```
+
+### `POST /api/analyze`
+
+Accepts:
+
+```json
+{ "youtube_url": "https://www.youtube.com/watch?v=..." }
+```
+
+Validates YouTube URLs, calls the AI worker when available, and returns mock analysis on local worker connection failures.
+
+## Project Structure
+
+```text
+app/
+  [locale]/
+    map/        # place discovery UI
+    analyze/    # SNS analyzer UI
+    persona/    # persona route generator UI
+    route/      # route timeline UI
+    radar/      # facility radar UI
+    profile/    # auth/profile UI
+  api/
+    places/     # TourAPI-backed place endpoint
+    analyze/    # AI worker proxy
+components/
+  common/
+  layout/
+  map/
+  radar/
+  route/
+lib/
+  tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
+  youtube.ts
+  haversine.ts
+messages/       # next-intl locale messages
+supabase/
+  migrations/
+ai-worker/      # FastAPI prototype
+```
+
+## Current Sprint Progress
+
+- Sprint 0 foundation is in place: Next.js, i18n, Supabase clients, layouts, API skeletons, tests.
+- Sprint 1 is in progress:
+  - `/api/places` now supports validated TourAPI calls with safe mock fallback.
+  - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - Redis caching is not wired yet, but cache key generation is implemented and tested.
+
+## Collaboration Workflow
+
+1. Implement on `hslee`.
+2. Run type-check, tests, and build.
+3. Use Claude CLI only for a targeted review when local verification leaves a specific risk and the user has approved any possible cost.
+4. Update this README with any changed setup, API, or workflow details.
+5. Commit and push to `hslee-origin/hslee`.
+
 ```bash
-# Supabase SQL Editor에서 아래 파일 내용 실행
-# supabase/migrations/001_initial.sql
+npm run type-check
+npm test
+npm run build
+git push hslee-origin hslee
 ```
-
----
-
-## 프로젝트 구조
-
-```
-k-vibe-tracker/
-├── app/
-│   ├── [locale]/          # i18n 라우팅 (ko/en/ja/zh)
-│   │   ├── page.tsx       # Landing
-│   │   ├── map/           # 메인 지도
-│   │   ├── analyze/       # SNS 분석기
-│   │   ├── persona/       # 페르소나 선택
-│   │   ├── route/         # 루트 결과
-│   │   ├── radar/         # 편의시설 레이더
-│   │   └── profile/       # 프로필 (로그인 필요)
-│   └── api/
-│       ├── auth/callback/ # OAuth 콜백
-│       └── places/        # TourAPI 프록시 (Sprint 1)
-├── components/
-│   ├── layout/            # TopBar, BottomNav, AppLayout
-│   ├── auth/              # LoginModal
-│   └── common/            # Toast, ErrorBoundary, Skeleton
-├── lib/supabase/          # Supabase 클라이언트/서버
-├── messages/              # i18n 번역 파일 (ko/en/ja/zh)
-├── types/                 # TypeScript DB 타입
-└── supabase/migrations/   # SQL 마이그레이션
-```
-
----
-
-## Sprint 진행 상황
-
-| Sprint | 내용 | 상태 |
-|--------|------|------|
-| **Sprint 0** | 프로젝트 셋업, 인증, UI 골격 | ✅ **완료** |
-| Sprint 1 | Kakao Maps + TourAPI 연동 | 🔜 다음 |
-| Sprint 2 | 인증 강화 + Apple 로그인 | ⬜ 예정 |
-| Sprint 3 | Redis 캐싱 + 성능 최적화 | ⬜ 예정 |
-| Sprint 4 | SNS AI 분석 (YouTube → 장소) | ⬜ 예정 |
-| Sprint 5 | AI 도슨트 TTS | ⬜ 예정 |
-
----
-
-## Sprint 1 개발 전 해야 할 것
-
-1. `.env.local`에 Supabase 키 설정
-2. Supabase에서 Google OAuth 활성화
-3. SQL 마이그레이션 실행
-4. `npm run dev` 로 로컬 확인
-5. Kakao Developers 앱 등록 → JS API Key 발급 준비

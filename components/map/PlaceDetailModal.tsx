@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { X, MapPin, Clock, Phone, ExternalLink, Star, Users } from 'lucide-react';
+import { X, MapPin, Clock, Phone, ExternalLink, Star } from 'lucide-react';
 
 export interface Place {
   id: string;
@@ -26,9 +26,9 @@ interface PlaceDetailModalProps {
 }
 
 const CROWD_CONFIG = {
-  low:  { label: '여유', color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
-  mid:  { label: '보통', color: 'text-yellow-400',  bg: 'bg-yellow-400/10',  dot: 'bg-yellow-400'  },
-  high: { label: '혼잡', color: 'text-red-400',     bg: 'bg-red-400/10',     dot: 'bg-red-400'     },
+  low:  { label: 'Quiet', color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
+  mid:  { label: 'Normal', color: 'text-yellow-400',  bg: 'bg-yellow-400/10',  dot: 'bg-yellow-400'  },
+  high: { label: 'Busy', color: 'text-red-400',     bg: 'bg-red-400/10',     dot: 'bg-red-400'     },
 };
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -150,7 +150,7 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
             {/* Actions */}
             <div className="flex gap-2 pt-1">
               <button className="flex-1 py-2.5 rounded-xl bg-[#FF3A5C] text-white text-sm font-semibold hover:bg-[#e02e4e] transition-colors">
-                루트에 추가
+                Add to Route
               </button>
               {place.tourApiUrl && (
                 <a
@@ -160,7 +160,7 @@ export function PlaceDetailModal({ place, onClose }: PlaceDetailModalProps) {
                   className="px-4 py-2.5 rounded-xl bg-white/10 text-white/70 text-sm font-semibold hover:bg-white/20 transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={14} />
-                  더보기
+                  Details
                 </a>
               )}
             </div>

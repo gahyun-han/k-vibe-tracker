@@ -17,6 +17,11 @@ const intlMiddleware = createMiddleware({
 export async function middleware(request: NextRequest) {
   // Supabase 세션 갱신
   let supabaseResponse = NextResponse.next({ request });
+  let user = null;
+  const hasSupabaseEnv = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
   const setAllCookies: SetAllCookies = (cookiesToSet) => {
     cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
     supabaseResponse = NextResponse.next({ request });
@@ -25,18 +30,21 @@ export async function middleware(request: NextRequest) {
     );
   };
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return request.cookies.getAll(); },
-        setAll: setAllCookies,
-      },
-    }
-  );
+  if (hasSupabaseEnv) {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() { return request.cookies.getAll(); },
+          setAll: setAllCookies,
+        },
+      }
+    );
 
-  const { data: { user } } = await supabase.auth.getUser();
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  }
 
   // /[locale]/profile, /[locale]/route/save 는 로그인 필수
   const pathname = request.nextUrl.pathname;
@@ -45,7 +53,7 @@ export async function middleware(request: NextRequest) {
 
   const requiresAuth = ['/profile'].some((p) => pathWithoutLocale.startsWith(p));
 
-  if (requiresAuth && !user) {
+  if (hasSupabaseEnv && requiresAuth && !user) {
     // 로그인 페이지로 리다이렉트 (locale 유지)
     const locale = pathname.match(localePattern)?.[1] ?? defaultLocale;
     const url = request.nextUrl.clone();

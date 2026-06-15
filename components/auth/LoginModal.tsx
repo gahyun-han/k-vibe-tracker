@@ -17,6 +17,10 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
     setError('');
     try {
       const supabase = createClient();
+      if (!supabase) {
+        throw new Error('Supabase environment variables are required for login.');
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

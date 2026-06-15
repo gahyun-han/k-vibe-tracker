@@ -8,13 +8,13 @@ interface CategoryFilterProps {
 }
 
 const CATEGORIES: { id: Category; label: string; emoji: string }[] = [
-  { id: 'all',     label: '전체',    emoji: '🗺️' },
-  { id: 'cafe',    label: '카페',    emoji: '☕' },
-  { id: 'photo',   label: '포토스팟', emoji: '📸' },
-  { id: 'fun',     label: '오락',    emoji: '🎮' },
-  { id: 'culture', label: '문화',    emoji: '🏛️' },
-  { id: 'food',    label: '맛집',    emoji: '🍜' },
-  { id: 'stay',    label: '숙소',    emoji: '🏨' },
+  { id: 'all',     label: 'All',     emoji: '🗺️' },
+  { id: 'cafe',    label: 'Cafe',    emoji: '☕' },
+  { id: 'photo',   label: 'Photo',   emoji: '📸' },
+  { id: 'fun',     label: 'Fun',     emoji: '🎮' },
+  { id: 'culture', label: 'Culture', emoji: '🏛️' },
+  { id: 'food',    label: 'Food',    emoji: '🍜' },
+  { id: 'stay',    label: 'Stay',    emoji: '🏨' },
 ];
 
 export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
