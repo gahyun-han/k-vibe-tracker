@@ -122,6 +122,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
 The language switcher persists the active locale in `localStorage` and the `NEXT_LOCALE` cookie so reloads and future server-side locale reads can keep the same language choice.
+Map categories, live Kakao pin labels, fallback map pins, and place detail category badges use the active locale's copy instead of hardcoded English category text.
 
 The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback. `components/common/NetworkStatusBanner.tsx` shows a localized offline-mode banner when the browser reports a network disconnect.
 

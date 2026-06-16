@@ -19,6 +19,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Persisted the active locale in `localStorage` and the `NEXT_LOCALE` cookie from the language switcher so language choice survives app reloads and future server-side locale reads.
 - Replaced corrupted toast symbols with lucide icons, accessible alert/status roles, and an icon close button.
 - Re-verified Kakao Maps after localhost domain registration in Chrome and fixed the Map screen height so the live Kakao renderer receives a nonzero viewport-sized container.
+- Localized Map category tags, live Kakao overlay labels, and fallback map pin labels so non-English routes no longer leak English category text such as `Food` or `Culture`.
+- Clarified the Chinese language selector label as Simplified Chinese and added test coverage for non-empty, non-placeholder language names.
 
 ## 2026-06-16
 

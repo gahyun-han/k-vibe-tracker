@@ -51,7 +51,7 @@ export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
   ja: '日本語',
-  zh: '中文',
+  zh: '简体中文',
 };
 
 const UI_COPY = {

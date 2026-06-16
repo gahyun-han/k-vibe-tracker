@@ -14,7 +14,7 @@ interface KakaoMapViewProps {
   selectedPlaceId?: string;
   onSelectPlace: (place: Place & { distanceM?: number }) => void;
   formatDistance: (meters?: number) => string;
-  categoryIcon: Record<string, string>;
+  categoryLabels: Readonly<Partial<Record<string, string>>>;
 }
 
 type KakaoLatLng = new (lat: number, lng: number) => unknown;
@@ -55,6 +55,10 @@ function pinPosition(place: Place, center: Coordinates) {
   const x = Math.max(8, Math.min(92, 50 + lngOffset));
   const y = Math.max(10, Math.min(88, 50 + latOffset));
   return { left: `${x}%`, top: `${y}%` };
+}
+
+function categoryLabelFor(category: string, labels: Readonly<Partial<Record<string, string>>>) {
+  return labels[category] ?? labels.spot ?? category;
 }
 
 function loadKakaoMaps(appKey: string): Promise<KakaoMapsApi> {
@@ -122,7 +126,7 @@ export function KakaoMapView({
   selectedPlaceId,
   onSelectPlace,
   formatDistance,
-  categoryIcon,
+  categoryLabels,
 }: KakaoMapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoMap | null>(null);
@@ -179,7 +183,7 @@ export function KakaoMapView({
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
     overlaysRef.current = places.slice(0, 30).map((place) => {
       const selected = selectedPlaceId === place.id;
-      const label = `${categoryIcon[place.category] ?? 'Spot'} ${formatDistance(place.distanceM)}`.trim();
+      const label = `${categoryLabelFor(place.category, categoryLabels)} ${formatDistance(place.distanceM)}`.trim();
       const content = makeOverlayButton({
         place,
         selected,
@@ -201,7 +205,7 @@ export function KakaoMapView({
       overlaysRef.current.forEach((overlay) => overlay.setMap(null));
       overlaysRef.current = [];
     };
-  }, [categoryIcon, formatDistance, mode, onSelectPlace, places, selectedPlaceId]);
+  }, [categoryLabels, formatDistance, mode, onSelectPlace, places, selectedPlaceId]);
 
   return (
     <div className="absolute inset-0" data-map-mode={mode}>
@@ -216,6 +220,7 @@ export function KakaoMapView({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,58,92,0.20),transparent_32%),radial-gradient(circle_at_30%_70%,rgba(16,185,129,0.14),transparent_24%)]" />
           {fallbackPins.map((place) => {
             const selected = selectedPlaceId === place.id;
+            const categoryLabel = categoryLabelFor(place.category, categoryLabels);
             return (
               <button
                 key={place.id}
@@ -227,7 +232,7 @@ export function KakaoMapView({
                 }`}
                 style={pinPosition(place, center)}
               >
-                <span className="mr-1">{categoryIcon[place.category] ?? 'Spot'}</span>
+                <span className="mr-1">{categoryLabel}</span>
                 {formatDistance(place.distanceM)}
               </button>
             );

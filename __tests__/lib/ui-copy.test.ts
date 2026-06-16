@@ -6,6 +6,7 @@ import {
   getNetworkStatusCopy,
   getProfileSettingsCopy,
   getUiCopy,
+  LANGUAGE_NAMES,
   SUPPORTED_LOCALES,
 } from '@/lib/ui-copy';
 
@@ -13,6 +14,9 @@ describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
+
+      expect(LANGUAGE_NAMES[locale]).not.toMatch(/[?]/);
+      expect(LANGUAGE_NAMES[locale].length).toBeGreaterThan(1);
 
       expect(copy.analyze.title.length).toBeGreaterThan(0);
       expect(copy.analyze.loadingSteps).toHaveLength(3);

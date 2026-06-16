@@ -1,6 +1,15 @@
 'use client';
 
-import { Building2, Camera, Coffee, Landmark, Map, ShoppingBag, Utensils } from 'lucide-react';
+import {
+  Building2,
+  Camera,
+  Coffee,
+  Landmark,
+  Map,
+  ShoppingBag,
+  Utensils,
+  type LucideIcon,
+} from 'lucide-react';
 
 export type Category = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay';
 
@@ -18,7 +27,15 @@ const CATEGORIES = [
   { id: 'culture', label: 'Culture', icon: Landmark },
   { id: 'food', label: 'Food', icon: Utensils },
   { id: 'stay', label: 'Stay', icon: Building2 },
-] satisfies { id: Category; label: string; icon: typeof Map }[];
+] satisfies { id: Category; label: string; icon: LucideIcon }[];
+
+const CATEGORY_ICONS = Object.fromEntries(
+  CATEGORIES.map(({ id, icon }) => [id, icon]),
+) as Record<Category, LucideIcon>;
+
+export function getCategoryIcon(category: string): LucideIcon {
+  return CATEGORY_ICONS[category as Category] ?? Map;
+}
 
 export function CategoryFilter({ selected, onChange, labels }: CategoryFilterProps) {
   function toggle(id: Category) {

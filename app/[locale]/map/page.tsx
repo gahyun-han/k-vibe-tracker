@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
-import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
+import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
@@ -50,16 +50,6 @@ const CROWD_DOT: Record<string, string> = {
   high: 'bg-red-400',
 };
 
-const CATEGORY_ICON: Record<string, string> = {
-  all: 'Map',
-  cafe: 'Cafe',
-  photo: 'Photo',
-  fun: 'Fun',
-  culture: 'Culture',
-  food: 'Food',
-  stay: 'Stay',
-};
-
 const DEFAULT_STAY_MINUTES: Record<string, number> = {
   cafe: 75,
   photo: 45,
@@ -76,7 +66,19 @@ function toCrowdLevel(value: number | null): Place['crowdLevel'] {
   return 'high';
 }
 
-function toPlace(place: NormalizedPlace, addressPending: string): Place & { distanceM?: number } {
+type CategoryLabels = Readonly<Record<PlaceCategory | 'spot', string>>;
+
+function categoryLabelFor(category: string, labels: CategoryLabels) {
+  return labels[category as PlaceCategory] ?? labels.spot ?? category;
+}
+
+function toPlace(
+  place: NormalizedPlace,
+  addressPending: string,
+  categoryLabels: CategoryLabels,
+): Place & { distanceM?: number } {
+  const categoryLabel = categoryLabelFor(place.category, categoryLabels);
+
   return {
     id: place.id,
     contentId: place.content_id,
@@ -88,7 +90,7 @@ function toPlace(place: NormalizedPlace, addressPending: string): Place & { dist
     lng: place.lng,
     imageUrl: place.image_url ?? undefined,
     crowdLevel: toCrowdLevel(place.crowd_level),
-    tags: [CATEGORY_ICON[place.category] ?? place.category],
+    tags: [categoryLabel],
     distanceM: place.distance_m,
   };
 }
@@ -325,7 +327,7 @@ export default function MapPage() {
 
       const cachedData = readLocalApiCache<PlacesApiResponse>(window.localStorage, localCacheKey);
       if (cachedData?.places?.length) {
-        setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending)));
+        setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending, copy.categories)));
         setSource('cache');
       }
 
@@ -345,13 +347,13 @@ export default function MapPage() {
           source: data.source ?? 'mock',
           cache_key: data.cache_key ?? localCacheKey,
         };
-        setPlaces(nextData.places.map((place) => toPlace(place, copy.map.addressPending)));
+        setPlaces(nextData.places.map((place) => toPlace(place, copy.map.addressPending, copy.categories)));
         setSource(nextData.source);
         writeLocalApiCache(window.localStorage, localCacheKey, nextData);
       } catch (e) {
         if ((e as Error).name === 'AbortError') return;
         if (cachedData?.places?.length) {
-          setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending)));
+          setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending, copy.categories)));
           setSource('cache');
           return;
         }
@@ -363,7 +365,7 @@ export default function MapPage() {
 
     loadPlaces();
     return () => controller.abort();
-  }, [coords.lat, coords.lng, copy.map.addressPending, locale, reloadKey]);
+  }, [coords.lat, coords.lng, copy.categories, copy.map.addressPending, locale, reloadKey]);
 
   const filtered = useMemo(() => {
     const candidates = focusPlace
@@ -393,7 +395,7 @@ export default function MapPage() {
             selectedPlaceId={selectedPlace?.id}
             onSelectPlace={setSelectedPlace}
             formatDistance={formatDistance}
-            categoryIcon={CATEGORY_ICON}
+            categoryLabels={copy.categories}
           />
 
           <div className="absolute left-4 top-4 rounded-xl border border-white/10 bg-black/35 px-3 py-2 backdrop-blur">
@@ -466,48 +468,57 @@ export default function MapPage() {
             {!loading && filtered.length === 0 ? (
               <div className="py-8 text-center text-sm text-white/35">{copy.map.noPlaces}</div>
             ) : (
-              filtered.map((place) => (
-                <button
-                  key={place.id}
-                  onClick={() => setSelectedPlace(place)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[10px] font-semibold text-white/70">
-                    {CATEGORY_ICON[place.category] ?? 'Spot'}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-white">{place.name}</p>
+              filtered.map((place) => {
+                const CategoryIcon = getCategoryIcon(place.category);
+                const categoryLabel = categoryLabelFor(place.category, copy.categories);
+
+                return (
+                  <button
+                    key={place.id}
+                    onClick={() => setSelectedPlace(place)}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5"
+                  >
+                    <div
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/70"
+                      aria-label={categoryLabel}
+                      title={categoryLabel}
+                    >
+                      <CategoryIcon size={17} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-semibold text-white">{place.name}</p>
+                        {place.crowdLevel && (
+                          <span
+                            className={`h-1.5 w-1.5 shrink-0 rounded-full ${CROWD_DOT[place.crowdLevel]}`}
+                          />
+                        )}
+                      </div>
+                      <p className="truncate text-xs text-white/40">{place.address}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      {place.distanceM !== undefined && (
+                        <p className="text-xs font-semibold text-white/60">
+                          {formatDistance(place.distanceM)}
+                        </p>
+                      )}
                       {place.crowdLevel && (
-                        <span
-                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${CROWD_DOT[place.crowdLevel]}`}
-                        />
+                        <p
+                          className={`text-xs ${
+                            place.crowdLevel === 'low'
+                              ? 'text-emerald-400'
+                              : place.crowdLevel === 'mid'
+                                ? 'text-yellow-400'
+                                : 'text-red-400'
+                          }`}
+                        >
+                          {copy.map.crowd[place.crowdLevel]}
+                        </p>
                       )}
                     </div>
-                    <p className="truncate text-xs text-white/40">{place.address}</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    {place.distanceM !== undefined && (
-                      <p className="text-xs font-semibold text-white/60">
-                        {formatDistance(place.distanceM)}
-                      </p>
-                    )}
-                    {place.crowdLevel && (
-                      <p
-                        className={`text-xs ${
-                          place.crowdLevel === 'low'
-                            ? 'text-emerald-400'
-                            : place.crowdLevel === 'mid'
-                              ? 'text-yellow-400'
-                              : 'text-red-400'
-                        }`}
-                      >
-                        {copy.map.crowd[place.crowdLevel]}
-                      </p>
-                    )}
-                  </div>
-                </button>
-              ))
+                  </button>
+                );
+              })
             )}
           </div>
         </div>

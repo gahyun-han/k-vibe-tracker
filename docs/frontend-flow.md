@@ -62,7 +62,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Current local verification shows the Kakao SDK loads on `http://localhost:3000`, `/ko/map` reaches `data-map-mode="ready"` in Chrome with a nonzero map container, and there are no Kakao console errors.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
-- Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
+- Category filters, map list icons, live Kakao overlay labels, fallback pin labels, and place detail sheets use lucide icons plus locale-aware labels instead of hardcoded English category strings.
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
 - Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places`.
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields.
@@ -121,6 +121,7 @@ Every data-backed page should expose:
 - Mock/source hint while the app is running without external integrations.
 - Clear copy that tells developers whether a local mock or external source produced the result.
 - Shared navigation, landing, tutorial, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
+- Language switcher names are covered by tests so supported locale names do not regress to placeholders or mojibake.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
