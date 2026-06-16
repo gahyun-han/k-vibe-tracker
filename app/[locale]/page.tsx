@@ -504,8 +504,30 @@ export default function LandingPage() {
                   );
                 })
               ) : (
-                <div className="w-full rounded-xl border border-white/10 bg-white/5 p-5 text-center text-sm text-white/45">
-                  {copy.homeFeed.empty}
+                <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-5 text-center">
+                  <p className="text-sm font-semibold text-white/65">{copy.homeFeed.empty}</p>
+                  <p className="mt-1 text-xs leading-5 text-white/35">{copy.homeFeed.emptyHint}</p>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedStory(null);
+                        setFeedCategory('all');
+                      }}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-white/10 px-3 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+                    >
+                      <RefreshCw size={14} />
+                      {copy.homeFeed.showAll}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/${locale}/map`)}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+                    >
+                      <Map size={14} />
+                      {copy.homeFeed.exploreMap}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

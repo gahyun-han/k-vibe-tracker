@@ -103,6 +103,9 @@ describe('ui copy', () => {
       expect(copy.homeFeed.personalizedFor).toContain('{persona}');
       expect(copy.homeFeed.retry.length).toBeGreaterThan(0);
       expect(copy.homeFeed.cachedFallback.length).toBeGreaterThan(0);
+      expect(copy.homeFeed.emptyHint.length).toBeGreaterThan(0);
+      expect(copy.homeFeed.showAll.length).toBeGreaterThan(0);
+      expect(copy.homeFeed.exploreMap.length).toBeGreaterThan(0);
       for (const storyLabel of Object.values(copy.homeFeed.stories)) {
         expect(storyLabel.length).toBeGreaterThan(0);
       }
