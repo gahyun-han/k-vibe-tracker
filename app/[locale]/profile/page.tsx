@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Bell, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, Route, UserRound } from 'lucide-react';
+import { Bell, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, Route, Settings2 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import LoginModal from '@/components/auth/LoginModal';
 import { CURRENT_ROUTE_STORAGE_KEY, type RoutePlan } from '@/lib/routes';
@@ -12,7 +12,7 @@ import {
   type SavedPlace,
 } from '@/lib/saved-places';
 import { createClient, hasSupabaseEnv } from '@/lib/supabase/client';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getProfileSettingsCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import type { User } from '@supabase/supabase-js';
 
 export default function ProfilePage() {
@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const settingsCopy = getProfileSettingsCopy(locale);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
@@ -94,6 +95,12 @@ export default function ProfilePage() {
   const displayEmail = user?.email ?? copy.profile.guestSubtitle;
   const avatarInitial = (user?.user_metadata?.full_name?.[0] ?? user?.email?.[0] ?? 'G').toUpperCase();
   const routeCount = currentRoute ? 1 : 0;
+  const settingItems = [
+    { icon: Languages, ...settingsCopy.items.language },
+    { icon: Bell, ...settingsCopy.items.notifications },
+    { icon: CloudOff, ...settingsCopy.items.offlineMaps },
+    { icon: Map, ...settingsCopy.items.mapData },
+  ];
 
   return (
     <AppLayout activeTab="profile" title={copy.profile.title}>
@@ -207,12 +214,13 @@ export default function ProfilePage() {
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-[#2E2E4A] bg-[#1E1E30]">
-          {[
-            { icon: Languages, label: 'Language', value: 'Top switcher' },
-            { icon: Bell, label: 'Notifications', value: 'Approval-gated' },
-            { icon: CloudOff, label: 'Offline maps', value: 'Not connected' },
-            { icon: Map, label: 'Map data', value: 'TourAPI + local fallback' },
-          ].map(({ icon: Icon, label, value }) => (
+          <div className="border-b border-[#2E2E4A] px-4 py-3">
+            <p className="flex items-center gap-2 text-sm font-bold text-white">
+              <Settings2 size={16} className="text-[#FF3A5C]" />
+              {settingsCopy.title}
+            </p>
+          </div>
+          {settingItems.map(({ icon: Icon, label, value }) => (
             <div
               key={label}
               className="flex w-full items-center gap-3 border-b border-[#2E2E4A] px-4 py-4 text-left last:border-b-0"

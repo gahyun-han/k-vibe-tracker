@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getUiCopy, SUPPORTED_LOCALES } from '@/lib/ui-copy';
+import { getDocentProximityCopy, getProfileSettingsCopy, getUiCopy, SUPPORTED_LOCALES } from '@/lib/ui-copy';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
@@ -48,6 +48,20 @@ describe('ui copy', () => {
       for (const step of copy.tutorial.steps) {
         expect(step.action.length).toBeGreaterThan(0);
       }
+
+      const profileSettings = getProfileSettingsCopy(locale);
+      expect(profileSettings.title.length).toBeGreaterThan(0);
+      expect(Object.values(profileSettings.items)).toHaveLength(4);
+      for (const item of Object.values(profileSettings.items)) {
+        expect(item.label.length).toBeGreaterThan(0);
+        expect(item.value.length).toBeGreaterThan(0);
+      }
+
+      const proximity = getDocentProximityCopy(locale);
+      expect(proximity.radiusLabel).toContain('100');
+      expect(proximity.distanceLabel).toContain('{distance}');
+      expect(proximity.checkButton.length).toBeGreaterThan(0);
+      expect(proximity.ready.length).toBeGreaterThan(0);
     }
   });
 });

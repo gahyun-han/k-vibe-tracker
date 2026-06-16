@@ -2,6 +2,36 @@ export const SUPPORTED_LOCALES = ['en', 'ko', 'ja', 'zh'] as const;
 
 export type UiLocale = (typeof SUPPORTED_LOCALES)[number];
 
+interface LabelValueCopy {
+  label: string;
+  value: string;
+}
+
+interface ProfileSettingsCopy {
+  title: string;
+  items: {
+    language: LabelValueCopy;
+    notifications: LabelValueCopy;
+    offlineMaps: LabelValueCopy;
+    mapData: LabelValueCopy;
+  };
+}
+
+interface DocentProximityCopy {
+  title: string;
+  radiusLabel: string;
+  checkButton: string;
+  checking: string;
+  ready: string;
+  far: string;
+  distanceLabel: string;
+  noCoordinates: string;
+  unsupported: string;
+  denied: string;
+  timeout: string;
+  error: string;
+}
+
 export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
@@ -1432,6 +1462,104 @@ const UI_COPY = {
   },
 } as const;
 
+const PROFILE_SETTINGS_COPY: Record<UiLocale, ProfileSettingsCopy> = {
+  en: {
+    title: 'Settings',
+    items: {
+      language: { label: 'Language', value: 'Top switcher' },
+      notifications: { label: 'Notifications', value: 'Permission-gated' },
+      offlineMaps: { label: 'Offline maps', value: 'Not connected' },
+      mapData: { label: 'Map data', value: 'TourAPI + fallback' },
+    },
+  },
+  ko: {
+    title: '설정',
+    items: {
+      language: { label: '언어', value: '상단 전환' },
+      notifications: { label: '알림', value: '권한 필요' },
+      offlineMaps: { label: '오프라인 지도', value: '미연결' },
+      mapData: { label: '지도 데이터', value: 'TourAPI + 대체 데이터' },
+    },
+  },
+  ja: {
+    title: '設定',
+    items: {
+      language: { label: '言語', value: '上部で切替' },
+      notifications: { label: '通知', value: '権限が必要' },
+      offlineMaps: { label: 'オフライン地図', value: '未接続' },
+      mapData: { label: '地図データ', value: 'TourAPI + 代替データ' },
+    },
+  },
+  zh: {
+    title: '设置',
+    items: {
+      language: { label: '语言', value: '顶部切换' },
+      notifications: { label: '通知', value: '需要权限' },
+      offlineMaps: { label: '离线地图', value: '未连接' },
+      mapData: { label: '地图数据', value: 'TourAPI + 备用数据' },
+    },
+  },
+};
+
+const DOCENT_PROXIMITY_COPY: Record<UiLocale, DocentProximityCopy> = {
+  en: {
+    title: 'Arrival check',
+    radiusLabel: '100m docent radius',
+    checkButton: 'Check location',
+    checking: 'Checking...',
+    ready: 'You are within 100m. The local docent is ready.',
+    far: 'You are outside the 100m radius. Recheck when you arrive.',
+    distanceLabel: '{distance} from this stop',
+    noCoordinates: 'This stop has no map coordinates yet.',
+    unsupported: 'Location is not available in this browser.',
+    denied: 'Location permission was denied. You can still play the guide manually.',
+    timeout: 'Location took too long. Try again near the stop.',
+    error: 'Location could not be checked. Try again later.',
+  },
+  ko: {
+    title: '도착 확인',
+    radiusLabel: '도슨트 반경 100m',
+    checkButton: '위치 확인',
+    checking: '확인 중...',
+    ready: '100m 안에 있습니다. 로컬 도슨트를 시작할 수 있어요.',
+    far: '아직 100m 반경 밖입니다. 도착한 뒤 다시 확인하세요.',
+    distanceLabel: '방문지까지 {distance}',
+    noCoordinates: '이 방문지는 아직 지도 좌표가 없습니다.',
+    unsupported: '이 브라우저에서는 위치 확인을 사용할 수 없습니다.',
+    denied: '위치 권한이 거부되었습니다. 안내는 수동으로 재생할 수 있어요.',
+    timeout: '위치 확인 시간이 초과되었습니다. 방문지 근처에서 다시 시도하세요.',
+    error: '위치를 확인하지 못했습니다. 잠시 후 다시 시도하세요.',
+  },
+  ja: {
+    title: '到着チェック',
+    radiusLabel: 'ドーセント半径100m',
+    checkButton: '位置を確認',
+    checking: '確認中...',
+    ready: '100m圏内です。ローカルドーセントを開始できます。',
+    far: 'まだ100m圏外です。到着後にもう一度確認してください。',
+    distanceLabel: 'このスポットまで{distance}',
+    noCoordinates: 'このスポットにはまだ地図座標がありません。',
+    unsupported: 'このブラウザでは位置確認を利用できません。',
+    denied: '位置情報の許可が拒否されました。ガイドは手動で再生できます。',
+    timeout: '位置確認がタイムアウトしました。スポット付近でもう一度お試しください。',
+    error: '位置を確認できませんでした。後でもう一度お試しください。',
+  },
+  zh: {
+    title: '到达确认',
+    radiusLabel: '导览触发半径100m',
+    checkButton: '检查位置',
+    checking: '检查中...',
+    ready: '你已进入100m范围，可以开始本地导览。',
+    far: '你还在100m范围外。到达后请再次检查。',
+    distanceLabel: '距离此站点{distance}',
+    noCoordinates: '此站点还没有地图坐标。',
+    unsupported: '此浏览器无法使用位置检查。',
+    denied: '位置权限已被拒绝。你仍可手动播放导览。',
+    timeout: '位置检查超时。请在站点附近重试。',
+    error: '无法检查当前位置。请稍后重试。',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -1439,4 +1567,12 @@ export function normalizeUiLocale(value: string | string[] | undefined): UiLocal
 
 export function getUiCopy(locale: string | string[] | undefined) {
   return UI_COPY[normalizeUiLocale(locale)];
+}
+
+export function getProfileSettingsCopy(locale: string | string[] | undefined) {
+  return PROFILE_SETTINGS_COPY[normalizeUiLocale(locale)];
+}
+
+export function getDocentProximityCopy(locale: string | string[] | undefined) {
+  return DOCENT_PROXIMITY_COPY[normalizeUiLocale(locale)];
 }

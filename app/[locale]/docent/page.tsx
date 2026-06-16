@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { Captions, MapPin, Mic2, Pause, Play, RotateCcw, Square, VolumeX } from 'lucide-react';
+import { AlertCircle, Captions, LocateFixed, MapPin, Mic2, Navigation, Pause, Play, RotateCcw, Square, VolumeX } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
-import { getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
+import { haversineKm } from '@/lib/haversine';
+import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
 interface DocentPlace {
   name: string;
@@ -14,7 +15,13 @@ interface DocentPlace {
   stayMinutes: string;
   startTime: string;
   tags: string[];
+  lat: number | null;
+  lng: number | null;
 }
+
+type ProximityStatus = 'idle' | 'checking' | 'near' | 'far' | 'unavailable' | 'unsupported' | 'denied' | 'timeout' | 'error';
+
+const DOCENT_RADIUS_METERS = 100;
 
 const SPEECH_LANG: Record<UiLocale, string> = {
   en: 'en-US',
@@ -32,6 +39,21 @@ function getQueryValue(search: { get: (key: string) => string | null }, key: str
   return value ? value : fallback;
 }
 
+function getQueryNumber(search: { get: (key: string) => string | null }, key: string) {
+  const rawValue = search.get(key)?.trim();
+  if (!rawValue) return null;
+
+  const value = Number(rawValue);
+  return Number.isFinite(value) ? value : null;
+}
+
+function formatDistanceMeters(distanceMeters: number) {
+  if (distanceMeters >= 1000) {
+    return `${(distanceMeters / 1000).toFixed(distanceMeters >= 10000 ? 0 : 1)}km`;
+  }
+  return `${Math.max(0, Math.round(distanceMeters))}m`;
+}
+
 export default function DocentPage() {
   return (
     <Suspense fallback={null}>
@@ -46,10 +68,13 @@ function DocentContent() {
   const router = useRouter();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const proximityCopy = getDocentProximityCopy(locale);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [proximityStatus, setProximityStatus] = useState<ProximityStatus>('idle');
+  const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
 
   const place = useMemo<DocentPlace>(() => {
     const tags = getQueryValue(searchParams, 'tags', '')
@@ -65,6 +90,8 @@ function DocentContent() {
       stayMinutes: getQueryValue(searchParams, 'stayMinutes', '30'),
       startTime: getQueryValue(searchParams, 'startTime', ''),
       tags,
+      lat: getQueryNumber(searchParams, 'lat'),
+      lng: getQueryNumber(searchParams, 'lng'),
     };
   }, [copy.docent.defaultDescription, copy.docent.fallbackAddress, copy.docent.fallbackCategory, copy.docent.fallbackName, searchParams]);
 
@@ -75,6 +102,11 @@ function DocentContent() {
       window.speechSynthesis?.cancel();
     };
   }, []);
+
+  useEffect(() => {
+    setProximityStatus(place.lat === null || place.lng === null ? 'unavailable' : 'idle');
+    setDistanceMeters(null);
+  }, [place.lat, place.lng]);
 
   const script = useMemo(() => {
     const values = {
@@ -148,8 +180,77 @@ function DocentContent() {
     window.setTimeout(playScript, 0);
   }
 
+  function checkProximity() {
+    if (place.lat === null || place.lng === null) {
+      setProximityStatus('unavailable');
+      setDistanceMeters(null);
+      return;
+    }
+
+    if (!('geolocation' in navigator)) {
+      setProximityStatus('unsupported');
+      setDistanceMeters(null);
+      return;
+    }
+
+    setProximityStatus('checking');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const nextDistanceMeters =
+          haversineKm(position.coords.latitude, position.coords.longitude, place.lat as number, place.lng as number) * 1000;
+        const isNearby = nextDistanceMeters <= DOCENT_RADIUS_METERS;
+        setDistanceMeters(nextDistanceMeters);
+        setProximityStatus(isNearby ? 'near' : 'far');
+
+        if (!isNearby && (speaking || paused)) {
+          stopScript();
+        }
+      },
+      (error) => {
+        setDistanceMeters(null);
+        if (error.code === error.PERMISSION_DENIED) {
+          setProximityStatus('denied');
+          return;
+        }
+        if (error.code === error.TIMEOUT) {
+          setProximityStatus('timeout');
+          return;
+        }
+        setProximityStatus('error');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
+  }
+
   const isActive = speaking && !paused;
   const primaryLabel = paused ? copy.docent.resume : copy.docent.play;
+  const hasCoordinates = place.lat !== null && place.lng !== null;
+  const proximityMessage = (() => {
+    switch (proximityStatus) {
+      case 'near':
+        return proximityCopy.ready;
+      case 'far':
+        return proximityCopy.far;
+      case 'unavailable':
+        return proximityCopy.noCoordinates;
+      case 'unsupported':
+        return proximityCopy.unsupported;
+      case 'denied':
+        return proximityCopy.denied;
+      case 'timeout':
+        return proximityCopy.timeout;
+      case 'error':
+        return proximityCopy.error;
+      default:
+        return '';
+    }
+  })();
+  const proximityTone =
+    proximityStatus === 'near'
+      ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100'
+      : proximityStatus === 'far' || proximityStatus === 'denied' || proximityStatus === 'timeout' || proximityStatus === 'error'
+        ? 'border-amber-400/30 bg-amber-400/10 text-amber-100'
+        : 'border-white/10 bg-white/5 text-white/55';
 
   return (
     <AppLayout activeTab="route" title={copy.docent.title} showBack>
@@ -177,7 +278,39 @@ function DocentContent() {
           </div>
         </section>
 
-        <section className="mx-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+        <section className={`mx-4 rounded-2xl border p-4 ${proximityTone}`}>
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10">
+              {proximityStatus === 'near' ? <Navigation size={17} /> : <LocateFixed size={17} />}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-white">{proximityCopy.title}</p>
+              <p className="mt-0.5 text-xs text-current/70">{proximityCopy.radiusLabel}</p>
+              {distanceMeters !== null && (
+                <p className="mt-2 text-xs font-semibold text-white">
+                  {proximityCopy.distanceLabel.replace('{distance}', formatDistanceMeters(distanceMeters))}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={checkProximity}
+              disabled={!hasCoordinates || proximityStatus === 'checking'}
+              className="min-h-10 shrink-0 rounded-xl bg-white/10 px-3 text-xs font-semibold text-white transition-colors hover:bg-white/20 disabled:opacity-45"
+            >
+              {proximityStatus === 'checking' ? proximityCopy.checking : proximityCopy.checkButton}
+            </button>
+          </div>
+
+          {proximityMessage && (
+            <div className="mt-3 flex items-start gap-2 text-xs leading-5" aria-live="polite">
+              <AlertCircle size={14} className="mt-0.5 shrink-0" />
+              <span>{proximityMessage}</span>
+            </div>
+          )}
+        </section>
+
+        <section className="mx-4 mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
           <div className="flex h-32 items-center justify-center gap-1.5 rounded-xl bg-[#111123] px-3">
             {Array.from({ length: 28 }).map((_, index) => {
               const height = 18 + ((index * 11) % 46);

@@ -9,6 +9,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Added a no-cost Radar map preview with radius rings, current-position marker, and typed facility pins, using the existing local/mock facility coordinates.
 - Connected Radar map pins and expanded facility cards to user-clicked Google Maps search URLs. No Google Maps API key, Directions API, or Kakao Mobility call is used.
 - Added facility helper tests for cache keys, radius filtering/sorting, and no-key Google Maps facility handoff URLs.
+- Added a no-cost Docent arrival check that reads route/map `lat` and `lng` query values, asks for browser geolocation only after the user taps the check button, and shows whether the stop is within the root-spec 100m docent radius.
+- Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows hardcoded in English.
 
 ## 2026-06-16
 
@@ -46,4 +48,5 @@ This log tracks concrete product and implementation improvements made while alig
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.
+- Automatic background GPS polling, push notifications, and paid/provider TTS for the Docent flow remain gated. The current arrival check is user-clicked and uses only browser geolocation plus local distance calculation.
 - A richer Home Feed, Supabase sync for saved places/routes, and production-grade TourAPI/Redis caching are still larger-scope follow-ups from the root wireframes.

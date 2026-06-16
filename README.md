@@ -115,9 +115,9 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
-- `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
+- `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions, browser `speechSynthesis` voice playback, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, supports radius/type filtering, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
-- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places and the current local route when Supabase is not configured.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -295,7 +295,9 @@ ai-worker/      # FastAPI prototype
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
+  - Docent now includes a user-clicked 100m arrival check that uses route/map coordinates, browser geolocation, and local Haversine distance calculation without background GPS polling or paid services.
   - Profile now works as a guest-mode dashboard with local saved places and the current local route, matching the root saved-places grid direction without needing Supabase.
+  - Profile settings rows are now localized for Korean, English, Japanese, and Chinese instead of remaining hardcoded in English.
   - Landing, login modal, top bar, language switcher, profile page, common error fallback, and key map/detail labels now use locale-aware copy for Korean, English, Japanese, and Chinese.
   - Login modal now exposes accessible dialog semantics while keeping the local guest flow available without Supabase credentials.
   - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.

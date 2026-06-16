@@ -19,14 +19,14 @@ This project is in local-first development mode. Pages should remain usable with
 - The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
-- Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions.
+- Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions and a user-clicked 100m arrival check when stop coordinates are available.
 
 ## Account Flow
 
 - Login UI lives in `components/auth/LoginModal.tsx`.
 - Login UI copy comes from `lib/ui-copy.ts` for `ko`, `en`, `ja`, and `zh`; the modal exposes dialog semantics with `aria-modal` and a labelled title.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
-- Profile stays usable without Supabase credentials, shows local saved places, shows the current local route, and explains that account sync is disabled in local development.
+- Profile stays usable without Supabase credentials, shows local saved places, shows the current local route, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
@@ -49,7 +49,7 @@ This project is in local-first development mode. Pages should remain usable with
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
 - Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places`.
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields.
-- Place detail sheets can open `/[locale]/docent` with the selected place overview as the local guide caption source.
+- Place detail sheets can open `/[locale]/docent` with the selected place overview and coordinates as the local guide caption and arrival-check source.
 
 ### Saved Places
 
@@ -90,6 +90,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
 - Route editor shows a no-cost local mini map preview. Stop pins and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
 - Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. It does not call OpenAI TTS or any paid API.
+- Docent arrival checking reads `lat` and `lng` from the query string, asks for browser geolocation only after a user tap, computes distance locally with Haversine, and treats 100m as the ready radius. Automatic polling, push prompts, and provider TTS remain approval-gated.
 
 ## Expected Page States
 
@@ -104,6 +105,7 @@ Every data-backed page should expose:
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
+- Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
 - Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 
