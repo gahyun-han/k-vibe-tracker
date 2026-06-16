@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Tightened Tutorial keyboard accessibility. The feature guide dialog now links its subtitle/footer as dialog descriptions, marks the backdrop as decorative, and traps Tab/Shift+Tab focus inside the sheet until the guide is closed.
 - Preserved route/map query context during shared language switching. The top-bar language switcher now swaps only the locale prefix while keeping query parameters such as `detail=1`, map coordinates, or local `route=` share payloads, with helper test coverage.
 - Repaired Analyze localized mock result copy and added root S7 estimated-location labels. Korean, Japanese, and Simplified Chinese mock titles, places, and reasons now render as readable locale text, and low-confidence or coordinate-missing result cards show a localized estimated-location badge.
 - Added root S2/S3-style central Analyze CTA treatment to the mobile bottom navigation. The Analyze tab now stands out as the primary SNS spot action while the desktop left rail keeps the existing work-focused navigation.

@@ -16,6 +16,7 @@ export function TutorialButton() {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const sheetRef = useRef<HTMLElement>(null);
 
   function closeGuide() {
     setOpen(false);
@@ -34,7 +35,38 @@ export function TutorialButton() {
     window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') closeGuide();
+      if (e.key === 'Escape') {
+        closeGuide();
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+
+      const focusable = Array.from(
+        sheetRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => element.offsetParent !== null || element === document.activeElement);
+
+      if (focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey && (active === first || !sheetRef.current?.contains(active))) {
+        e.preventDefault();
+        last.focus();
+        return;
+      }
+
+      if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
 
     window.addEventListener('keydown', onKey);
@@ -62,12 +94,14 @@ export function TutorialButton() {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm" onClick={closeGuide} />
+          <div className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm" aria-hidden="true" onClick={closeGuide} />
           <section
+            ref={sheetRef}
             id="tutorial-sheet"
             role="dialog"
             aria-modal="true"
             aria-labelledby="tutorial-title"
+            aria-describedby="tutorial-subtitle tutorial-footer"
             className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[calc(100dvh-1rem)] max-w-md overflow-y-auto rounded-t-2xl border border-white/10 bg-[#1A1A2E] pb-[env(safe-area-inset-bottom)] shadow-2xl"
           >
             <div className="flex justify-center pb-1 pt-3">
@@ -83,7 +117,7 @@ export function TutorialButton() {
                   <h2 id="tutorial-title" className="text-lg font-bold text-white">
                     {copy.tutorial.title}
                   </h2>
-                  <p className="mt-1 text-sm leading-6 text-white/55">{copy.tutorial.subtitle}</p>
+                  <p id="tutorial-subtitle" className="mt-1 text-sm leading-6 text-white/55">{copy.tutorial.subtitle}</p>
                 </div>
                 <button
                   ref={closeButtonRef}
@@ -120,7 +154,7 @@ export function TutorialButton() {
                 })}
               </div>
 
-              <p className="mt-3 text-xs leading-5 text-white/40">{copy.tutorial.footer}</p>
+              <p id="tutorial-footer" className="mt-3 text-xs leading-5 text-white/40">{copy.tutorial.footer}</p>
             </div>
           </section>
         </>
