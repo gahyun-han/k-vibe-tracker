@@ -27,6 +27,12 @@ Recommended when local npm is unavailable:
 docker compose up app
 ```
 
+Keep it running in the background:
+
+```bash
+docker compose up -d app
+```
+
 Open:
 
 ```text

@@ -18,6 +18,18 @@ http://localhost:3000/en
 
 The first run builds the dev image and runs `npm ci` inside the container. Later runs reuse the named `node_modules` volume until `package-lock.json` changes.
 
+## Keep The App Running
+
+```bash
+docker compose up -d app
+```
+
+The app service uses `restart: unless-stopped`, so Docker will restart it after app crashes or Docker Desktop restarts. To stop it intentionally:
+
+```bash
+docker compose down
+```
+
 ## Run Checks
 
 ```bash
