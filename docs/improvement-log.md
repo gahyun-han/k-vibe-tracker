@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S10-style Docent proximity autoplay. After a user-clicked 100m arrival check confirms the stop is nearby, the page now starts local browser `speechSynthesis` when supported and idle, while keeping background GPS polling and provider TTS approval-gated.
 - Re-tested Kakao Maps after the user's follow-up domain setup confirmation. A direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no auth/domain error patterns, and Chrome loaded `/ko/map` in live map mode with 26 Kakao tile images and no console warnings or errors.
 - Expanded root S11 Radar coverage with no-cost local medical and transit facility types. The new filters, mock results, map pins, card icons, four-locale labels, and API/helper tests complete the wireframe's restroom/ATM/medical/transit immediate-need set without live provider calls.
 - Added root S9-style local transit hints to Route timeline segments. Short legs remain walking, while longer legs show localized transit timing from local distance thresholds without calling Kakao Mobility, Google Directions, or another route provider.

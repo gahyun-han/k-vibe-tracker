@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildDocentScriptSections, getDocentSectionIndexForChar, joinDocentScript } from '@/lib/docent';
+import {
+  buildDocentScriptSections,
+  getDocentSectionIndexForChar,
+  joinDocentScript,
+  shouldAutoPlayDocentAfterProximityCheck,
+} from '@/lib/docent';
 
 const copy = {
   sectionIntroTitle: 'Intro',
@@ -70,5 +75,52 @@ describe('docent script helpers', () => {
     expect(getDocentSectionIndexForChar(sections, sections[1].startIndex)).toBe(1);
     expect(getDocentSectionIndexForChar(sections, sections[2].startIndex + 3)).toBe(2);
     expect(getDocentSectionIndexForChar(sections, Number.MAX_SAFE_INTEGER)).toBe(3);
+  });
+
+  it('auto-plays only after a nearby user-triggered proximity check when speech is idle', () => {
+    expect(
+      shouldAutoPlayDocentAfterProximityCheck({
+        isNearby: true,
+        speechSupported: true,
+        speaking: false,
+        paused: false,
+      }),
+    ).toBe(true);
+
+    expect(
+      shouldAutoPlayDocentAfterProximityCheck({
+        isNearby: false,
+        speechSupported: true,
+        speaking: false,
+        paused: false,
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldAutoPlayDocentAfterProximityCheck({
+        isNearby: true,
+        speechSupported: false,
+        speaking: false,
+        paused: false,
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldAutoPlayDocentAfterProximityCheck({
+        isNearby: true,
+        speechSupported: true,
+        speaking: true,
+        paused: false,
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldAutoPlayDocentAfterProximityCheck({
+        isNearby: true,
+        speechSupported: true,
+        speaking: false,
+        paused: true,
+      }),
+    ).toBe(false);
   });
 });

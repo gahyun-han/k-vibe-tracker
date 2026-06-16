@@ -4,7 +4,12 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Captions, LocateFixed, MapPin, Mic2, Navigation, Pause, Play, RotateCcw, Square, VolumeX } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
-import { buildDocentScriptSections, getDocentSectionIndexForChar, joinDocentScript } from '@/lib/docent';
+import {
+  buildDocentScriptSections,
+  getDocentSectionIndexForChar,
+  joinDocentScript,
+  shouldAutoPlayDocentAfterProximityCheck,
+} from '@/lib/docent';
 import { haversineKm } from '@/lib/haversine';
 import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
@@ -204,6 +209,11 @@ function DocentContent() {
         const isNearby = nextDistanceMeters <= DOCENT_RADIUS_METERS;
         setDistanceMeters(nextDistanceMeters);
         setProximityStatus(isNearby ? 'near' : 'far');
+
+        if (shouldAutoPlayDocentAfterProximityCheck({ isNearby, speechSupported, speaking, paused })) {
+          playScript();
+          return;
+        }
 
         if (!isNearby && (speaking || paused)) {
           stopScript();

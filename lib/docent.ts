@@ -27,6 +27,13 @@ export interface DocentScriptSection {
   startIndex: number;
 }
 
+export interface DocentAutoPlayState {
+  isNearby: boolean;
+  speechSupported: boolean;
+  speaking: boolean;
+  paused: boolean;
+}
+
 function formatTemplate(template: string, values: Record<string, string>) {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
 }
@@ -93,4 +100,13 @@ export function getDocentSectionIndexForChar(sections: DocentScriptSection[], ch
   });
 
   return activeIndex;
+}
+
+export function shouldAutoPlayDocentAfterProximityCheck({
+  isNearby,
+  speechSupported,
+  speaking,
+  paused,
+}: DocentAutoPlayState) {
+  return isNearby && speechSupported && !speaking && !paused;
 }

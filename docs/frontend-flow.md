@@ -25,7 +25,7 @@ This project is in local-first development mode. Pages should remain usable with
 - If a local persona preference exists, the home feed applies its mapped category filter on load and shows a localized personalization chip for the selected route mood.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
-- Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions, script progress, and a user-clicked 100m arrival check when stop coordinates are available.
+- Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions, script progress, and a user-clicked 100m arrival check that can auto-start browser speech when stop coordinates are in range.
 
 ## Account Flow
 
@@ -142,7 +142,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Route progress is no-cost and local-first: completed stop IDs are stored per route, invalid/deleted stops are filtered out, and Start Guidance opens the next incomplete stop before showing the all-complete state.
 - Route editor shows a no-cost local mini map preview. Stops can be reordered through drag-and-drop or icon move controls, and the sticky action bar stays inside the responsive app shell on mobile and desktop. The root S9 Open in Map CTA opens `/[locale]/map?source=route-map` centered on the first stop without entering detail mode or calling a routing provider. The route screen can also check current distance to the next incomplete stop after a user tap, using browser geolocation plus local Haversine math and no background polling. The timeline now inserts dashed travel segments between stops: short legs stay as walking, while longer legs show a local transit hint using distance thresholds and estimated minutes. Selecting a stop body opens `/[locale]/map` with `detail=1`, focusing that stop, and showing the local place detail sheet with route context. Stop pins, explicit Google Maps icons, and the walking directions icon open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
 - Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. The script is split into intro, details, tags, and next-step sections; the UI shows localized script progress, and speech boundary events highlight and scroll the active section when supported. It does not call OpenAI TTS or any paid API.
-- Docent arrival checking reads `lat` and `lng` from the query string, asks for browser geolocation only after a user tap, computes distance locally with Haversine, and treats 100m as the ready radius. Automatic polling, push prompts, and provider TTS remain approval-gated.
+- Docent arrival checking reads `lat` and `lng` from the query string, asks for browser geolocation only after a user tap, computes distance locally with Haversine, treats 100m as the ready radius, and starts local browser speech when supported and idle. Automatic polling, push prompts, and provider TTS remain approval-gated.
 
 ## Expected Page States
 
