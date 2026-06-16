@@ -126,7 +126,7 @@ export default function AnalyzePage() {
     });
   }
 
-  function viewPlaceOnMap(place: AnalysisPlace) {
+  function viewPlaceOnMap(place: AnalysisPlace, openDetail = false) {
     if (place.lat === null || place.lng === null) return;
     const searchParams = new URLSearchParams({
       lat: String(place.lat),
@@ -134,6 +134,8 @@ export default function AnalyzePage() {
       q: place.name,
       source: 'analyze',
     });
+    if (place.reason) searchParams.set('description', place.reason);
+    if (openDetail) searchParams.set('detail', '1');
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
@@ -388,40 +390,45 @@ export default function AnalyzePage() {
                   <p className="mt-1 text-xs leading-5 text-white/45">{copy.emptyBody}</p>
                 </div>
               ) : (
-                result.places.map((place, idx) => (
-                  <div
-                    key={`${place.name}-${idx}`}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3"
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FF3A5C] text-xs font-bold text-white">
-                      {idx + 1}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-white">{place.name}</p>
-                      {place.lat !== null && place.lng !== null && (
-                        <p className="text-xs text-white/40">
-                          {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
+                result.places.map((place, idx) => {
+                  const coordinateText = place.lat !== null && place.lng !== null
+                    ? `${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}`
+                    : '';
+                  const hasCoordinates = Boolean(coordinateText);
+
+                  return (
+                    <button
+                      key={`${place.name}-${idx}`}
+                      type="button"
+                      onClick={() => viewPlaceOnMap(place, true)}
+                      disabled={!hasCoordinates}
+                      aria-label={`${copy.viewOnMap}: ${place.name}`}
+                      className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-left transition-colors hover:border-[#FF3A5C]/35 hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FF3A5C] text-xs font-bold text-white">
+                        {idx + 1}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-white">{place.name}</p>
+                        {hasCoordinates && (
+                          <p className="text-xs text-white/40">{coordinateText}</p>
+                        )}
+                        {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-xs font-semibold text-[#FF3A5C]">
+                          {Math.round(place.confidence * 100)}%
                         </p>
-                      )}
-                      {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-xs font-semibold text-[#FF3A5C]">
-                        {Math.round(place.confidence * 100)}%
-                      </p>
-                      <p className="text-[10px] text-white/30">{copy.confidence}</p>
-                      {place.lat !== null && place.lng !== null && (
-                        <button
-                          type="button"
-                          onClick={() => viewPlaceOnMap(place)}
-                          className="mt-2 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70 transition-colors hover:bg-white/20 hover:text-white"
-                        >
-                          {copy.map}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
+                        <p className="text-[10px] text-white/30">{copy.confidence}</p>
+                        {hasCoordinates && (
+                          <span className="mt-2 inline-flex rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70">
+                            {copy.map}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })
               )}
 
               <div className="grid grid-cols-2 gap-2">

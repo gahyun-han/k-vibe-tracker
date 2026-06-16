@@ -40,6 +40,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Enhanced the S4 place detail sheet with a compact TourAPI image gallery, letting users switch the hero image from already-fetched `detailImage2` results without adding any external provider call.
 - Added the root S3 SNS analyzer FAB to the Map screen, giving users an immediate icon-only shortcut from map exploration to `/[locale]/analyze` while keeping the existing current-location FAB.
 - Upgraded S5 Analyze examples into platform-aware cards: YouTube examples now fill the input and immediately enter the local/mock analysis flow, while the Instagram example stays provider-gated with no live extraction call.
+- Connected S7 Analyze result cards to the S4-style place detail flow by sending `detail=1` map handoff links that focus the analyzed coordinates and open the local detail sheet with the analysis reason.
 - Upgraded Persona route generation to a localized 3-step S8 flow: choose route theme, choose mood/detail, then confirm selected inputs before generating the no-cost local preview route.
 - Expanded Persona route generation to cover the root S8 Foodie Explorer, Content Creator, and History Buff directions with new no-cost local route templates and localized detail copy for Korean, English, Japanese, and Chinese.
 

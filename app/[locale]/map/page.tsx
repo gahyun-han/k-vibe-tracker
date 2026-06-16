@@ -282,24 +282,29 @@ export default function MapPage() {
     const focusLng = Number(searchParams.get('lng'));
     const query = searchParams.get('q')?.trim();
     const sourceParam = searchParams.get('source');
+    const openDetail = searchParams.get('detail') === '1';
+    const description = searchParams.get('description')?.trim();
 
     if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
       const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
-      setCoords({ lat: focusLat, lng: focusLng });
-      setLocationLabel(nextLocationLabel);
-      setSearch(focusName);
-      setFocusPlace({
+      const focusedPlace = {
         id: `analysis-${focusLat}-${focusLng}`,
         name: focusName,
         category: 'photo',
         address: nextLocationLabel,
         lat: focusLat,
         lng: focusLng,
+        overview: description || undefined,
         crowdLevel: undefined,
         tags: ['SNS'],
         distanceM: 0,
-      });
+      } satisfies Place & { distanceM?: number };
+      setCoords({ lat: focusLat, lng: focusLng });
+      setLocationLabel(nextLocationLabel);
+      setSearch(focusName);
+      setFocusPlace(focusedPlace);
+      if (openDetail) setSelectedPlace(focusedPlace);
       setReloadKey((key) => key + 1);
       return;
     }
