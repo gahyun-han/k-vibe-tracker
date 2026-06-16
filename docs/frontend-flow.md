@@ -20,7 +20,7 @@ This project is in local-first development mode. Pages should remain usable with
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
-- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
+- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards with localized crowd badges, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
 - Home feed stores successful `/api/places` responses in the shared 1-hour local API cache, can display cached feed cards if live refresh fails, and exposes a localized retry button in the error state.
 - If a local persona preference exists, the home feed applies its mapped category filter on load and shows a localized personalization chip for the selected route mood.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
@@ -60,7 +60,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Detail API: `app/api/places/[contentId]/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
-- Home feed requests the same `/api/places` contract with the active locale, shows the response source, stores successful responses in the shared local API cache, supports local category filters, can save places, and hands selected cards to the map with `source=home`, `detail=1`, category/address/tags, and TourAPI content identifiers when available.
+- Home feed requests the same `/api/places` contract with the active locale, shows the response source, stores successful responses in the shared local API cache, supports local category filters, can save places, and hands selected cards to the map with `source=home`, `detail=1`, category/address/tags, crowd level, and TourAPI content identifiers when available.
 - Map uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Map stores successful `/api/places` responses in the shared local API cache and displays cached place lists while a fresh same-query request is pending or if it fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
@@ -89,7 +89,7 @@ This project is in local-first development mode. Pages should remain usable with
 - UI: `app/[locale]/profile/page.tsx`
 - Helpers: `lib/saved-places.ts`
 - Local persistence key: `k-vibe-saved-places`
-- Saved places remain available in guest mode and open focused map detail views with `source=saved`, `detail=1`, category/address/tags, and TourAPI content identifiers when available.
+- Saved places remain available in guest mode and open focused map detail views with `source=saved`, `detail=1`, category/address/tags, crowd level, and TourAPI content identifiers when available.
 - The same Profile page also reads `k-vibe-current-route` and `k-vibe-route-progress` to show the local My Routes card with progress percentage, completed count, next stop, a whole-card route-detail tap target, Continue/Edit actions, and a create-first-route empty-state CTA.
 - Supabase cross-device sync is still approval/credential-gated; the local contract is ready to sync later.
 

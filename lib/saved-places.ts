@@ -1,3 +1,5 @@
+import { isCrowdLevel, type CrowdLevel } from '@/lib/crowd';
+
 export const SAVED_PLACES_STORAGE_KEY = 'k-vibe-saved-places';
 
 export interface SaveablePlace {
@@ -12,6 +14,7 @@ export interface SaveablePlace {
   imageUrl?: string;
   overview?: string;
   tags?: string[];
+  crowdLevel?: CrowdLevel;
 }
 
 export interface SavedPlace extends SaveablePlace {
@@ -51,6 +54,7 @@ function normalizeSavedPlace(value: unknown): SavedPlace | null {
     tags: Array.isArray(item.tags)
       ? item.tags.map(cleanOptionalString).filter((tag): tag is string => Boolean(tag))
       : [],
+    crowdLevel: isCrowdLevel(item.crowdLevel) ? item.crowdLevel : undefined,
     savedAt: cleanOptionalString(item.savedAt) ?? new Date(0).toISOString(),
   };
 }
@@ -70,6 +74,7 @@ export function createSavedPlace(place: SaveablePlace, savedAt = new Date().toIS
     imageUrl: place.imageUrl,
     overview: place.overview,
     tags: place.tags ?? [],
+    crowdLevel: place.crowdLevel,
     savedAt,
   };
 }

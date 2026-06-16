@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S2-style crowd badges to Home feed cards. The existing `/api/places` `crowd_level` signal is mapped locally into localized Quiet/Normal/Busy labels, and the crowd context is preserved through map-detail and saved-place handoffs without another provider call.
 - Added no-cost recovery actions to Analyze and Radar empty states from the root UI design guidance. Analyze empty results can start a sample YouTube analysis, and Radar empty results can expand to the next radius step without adding a new provider.
 - Re-tested Kakao Maps after the latest Kakao domain setup. Chrome loaded `/ko/map` on `http://localhost:3000` in live map mode, rendered Kakao tiles from `mts.daumcdn.net`, and reported no console warnings or errors.
 - Added S7 Analyze confidence bars to result cards. The UI now turns each local/mock confidence score into an accessible progress bar while keeping the existing map and route handoffs.

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
+import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
 import { persistPreferredLocale } from '@/lib/locale-preference';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
@@ -64,6 +65,7 @@ const TRENDING_DESTINATIONS = [
 type ApiSource = 'mock' | 'tourapi' | 'cache';
 type FeedCategory = 'all' | 'culture' | 'food' | 'fun' | 'photo';
 type StoryTopic = 'kpop' | 'streetFood' | 'photoSpots' | 'nature' | 'shopping';
+type FeedPlace = SaveablePlace & { distanceM?: number; crowdLevel?: CrowdLevel };
 
 interface PlacesApiResponse {
   places: NormalizedPlace[];
@@ -85,7 +87,7 @@ function getStoryTopicForFeedCategory(category: FeedCategory): StoryTopic | null
   return STORY_TOPICS.find((topic) => topic.category === category)?.id ?? null;
 }
 
-function toFeedPlace(place: NormalizedPlace, addressPending: string): SaveablePlace & { distanceM?: number } {
+function toFeedPlace(place: NormalizedPlace, addressPending: string): FeedPlace {
   return {
     id: place.id,
     contentId: place.content_id,
@@ -98,6 +100,7 @@ function toFeedPlace(place: NormalizedPlace, addressPending: string): SaveablePl
     imageUrl: place.image_url ?? undefined,
     tags: [place.category],
     distanceM: place.distance_m,
+    crowdLevel: toCrowdLevel(place.crowd_level),
   };
 }
 
@@ -112,7 +115,7 @@ export default function LandingPage() {
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
   const [showLogin, setShowLogin] = useState(false);
-  const [feedPlaces, setFeedPlaces] = useState<(SaveablePlace & { distanceM?: number })[]>([]);
+  const [feedPlaces, setFeedPlaces] = useState<FeedPlace[]>([]);
   const [feedSource, setFeedSource] = useState<ApiSource>('mock');
   const [feedLoading, setFeedLoading] = useState(true);
   const [feedError, setFeedError] = useState('');
@@ -238,7 +241,7 @@ export default function LandingPage() {
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
-  const openFeedPlace = useCallback((place: SaveablePlace) => {
+  const openFeedPlace = useCallback((place: FeedPlace) => {
     const searchParams = new URLSearchParams({
       lat: String(place.lat),
       lng: String(place.lng),
@@ -253,6 +256,7 @@ export default function LandingPage() {
     if (place.imageUrl) searchParams.set('imageUrl', place.imageUrl);
     if (place.overview) searchParams.set('description', place.overview);
     if (place.tags?.length) searchParams.set('tags', place.tags.join(','));
+    if (place.crowdLevel) searchParams.set('crowdLevel', place.crowdLevel);
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }, [locale, router]);
 
@@ -444,6 +448,14 @@ export default function LandingPage() {
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                         </button>
+                        {place.crowdLevel && (
+                          <span
+                            className={`pointer-events-none absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold backdrop-blur ${CROWD_TEXT_CLASS[place.crowdLevel]}`}
+                          >
+                            <span className={`h-1.5 w-1.5 rounded-full ${CROWD_DOT_CLASS[place.crowdLevel]}`} />
+                            {copy.map.crowd[place.crowdLevel]}
+                          </span>
+                        )}
                         <button
                           type="button"
                           onClick={() => toggleSavedPlace(place)}

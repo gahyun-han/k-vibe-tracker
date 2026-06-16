@@ -22,6 +22,7 @@ const PLACE: SaveablePlace = {
   imageUrl: 'https://example.com/forest.jpg',
   overview: 'A park stop.',
   tags: ['park', 'healing'],
+  crowdLevel: 'low',
 };
 
 describe('saved place helpers', () => {
@@ -34,6 +35,7 @@ describe('saved place helpers', () => {
 
     expect(saved.id).toBe('123');
     expect(saved.contentTypeId).toBe(12);
+    expect(saved.crowdLevel).toBe('low');
     expect(saved.savedAt).toBe('2026-06-16T00:00:00.000Z');
   });
 

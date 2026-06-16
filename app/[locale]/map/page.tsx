@@ -7,6 +7,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
+import { CROWD_DOT_CLASS, isCrowdLevel, toCrowdLevel } from '@/lib/crowd';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
@@ -44,12 +45,6 @@ interface Coordinates {
   lng: number;
 }
 
-const CROWD_DOT: Record<string, string> = {
-  low: 'bg-emerald-400',
-  mid: 'bg-yellow-400',
-  high: 'bg-red-400',
-};
-
 const DEFAULT_STAY_MINUTES: Record<string, number> = {
   cafe: 75,
   photo: 45,
@@ -58,13 +53,6 @@ const DEFAULT_STAY_MINUTES: Record<string, number> = {
   food: 70,
   stay: 60,
 };
-
-function toCrowdLevel(value: number | null): Place['crowdLevel'] {
-  if (value === null) return undefined;
-  if (value < 40) return 'low';
-  if (value < 70) return 'mid';
-  return 'high';
-}
 
 type CategoryLabels = Readonly<Record<PlaceCategory | 'spot', string>>;
 
@@ -291,6 +279,7 @@ export default function MapPage() {
     const contentTypeIdParam = searchParams.get('contentTypeId');
     const contentTypeId = contentTypeIdParam ? Number(contentTypeIdParam) : null;
     const imageUrl = searchParams.get('imageUrl')?.trim();
+    const crowdLevel = searchParams.get('crowdLevel');
 
     if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
@@ -306,7 +295,7 @@ export default function MapPage() {
         lng: focusLng,
         imageUrl: imageUrl?.startsWith('http') ? imageUrl : undefined,
         overview: description || undefined,
-        crowdLevel: undefined,
+        crowdLevel: isCrowdLevel(crowdLevel) ? crowdLevel : undefined,
         tags: tags.length > 0 ? tags : sourceParam === 'analyze' ? ['SNS'] : [],
         distanceM: 0,
       } satisfies Place & { distanceM?: number };
@@ -515,7 +504,7 @@ export default function MapPage() {
                         <p className="truncate text-sm font-semibold text-white">{place.name}</p>
                         {place.crowdLevel && (
                           <span
-                            className={`h-1.5 w-1.5 shrink-0 rounded-full ${CROWD_DOT[place.crowdLevel]}`}
+                            className={`h-1.5 w-1.5 shrink-0 rounded-full ${CROWD_DOT_CLASS[place.crowdLevel]}`}
                           />
                         )}
                       </div>

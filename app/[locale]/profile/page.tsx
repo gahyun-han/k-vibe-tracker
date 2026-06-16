@@ -115,6 +115,7 @@ export default function ProfilePage() {
     if (place.imageUrl) searchParams.set('imageUrl', place.imageUrl);
     if (place.overview) searchParams.set('description', place.overview);
     if (place.tags?.length) searchParams.set('tags', place.tags.join(','));
+    if (place.crowdLevel) searchParams.set('crowdLevel', place.crowdLevel);
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
