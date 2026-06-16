@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 localized Profile-settings and Docent-arrival copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 localized common-status copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 localized language-name and tutorial-copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Tutorial structured-guide accessibility pass because it may consume paid quota and the local semantic markup change could be verified with type-check, tests, build, and static route checks.
@@ -99,6 +100,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost localized Profile-settings and Docent-arrival copy repair that changes only bundled UI copy and tests for existing supported locales, without external translation providers, APIs, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost localized common-status copy repair that changes only bundled UI copy and tests for last-known location, data-source labels, offline mode, and PWA install prompts, without external translation providers, APIs, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost localized language-name and tutorial-copy repair that changes only bundled UI copy and tests for the existing supported locales, without external translation providers, APIs, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost Tutorial structured-guide accessibility pass that changes only local dialog/list/button semantics for existing localized guide content and shortcut actions, without external providers, API calls, maps, AI, GPS, backend writes, storage, or paid services.

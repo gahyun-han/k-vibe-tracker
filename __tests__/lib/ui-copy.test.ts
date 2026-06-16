@@ -64,6 +64,18 @@ describe('ui copy', () => {
       ja: { title: 'K-Vibeをインストール', install: 'インストール', dismiss: '後で' },
       zh: { title: '安装 K-Vibe', install: '安装', dismiss: '稍后' },
     };
+    const expectedProfileSettings = {
+      en: { title: 'Settings', language: 'Language', notifications: 'Notifications' },
+      ko: { title: '설정', language: '언어', notifications: '알림' },
+      ja: { title: '設定', language: '言語', notifications: '通知' },
+      zh: { title: '设置', language: '语言', notifications: '通知' },
+    };
+    const expectedDocentProximity = {
+      en: { title: 'Arrival check', checkButton: 'Check location', ready: 'You are within 100m. The local docent is ready.' },
+      ko: { title: '도착 확인', checkButton: '위치 확인', ready: '100m 안에 있습니다. 로컬 도슨트를 시작할 수 있습니다.' },
+      ja: { title: '到着確認', checkButton: '位置を確認', ready: '100m以内です。ローカルドーセントを開始できます。' },
+      zh: { title: '到达检查', checkButton: '检查位置', ready: '你已在100m范围内，可以开始本地导览。' },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -232,6 +244,10 @@ describe('ui copy', () => {
       expect(copy.route.locationPermissionDenied.length).toBeGreaterThan(0);
 
       const profileSettings = getProfileSettingsCopy(locale);
+      expect(profileSettings.title).toBe(expectedProfileSettings[locale].title);
+      expect(profileSettings.items.language.label).toBe(expectedProfileSettings[locale].language);
+      expect(profileSettings.items.notifications.label).toBe(expectedProfileSettings[locale].notifications);
+      expect(JSON.stringify(profileSettings)).not.toContain('?');
       expect(profileSettings.title.length).toBeGreaterThan(0);
       expect(Object.values(profileSettings.items)).toHaveLength(4);
       for (const item of Object.values(profileSettings.items)) {
@@ -240,6 +256,10 @@ describe('ui copy', () => {
       }
 
       const proximity = getDocentProximityCopy(locale);
+      expect(proximity.title).toBe(expectedDocentProximity[locale].title);
+      expect(proximity.checkButton).toBe(expectedDocentProximity[locale].checkButton);
+      expect(proximity.ready).toBe(expectedDocentProximity[locale].ready);
+      expect(JSON.stringify(proximity)).not.toContain('?');
       expect(proximity.radiusLabel).toContain('100');
       expect(proximity.distanceLabel).toContain('{distance}');
       expect(proximity.checkButton.length).toBeGreaterThan(0);
