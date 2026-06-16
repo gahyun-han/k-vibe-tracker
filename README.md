@@ -116,7 +116,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions, browser `speechSynthesis` voice playback, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
-- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.

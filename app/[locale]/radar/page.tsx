@@ -5,6 +5,7 @@ import { AlertCircle, Radar, RefreshCw } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import { FacilityCard } from '@/components/radar/FacilityCard';
+import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
@@ -14,13 +15,13 @@ import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale 
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 
-const FILTER_TABS: { id: FacilityFilter; icon: string }[] = [
-  { id: 'all', icon: 'All' },
-  { id: 'restroom', icon: 'WC' },
-  { id: 'cafe_toilet', icon: 'Cafe' },
-  { id: 'pharmacy', icon: 'Rx' },
-  { id: 'convenience', icon: 'CV' },
-  { id: 'popup', icon: 'Pop' },
+const FILTER_TABS: { id: FacilityFilter }[] = [
+  { id: 'all' },
+  { id: 'restroom' },
+  { id: 'cafe_toilet' },
+  { id: 'pharmacy' },
+  { id: 'convenience' },
+  { id: 'popup' },
 ];
 
 interface Coordinates {
@@ -180,9 +181,9 @@ export default function RadarPage() {
               </h2>
               <p className="mt-0.5 text-xs text-white/40">
                 {locationLabel}
-                {' · '}
+                {' / '}
                 {copy.found.replace('{count}', String(facilities.length))}
-                {' · '}
+                {' / '}
                 {source === 'mock' ? sourceCopy.mock : sourceCopy.cache}
               </p>
             </div>
@@ -202,20 +203,27 @@ export default function RadarPage() {
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {FILTER_TABS.map(({ id, icon }) => (
-              <button
-                key={id}
-                onClick={() => setFilter(id)}
-                className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
-                  filter === id
-                    ? 'bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30'
-                    : 'bg-white/10 text-white/70 hover:bg-white/20'
-                }`}
-              >
-                <span className="text-[11px] font-bold">{icon}</span>
-                <span>{copy.filters[id]}</span>
-              </button>
-            ))}
+            {FILTER_TABS.map(({ id }) => {
+              const active = filter === id;
+              const Icon = id === 'all' ? Radar : getFacilityTypeUi(id).Icon;
+
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setFilter(id)}
+                  aria-pressed={active}
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
+                    active
+                      ? 'bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30'
+                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  }`}
+                >
+                  <Icon size={14} />
+                  <span>{copy.filters[id]}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

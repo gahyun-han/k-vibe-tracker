@@ -2,6 +2,7 @@
 
 import { Crosshair, LocateFixed } from 'lucide-react';
 import type { Facility, FacilityType } from '@/lib/facilities';
+import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 
 interface Coordinates {
   lat: number;
@@ -23,14 +24,6 @@ interface RadarMapPreviewProps {
   copy: RadarMapPreviewCopy;
   onSelectFacility: (facility: Facility) => void;
 }
-
-const TYPE_PIN: Record<FacilityType, { label: string; className: string }> = {
-  restroom: { label: 'WC', className: 'bg-blue-400 text-[#0D0D1A]' },
-  pharmacy: { label: 'Rx', className: 'bg-emerald-400 text-[#0D0D1A]' },
-  cafe_toilet: { label: 'Cafe', className: 'bg-amber-400 text-[#0D0D1A]' },
-  convenience: { label: 'CV', className: 'bg-violet-400 text-white' },
-  popup: { label: 'Pop', className: 'bg-pink-400 text-white' },
-};
 
 function toPreviewPoint(center: Coordinates, facility: Facility, radius: number) {
   const metersPerLat = 111_320;
@@ -80,18 +73,20 @@ export function RadarMapPreview({
 
         {previewFacilities.map((facility) => {
           const point = toPreviewPoint(center, facility, radius);
-          const pin = TYPE_PIN[facility.type];
+          const typeUi = getFacilityTypeUi(facility.type);
+          const Icon = typeUi.Icon;
+          const typeLabel = copy.facilityTypes[facility.type];
           return (
             <button
               key={facility.id}
               type="button"
               onClick={() => onSelectFacility(facility)}
               aria-label={copy.openFacilityMap.replace('{name}', facility.name)}
-              title={`${copy.facilityTypes[facility.type]} · ${facility.distance}m`}
-              className={`absolute z-20 flex h-8 min-w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full px-1.5 text-[10px] font-black shadow-lg shadow-black/30 transition-transform hover:scale-105 ${pin.className}`}
+              title={`${typeLabel} / ${facility.distance}m`}
+              className={`absolute z-20 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-lg shadow-black/30 transition-transform hover:scale-105 ${typeUi.pin}`}
               style={{ left: `${point.x}%`, top: `${point.y}%` }}
             >
-              {pin.label}
+              <Icon size={15} />
             </button>
           );
         })}

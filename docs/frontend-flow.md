@@ -95,6 +95,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Radar uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Radar stores successful `/api/facilities` responses in the shared local API cache and displays cached facility lists while a fresh same-query request is pending or if it fails.
 - Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.
+- Radar filter chips, preview pins, and facility cards use shared lucide facility icons so labels stay localized and iconography stays consistent.
 - Radar pins and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
 
 ### Routes

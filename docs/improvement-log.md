@@ -22,6 +22,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Localized Map category tags, live Kakao overlay labels, and fallback map pin labels so non-English routes no longer leak English category text such as `Food` or `Culture`.
 - Clarified the Chinese language selector label as Simplified Chinese and added test coverage for non-empty, non-placeholder language names.
 - Added a localized no-cost PWA install prompt that listens for the browser `beforeinstallprompt` event, lets users add K-Vibe to the home screen, and remembers dismissals locally.
+- Replaced Radar text abbreviations such as `WC`, `Rx`, and `Pop` with shared lucide facility icons across filters, map pins, and facility cards, and normalized the Radar status separator for more reliable rendering.
 
 ## 2026-06-16
 

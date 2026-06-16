@@ -2,28 +2,10 @@
 
 import { useState } from 'react';
 import { Accessibility, ChevronDown, ChevronUp, Clock, MapPin } from 'lucide-react';
+import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 import type { Facility, FacilityType } from '@/lib/facilities';
 
 export type { Facility };
-
-const TYPE_CONFIG: Record<
-  FacilityType,
-  { icon: string; color: string; bg: string }
-> = {
-  restroom: { icon: 'WC', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-  pharmacy: { icon: 'Rx', color: 'text-green-400', bg: 'bg-green-400/10' },
-  cafe_toilet: {
-    icon: 'Cafe',
-    color: 'text-amber-400',
-    bg: 'bg-amber-400/10',
-  },
-  convenience: {
-    icon: 'CV',
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/10',
-  },
-  popup: { icon: 'Pop', color: 'text-pink-400', bg: 'bg-pink-400/10' },
-};
 
 interface FacilityCardCopy {
   facilityTypes: Readonly<Record<FacilityType, string>>;
@@ -41,7 +23,8 @@ interface Props {
 
 export function FacilityCard({ facility: f, copy, onViewMap }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const cfg = TYPE_CONFIG[f.type];
+  const cfg = getFacilityTypeUi(f.type);
+  const Icon = cfg.Icon;
   const distLabel = f.distance >= 1000
     ? `${(f.distance / 1000).toFixed(1)}km`
     : `${f.distance}m`;
@@ -53,9 +36,11 @@ export function FacilityCard({ facility: f, copy, onViewMap }: Props) {
         onClick={() => setExpanded((v) => !v)}
       >
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold ${cfg.bg} ${cfg.color}`}
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${cfg.bg} ${cfg.color}`}
+          aria-label={copy.facilityTypes[f.type]}
+          title={copy.facilityTypes[f.type]}
         >
-          {cfg.icon}
+          <Icon size={18} />
         </div>
 
         <div className="min-w-0 flex-1">
