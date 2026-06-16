@@ -76,6 +76,18 @@ describe('ui copy', () => {
       ja: { title: '到着確認', checkButton: '位置を確認', ready: '100m以内です。ローカルドーセントを開始できます。' },
       zh: { title: '到达检查', checkButton: '检查位置', ready: '你已在100m范围内，可以开始本地导览。' },
     };
+    const expectedCommonCopy = {
+      en: { signIn: 'Sign in', goBack: 'Go back', close: 'Close' },
+      ko: { signIn: '로그인', goBack: '뒤로 가기', close: '닫기' },
+      ja: { signIn: 'ログイン', goBack: '戻る', close: '閉じる' },
+      zh: { signIn: '登录', goBack: '返回', close: '关闭' },
+    };
+    const expectedLoginCopy = {
+      en: { title: 'Sign in to K-Vibe', continueGuest: 'Continue as Guest', availableWithoutLogin: 'Available without login' },
+      ko: { title: 'K-Vibe에 로그인', continueGuest: '게스트로 계속하기', availableWithoutLogin: '로그인 없이 사용 가능' },
+      ja: { title: 'K-Vibeにログイン', continueGuest: 'ゲストとして続行', availableWithoutLogin: 'ログインなしで利用可能' },
+      zh: { title: '登录 K-Vibe', continueGuest: '以访客身份继续', availableWithoutLogin: '无需登录也可使用' },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -136,12 +148,20 @@ describe('ui copy', () => {
       expect(copy.route.moveStopDownTitle.length).toBeGreaterThan(0);
       expect(copy.route.extraStop.name.length).toBeGreaterThan(0);
 
+      expect(copy.common.signIn).toBe(expectedCommonCopy[locale].signIn);
+      expect(copy.common.goBack).toBe(expectedCommonCopy[locale].goBack);
+      expect(copy.common.close).toBe(expectedCommonCopy[locale].close);
+      expect(JSON.stringify(copy.common)).not.toContain('?');
       expect(copy.common.goBack.length).toBeGreaterThan(0);
       expect(copy.common.changeLanguage.length).toBeGreaterThan(0);
       expect(copy.common.openProfile.length).toBeGreaterThan(0);
       expect(copy.common.unexpectedErrorTitle.length).toBeGreaterThan(0);
       expect(copy.common.dismissNotification.length).toBeGreaterThan(0);
 
+      expect(copy.login.title).toBe(expectedLoginCopy[locale].title);
+      expect(copy.login.continueGuest).toBe(expectedLoginCopy[locale].continueGuest);
+      expect(copy.login.availableWithoutLogin).toBe(expectedLoginCopy[locale].availableWithoutLogin);
+      expect(JSON.stringify(copy.login)).not.toContain('?');
       expect(copy.login.title.length).toBeGreaterThan(0);
       expect(copy.login.continueGuest.length).toBeGreaterThan(0);
       expect(copy.login.guestFeatures).toHaveLength(4);

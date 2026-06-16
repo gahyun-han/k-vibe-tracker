@@ -2309,6 +2309,34 @@ Object.assign(LANGUAGE_NAMES, {
   zh: '简体中文',
 });
 
+type CommonCopy = {
+  appName: string;
+  signIn: string;
+  close: string;
+  goBack: string;
+  changeLanguage: string;
+  openProfile: string;
+  avatarAlt: string;
+  unexpectedErrorTitle: string;
+  unexpectedErrorBody: string;
+  reloadPage: string;
+  dismissNotification: string;
+};
+
+type LoginCopy = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  close: string;
+  continueGoogle: string;
+  continueGuest: string;
+  availableWithoutLogin: string;
+  guestFeatures: readonly string[];
+  loginRequiredLater: string;
+  supabaseMissing: string;
+  failed: string;
+};
+
 type TutorialCopy = {
   buttonLabel: string;
   title: string;
@@ -2319,6 +2347,116 @@ type TutorialCopy = {
     body: string;
     action: string;
   }>;
+};
+
+const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
+  en: {
+    appName: 'K-Vibe Tracker',
+    signIn: 'Sign in',
+    close: 'Close',
+    goBack: 'Go back',
+    changeLanguage: 'Change language',
+    openProfile: 'Open profile',
+    avatarAlt: 'User avatar',
+    unexpectedErrorTitle: 'Something went wrong',
+    unexpectedErrorBody: 'An unexpected error occurred. Please try again.',
+    reloadPage: 'Reload Page',
+    dismissNotification: 'Dismiss notification',
+  },
+  ko: {
+    appName: 'K-Vibe Tracker',
+    signIn: '로그인',
+    close: '닫기',
+    goBack: '뒤로 가기',
+    changeLanguage: '언어 변경',
+    openProfile: '프로필 열기',
+    avatarAlt: '사용자 아바타',
+    unexpectedErrorTitle: '문제가 발생했습니다',
+    unexpectedErrorBody: '예상치 못한 오류가 발생했습니다. 다시 시도해주세요.',
+    reloadPage: '페이지 새로고침',
+    dismissNotification: '알림 닫기',
+  },
+  ja: {
+    appName: 'K-Vibe Tracker',
+    signIn: 'ログイン',
+    close: '閉じる',
+    goBack: '戻る',
+    changeLanguage: '言語を変更',
+    openProfile: 'プロフィールを開く',
+    avatarAlt: 'ユーザーアバター',
+    unexpectedErrorTitle: '問題が発生しました',
+    unexpectedErrorBody: '予期しないエラーが発生しました。もう一度お試しください。',
+    reloadPage: 'ページを再読み込み',
+    dismissNotification: '通知を閉じる',
+  },
+  zh: {
+    appName: 'K-Vibe Tracker',
+    signIn: '登录',
+    close: '关闭',
+    goBack: '返回',
+    changeLanguage: '更改语言',
+    openProfile: '打开个人资料',
+    avatarAlt: '用户头像',
+    unexpectedErrorTitle: '出现问题',
+    unexpectedErrorBody: '发生了意外错误。请重试。',
+    reloadPage: '重新加载页面',
+    dismissNotification: '关闭通知',
+  },
+};
+
+const LOGIN_COPY_OVERRIDES: Record<UiLocale, LoginCopy> = {
+  en: {
+    eyebrow: 'Account',
+    title: 'Sign in to K-Vibe',
+    subtitle: 'Save routes and sync preferences when Supabase is configured.',
+    close: 'Close sign in',
+    continueGoogle: 'Continue with Google',
+    continueGuest: 'Continue as Guest',
+    availableWithoutLogin: 'Available without login',
+    guestFeatures: ['Browse nearby places', 'Analyze sample SNS links', 'Create local routes', 'Save places on this device'],
+    loginRequiredLater: 'Login required later: saved routes, sharing history, account sync',
+    supabaseMissing: 'Supabase env is not configured. Continue as Guest for local development.',
+    failed: 'Login failed. Please try again.',
+  },
+  ko: {
+    eyebrow: '계정',
+    title: 'K-Vibe에 로그인',
+    subtitle: 'Supabase가 설정되면 루트 저장과 취향 동기화를 사용할 수 있습니다.',
+    close: '로그인 닫기',
+    continueGoogle: 'Google로 계속하기',
+    continueGuest: '게스트로 계속하기',
+    availableWithoutLogin: '로그인 없이 사용 가능',
+    guestFeatures: ['주변 장소 둘러보기', '샘플 SNS 링크 분석', '로컬 루트 만들기', '이 기기에 장소 저장'],
+    loginRequiredLater: '나중에 로그인이 필요합니다: 저장 루트, 공유 기록, 계정 동기화',
+    supabaseMissing: 'Supabase 환경 변수가 설정되지 않았습니다. 로컬 개발에서는 게스트로 계속하세요.',
+    failed: '로그인에 실패했습니다. 다시 시도해주세요.',
+  },
+  ja: {
+    eyebrow: 'アカウント',
+    title: 'K-Vibeにログイン',
+    subtitle: 'Supabase設定後にルート保存と好みの同期ができます。',
+    close: 'ログインを閉じる',
+    continueGoogle: 'Googleで続行',
+    continueGuest: 'ゲストとして続行',
+    availableWithoutLogin: 'ログインなしで利用可能',
+    guestFeatures: ['周辺スポットを見る', 'サンプルSNSリンクを分析', 'ローカルルートを作成', 'この端末にスポットを保存'],
+    loginRequiredLater: '後でログインが必要: 保存ルート、共有履歴、アカウント同期',
+    supabaseMissing: 'Supabase環境変数が設定されていません。ローカル開発ではゲストで続けられます。',
+    failed: 'ログインに失敗しました。もう一度お試しください。',
+  },
+  zh: {
+    eyebrow: '账号',
+    title: '登录 K-Vibe',
+    subtitle: '配置 Supabase 后，可以保存路线并同步偏好。',
+    close: '关闭登录',
+    continueGoogle: '使用 Google 继续',
+    continueGuest: '以访客身份继续',
+    availableWithoutLogin: '无需登录也可使用',
+    guestFeatures: ['浏览附近地点', '分析示例 SNS 链接', '创建本地路线', '在此设备保存地点'],
+    loginRequiredLater: '稍后需要登录：已保存路线、分享历史、账号同步',
+    supabaseMissing: '未配置 Supabase 环境变量。本地开发可继续使用访客模式。',
+    failed: '登录失败。请重试。',
+  },
 };
 
 const TUTORIAL_COPY_OVERRIDES: Record<Exclude<UiLocale, 'en'>, TutorialCopy> = {
@@ -2632,11 +2770,12 @@ export function normalizeUiLocale(value: string | string[] | undefined): UiLocal
 export function getUiCopy(locale: string | string[] | undefined) {
   const normalizedLocale = normalizeUiLocale(locale);
   const copy = UI_COPY[normalizedLocale];
-  if (normalizedLocale === 'en') return copy;
 
   return {
     ...copy,
-    tutorial: TUTORIAL_COPY_OVERRIDES[normalizedLocale],
+    common: COMMON_COPY_OVERRIDES[normalizedLocale],
+    login: LOGIN_COPY_OVERRIDES[normalizedLocale],
+    tutorial: normalizedLocale === 'en' ? copy.tutorial : TUTORIAL_COPY_OVERRIDES[normalizedLocale],
   };
 }
 

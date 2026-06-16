@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Repaired localized common app chrome and Login modal copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for sign-in, back/close labels, login titles, guest entry, and no-login availability copy.
 - Repaired localized Profile settings and Docent arrival-check copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for high-visibility settings labels and proximity actions.
 - Repaired localized common status copy for last-known location, data-source labels, offline mode, and the PWA install prompt in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions.
 - Repaired localized language names and Tutorial guide copy for Korean, Japanese, and Simplified Chinese. The UI copy test now asserts exact language labels and tutorial step titles so these high-visibility onboarding strings do not regress into mojibake.
