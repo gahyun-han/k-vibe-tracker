@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S3 Map refresh-failure toast feedback. When `/api/places` refresh fails, Map now warns that cached places are being shown or raises a localized error toast if no cache is available.
 - Added root S3-style Map related-search recovery. When a typed search filters all map places out, the empty state now offers localized keyword chips that swap the query locally without adding API calls.
 - Added root S2/S4-style Home feed save feedback. Tapping a feed card heart now raises the same localized saved/removed toast used by place details while keeping the existing localStorage-only saved-place contract.
 - Added root S9 Route shared-link recovery. Invalid or stale `route=` payloads now show a localized warning toast and fall back to the local/starter route instead of silently replacing the user's context.

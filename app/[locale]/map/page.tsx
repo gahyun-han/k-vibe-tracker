@@ -365,9 +365,11 @@ export default function MapPage() {
         if (cachedData?.places?.length) {
           setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending, copy.categories)));
           setSource('cache');
+          toast(copy.map.cachedFallback, 'warning', 5000);
           return;
         }
         setError(e instanceof Error ? e.message : 'PLACES_REQUEST_FAILED');
+        toast(copy.map.placesError, 'error');
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -375,7 +377,17 @@ export default function MapPage() {
 
     loadPlaces();
     return () => controller.abort();
-  }, [coords.lat, coords.lng, copy.categories, copy.map.addressPending, locale, reloadKey]);
+  }, [
+    coords.lat,
+    coords.lng,
+    copy.categories,
+    copy.map.addressPending,
+    copy.map.cachedFallback,
+    copy.map.placesError,
+    locale,
+    reloadKey,
+    toast,
+  ]);
 
   const filtered = useMemo(() => {
     const candidates = focusPlace

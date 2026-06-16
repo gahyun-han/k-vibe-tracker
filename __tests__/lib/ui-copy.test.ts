@@ -98,6 +98,7 @@ describe('ui copy', () => {
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
       expect(copy.map.locationUnavailable.length).toBeGreaterThan(0);
+      expect(copy.map.cachedFallback.length).toBeGreaterThan(0);
       expect(copy.landing.languageTitle.length).toBeGreaterThan(0);
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
       expect(copy.map.resultCount).toContain('{count}');
