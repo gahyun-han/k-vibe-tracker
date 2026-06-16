@@ -50,6 +50,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added no-cost S8 feed personalization. Persona theme/detail choices are stored locally, can return users to a personalized Home feed category, and appear in the Profile hero without calling AI, Supabase, or a recommendation provider.
 - Added the root S9 no-cost Open in Map CTA to the Route screen. The sticky action bar now sends the whole route to the in-app map with `source=route-map`, centered on the first stop, while keeping Google Maps walking directions as a separate user-clicked external handoff.
 - Added root S4-style no-cost Seen in badges to the place detail sheet. YouTube video and Instagram post counts are deterministic local signals from place metadata, localized in Korean, English, Japanese, and Chinese, and do not call live SNS APIs or scraping providers.
+- Added root S9-style no-cost travel segments to the Route timeline. The editor now shows dashed walking legs between stops with estimated duration and distance, derived from local Haversine calculations instead of Kakao Mobility or a paid Directions API.
 
 ## 2026-06-16
 

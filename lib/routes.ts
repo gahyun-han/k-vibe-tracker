@@ -50,6 +50,15 @@ export interface RoutePlan {
   shareText: string;
 }
 
+export interface RouteLeg {
+  fromStopId: string;
+  toStopId: string;
+  fromName: string;
+  toName: string;
+  distanceM: number;
+  walkingMinutes: number;
+}
+
 export interface RouteProgressState {
   planId: string;
   completedStopIds: string[];
@@ -550,6 +559,27 @@ export function calculateWalkingMinutes(stops: Pick<RouteStop, 'lat' | 'lng'>[])
     total += walkingMinutes(haversineKm(stops[i].lat, stops[i].lng, stops[i + 1].lat, stops[i + 1].lng));
   }
   return total;
+}
+
+export function calculateRouteLegs(stops: Pick<RouteStop, 'id' | 'name' | 'lat' | 'lng'>[]): RouteLeg[] {
+  const legs: RouteLeg[] = [];
+
+  for (let i = 0; i < stops.length - 1; i += 1) {
+    const from = stops[i];
+    const to = stops[i + 1];
+    const distanceKm = haversineKm(from.lat, from.lng, to.lat, to.lng);
+
+    legs.push({
+      fromStopId: from.id,
+      toStopId: to.id,
+      fromName: from.name,
+      toName: to.name,
+      distanceM: Math.round(distanceKm * 1000),
+      walkingMinutes: walkingMinutes(distanceKm),
+    });
+  }
+
+  return legs;
 }
 
 export function createLocalRoutePlan({

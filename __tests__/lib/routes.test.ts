@@ -5,6 +5,8 @@ import {
   buildGoogleMapsPlaceUrl,
   buildRouteMapUrl,
   buildRouteStopDetailUrl,
+  calculateRouteLegs,
+  calculateWalkingMinutes,
   createLocalRoutePlan,
   createRouteProgressState,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -120,6 +122,20 @@ describe('route helpers', () => {
     expect(multiStop.searchParams.get('destination')).toBe('37.5701,126.9996');
     expect(waypointStop.searchParams.get('waypoints')).toBe('37.5665,126.978');
     expect(place.searchParams.get('query')).toBe('37.5447,127.0564');
+  });
+
+  it('builds no-cost walking legs for route timeline segments', () => {
+    expect(calculateRouteLegs([STOPS[0]])).toEqual([]);
+
+    const legs = calculateRouteLegs(STOPS);
+
+    expect(legs).toHaveLength(1);
+    expect(legs[0].fromStopId).toBe('one');
+    expect(legs[0].toStopId).toBe('two');
+    expect(legs[0].fromName).toBe('First stop');
+    expect(legs[0].toName).toBe('Second stop');
+    expect(legs[0].distanceM).toBeGreaterThan(0);
+    expect(legs[0].walkingMinutes).toBe(calculateWalkingMinutes(STOPS));
   });
 
   it('builds in-app map detail handoff links for route stops', () => {

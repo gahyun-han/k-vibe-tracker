@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
@@ -13,6 +13,7 @@ import {
   buildLocalRouteShareUrl,
   buildRouteMapUrl,
   buildRouteStopDetailUrl,
+  calculateRouteLegs,
   calculateWalkingMinutes,
   createLocalRoutePlan,
   createRouteProgressState,
@@ -175,6 +176,7 @@ export default function RoutePage() {
   }, [completedStopIds.length, spots]);
   const directionsUrl = useMemo(() => buildGoogleMapsDirectionsUrl(spots), [spots]);
   const routeMapUrl = useMemo(() => buildRouteMapUrl(spots, planTitle, locale), [locale, planTitle, spots]);
+  const routeLegs = useMemo(() => calculateRouteLegs(spots), [spots]);
 
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
   const onDragOver = useCallback((e: React.DragEvent, id: string) => {
@@ -316,6 +318,10 @@ export default function RoutePage() {
     openDocent(nextSpot);
   }
 
+  function formatLegDistance(meters: number) {
+    return meters < 1000 ? `${meters}m` : `${(meters / 1000).toFixed(1)}km`;
+  }
+
   return (
     <AppLayout activeTab="route" title={copy.title}>
       <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-24 lg:pb-6">
@@ -390,121 +396,152 @@ export default function RoutePage() {
         <div className="space-y-2 px-4">
           {spots.map((spot, idx) => {
             const isCompleted = completedStopIds.includes(spot.id);
+            const leg = routeLegs[idx];
+            const legLabel = leg
+              ? copy.travelSegment
+                .replace('{duration}', formatDuration(leg.walkingMinutes))
+                .replace('{distance}', formatLegDistance(leg.distanceM))
+              : '';
+            const legBetween = leg
+              ? copy.travelSegmentBetween
+                .replace('{from}', leg.fromName)
+                .replace('{to}', leg.toName)
+              : '';
             return (
-            <div
-              key={spot.id}
-              draggable
-              onDragStart={() => onDragStart(spot.id)}
-              onDragOver={(e) => onDragOver(e, spot.id)}
-              onDrop={() => onDrop(spot.id)}
-              onDragEnd={onDragEnd}
-              className={`relative flex cursor-grab items-center gap-2 rounded-xl border bg-white/5 p-2 transition-all active:cursor-grabbing ${
-                dragOverId === spot.id
-                  ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5'
-                  : isCompleted
-                    ? 'border-emerald-400/30 bg-emerald-400/5'
-                    : 'border-white/10'
-              } ${draggingId === spot.id ? 'opacity-40' : 'opacity-100'}`}
-            >
-              <button
-                type="button"
-                onClick={() => openStopDetail(spot)}
-                aria-label={copy.openStopDetail.replace('{name}', spot.name)}
-                title={copy.openStopDetailTitle}
-                className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 text-left transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/40"
-              >
+              <Fragment key={spot.id}>
                 <div
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                    isCompleted ? 'bg-emerald-500' : 'bg-[#FF3A5C]'
-                  }`}
+                  draggable
+                  onDragStart={() => onDragStart(spot.id)}
+                  onDragOver={(e) => onDragOver(e, spot.id)}
+                  onDrop={() => onDrop(spot.id)}
+                  onDragEnd={onDragEnd}
+                  className={`relative flex cursor-grab items-center gap-2 rounded-xl border bg-white/5 p-2 transition-all active:cursor-grabbing ${
+                    dragOverId === spot.id
+                      ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5'
+                      : isCompleted
+                        ? 'border-emerald-400/30 bg-emerald-400/5'
+                        : 'border-white/10'
+                  } ${draggingId === spot.id ? 'opacity-40' : 'opacity-100'}`}
                 >
-                  {isCompleted ? <CheckCircle2 size={15} /> : idx + 1}
-                </div>
+                  <button
+                    type="button"
+                    onClick={() => openStopDetail(spot)}
+                    aria-label={copy.openStopDetail.replace('{name}', spot.name)}
+                    title={copy.openStopDetailTitle}
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 text-left transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/40"
+                  >
+                    <div
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
+                        isCompleted ? 'bg-emerald-500' : 'bg-[#FF3A5C]'
+                      }`}
+                    >
+                      {isCompleted ? <CheckCircle2 size={15} /> : idx + 1}
+                    </div>
 
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <p className={`text-sm font-semibold ${isCompleted ? 'text-white/55 line-through' : 'text-white'}`}>
-                      {spot.name}
-                    </p>
-                    <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
-                    {isCompleted && (
-                      <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
-                        {copy.completed}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-0.5 flex items-center gap-2">
-                    <span className="text-xs text-white/40">{spot.category}</span>
-                    <span className="text-white/20">.</span>
-                    <span className="text-xs text-white/40">{spot.stayMinutes}{copy.staySuffix}</span>
-                    <span className="text-white/20">.</span>
-                    <span className="text-xs text-white/40">{spot.startTime}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <p className={`text-sm font-semibold ${isCompleted ? 'text-white/55 line-through' : 'text-white'}`}>
+                          {spot.name}
+                        </p>
+                        <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
+                        {isCompleted && (
+                          <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                            {copy.completed}
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <span className="text-xs text-white/40">{spot.category}</span>
+                        <span className="text-white/20">.</span>
+                        <span className="text-xs text-white/40">{spot.stayMinutes}{copy.staySuffix}</span>
+                        <span className="text-white/20">.</span>
+                        <span className="text-xs text-white/40">{spot.startTime}</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => toggleStopCompleted(spot.id)}
+                      aria-pressed={isCompleted}
+                      aria-label={(isCompleted ? copy.markIncomplete : copy.markComplete).replace('{name}', spot.name)}
+                      title={isCompleted ? copy.markIncompleteTitle : copy.markCompleteTitle}
+                      className={`rounded-lg p-1 transition-colors hover:bg-white/10 ${
+                        isCompleted ? 'text-emerald-300 hover:text-emerald-200' : 'text-white/30 hover:text-emerald-300'
+                      }`}
+                    >
+                      <CheckCircle2 size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveSpot(spot.id, -1)}
+                      disabled={idx === 0}
+                      aria-label={`Move ${spot.name} up`}
+                      title={copy.orderUpdated}
+                      className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
+                    >
+                      <ChevronUp size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveSpot(spot.id, 1)}
+                      disabled={idx === spots.length - 1}
+                      aria-label={`Move ${spot.name} down`}
+                      title={copy.orderUpdated}
+                      className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
+                    >
+                      <ChevronDown size={14} />
+                    </button>
+                    <GripVertical size={16} className="text-white/20" />
+                    <button
+                      type="button"
+                      onClick={() => openStopMap(spot)}
+                      aria-label={copy.openStopMap.replace('{name}', spot.name)}
+                      title={copy.openStopMapTitle}
+                      className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
+                    >
+                      <ExternalLink size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openDocent(spot)}
+                      aria-label={copy.openDocent.replace('{name}', spot.name)}
+                      title={copy.openDocentTitle}
+                      className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
+                    >
+                      <Mic2 size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeSpot(spot.id)}
+                      aria-label={copy.removeStop.replace('{name}', spot.name)}
+                      className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-white/70"
+                    >
+                      <X size={14} />
+                    </button>
                   </div>
                 </div>
-              </button>
-
-              <div className="flex shrink-0 items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => toggleStopCompleted(spot.id)}
-                  aria-pressed={isCompleted}
-                  aria-label={(isCompleted ? copy.markIncomplete : copy.markComplete).replace('{name}', spot.name)}
-                  title={isCompleted ? copy.markIncompleteTitle : copy.markCompleteTitle}
-                  className={`rounded-lg p-1 transition-colors hover:bg-white/10 ${
-                    isCompleted ? 'text-emerald-300 hover:text-emerald-200' : 'text-white/30 hover:text-emerald-300'
-                  }`}
-                >
-                  <CheckCircle2 size={14} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSpot(spot.id, -1)}
-                  disabled={idx === 0}
-                  aria-label={`Move ${spot.name} up`}
-                  title={copy.orderUpdated}
-                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
-                >
-                  <ChevronUp size={14} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSpot(spot.id, 1)}
-                  disabled={idx === spots.length - 1}
-                  aria-label={`Move ${spot.name} down`}
-                  title={copy.orderUpdated}
-                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
-                >
-                  <ChevronDown size={14} />
-                </button>
-                <GripVertical size={16} className="text-white/20" />
-                <button
-                  type="button"
-                  onClick={() => openStopMap(spot)}
-                  aria-label={copy.openStopMap.replace('{name}', spot.name)}
-                  title={copy.openStopMapTitle}
-                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
-                >
-                  <ExternalLink size={14} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openDocent(spot)}
-                  aria-label={copy.openDocent.replace('{name}', spot.name)}
-                  title={copy.openDocentTitle}
-                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
-                >
-                  <Mic2 size={14} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => removeSpot(spot.id)}
-                  aria-label={copy.removeStop.replace('{name}', spot.name)}
-                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-white/70"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            </div>
+                {leg && (
+                  <div
+                    role="group"
+                    className="grid grid-cols-[36px_minmax(0,1fr)] gap-2 px-1 py-1"
+                    aria-label={legBetween}
+                  >
+                    <div className="flex flex-col items-center">
+                      <div className="h-3 border-l border-dashed border-white/15" />
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-white/15 bg-white/[0.03] text-white/40">
+                        <Footprints size={14} />
+                      </div>
+                      <div className="h-3 border-l border-dashed border-white/15" />
+                    </div>
+                    <div className="min-w-0 rounded-xl border border-dashed border-white/10 bg-white/[0.03] px-3 py-2">
+                      <p className="text-xs font-semibold text-white/55">{legLabel}</p>
+                      <p className="mt-0.5 truncate text-[11px] text-white/25">{legBetween}</p>
+                    </div>
+                  </div>
+                )}
+              </Fragment>
             );
           })}
 
