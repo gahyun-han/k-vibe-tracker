@@ -3,6 +3,7 @@ import {
   buildLocalRouteShareUrl,
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
+  buildRouteMapUrl,
   buildRouteStopDetailUrl,
   createLocalRoutePlan,
   createRouteProgressState,
@@ -134,6 +135,21 @@ describe('route helpers', () => {
     expect(detailUrl.searchParams.get('address')).toBe('Seoul');
     expect(detailUrl.searchParams.get('description')).toBe('A test stop.');
     expect(detailUrl.searchParams.get('tags')).toBe('cafe');
+  });
+
+  it('builds in-app route map handoff links without opening detail mode', () => {
+    expect(buildRouteMapUrl([], 'Empty Route', 'ko')).toBeNull();
+
+    const routeMapUrl = new URL(buildRouteMapUrl(STOPS, 'Custom Route', 'ko')!, 'http://localhost:3000');
+
+    expect(routeMapUrl.pathname).toBe('/ko/map');
+    expect(routeMapUrl.searchParams.get('lat')).toBe('37.5447');
+    expect(routeMapUrl.searchParams.get('lng')).toBe('127.0564');
+    expect(routeMapUrl.searchParams.get('q')).toBe('Custom Route');
+    expect(routeMapUrl.searchParams.get('source')).toBe('route-map');
+    expect(routeMapUrl.searchParams.get('firstStop')).toBe('First stop');
+    expect(routeMapUrl.searchParams.get('stopCount')).toBe('2');
+    expect(routeMapUrl.searchParams.get('detail')).toBeNull();
   });
 
   it('builds and restores no-cost local route share URLs', () => {

@@ -44,6 +44,8 @@ describe('ui copy', () => {
       expect(copy.route.title.length).toBeGreaterThan(0);
       expect(copy.route.startGuidance.length).toBeGreaterThan(0);
       expect(copy.route.miniMapTitle.length).toBeGreaterThan(0);
+      expect(copy.route.openRouteMap.length).toBeGreaterThan(0);
+      expect(copy.route.openRouteMapTitle.length).toBeGreaterThan(0);
       expect(copy.route.openDirections.length).toBeGreaterThan(0);
       expect(copy.route.openStopDetail).toContain('{name}');
       expect(copy.route.openStopDetailTitle.length).toBeGreaterThan(0);

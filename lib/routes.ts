@@ -710,6 +710,22 @@ export function buildGoogleMapsPlaceUrl(stop: Pick<RouteStop, 'lat' | 'lng'>) {
   return url.toString();
 }
 
+export function buildRouteMapUrl(stops: RouteStop[], title: string, locale: string) {
+  const firstStop = stops[0];
+  if (!firstStop) return null;
+
+  const params = new URLSearchParams({
+    lat: String(firstStop.lat),
+    lng: String(firstStop.lng),
+    q: title,
+    source: 'route-map',
+    firstStop: firstStop.name,
+    stopCount: String(stops.length),
+  });
+
+  return `/${locale}/map?${params.toString()}`;
+}
+
 export function buildRouteStopDetailUrl(stop: RouteStop, locale: string) {
   const params = new URLSearchParams({
     lat: String(stop.lat),

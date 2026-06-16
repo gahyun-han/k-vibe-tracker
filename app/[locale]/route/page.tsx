@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
@@ -11,6 +11,7 @@ import {
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
   buildLocalRouteShareUrl,
+  buildRouteMapUrl,
   buildRouteStopDetailUrl,
   calculateWalkingMinutes,
   createLocalRoutePlan,
@@ -173,6 +174,7 @@ export default function RoutePage() {
     };
   }, [completedStopIds.length, spots]);
   const directionsUrl = useMemo(() => buildGoogleMapsDirectionsUrl(spots), [spots]);
+  const routeMapUrl = useMemo(() => buildRouteMapUrl(spots, planTitle, locale), [locale, planTitle, spots]);
 
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
   const onDragOver = useCallback((e: React.DragEvent, id: string) => {
@@ -280,6 +282,15 @@ export default function RoutePage() {
     router.push(buildRouteStopDetailUrl(spot, locale));
   }
 
+  function openRouteMap() {
+    if (!routeMapUrl) {
+      setStatus(copy.addStopBeforeGuidance);
+      return;
+    }
+
+    router.push(routeMapUrl);
+  }
+
   function openDirections() {
     if (!directionsUrl) {
       setStatus(copy.addStopBeforeGuidance);
@@ -339,28 +350,38 @@ export default function RoutePage() {
 
         {spots.length > 0 && (
           <div className="sticky bottom-20 z-20 mb-4 px-4 lg:bottom-4">
-            <div className="flex gap-2 rounded-2xl border border-white/10 bg-[#0D0D1A]/95 p-2 shadow-2xl shadow-black/30 backdrop-blur">
+            <div className="grid grid-cols-[minmax(0,1fr)_44px_44px_44px] gap-2 rounded-2xl border border-white/10 bg-[#0D0D1A]/95 p-2 shadow-2xl shadow-black/30 backdrop-blur">
+              <button
+                onClick={openRouteMap}
+                title={copy.openRouteMapTitle}
+                className="flex h-11 min-w-0 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] px-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+              >
+                <Map size={16} className="shrink-0" />
+                <span className="truncate">{copy.openRouteMap}</span>
+              </button>
               <button
                 onClick={openDirections}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+                title={copy.openDirections}
+                aria-label={copy.openDirections}
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white/70 transition-colors hover:bg-white/20"
               >
                 <Navigation size={16} />
-                {copy.openDirections}
               </button>
               <button
                 onClick={startGuidance}
                 title={copy.startGuidance}
                 aria-label={copy.startGuidance}
-                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white/70 transition-colors hover:bg-white/20"
               >
                 <Mic2 size={16} />
               </button>
               <button
                 onClick={shareRoute}
-                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+                title={copy.share}
+                aria-label={copy.share}
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white/70 transition-colors hover:bg-white/20"
               >
                 <Share2 size={16} />
-                {copy.share}
               </button>
             </div>
           </div>

@@ -48,6 +48,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Connected S12 Profile saved-place tiles to the S4-style place detail flow. Saved grid taps now open the in-app map with `detail=1`, preserving saved category, address, tags, image, overview, and TourAPI content identifiers when available.
 - Added no-cost S4 place detail sharing. The detail sheet now exposes a localized share action that uses Web Share or clipboard to hand off a same-origin focused map detail URL without Supabase public links, Kakao Mobility, or paid routing APIs.
 - Added no-cost S8 feed personalization. Persona theme/detail choices are stored locally, can return users to a personalized Home feed category, and appear in the Profile hero without calling AI, Supabase, or a recommendation provider.
+- Added the root S9 no-cost Open in Map CTA to the Route screen. The sticky action bar now sends the whole route to the in-app map with `source=route-map`, centered on the first stop, while keeping Google Maps walking directions as a separate user-clicked external handoff.
 
 ## 2026-06-16
 
