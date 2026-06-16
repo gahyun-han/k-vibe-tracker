@@ -34,6 +34,8 @@ const SAVED_TILE_BACKGROUNDS = [
   'from-[#E9D5FF] to-[#7C3AED]',
 ] as const;
 
+const SAVED_PLACES_PREVIEW_LIMIT = 4;
+
 export default function ProfilePage() {
   const router = useRouter();
   const params = useParams();
@@ -47,6 +49,7 @@ export default function ProfilePage() {
   const [currentRoute, setCurrentRoute] = useState<RoutePlan | null>(null);
   const [routeCompletedStopIds, setRouteCompletedStopIds] = useState<string[]>([]);
   const [personaPreference, setPersonaPreference] = useState<PersonaPreference | null>(null);
+  const [showAllSavedPlaces, setShowAllSavedPlaces] = useState(false);
   const supabaseConfigured = hasSupabaseEnv();
 
   useEffect(() => {
@@ -147,6 +150,8 @@ export default function ProfilePage() {
   const routeCompletedCount = currentRoute ? routeCompletedStopIds.length : 0;
   const routeProgressPercent = routeTotalStops > 0 ? Math.round((routeCompletedCount / routeTotalStops) * 100) : 0;
   const nextRouteStop = currentRoute?.stops.find((stop) => !routeCompletedStopIds.includes(stop.id));
+  const visibleSavedPlaces = showAllSavedPlaces ? savedPlaces : savedPlaces.slice(0, SAVED_PLACES_PREVIEW_LIMIT);
+  const canToggleSavedPlaces = savedPlaces.length > SAVED_PLACES_PREVIEW_LIMIT;
   const settingItems = [
     { icon: Languages, ...settingsCopy.items.language },
     { icon: Bell, ...settingsCopy.items.notifications },
@@ -206,11 +211,20 @@ export default function ProfilePage() {
               <Heart size={16} className="text-[#FF3A5C]" />
               {copy.profile.savedPlaces}
             </h2>
+            {canToggleSavedPlaces && (
+              <button
+                type="button"
+                onClick={() => setShowAllSavedPlaces((current) => !current)}
+                className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/55 transition-colors hover:border-[#FF3A5C]/50 hover:text-white"
+              >
+                {showAllSavedPlaces ? copy.profile.showLess : copy.profile.seeAll}
+              </button>
+            )}
           </div>
 
           {savedPlaces.length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
-              {savedPlaces.map((place, index) => (
+              {visibleSavedPlaces.map((place, index) => (
                 <button
                   key={place.id}
                   type="button"

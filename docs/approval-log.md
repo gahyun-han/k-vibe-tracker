@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Profile saved-place preview pass because it may consume paid quota and the UI/localStorage-only change could be verified with local type-check, unit tests, and build.
 - Claude CLI was not used for the 2026-06-17 Docent proximity autoplay pass because it may consume paid quota, the prior budget-cap attempts produced no usable review, and the change could be verified locally with focused helper tests, type-check, and build.
 - Claude CLI was not used for the 2026-06-17 Docent/Profile pass because local type-check, unit tests, build, and Chrome verification were sufficient, and the previous budget cap remains in effect.
 - Claude CLI was not used for the 2026-06-17 Docent caption-section pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
@@ -72,6 +73,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost local Route transit hints that classify longer timeline legs with deterministic distance thresholds and estimated minutes, without Kakao Mobility, Directions APIs, transit APIs, browser GPS, or backend route lookup.
 - No-cost local Route current-distance checks that run only after a user tap, use browser geolocation plus Haversine math, and do not call Kakao Mobility, Google Directions API, automatic GPS polling, or a backend route lookup.
 - No-cost Profile saved-place detail handoff that sends locally saved place metadata to the in-app map detail sheet without Supabase sync or a backend saved-place lookup.
+- No-cost Profile saved-place preview toggle that reads the existing local saved-place list, reveals more tiles in the browser only after a user click, and does not call Supabase, TourAPI, maps providers, or a backend saved-place lookup.
 - No-cost Profile My Routes route-card tap target that opens the local route editor from `localStorage` without Supabase sync, GPS, Kakao Mobility, or backend route lookup.
 - No-cost Place detail share links that use Web Share or clipboard with a same-origin `/[locale]/map?detail=1` URL and do not create a backend public-link record.
 - No-cost Place detail Seen-in badges that derive YouTube/Instagram counts from local place metadata and do not call YouTube, Instagram, scraping providers, AI, or paid APIs.

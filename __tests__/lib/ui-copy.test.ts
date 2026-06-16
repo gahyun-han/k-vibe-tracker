@@ -82,6 +82,8 @@ describe('ui copy', () => {
       expect(copy.profile.openSavedDetailCta.length).toBeGreaterThan(0);
       expect(copy.profile.personaLabel.length).toBeGreaterThan(0);
       expect(copy.profile.personaUnset.length).toBeGreaterThan(0);
+      expect(copy.profile.seeAll.length).toBeGreaterThan(0);
+      expect(copy.profile.showLess.length).toBeGreaterThan(0);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
