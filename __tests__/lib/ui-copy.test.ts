@@ -107,6 +107,8 @@ describe('ui copy', () => {
       expect(copy.analyze.confidence.length).toBeGreaterThan(0);
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.addedToRoute.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.removed.length).toBeGreaterThan(0);
       expect(copy.placeDetail.imagePreview).toContain('{index}');
       expect(copy.placeDetail.seenInTitle).toBe(expectedSeenInTitle[locale]);
       expect(copy.placeDetail.seenInTitle.length).toBeGreaterThan(0);

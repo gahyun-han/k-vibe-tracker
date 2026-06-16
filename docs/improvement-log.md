@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S4-style Place detail toast feedback. Save, unsave, add-to-route, share, copy, and share-failure outcomes now use the shared accessible toast system with localized labels, while keeping the existing local-first storage and share flows.
 - Activated root UI-style Route toast feedback. Route reorder, remove, completion, sharing/copying, directions, and guidance-blocked outcomes now use the shared accessible toast system with localized dismiss labels while keeping the inline status text.
 - Added a root S1-style visible language grid to the Home entry. The first screen now shows localized language names in a 2x2 selector with selected-state semantics instead of relying on EN/KO/JA/ZH codes alone.
 - Improved Tutorial and language-switcher accessibility. The guide trigger now exposes open state, focus moves into the sheet and returns on close, and language controls expose localized labels plus selected/open state for assistive tech.

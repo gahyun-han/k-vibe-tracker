@@ -70,10 +70,10 @@ This project is in local-first development mode. Pages should remain usable with
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters, map list icons, live Kakao overlay labels, fallback pin labels, and place detail sheets use lucide icons plus locale-aware labels instead of hardcoded English category strings.
-- `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
-- Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places`.
+- `Add to Route` stores the selected place in the shared local route plan, raises a localized success toast, and opens `/[locale]/route`.
+- Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places` and raises localized saved/removed toast feedback.
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields. When multiple images are available, the detail sheet exposes a compact image gallery that switches the hero image without another provider call. The sheet also renders root S4-style Seen in badges for YouTube and Instagram from deterministic local place metadata, so it does not call live SNS APIs or scraping providers.
-- Place detail sharing is no-cost and local-first: the sheet uses Web Share when available, otherwise copies a same-origin `/[locale]/map?detail=1&source=share` URL with coordinates, category, address, tags, and optional TourAPI identifiers. It does not create a backend public-link row or call a paid maps/routing provider.
+- Place detail sharing is no-cost and local-first: the sheet uses Web Share when available, otherwise copies a same-origin `/[locale]/map?detail=1&source=share` URL with coordinates, category, address, tags, and optional TourAPI identifiers. Share/copy/failure outcomes raise shared toast feedback. It does not create a backend public-link row or call a paid maps/routing provider.
 - Place detail sheets can open `/[locale]/docent` with the selected place overview and coordinates as the local guide caption and arrival-check source.
 
 ### Persona Preference
@@ -158,7 +158,7 @@ Every data-backed page should expose:
 - Language switcher names are covered by tests so supported locale names do not regress to placeholders or mojibake.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
-- Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close/Seen in labels are also routed through `lib/ui-copy.ts`.
+- Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close/Seen in/save/share toast labels are also routed through `lib/ui-copy.ts`.
 - Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
 - Map/Radar data-source labels are localized for TourAPI, mock, and cache states.
 - The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.

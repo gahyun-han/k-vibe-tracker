@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, ExternalLink, Heart, Instagram, MapPin, Mic2, Phone, RefreshCw, Share2, Star, Tags, X, Youtube } from 'lucide-react';
+import { useToast } from '@/components/common/Toast';
 import { buildPlaceImageGallery } from '@/lib/place-images';
 import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
 import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/place-social-proof';
@@ -35,8 +36,10 @@ interface PlaceDetailModalProps {
   locale?: TourApiLocale;
   labels?: {
     addToRoute: string;
+    addedToRoute: string;
     save: string;
     saved: string;
+    removed: string;
     docent: string;
     details: string;
     parking: string;
@@ -83,8 +86,10 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 const DEFAULT_LABELS = {
   addToRoute: 'Add to Route',
+  addedToRoute: 'Added to route',
   save: 'Save place',
   saved: 'Saved place',
+  removed: 'Removed from saved places',
   docent: 'Docent',
   details: 'Details',
   parking: 'Parking',
@@ -117,6 +122,7 @@ export function PlaceDetailModal({
   onOpenDocent,
   onToggleSave,
 }: PlaceDetailModalProps) {
+  const { toast } = useToast();
   const [detail, setDetail] = useState<NormalizedPlaceDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
@@ -239,14 +245,31 @@ export function PlaceDetailModal({
           url: shareUrl,
         });
         setShareStatus(text.shared);
+        toast(text.shared, 'success');
         return;
       }
 
       await navigator.clipboard.writeText(shareUrl);
       setShareStatus(text.copied);
+      toast(text.copied, 'success');
     } catch {
       setShareStatus(text.shareUnavailable);
+      toast(text.shareUnavailable, 'error');
     }
+  }
+
+  function toggleSavePlace() {
+    if (!onToggleSave) return;
+
+    onToggleSave(mergedPlace);
+    toast(isSaved ? text.removed : text.saved, isSaved ? 'info' : 'success');
+  }
+
+  function addPlaceToRoute() {
+    if (!onAddToRoute) return;
+
+    toast(text.addedToRoute, 'success');
+    onAddToRoute(mergedPlace);
   }
 
   return (
@@ -327,7 +350,7 @@ export function PlaceDetailModal({
               <div className="flex shrink-0 items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => onToggleSave?.(mergedPlace)}
+                  onClick={toggleSavePlace}
                   aria-label={isSaved ? text.saved : text.save}
                   title={isSaved ? text.saved : text.save}
                   className={`rounded-lg p-1.5 transition-colors hover:bg-white/10 ${
@@ -425,7 +448,7 @@ export function PlaceDetailModal({
 
             <div className="flex flex-wrap gap-2 pt-1">
               <button
-                onClick={() => onAddToRoute?.(mergedPlace)}
+                onClick={addPlaceToRoute}
                 className="min-w-[150px] flex-[2_1_150px] rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 {text.addToRoute}

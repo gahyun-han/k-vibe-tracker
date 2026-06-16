@@ -179,8 +179,10 @@ const UI_COPY = {
     },
     placeDetail: {
       addToRoute: 'Add to Route',
+      addedToRoute: 'Added to route',
       save: 'Save place',
       saved: 'Saved place',
+      removed: 'Removed from saved places',
       docent: 'Docent',
       details: 'Details',
       parking: 'Parking',
@@ -666,8 +668,10 @@ const UI_COPY = {
     },
     placeDetail: {
       addToRoute: '루트에 추가',
+      addedToRoute: '루트에 추가했어요',
       save: '장소 저장',
       saved: '저장된 장소',
+      removed: '저장 장소에서 제거했어요',
       docent: '도슨트',
       details: '상세',
       parking: '주차',
@@ -1153,8 +1157,10 @@ const UI_COPY = {
     },
     placeDetail: {
       addToRoute: 'ルートに追加',
+      addedToRoute: 'ルートに追加しました',
       save: '保存する',
       saved: '保存済み',
+      removed: '保存スポットから削除しました',
       docent: 'ドーセント',
       details: '詳細',
       parking: '駐車',
@@ -1640,8 +1646,10 @@ const UI_COPY = {
     },
     placeDetail: {
       addToRoute: '加入路线',
+      addedToRoute: '已加入路线',
       save: '保存地点',
       saved: '已保存',
+      removed: '已从保存地点移除',
       docent: '导览',
       details: '详情',
       parking: '停车',
