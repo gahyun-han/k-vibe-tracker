@@ -10,6 +10,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
 - Claude CLI was not used for the 2026-06-17 Docent/Profile pass because local type-check, unit tests, build, and Chrome verification were sufficient, and the previous budget cap remains in effect.
 - Claude CLI was not used for the 2026-06-17 Docent caption-section pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
+- Claude CLI was not used for the 2026-06-17 Docent progress pass because it may consume paid quota and the change could be verified locally with copy/docent tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze locale pass because it may consume paid quota and the change could be verified locally with deterministic unit/API tests and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze loading-state pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze local-cache pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
@@ -48,6 +49,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost Docent script progress UI that uses local caption sections and does not call OpenAI TTS, speech providers, geolocation, or backend audio storage.
 - No-cost local Route share URLs that encode route state in the same-origin `route=` query parameter and restore it into `localStorage`.
 - No-cost local Route progress tracking that stores completed stop IDs in `localStorage` and does not use GPS polling, Kakao Mobility, or a backend route session.
 - No-cost local Route stop detail handoff that sends route stop coordinates and copy to the in-app map detail sheet without Kakao Mobility, Google Directions API, or a backend route lookup.

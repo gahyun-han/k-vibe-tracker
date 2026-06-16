@@ -229,6 +229,12 @@ function DocentContent() {
   const primaryLabel = paused ? copy.docent.resume : copy.docent.play;
   const hasCoordinates = place.lat !== null && place.lng !== null;
   const activeSection = scriptSections[activeSectionIndex] ?? scriptSections[0];
+  const scriptProgressPercent = scriptSections.length > 0
+    ? Math.round(((activeSectionIndex + 1) / scriptSections.length) * 100)
+    : 0;
+  const scriptProgressValue = copy.docent.progressValue
+    .replace('{current}', String(activeSectionIndex + 1))
+    .replace('{total}', String(scriptSections.length));
   const proximityMessage = (() => {
     switch (proximityStatus) {
       case 'near':
@@ -332,6 +338,19 @@ function DocentContent() {
                 />
               );
             })}
+          </div>
+
+          <div className="mt-3 rounded-xl bg-white/[0.04] p-3">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="font-semibold text-white/55">{copy.docent.progressLabel}</span>
+              <span className="shrink-0 font-semibold text-[#FF8BA0]">{scriptProgressValue}</span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+              <div
+                className="h-full rounded-full bg-[#FF3A5C] transition-all duration-300"
+                style={{ width: `${scriptProgressPercent}%` }}
+              />
+            </div>
           </div>
 
           <div className="mt-4 grid grid-cols-[1fr_auto_auto_auto] gap-2">
