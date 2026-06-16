@@ -2438,6 +2438,94 @@ const TUTORIAL_COPY_OVERRIDES: Record<Exclude<UiLocale, 'en'>, TutorialCopy> = {
   },
 };
 
+const LOCATION_STATUS_COPY_OVERRIDES: Record<UiLocale, LocationStatusCopy> = {
+  en: {
+    lastKnownLocation: 'Last known location',
+  },
+  ko: {
+    lastKnownLocation: '마지막 위치',
+  },
+  ja: {
+    lastKnownLocation: '最後に確認した位置',
+  },
+  zh: {
+    lastKnownLocation: '上次已知位置',
+  },
+};
+
+const DATA_SOURCE_COPY_OVERRIDES: Record<UiLocale, DataSourceCopy> = {
+  en: {
+    tourApi: 'TourAPI',
+    cache: 'Cache',
+    mock: 'Mock',
+  },
+  ko: {
+    tourApi: 'TourAPI',
+    cache: '캐시',
+    mock: '모의 데이터',
+  },
+  ja: {
+    tourApi: 'TourAPI',
+    cache: 'キャッシュ',
+    mock: 'モック',
+  },
+  zh: {
+    tourApi: 'TourAPI',
+    cache: '缓存',
+    mock: '模拟数据',
+  },
+};
+
+const NETWORK_STATUS_COPY_OVERRIDES: Record<UiLocale, NetworkStatusCopy> = {
+  en: {
+    offlineTitle: 'Offline mode',
+    offlineBody: 'Showing cached places, facilities, and app screens when available.',
+  },
+  ko: {
+    offlineTitle: '오프라인 모드',
+    offlineBody: '사용 가능한 캐시 장소, 편의시설, 앱 화면을 표시합니다.',
+  },
+  ja: {
+    offlineTitle: 'オフラインモード',
+    offlineBody: '利用可能なキャッシュ済みのスポット、施設、アプリ画面を表示します。',
+  },
+  zh: {
+    offlineTitle: '离线模式',
+    offlineBody: '会显示可用的缓存地点、设施和应用页面。',
+  },
+};
+
+const PWA_INSTALL_COPY_OVERRIDES: Record<UiLocale, PwaInstallCopy> = {
+  en: {
+    title: 'Install K-Vibe',
+    body: 'Add the app to your home screen for quicker access during trips.',
+    install: 'Install',
+    dismiss: 'Not now',
+    close: 'Dismiss install prompt',
+  },
+  ko: {
+    title: 'K-Vibe 설치',
+    body: '여행 중 더 빠르게 열 수 있도록 홈 화면에 앱을 추가하세요.',
+    install: '설치',
+    dismiss: '나중에',
+    close: '설치 안내 닫기',
+  },
+  ja: {
+    title: 'K-Vibeをインストール',
+    body: '旅行中にすばやく開けるよう、ホーム画面にアプリを追加します。',
+    install: 'インストール',
+    dismiss: '後で',
+    close: 'インストール案内を閉じる',
+  },
+  zh: {
+    title: '安装 K-Vibe',
+    body: '将应用添加到主屏幕，方便旅途中快速打开。',
+    install: '安装',
+    dismiss: '稍后',
+    close: '关闭安装提示',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -2463,17 +2551,17 @@ export function getDocentProximityCopy(locale: string | string[] | undefined) {
 }
 
 export function getLocationStatusCopy(locale: string | string[] | undefined) {
-  return LOCATION_STATUS_COPY[normalizeUiLocale(locale)];
+  return LOCATION_STATUS_COPY_OVERRIDES[normalizeUiLocale(locale)];
 }
 
 export function getDataSourceCopy(locale: string | string[] | undefined) {
-  return DATA_SOURCE_COPY[normalizeUiLocale(locale)];
+  return DATA_SOURCE_COPY_OVERRIDES[normalizeUiLocale(locale)];
 }
 
 export function getNetworkStatusCopy(locale: string | string[] | undefined) {
-  return NETWORK_STATUS_COPY[normalizeUiLocale(locale)];
+  return NETWORK_STATUS_COPY_OVERRIDES[normalizeUiLocale(locale)];
 }
 
 export function getPwaInstallCopy(locale: string | string[] | undefined) {
-  return PWA_INSTALL_COPY[normalizeUiLocale(locale)];
+  return PWA_INSTALL_COPY_OVERRIDES[normalizeUiLocale(locale)];
 }

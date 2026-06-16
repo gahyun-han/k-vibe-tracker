@@ -329,6 +329,7 @@ ai-worker/      # FastAPI prototype
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Analyze and Radar screen copy now comes from shared locale resources for Korean, English, Japanese, and Chinese.
   - Persona and Route screen copy now comes from shared locale resources, and route generation localizes mock plan titles/summaries when a locale is provided.
+  - Common status copy for last-known location, data source labels, offline mode, and the PWA install prompt is repaired for Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions.
   - Language names and the in-app tutorial guide copy are now repaired for Korean, Japanese, and Simplified Chinese, with exact copy assertions covering the guide titles and six feature step labels.
   - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions, restores focus after closing, exposes dialog/open state to assistive tech, renders the feature shortcuts as an ordered list, and its sheet scrolls safely on small mobile screens with longer localized copy.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.

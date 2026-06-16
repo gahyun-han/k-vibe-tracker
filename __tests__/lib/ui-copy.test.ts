@@ -40,6 +40,30 @@ describe('ui copy', () => {
       ja: ['マップ', '分析', 'ルート', 'ドーセント', 'レーダー', 'プロフィール'],
       zh: ['地图', '分析', '路线', '导览', '雷达', '个人资料'],
     };
+    const expectedLocationStatus = {
+      en: 'Last known location',
+      ko: '마지막 위치',
+      ja: '最後に確認した位置',
+      zh: '上次已知位置',
+    };
+    const expectedDataSource = {
+      en: { cache: 'Cache', mock: 'Mock' },
+      ko: { cache: '캐시', mock: '모의 데이터' },
+      ja: { cache: 'キャッシュ', mock: 'モック' },
+      zh: { cache: '缓存', mock: '模拟数据' },
+    };
+    const expectedNetworkStatus = {
+      en: 'Offline mode',
+      ko: '오프라인 모드',
+      ja: 'オフラインモード',
+      zh: '离线模式',
+    };
+    const expectedPwaInstall = {
+      en: { title: 'Install K-Vibe', install: 'Install', dismiss: 'Not now' },
+      ko: { title: 'K-Vibe 설치', install: '설치', dismiss: '나중에' },
+      ja: { title: 'K-Vibeをインストール', install: 'インストール', dismiss: '後で' },
+      zh: { title: '安装 K-Vibe', install: '安装', dismiss: '稍后' },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -222,18 +246,27 @@ describe('ui copy', () => {
       expect(proximity.ready.length).toBeGreaterThan(0);
 
       const locationStatus = getLocationStatusCopy(locale);
+      expect(locationStatus.lastKnownLocation).toBe(expectedLocationStatus[locale]);
       expect(locationStatus.lastKnownLocation.length).toBeGreaterThan(0);
 
       const dataSource = getDataSourceCopy(locale);
+      expect(dataSource.cache).toBe(expectedDataSource[locale].cache);
+      expect(dataSource.mock).toBe(expectedDataSource[locale].mock);
       expect(dataSource.cache.length).toBeGreaterThan(0);
       expect(dataSource.mock.length).toBeGreaterThan(0);
       expect(dataSource.tourApi).toBe('TourAPI');
 
       const networkStatus = getNetworkStatusCopy(locale);
+      expect(networkStatus.offlineTitle).toBe(expectedNetworkStatus[locale]);
+      expect(JSON.stringify(networkStatus)).not.toContain('?');
       expect(networkStatus.offlineTitle.length).toBeGreaterThan(0);
       expect(networkStatus.offlineBody.length).toBeGreaterThan(0);
 
       const pwaInstall = getPwaInstallCopy(locale);
+      expect(pwaInstall.title).toBe(expectedPwaInstall[locale].title);
+      expect(pwaInstall.install).toBe(expectedPwaInstall[locale].install);
+      expect(pwaInstall.dismiss).toBe(expectedPwaInstall[locale].dismiss);
+      expect(JSON.stringify(pwaInstall)).not.toContain('?');
       expect(pwaInstall.title.length).toBeGreaterThan(0);
       expect(pwaInstall.body.length).toBeGreaterThan(0);
       expect(pwaInstall.install.length).toBeGreaterThan(0);

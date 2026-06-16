@@ -164,9 +164,9 @@ Every data-backed page should expose:
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close/Seen in/save/share toast labels are also routed through `lib/ui-copy.ts`.
 - Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
-- Map/Radar data-source labels are localized for TourAPI, mock, and cache states.
-- The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
-- The PWA install prompt is localized for `ko`, `en`, `ja`, and `zh`.
+- Map/Radar data-source labels are localized for TourAPI, mock, and cache states, and the tested copy includes exact labels for `ko`, `en`, `ja`, and `zh`.
+- The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`, with exact title assertions for the high-visibility offline state.
+- The PWA install prompt is localized for `ko`, `en`, `ja`, and `zh`, with exact title/action assertions for install and dismiss copy.
 - Shared toast notifications use lucide icons, accessible alert/status roles, localized dismiss labels, and an icon close control.
 - Locale route errors use the shared localized error title/body and retry action for `ko`, `en`, `ja`, and `zh`.
 - Route stop detail handoff labels, route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
