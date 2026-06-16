@@ -297,7 +297,7 @@ ai-worker/      # FastAPI prototype
   - Home feed cards now show localized crowd badges and preserve local crowd context when opening the map detail sheet or saving places.
   - App screens now show a localized offline-mode banner when the browser reports a network disconnect, matching the root network-state wireframe.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
-  - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
+  - Landing, bottom navigation, map filters, language switching, and the new in-app feature guide use readable locale-aware copy.
   - Shared app navigation now keeps the mobile bottom tabs and switches to a desktop left rail at wider breakpoints, matching the root UI design document.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - PWA runtime now updates the document `lang` attribute per locale and registers a production-only static service worker without affecting local development caches.
@@ -324,7 +324,7 @@ ai-worker/      # FastAPI prototype
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Analyze and Radar screen copy now comes from shared locale resources for Korean, English, Japanese, and Chinese.
   - Persona and Route screen copy now comes from shared locale resources, and route generation localizes mock plan titles/summaries when a locale is provided.
-  - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions, and its sheet scrolls safely on small mobile screens with longer localized copy.
+  - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions, restores focus after closing, exposes its open state to assistive tech, and its sheet scrolls safely on small mobile screens with longer localized copy.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.

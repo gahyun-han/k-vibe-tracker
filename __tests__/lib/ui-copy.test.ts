@@ -72,6 +72,7 @@ describe('ui copy', () => {
       expect(copy.route.extraStop.name.length).toBeGreaterThan(0);
 
       expect(copy.common.goBack.length).toBeGreaterThan(0);
+      expect(copy.common.changeLanguage.length).toBeGreaterThan(0);
       expect(copy.common.openProfile.length).toBeGreaterThan(0);
       expect(copy.common.unexpectedErrorTitle.length).toBeGreaterThan(0);
 

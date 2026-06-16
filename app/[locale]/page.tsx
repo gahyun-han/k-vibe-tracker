@@ -276,6 +276,8 @@ export default function LandingPage() {
             key={code}
             onClick={() => handleLangChange(code)}
             title={LANGUAGE_NAMES[code]}
+            aria-label={`${LANGUAGE_NAMES[code]} (${code.toUpperCase()})`}
+            aria-pressed={locale === code}
             className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
               locale === code
                 ? 'border-[#FF3A5C] bg-[#FF3A5C] font-bold text-white'

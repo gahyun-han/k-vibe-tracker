@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Compass, HelpCircle, Map, Mic2, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
@@ -14,35 +14,47 @@ export function TutorialButton() {
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  function closeGuide() {
+    setOpen(false);
+  }
 
   function openStep(index: number) {
     const path = STEP_PATHS[index] ?? '/map';
-    setOpen(false);
+    closeGuide();
     router.push(`/${locale}${path}`);
   }
 
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
 
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') closeGuide();
     }
 
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKey);
+      triggerRef.current?.focus();
     };
   }, [open]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         title={copy.tutorial.buttonLabel}
         aria-label={copy.tutorial.buttonLabel}
+        aria-controls="tutorial-sheet"
+        aria-expanded={open}
         className="absolute bottom-20 right-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e] lg:bottom-6 lg:right-6"
       >
         <HelpCircle size={22} />
@@ -50,8 +62,9 @@ export function TutorialButton() {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-40 bg-black/65 backdrop-blur-sm" onClick={closeGuide} />
           <section
+            id="tutorial-sheet"
             role="dialog"
             aria-modal="true"
             aria-labelledby="tutorial-title"
@@ -73,8 +86,9 @@ export function TutorialButton() {
                   <p className="mt-1 text-sm leading-6 text-white/55">{copy.tutorial.subtitle}</p>
                 </div>
                 <button
+                  ref={closeButtonRef}
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={closeGuide}
                   aria-label={copy.common.close}
                   className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
                 >

@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Improved Tutorial and language-switcher accessibility. The guide trigger now exposes open state, focus moves into the sheet and returns on close, and language controls expose localized labels plus selected/open state for assistive tech.
 - Improved the localized Tutorial sheet viewport behavior. The guide dialog is now bounded to the visible mobile viewport and scrolls internally, so all six localized shortcut steps remain reachable on small screens.
 - Added a root S3-style Map nearby-spots header. The bottom sheet now shows a localized "Nearby spots" label plus the current filtered result count, derived from the already-loaded local/cached place list without another provider call.
 - Added a root S12-style Profile saved-place preview. The saved grid now defaults to four visual tiles and exposes localized See all/Show less controls for longer local saved-place lists without calling Supabase or another provider.
