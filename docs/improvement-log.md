@@ -36,6 +36,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added no-cost local caching for Analyze results. Same-video, same-locale analysis responses are stored in the shared 1-hour local API cache, cache hits skip the network call, and the result source label changes to a localized previous-result state.
 - Added no-cost SNS platform detection to Analyze. YouTube links continue through the local/mock analysis flow, while Instagram links are detected, labeled, and held behind an approval-gated notice instead of being treated as invalid URLs or calling a provider.
 - Added a root S2-style story topic row to the Home feed. K-Pop, Street Food, Photo Spots, Nature, and Shopping stories filter the existing local/TourAPI feed without making extra provider calls.
+- Refined the Profile saved-place section into a root S12-style square visual grid with image-backed tiles, local gradient fallbacks, category chips, and one-tap map handoff.
 - Upgraded Persona route generation to a localized 3-step S8 flow: choose route theme, choose mood/detail, then confirm selected inputs before generating the no-cost local preview route.
 - Expanded Persona route generation to cover the root S8 Foodie Explorer, Content Creator, and History Buff directions with new no-cost local route templates and localized detail copy for Korean, English, Japanese, and Chinese.
 

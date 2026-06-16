@@ -21,6 +21,14 @@ import { createClient, hasSupabaseEnv } from '@/lib/supabase/client';
 import { getProfileSettingsCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import type { User } from '@supabase/supabase-js';
 
+const SAVED_TILE_BACKGROUNDS = [
+  'from-[#FFB3C1] to-[#FF3A5C]',
+  'from-[#B3D4FF] to-[#2563EB]',
+  'from-[#FFE9B3] to-[#F59E0B]',
+  'from-[#B3FFD4] to-[#16A34A]',
+  'from-[#E9D5FF] to-[#7C3AED]',
+] as const;
+
 export default function ProfilePage() {
   const router = useRouter();
   const params = useParams();
@@ -173,25 +181,39 @@ export default function ProfilePage() {
 
           {savedPlaces.length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
-              {savedPlaces.map((place) => (
+              {savedPlaces.map((place, index) => (
                 <button
                   key={place.id}
                   type="button"
                   onClick={() => openSavedPlace(place)}
-                  className="min-h-[154px] overflow-hidden rounded-xl border border-white/10 bg-white/5 text-left transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/5"
+                  aria-label={`${copy.profile.openMap}: ${place.name}`}
+                  className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/5 text-left transition-colors hover:border-[#FF3A5C]/60"
                 >
                   {place.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={place.imageUrl} alt="" className="h-20 w-full object-cover" />
+                    <img
+                      src={place.imageUrl}
+                      alt=""
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
                   ) : (
-                    <div className="flex h-20 w-full items-center justify-center bg-[#FF3A5C]/15 text-[#FF3A5C]">
-                      <MapPin size={24} />
+                    <div
+                      className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${SAVED_TILE_BACKGROUNDS[index % SAVED_TILE_BACKGROUNDS.length]} text-white`}
+                    >
+                      <MapPin size={28} />
                     </div>
                   )}
-                  <div className="p-3">
-                    <p className="line-clamp-2 text-sm font-semibold leading-5 text-white">{place.name}</p>
-                    <p className="mt-1 truncate text-xs text-white/40">{place.address}</p>
-                    <p className="mt-2 text-xs font-semibold text-[#FF3A5C]">{copy.profile.openMap}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+                  <span className="absolute left-2 top-2 rounded-full bg-black/45 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white/75 backdrop-blur">
+                    {copy.categories[place.category as keyof typeof copy.categories] ?? place.category}
+                  </span>
+                  <div className="absolute inset-x-0 bottom-0 p-2.5">
+                    <p className="line-clamp-2 text-sm font-bold leading-5 text-white drop-shadow">{place.name}</p>
+                    <p className="mt-1 truncate text-[11px] text-white/65">{place.address}</p>
+                    <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-[#FF8BA0]">
+                      <Map size={11} />
+                      {copy.profile.openMap}
+                    </p>
                   </div>
                 </button>
               ))}

@@ -30,7 +30,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Login UI lives in `components/auth/LoginModal.tsx`.
 - Login UI copy comes from `lib/ui-copy.ts` for `ko`, `en`, `ja`, and `zh`; the modal exposes dialog semantics with `aria-modal` and a labelled title.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
-- Profile stays usable without Supabase credentials, shows local saved places, shows the current local route with route progress and next-stop context, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
+- Profile stays usable without Supabase credentials, shows local saved places in a root S12-style square visual grid, shows the current local route with route progress and next-stop context, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
