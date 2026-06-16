@@ -118,6 +118,10 @@ export default function ProfilePage() {
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
+  function openCurrentRoute() {
+    router.push(`/${locale}/route`);
+  }
+
   if (loading) {
     return (
       <AppLayout activeTab="profile" title={copy.profile.title}>
@@ -259,20 +263,25 @@ export default function ProfilePage() {
           </div>
           {currentRoute ? (
             <div className="space-y-3 p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-white">{currentRoute.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-[#8B8BA8]">
-                    {copy.profile.routeStops.replace('{count}', String(currentRoute.stops.length))}
-                  </p>
+              <button
+                type="button"
+                onClick={openCurrentRoute}
+                aria-label={copy.profile.openRouteDetail.replace('{name}', currentRoute.title)}
+                className="w-full rounded-xl border border-white/10 bg-white/[0.03] p-3 text-left transition-colors hover:border-[#FF3A5C]/50 hover:bg-white/[0.06]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-white">{currentRoute.title}</p>
+                    <p className="mt-1 text-xs leading-5 text-[#8B8BA8]">
+                      {copy.profile.routeStops.replace('{count}', String(currentRoute.stops.length))}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-[#FF3A5C]/10 px-2.5 py-1 text-[11px] font-semibold text-[#FF3A5C]">
+                    {routeProgressPercent}%
+                  </span>
                 </div>
-                <span className="shrink-0 rounded-full bg-[#FF3A5C]/10 px-2.5 py-1 text-[11px] font-semibold text-[#FF3A5C]">
-                  {routeProgressPercent}%
-                </span>
-              </div>
 
-              <div>
-                <div className="mb-1 flex items-center justify-between text-[11px] text-white/45">
+                <div className="mb-1 mt-3 flex items-center justify-between text-[11px] text-white/45">
                   <span className="flex items-center gap-1.5">
                     <CheckCircle2 size={12} />
                     {copy.profile.routeProgress
@@ -290,21 +299,26 @@ export default function ProfilePage() {
                     style={{ width: `${routeProgressPercent}%` }}
                   />
                 </div>
-              </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/35">
-                  {nextRouteStop ? copy.profile.nextStop : copy.profile.routeComplete}
+                <div className="mt-3 rounded-lg bg-white/5 p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/35">
+                    {nextRouteStop ? copy.profile.nextStop : copy.profile.routeComplete}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-white">
+                    {nextRouteStop?.name ?? currentRoute.stops[currentRoute.stops.length - 1]?.name}
+                  </p>
+                </div>
+
+                <p className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-[#FF8BA0]">
+                  <Route size={12} />
+                  {copy.profile.openRouteDetailCta}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white">
-                  {nextRouteStop?.name ?? currentRoute.stops[currentRoute.stops.length - 1]?.name}
-                </p>
-              </div>
+              </button>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => router.push(`/${locale}/route`)}
+                  onClick={openCurrentRoute}
                   className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white"
                 >
                   <PlayCircle size={15} />
@@ -312,7 +326,7 @@ export default function ProfilePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => router.push(`/${locale}/route`)}
+                  onClick={openCurrentRoute}
                   className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-semibold text-white/75"
                 >
                   {copy.profile.editRoute}

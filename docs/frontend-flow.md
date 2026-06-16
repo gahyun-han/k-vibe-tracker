@@ -31,7 +31,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Login UI lives in `components/auth/LoginModal.tsx`.
 - Login UI copy comes from `lib/ui-copy.ts` for `ko`, `en`, `ja`, and `zh`; the modal exposes dialog semantics with `aria-modal` and a labelled title.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
-- Profile stays usable without Supabase credentials, shows local saved places in a root S12-style square visual grid that opens the S4-style place detail sheet, shows the current local route with route progress and next-stop context, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
+- Profile stays usable without Supabase credentials, shows local saved places in a root S12-style square visual grid that opens the S4-style place detail sheet, shows the current local route with a tappable route card, route progress, next-stop context, and Continue/Edit actions, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
 - Profile also reads the local persona preference and displays the selected persona/mood in the profile hero.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
@@ -89,7 +89,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/saved-places.ts`
 - Local persistence key: `k-vibe-saved-places`
 - Saved places remain available in guest mode and open focused map detail views with `source=saved`, `detail=1`, category/address/tags, and TourAPI content identifiers when available.
-- The same Profile page also reads `k-vibe-current-route` and `k-vibe-route-progress` to show the local My Routes card with progress percentage, completed count, next stop, Continue/Edit actions, and a create-first-route empty-state CTA.
+- The same Profile page also reads `k-vibe-current-route` and `k-vibe-route-progress` to show the local My Routes card with progress percentage, completed count, next stop, a whole-card route-detail tap target, Continue/Edit actions, and a create-first-route empty-state CTA.
 - Supabase cross-device sync is still approval/credential-gated; the local contract is ready to sync later.
 
 ### Analysis

@@ -11,6 +11,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI was not used for the 2026-06-17 Docent/Profile pass because local type-check, unit tests, build, and Chrome verification were sufficient, and the previous budget cap remains in effect.
 - Claude CLI was not used for the 2026-06-17 Docent caption-section pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Docent progress pass because it may consume paid quota and the change could be verified locally with copy/docent tests, type-check, build, and Chrome inspection.
+- Claude CLI was not used for the 2026-06-17 Profile route-card tap pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze locale pass because it may consume paid quota and the change could be verified locally with deterministic unit/API tests and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze loading-state pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze local-cache pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
@@ -56,6 +57,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost local Route map handoff that sends the route title plus first-stop coordinates to `/[locale]/map?source=route-map` without Kakao Mobility, Google Directions API, or a backend route lookup.
 - No-cost local Route travel segments that estimate leg duration and distance with Haversine math and do not call Kakao Mobility, Google Directions API, browser GPS, or a backend route lookup.
 - No-cost Profile saved-place detail handoff that sends locally saved place metadata to the in-app map detail sheet without Supabase sync or a backend saved-place lookup.
+- No-cost Profile My Routes route-card tap target that opens the local route editor from `localStorage` without Supabase sync, GPS, Kakao Mobility, or backend route lookup.
 - No-cost Place detail share links that use Web Share or clipboard with a same-origin `/[locale]/map?detail=1` URL and do not create a backend public-link record.
 - No-cost Place detail Seen-in badges that derive YouTube/Instagram counts from local place metadata and do not call YouTube, Instagram, scraping providers, AI, or paid APIs.
 - No-cost Persona feed personalization that stores the selected theme/detail in localStorage and filters the existing Home feed locally without calling AI, Supabase, or a recommendation provider.

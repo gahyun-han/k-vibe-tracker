@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Made the S12 Profile My Routes card itself tappable so saved local routes open `/[locale]/route` from the card body as well as the Continue/Edit buttons, without Supabase or a backend route lookup.
 - Added a no-cost S10 Docent script progress bar and current-section status. It uses local script sections and browser speech state without OpenAI TTS or provider audio.
 - Added a no-cost Radar map preview with radius rings, current-position marker, and typed facility pins, using the existing local/mock facility coordinates.
 - Connected Radar map pins and expanded facility cards to user-clicked Google Maps search URLs. No Google Maps API key, Directions API, or Kakao Mobility call is used.

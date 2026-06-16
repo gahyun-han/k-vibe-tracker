@@ -127,6 +127,9 @@ describe('ui copy', () => {
       expect(copy.docent.progressValue).toContain('{total}');
       expect(copy.docent.captionTitle.length).toBeGreaterThan(0);
 
+      expect(copy.profile.openRouteDetail).toContain('{name}');
+      expect(copy.profile.openRouteDetailCta.length).toBeGreaterThan(0);
+
       const profileSettings = getProfileSettingsCopy(locale);
       expect(profileSettings.title.length).toBeGreaterThan(0);
       expect(Object.values(profileSettings.items)).toHaveLength(4);

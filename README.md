@@ -117,7 +117,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, S9-style whole-route Open in Map handoff, free walking travel segments between stops, in-app stop detail handoff to the map sheet, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with structured captions, a localized script progress bar, browser `speechSynthesis` voice playback with active script-section highlighting when supported, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
-- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with the active local persona, an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, My Routes actions, and localized app settings state when Supabase is not configured.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with the active local persona, an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, a tappable My Routes card and actions, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -327,6 +327,7 @@ ai-worker/      # FastAPI prototype
   - Docent now shows localized script progress and the current caption section while playback remains fully local.
   - Docent now includes a user-clicked 100m arrival check that uses route/map coordinates, browser geolocation, and local Haversine distance calculation without background GPS polling or paid services.
   - Profile now works as a guest-mode dashboard with local saved places, a current route progress card, next-stop context, and My Routes actions without needing Supabase.
+  - Profile My Routes now opens the route editor from the route card body as well as the Continue/Edit buttons, matching the root S12 saved-route tap flow.
   - Profile settings rows are now localized for Korean, English, Japanese, and Chinese instead of remaining hardcoded in English.
   - Landing, login modal, top bar, language switcher, profile page, common error fallback, and key map/detail labels now use locale-aware copy for Korean, English, Japanese, and Chinese.
   - Login modal now exposes accessible dialog semantics while keeping the local guest flow available without Supabase credentials.
