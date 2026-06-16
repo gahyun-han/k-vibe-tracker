@@ -86,6 +86,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Local persistence key: `k-vibe-current-route`
 - Route editor mutations are written back to the same local persistence key.
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
+- Route editor shows a no-cost local mini map preview. Stop pins and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
 - Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. It does not call OpenAI TTS or any paid API.
 
 ## Expected Page States
@@ -101,6 +102,7 @@ Every data-backed page should expose:
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
+- Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 
 ## Approval-Gated Work
 

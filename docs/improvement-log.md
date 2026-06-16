@@ -30,10 +30,13 @@ This log tracks concrete product and implementation improvements made while alig
 - Updated the map place detail sheet to lazy-load real overview, image gallery, phone, operating time, rest day, and parking data, then launch the local Docent flow from that enriched detail.
 - Added local saved places with a heart control on place detail sheets, a shared `k-vibe-saved-places` contract, and a guest-mode profile saved-place grid.
 - Added dialog semantics to the login modal so browser automation and assistive tech can identify the localized account sheet.
+- Added a no-cost route mini map preview and Google Maps walking directions handoff to the route screen, matching the root HTML route-navigation direction without using Kakao Mobility or another paid routing API.
+- Localized route crowd badges by passing the active locale labels into the shared `CrowdBadge` component.
 
 ## Still Gated Or Larger Scope
 
 - Kakao Maps JavaScript SDK is configured and verified for `http://localhost:3000`; `127.0.0.1` still returns a Kakao domain mismatch unless that host is registered too.
+- Kakao Mobility routing remains gated; the current route screen uses user-clicked Google Maps URLs for no-key walking directions.
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.

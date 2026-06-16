@@ -371,6 +371,36 @@ export function createLocalRoutePlan({
   };
 }
 
+export function buildGoogleMapsDirectionsUrl(stops: Pick<RouteStop, 'lat' | 'lng'>[]) {
+  if (stops.length === 0) return null;
+
+  const url = new URL('https://www.google.com/maps/dir/');
+  url.searchParams.set('api', '1');
+  url.searchParams.set('travelmode', 'walking');
+
+  if (stops.length === 1) {
+    url.searchParams.set('destination', formatCoordinates(stops[0]));
+    return url.toString();
+  }
+
+  url.searchParams.set('origin', formatCoordinates(stops[0]));
+  url.searchParams.set('destination', formatCoordinates(stops[stops.length - 1]));
+
+  const waypoints = stops.slice(1, -1).map(formatCoordinates);
+  if (waypoints.length > 0) {
+    url.searchParams.set('waypoints', waypoints.join('|'));
+  }
+
+  return url.toString();
+}
+
+export function buildGoogleMapsPlaceUrl(stop: Pick<RouteStop, 'lat' | 'lng'>) {
+  const url = new URL('https://www.google.com/maps/search/');
+  url.searchParams.set('api', '1');
+  url.searchParams.set('query', formatCoordinates(stop));
+  return url.toString();
+}
+
 export function formatDuration(minutes: number) {
   if (minutes < 60) return `${minutes}min`;
   const hours = Math.floor(minutes / 60);
@@ -393,4 +423,8 @@ function formatClock(minutes: number) {
 
 function formatRouteTemplate(template: string, values: Record<string, string>) {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
+}
+
+function formatCoordinates(stop: Pick<RouteStop, 'lat' | 'lng'>) {
+  return `${stop.lat},${stop.lng}`;
 }

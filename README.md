@@ -114,7 +114,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
-- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, and share text.
+- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places and the current local route when Supabase is not configured.
@@ -285,6 +285,7 @@ ai-worker/      # FastAPI prototype
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
+  - Route page now includes a no-cost mini map preview, per-stop Google Maps open actions, and a walking directions CTA without calling Kakao Mobility or a paid Directions API.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.

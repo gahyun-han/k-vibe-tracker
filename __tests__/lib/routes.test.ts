@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildGoogleMapsDirectionsUrl,
+  buildGoogleMapsPlaceUrl,
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
   generateMockRoutePlan,
@@ -64,5 +66,29 @@ describe('route helpers', () => {
     expect(plan.stops[0].startTime).toBe('09:00');
     expect(plan.totalMinutes).toBe(plan.walkingMinutes + plan.stayMinutes);
     expect(plan.shareText).toContain(plan.title);
+  });
+
+  it('builds free Google Maps walking links for route guidance', () => {
+    const empty = buildGoogleMapsDirectionsUrl([]);
+    const oneStop = new URL(buildGoogleMapsDirectionsUrl([STOPS[0]])!);
+    const multiStop = new URL(buildGoogleMapsDirectionsUrl(STOPS)!);
+    const waypointStop = new URL(buildGoogleMapsDirectionsUrl([
+      STOPS[0],
+      { ...STOPS[0], id: 'middle', lat: 37.5665, lng: 126.978 },
+      STOPS[1],
+    ])!);
+    const place = new URL(buildGoogleMapsPlaceUrl(STOPS[0]));
+
+    expect(empty).toBeNull();
+    expect(oneStop.origin).toBe('https://www.google.com');
+    expect(oneStop.searchParams.get('api')).toBe('1');
+    expect(oneStop.searchParams.get('travelmode')).toBe('walking');
+    expect(oneStop.searchParams.get('destination')).toBe('37.5447,127.0564');
+
+    expect(multiStop.pathname).toBe('/maps/dir/');
+    expect(multiStop.searchParams.get('origin')).toBe('37.5447,127.0564');
+    expect(multiStop.searchParams.get('destination')).toBe('37.5701,126.9996');
+    expect(waypointStop.searchParams.get('waypoints')).toBe('37.5665,126.978');
+    expect(place.searchParams.get('query')).toBe('37.5447,127.0564');
   });
 });

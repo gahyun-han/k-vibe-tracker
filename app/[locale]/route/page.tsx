@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Clock, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
+import { RouteMiniMap } from '@/components/route/RouteMiniMap';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import {
+  buildGoogleMapsDirectionsUrl,
+  buildGoogleMapsPlaceUrl,
   calculateWalkingMinutes,
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -126,6 +129,7 @@ export default function RoutePage() {
       total: walking + stay,
     };
   }, [spots]);
+  const directionsUrl = useMemo(() => buildGoogleMapsDirectionsUrl(spots), [spots]);
 
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
   const onDragOver = useCallback((e: React.DragEvent, id: string) => {
@@ -197,6 +201,20 @@ export default function RoutePage() {
     router.push(`/${locale}/docent?${query.toString()}`);
   }
 
+  function openStopMap(spot: RouteStop) {
+    window.open(buildGoogleMapsPlaceUrl(spot), '_blank', 'noopener,noreferrer');
+  }
+
+  function openDirections() {
+    if (!directionsUrl) {
+      setStatus(copy.addStopBeforeGuidance);
+      return;
+    }
+
+    window.open(directionsUrl, '_blank', 'noopener,noreferrer');
+    setStatus(copy.directionsOpened);
+  }
+
   function startGuidance() {
     if (spots.length === 0) {
       setStatus(copy.addStopBeforeGuidance);
@@ -229,6 +247,14 @@ export default function RoutePage() {
           ))}
         </div>
 
+        <RouteMiniMap
+          stops={spots}
+          title={copy.miniMapTitle}
+          subtitle={copy.miniMapSubtitle}
+          openStopMapLabel={copy.openStopMap}
+          onOpenStopMap={openStopMap}
+        />
+
         <div className="space-y-2 px-4">
           {spots.map((spot, idx) => (
             <div
@@ -249,7 +275,7 @@ export default function RoutePage() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <p className="text-sm font-semibold text-white">{spot.name}</p>
-                  <CrowdBadge level={spot.crowdLevel} size="sm" />
+                  <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <span className="text-xs text-white/40">{spot.category}</span>
@@ -262,6 +288,15 @@ export default function RoutePage() {
 
               <div className="flex shrink-0 items-center gap-1">
                 <GripVertical size={16} className="text-white/20" />
+                <button
+                  type="button"
+                  onClick={() => openStopMap(spot)}
+                  aria-label={copy.openStopMap.replace('{name}', spot.name)}
+                  title={copy.openStopMapTitle}
+                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
+                >
+                  <ExternalLink size={14} />
+                </button>
                 <button
                   type="button"
                   onClick={() => openDocent(spot)}
@@ -298,11 +333,19 @@ export default function RoutePage() {
           <div className="fixed bottom-20 left-0 right-0 mx-auto max-w-md px-4">
             <div className="flex gap-2">
               <button
-                onClick={startGuidance}
+                onClick={openDirections}
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 <Navigation size={16} />
-                {copy.startGuidance}
+                {copy.openDirections}
+              </button>
+              <button
+                onClick={startGuidance}
+                title={copy.startGuidance}
+                aria-label={copy.startGuidance}
+                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+              >
+                <Mic2 size={16} />
               </button>
               <button
                 onClick={shareRoute}

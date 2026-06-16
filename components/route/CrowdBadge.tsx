@@ -6,6 +6,7 @@ interface Props {
   level: CrowdLevel;
   showLabel?: boolean;
   size?: 'sm' | 'md';
+  labels?: Readonly<Record<CrowdLevel, string>>;
 }
 
 const CFG: Record<CrowdLevel, { label: string; dot: string; text: string; bg: string }> = {
@@ -14,14 +15,14 @@ const CFG: Record<CrowdLevel, { label: string; dot: string; text: string; bg: st
   high: { label: 'Busy', dot: 'bg-red-400', text: 'text-red-400', bg: 'bg-red-400/10' },
 };
 
-export function CrowdBadge({ level, showLabel = true, size = 'md' }: Props) {
+export function CrowdBadge({ level, showLabel = true, size = 'md', labels }: Props) {
   const c = CFG[level];
   const px = size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-xs';
 
   return (
     <span className={`inline-flex items-center gap-1 rounded-full font-semibold ${px} ${c.bg} ${c.text}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${c.dot}`} />
-      {showLabel && c.label}
+      {showLabel && (labels?.[level] ?? c.label)}
     </span>
   );
 }
