@@ -4,6 +4,13 @@ Last updated: 2026-06-16
 
 This project is in local-first development mode. Pages should remain usable without paid API keys or production credentials.
 
+## Local Development Runtime
+
+- Preferred runtime when Windows npm is unavailable: Docker Compose.
+- Start the app with `docker compose up app`.
+- Run checks with `docker compose run --rm app npm run type-check`, `docker compose run --rm app npm test`, and `docker compose run --rm app npm run build`.
+- Detailed container instructions live in `docs/docker-development.md`.
+
 ## Navigation
 
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.

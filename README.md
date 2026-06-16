@@ -21,6 +21,30 @@ The original upstream repository is still kept as `origin` for reference.
 
 ## Quick Start
 
+Recommended when local npm is unavailable:
+
+```bash
+docker compose up app
+```
+
+Open:
+
+```text
+http://localhost:3000/en
+```
+
+Run checks through Docker:
+
+```bash
+docker compose run --rm app npm run type-check
+docker compose run --rm app npm test
+docker compose run --rm app npm run build
+```
+
+Docker details, reset commands, and VS Code Dev Container notes are in [docs/docker-development.md](docs/docker-development.md).
+
+Local npm fallback:
+
 ```bash
 npm install
 cp .env.example .env.local
