@@ -21,6 +21,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Re-verified Kakao Maps after localhost domain registration in Chrome and fixed the Map screen height so the live Kakao renderer receives a nonzero viewport-sized container.
 - Localized Map category tags, live Kakao overlay labels, and fallback map pin labels so non-English routes no longer leak English category text such as `Food` or `Culture`.
 - Clarified the Chinese language selector label as Simplified Chinese and added test coverage for non-empty, non-placeholder language names.
+- Added a localized no-cost PWA install prompt that listens for the browser `beforeinstallprompt` event, lets users add K-Vibe to the home screen, and remembers dismissals locally.
 
 ## 2026-06-16
 
@@ -59,5 +60,5 @@ This log tracks concrete product and implementation improvements made while alig
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.
 - Automatic background GPS polling, push notifications, and paid/provider TTS for the Docent flow remain gated. The current arrival check is user-clicked and uses only browser geolocation plus local distance calculation.
-- IndexedDB POI data packs, offline map tiles, and offline synced route/place history remain larger-scope work beyond the current static PWA shell cache, offline banner, 30-minute last-known-location cache, and 1-hour API response cache.
+- IndexedDB POI data packs, offline map tiles, and offline synced route/place history remain larger-scope work beyond the current static PWA shell cache, install prompt, offline banner, 30-minute last-known-location cache, and 1-hour API response cache.
 - A richer Home Feed, Supabase sync for saved places/routes, and production-grade TourAPI/Redis caching are still larger-scope follow-ups from the root wireframes.

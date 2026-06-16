@@ -47,6 +47,14 @@ interface NetworkStatusCopy {
   offlineBody: string;
 }
 
+interface PwaInstallCopy {
+  title: string;
+  body: string;
+  install: string;
+  dismiss: string;
+  close: string;
+}
+
 export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
@@ -1632,6 +1640,37 @@ const NETWORK_STATUS_COPY: Record<UiLocale, NetworkStatusCopy> = {
   },
 };
 
+const PWA_INSTALL_COPY: Record<UiLocale, PwaInstallCopy> = {
+  en: {
+    title: 'Install K-Vibe',
+    body: 'Add the app to your home screen for quicker access during trips.',
+    install: 'Install',
+    dismiss: 'Not now',
+    close: 'Dismiss install prompt',
+  },
+  ko: {
+    title: '홈 화면에 추가',
+    body: '여행 중 빠르게 열 수 있도록 K-Vibe를 앱처럼 설치하세요.',
+    install: '설치',
+    dismiss: '나중에',
+    close: '설치 안내 닫기',
+  },
+  ja: {
+    title: 'ホーム画面に追加',
+    body: '旅行中にすぐ開けるよう、K-Vibeをアプリのようにインストールできます。',
+    install: 'インストール',
+    dismiss: 'あとで',
+    close: 'インストール案内を閉じる',
+  },
+  zh: {
+    title: '添加到主屏幕',
+    body: '将 K-Vibe 像应用一样安装，旅途中可以更快打开。',
+    install: '安装',
+    dismiss: '稍后',
+    close: '关闭安装提示',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -1659,4 +1698,8 @@ export function getDataSourceCopy(locale: string | string[] | undefined) {
 
 export function getNetworkStatusCopy(locale: string | string[] | undefined) {
   return NETWORK_STATUS_COPY[normalizeUiLocale(locale)];
+}
+
+export function getPwaInstallCopy(locale: string | string[] | undefined) {
+  return PWA_INSTALL_COPY[normalizeUiLocale(locale)];
 }

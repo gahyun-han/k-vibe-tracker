@@ -19,6 +19,7 @@ This project is in local-first development mode. Pages should remain usable with
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
+- PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
 - The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
@@ -41,6 +42,7 @@ This project is in local-first development mode. Pages should remain usable with
 - The root document defaults to `lang="ko"` before hydration, then the runtime updates it to `ko`, `en`, `ja`, or `zh` based on the active URL locale.
 - The service worker precaches the manifest, icons, Open Graph image, and Korean start route, then caches Next static chunks and same-origin navigations on demand.
 - Service worker registration is production-only so local development is not affected by stale caches.
+- The install prompt listens for browser install eligibility and is localized for `ko`, `en`, `ja`, and `zh`. It does not call an external provider.
 - Last known GPS position is stored in `localStorage` through `lib/location-cache.ts` with a 30-minute TTL. Map and Radar read it before requesting fresh geolocation so the UI can render immediately in poor network or indoor GPS conditions.
 - Map and Radar API responses are stored in `localStorage` through `lib/local-api-cache.ts` with a 1-hour TTL. Pages render cached results immediately on revisit and fall back to cached content when a same-query fetch fails.
 - The shared offline banner listens to browser `online` and `offline` events and shows localized copy explaining that cached places, facilities, and app screens are used when available.
@@ -128,6 +130,7 @@ Every data-backed page should expose:
 - Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
 - Map/Radar data-source labels are localized for TourAPI, mock, and cache states.
 - The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
+- The PWA install prompt is localized for `ko`, `en`, `ja`, and `zh`.
 - Shared toast notifications use lucide icons, accessible alert/status roles, and an icon close control.
 - Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.

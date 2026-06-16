@@ -5,6 +5,7 @@ import {
   getLocationStatusCopy,
   getNetworkStatusCopy,
   getProfileSettingsCopy,
+  getPwaInstallCopy,
   getUiCopy,
   LANGUAGE_NAMES,
   SUPPORTED_LOCALES,
@@ -86,6 +87,13 @@ describe('ui copy', () => {
       const networkStatus = getNetworkStatusCopy(locale);
       expect(networkStatus.offlineTitle.length).toBeGreaterThan(0);
       expect(networkStatus.offlineBody.length).toBeGreaterThan(0);
+
+      const pwaInstall = getPwaInstallCopy(locale);
+      expect(pwaInstall.title.length).toBeGreaterThan(0);
+      expect(pwaInstall.body.length).toBeGreaterThan(0);
+      expect(pwaInstall.install.length).toBeGreaterThan(0);
+      expect(pwaInstall.dismiss.length).toBeGreaterThan(0);
+      expect(pwaInstall.close.length).toBeGreaterThan(0);
     }
   });
 });
