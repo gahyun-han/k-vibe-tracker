@@ -19,6 +19,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added Kakao Maps JavaScript SDK scaffolding behind `NEXT_PUBLIC_KAKAO_MAP_KEY`. The app now uses the real map renderer only when a client key exists and otherwise keeps the no-cost local preview map.
 - Connected the home trend chips to focused map views so the first screen behaves more like the wireframed Home Feed instead of a static landing page.
 - Reworked the home entry into a TourAPI-backed Seoul K-spot feed with horizontal cards, category filters, local save controls, and focused map handoff links.
+- Localized the Analyze and Radar user-facing screens through the shared UI copy table so the root 4-language requirement covers the shipped local-first workflows.
 - Connected Analyze results to downstream workflows: individual detected places can open the map, and the full candidate set can draft an editable local route.
 - Added a no-cost local AI Docent page. Route stops now open captions and browser `speechSynthesis` playback without calling a paid TTS provider.
 - Added a TourAPI-backed place detail endpoint using `detailCommon2`, `detailIntro2`, and `detailImage2`, with mock fallback and cache-key preparation.

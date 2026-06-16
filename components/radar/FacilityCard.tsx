@@ -8,30 +8,37 @@ export type { Facility };
 
 const TYPE_CONFIG: Record<
   FacilityType,
-  { icon: string; label: string; color: string; bg: string }
+  { icon: string; color: string; bg: string }
 > = {
-  restroom: { icon: 'WC', label: 'Restroom', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-  pharmacy: { icon: 'Rx', label: 'Pharmacy', color: 'text-green-400', bg: 'bg-green-400/10' },
+  restroom: { icon: 'WC', color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  pharmacy: { icon: 'Rx', color: 'text-green-400', bg: 'bg-green-400/10' },
   cafe_toilet: {
     icon: 'Cafe',
-    label: 'Cafe restroom',
     color: 'text-amber-400',
     bg: 'bg-amber-400/10',
   },
   convenience: {
     icon: 'CV',
-    label: 'Convenience',
     color: 'text-purple-400',
     bg: 'bg-purple-400/10',
   },
-  popup: { icon: 'Pop', label: 'Pop-up', color: 'text-pink-400', bg: 'bg-pink-400/10' },
+  popup: { icon: 'Pop', color: 'text-pink-400', bg: 'bg-pink-400/10' },
 };
+
+interface FacilityCardCopy {
+  facilityTypes: Readonly<Record<FacilityType, string>>;
+  closed: string;
+  twentyFourHours: string;
+  accessibleRestroom: string;
+  viewOnMap: string;
+}
 
 interface Props {
   facility: Facility;
+  copy: FacilityCardCopy;
 }
 
-export function FacilityCard({ facility: f }: Props) {
+export function FacilityCard({ facility: f, copy }: Props) {
   const [expanded, setExpanded] = useState(false);
   const cfg = TYPE_CONFIG[f.type];
   const distLabel = f.distance >= 1000
@@ -53,16 +60,16 @@ export function FacilityCard({ facility: f }: Props) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className={`rounded-full px-1.5 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}>
-              {cfg.label}
+              {copy.facilityTypes[f.type]}
             </span>
             {f.is24h && (
               <span className="rounded-full bg-emerald-400/10 px-1.5 py-0.5 text-xs font-semibold text-emerald-400">
-                24h
+                {copy.twentyFourHours}
               </span>
             )}
             {f.isOpen === false && (
               <span className="rounded-full bg-red-400/10 px-1.5 py-0.5 text-xs font-semibold text-red-400">
-                Closed
+                {copy.closed}
               </span>
             )}
           </div>
@@ -95,7 +102,7 @@ export function FacilityCard({ facility: f }: Props) {
           {f.hasDisabled && (
             <div className="flex items-center gap-2 text-xs text-emerald-400">
               <Accessibility size={12} />
-              <span>Accessible restroom available</span>
+              <span>{copy.accessibleRestroom}</span>
             </div>
           )}
           {f.extra && (
@@ -104,7 +111,7 @@ export function FacilityCard({ facility: f }: Props) {
             </div>
           )}
           <button className="mt-1 w-full rounded-lg bg-[#FF3A5C]/20 py-2 text-xs font-semibold text-[#FF3A5C] transition-colors hover:bg-[#FF3A5C]/30">
-            View on Map
+            {copy.viewOnMap}
           </button>
         </div>
       )}

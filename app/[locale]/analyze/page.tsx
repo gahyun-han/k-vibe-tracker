@@ -20,7 +20,7 @@ import {
   CURRENT_ROUTE_STORAGE_KEY,
   type RouteStop,
 } from '@/lib/routes';
-import { normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -33,6 +33,7 @@ export default function AnalyzePage() {
   const router = useRouter();
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
+  const copy = getUiCopy(locale).analyze;
   const [url, setUrl] = useState('');
   const [status, setStatus] = useState<AnalysisStatus>('idle');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -100,7 +101,7 @@ export default function AnalyzePage() {
       id: `analysis-${result.video_id}-${index}`,
       name: place.name,
       category: 'SNS',
-      address: 'Detected from YouTube analysis',
+      address: copy.detectedAddress,
       crowdLevel: place.confidence >= 0.9 ? 'mid' : 'low',
       lat: place.lat,
       lng: place.lng,
@@ -112,10 +113,10 @@ export default function AnalyzePage() {
 
     const plan = createLocalRoutePlan({
       id: `analysis-${result.video_id}`,
-      title: 'SNS Analysis Route',
+      title: copy.routeTitle,
       theme: 'mood',
       detail: 'analysis',
-      summary: `Route drafted from ${result.title}.`,
+      summary: copy.routeSummary.replace('{title}', result.title),
       stops,
     });
 
@@ -136,10 +137,10 @@ export default function AnalyzePage() {
           <div>
             <h2 className="flex items-center gap-2 text-base font-bold text-white">
               <Sparkles size={18} className="text-[#FF3A5C]" />
-              SNS Spot Analyzer
+              {copy.title}
             </h2>
             <p className="mt-0.5 text-xs leading-5 text-white/40">
-              Paste a YouTube URL to extract likely Seoul travel spots. Local mock analysis is used until AI is approved.
+              {copy.subtitle}
             </p>
           </div>
 
@@ -154,7 +155,7 @@ export default function AnalyzePage() {
                   setResult(null);
                   setErrorMsg('');
                 }}
-                placeholder="Paste a YouTube URL"
+                placeholder={copy.inputPlaceholder}
                 className="w-full rounded-xl border border-white/10 bg-white/8 py-3 pl-9 pr-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#FF3A5C]/50"
               />
             </div>
@@ -162,7 +163,7 @@ export default function AnalyzePage() {
             {url && !urlValid && (
               <p className="flex items-center gap-1 text-xs text-red-400">
                 <AlertCircle size={12} />
-                This does not look like a supported YouTube URL.
+                {copy.invalidUrl}
               </p>
             )}
 
@@ -171,7 +172,7 @@ export default function AnalyzePage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={getThumbnailUrl(videoId)}
-                  alt="YouTube thumbnail"
+                  alt={copy.thumbnailAlt}
                   className="h-full w-full object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
@@ -193,18 +194,18 @@ export default function AnalyzePage() {
               {status === 'loading' ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Analyzing spots...
+                  {copy.loadingButton}
                 </>
               ) : (
                 <>
                   <Search size={16} />
-                  Analyze Spots
+                  {copy.analyzeButton}
                 </>
               )}
             </button>
 
             <div>
-              <p className="mb-1.5 text-xs text-white/30">Example URLs</p>
+              <p className="mb-1.5 text-xs text-white/30">{copy.examplesLabel}</p>
               <div className="space-y-1">
                 {EXAMPLE_URLS.map((exampleUrl) => (
                   <button
@@ -221,7 +222,7 @@ export default function AnalyzePage() {
 
           {status === 'loading' && (
             <div className="space-y-2 rounded-xl bg-white/5 p-4">
-              {['Validating URL', 'Building local spot candidates', 'Preparing map-ready results'].map((step, i) => (
+              {copy.loadingSteps.map((step, i) => (
                 <div key={step} className="flex items-center gap-2">
                   <div
                     className={`h-4 w-4 animate-spin rounded-full border-2 border-t-transparent ${
@@ -240,7 +241,7 @@ export default function AnalyzePage() {
               <div className="flex items-start gap-2">
                 <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-400" />
                 <div>
-                  <p className="text-sm font-semibold text-red-400">Analysis failed</p>
+                  <p className="text-sm font-semibold text-red-400">{copy.errorTitle}</p>
                   <p className="mt-0.5 text-xs text-red-400/70">{errorMsg}</p>
                 </div>
               </div>
@@ -249,7 +250,7 @@ export default function AnalyzePage() {
                 className="mt-3 flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300"
               >
                 <RotateCcw size={12} />
-                Retry
+                {copy.retry}
               </button>
             </div>
           )}
@@ -259,12 +260,12 @@ export default function AnalyzePage() {
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-white">
-                    Found {result.places.length} candidate spots
+                    {copy.foundSpots.replace('{count}', String(result.places.length))}
                   </p>
                   <p className="truncate text-xs text-white/40">{result.title}</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-semibold text-purple-400">
-                  {result.source === 'worker' ? 'AI Worker' : 'Mock'}
+                  {result.source === 'worker' ? copy.sourceWorker : copy.sourceMock}
                 </span>
               </div>
 
@@ -289,14 +290,14 @@ export default function AnalyzePage() {
                     <p className="text-xs font-semibold text-[#FF3A5C]">
                       {Math.round(place.confidence * 100)}%
                     </p>
-                    <p className="text-[10px] text-white/30">confidence</p>
+                    <p className="text-[10px] text-white/30">{copy.confidence}</p>
                     {place.lat !== null && place.lng !== null && (
                       <button
                         type="button"
                         onClick={() => viewPlaceOnMap(place)}
                         className="mt-2 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70 transition-colors hover:bg-white/20 hover:text-white"
                       >
-                        Map
+                        {copy.map}
                       </button>
                     )}
                   </div>
@@ -311,7 +312,7 @@ export default function AnalyzePage() {
                   className="flex items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <MapPin size={14} />
-                  View on Map
+                  {copy.viewOnMap}
                 </button>
                 <button
                   type="button"
@@ -320,7 +321,7 @@ export default function AnalyzePage() {
                   className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Compass size={14} />
-                  Build Route
+                  {copy.buildRoute}
                 </button>
               </div>
             </div>
@@ -330,11 +331,9 @@ export default function AnalyzePage() {
             <div className="flex items-start gap-2.5 rounded-xl bg-white/5 p-3">
               <Sparkles size={14} className="mt-0.5 shrink-0 text-purple-400" />
               <div>
-                <p className="text-xs font-semibold text-white/70">Local-first analysis</p>
+                <p className="text-xs font-semibold text-white/70">{copy.localModeTitle}</p>
                 <p className="mt-0.5 text-xs leading-5 text-white/40">
-                  The API returns deterministic mock spot extraction unless
-                  <code className="px-1 text-purple-400">ENABLE_AI_WORKER_ANALYSIS=true</code>
-                  and an approved worker URL are configured.
+                  {copy.localModeBody}
                 </p>
               </div>
             </div>
@@ -348,7 +347,7 @@ export default function AnalyzePage() {
               className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2 text-xs font-semibold text-white/45 transition-colors hover:border-white/20 hover:text-white/70"
             >
               <ExternalLink size={12} />
-              Open video
+              {copy.openVideo}
             </a>
           )}
         </div>

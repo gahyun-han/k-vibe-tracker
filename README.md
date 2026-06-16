@@ -288,6 +288,7 @@ ai-worker/      # FastAPI prototype
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
+  - Analyze and Radar screen copy now comes from shared locale resources for Korean, English, Japanese, and Chinese.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.

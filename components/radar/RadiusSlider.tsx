@@ -3,6 +3,7 @@
 interface RadiusSliderProps {
   value: number;
   onChange: (v: number) => void;
+  label?: string;
 }
 
 const STEPS = [300, 500, 800, 1000, 1500];
@@ -11,13 +12,13 @@ function formatRadius(value: number) {
   return value >= 1000 ? `${value / 1000}km` : `${value}m`;
 }
 
-export function RadiusSlider({ value, onChange }: RadiusSliderProps) {
+export function RadiusSlider({ value, onChange, label = 'Radius' }: RadiusSliderProps) {
   const currentIndex = STEPS.indexOf(value);
 
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-white/50">Radius</span>
+        <span className="text-xs text-white/50">{label}</span>
         <span className="text-xs font-semibold text-[#FF3A5C]">
           {formatRadius(value)}
         </span>
