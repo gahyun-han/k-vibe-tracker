@@ -17,6 +17,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Fixed corrupted app metadata and web app manifest descriptions.
 - Generated missing PWA icons, favicon, shortcut icons, and Open Graph image assets referenced by the manifest and metadata.
 - Added Kakao Maps JavaScript SDK scaffolding behind `NEXT_PUBLIC_KAKAO_MAP_KEY`. The app now uses the real map renderer only when a client key exists and otherwise keeps the no-cost local preview map.
+- Connected the home trend chips to focused map views so the first screen behaves more like the wireframed Home Feed instead of a static landing page.
+- Connected Analyze results to downstream workflows: individual detected places can open the map, and the full candidate set can draft an editable local route.
 
 ## Still Gated Or Larger Scope
 

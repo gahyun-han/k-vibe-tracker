@@ -54,6 +54,7 @@ const UI_COPY = {
     map: {
       seoulFallback: 'Seoul fallback',
       currentLocation: 'Current location',
+      analysisResult: 'Analysis result',
       searchPlaceholder: 'Search places',
       loadingNearby: 'Loading nearby places',
       placesError: 'Places could not be loaded',
@@ -136,6 +137,7 @@ const UI_COPY = {
     map: {
       seoulFallback: '서울 기본 위치',
       currentLocation: '현재 위치',
+      analysisResult: '분석 결과 위치',
       searchPlaceholder: '장소 검색',
       loadingNearby: '주변 장소 불러오는 중',
       placesError: '장소를 불러오지 못했습니다',
@@ -218,6 +220,7 @@ const UI_COPY = {
     map: {
       seoulFallback: 'ソウル基準位置',
       currentLocation: '現在地',
+      analysisResult: '分析結果の位置',
       searchPlaceholder: 'スポット検索',
       loadingNearby: '周辺スポットを読み込み中',
       placesError: 'スポットを読み込めませんでした',
@@ -300,6 +303,7 @@ const UI_COPY = {
     map: {
       seoulFallback: '首尔默认位置',
       currentLocation: '当前位置',
+      analysisResult: '分析结果位置',
       searchPlaceholder: '搜索地点',
       loadingNearby: '正在加载附近地点',
       placesError: '无法加载地点',

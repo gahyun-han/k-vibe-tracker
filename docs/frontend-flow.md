@@ -16,7 +16,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens.
-- The landing page at `/[locale]` presents the local-first development status and sends users to `/[locale]/map`.
+- The home entry at `/[locale]` presents local-first status, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
 
@@ -66,6 +66,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Local persistence key: `k-vibe-current-route`
 - Route editor mutations are written back to the same local persistence key.
+- Analyze results can write a draft route into this same key and open `/[locale]/route`.
 
 ## Expected Page States
 

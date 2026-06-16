@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
@@ -124,10 +124,12 @@ export default function MapPage() {
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
   const [locationLabel, setLocationLabel] = useState<string>(copy.map.seoulFallback);
   const [places, setPlaces] = useState<(Place & { distanceM?: number })[]>([]);
+  const [focusPlace, setFocusPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [source, setSource] = useState<ApiSource>('mock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
+  const initialLocationApplied = useRef(false);
 
   const addPlaceToRoute = useCallback((place: Place) => {
     try {
@@ -166,6 +168,7 @@ export default function MapPage() {
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
+      setFocusPlace(null);
       setCoords(SEOUL_CENTER);
       setLocationLabel(copy.map.seoulFallback);
       setReloadKey((key) => key + 1);
@@ -174,6 +177,7 @@ export default function MapPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        setFocusPlace(null);
         setCoords({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -182,6 +186,7 @@ export default function MapPage() {
         setReloadKey((key) => key + 1);
       },
       () => {
+        setFocusPlace(null);
         setCoords(SEOUL_CENTER);
         setLocationLabel(copy.map.seoulFallback);
         setReloadKey((key) => key + 1);
@@ -191,8 +196,38 @@ export default function MapPage() {
   }, [copy.map.currentLocation, copy.map.seoulFallback]);
 
   useEffect(() => {
+    if (initialLocationApplied.current) return;
+    initialLocationApplied.current = true;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const focusLat = Number(searchParams.get('lat'));
+    const focusLng = Number(searchParams.get('lng'));
+    const query = searchParams.get('q')?.trim();
+    const sourceParam = searchParams.get('source');
+
+    if (Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
+      const focusName = query || copy.map.analysisResult;
+      const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
+      setCoords({ lat: focusLat, lng: focusLng });
+      setLocationLabel(nextLocationLabel);
+      setSearch(focusName);
+      setFocusPlace({
+        id: `analysis-${focusLat}-${focusLng}`,
+        name: focusName,
+        category: 'photo',
+        address: nextLocationLabel,
+        lat: focusLat,
+        lng: focusLng,
+        crowdLevel: undefined,
+        tags: ['SNS'],
+        distanceM: 0,
+      });
+      setReloadKey((key) => key + 1);
+      return;
+    }
+
     requestLocation();
-  }, [requestLocation]);
+  }, [copy.map.analysisResult, requestLocation]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -234,7 +269,11 @@ export default function MapPage() {
   }, [coords.lat, coords.lng, copy.map.addressPending, locale, reloadKey]);
 
   const filtered = useMemo(() => {
-    return places.filter((place) => {
+    const candidates = focusPlace
+      ? [focusPlace, ...places.filter((place) => place.id !== focusPlace.id)]
+      : places;
+
+    return candidates.filter((place) => {
       const matchCat =
         categories.includes('all') || categories.includes(place.category as Category);
       const q = search.trim().toLowerCase();
@@ -245,7 +284,7 @@ export default function MapPage() {
         place.tags?.some((tag) => tag.toLowerCase().includes(q));
       return matchCat && matchSearch;
     });
-  }, [categories, places, search]);
+  }, [categories, focusPlace, places, search]);
 
   return (
     <AppLayout activeTab="map">

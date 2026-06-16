@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import {
   AlertCircle,
+  Compass,
   ExternalLink,
   MapPin,
   RotateCcw,
@@ -10,9 +11,16 @@ import {
   Sparkles,
   Youtube,
 } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import { extractVideoId, getThumbnailUrl, isValidYoutubeUrl } from '@/lib/youtube';
-import type { AnalysisResult } from '@/lib/analysis';
+import type { AnalysisPlace, AnalysisResult } from '@/lib/analysis';
+import {
+  createLocalRoutePlan,
+  CURRENT_ROUTE_STORAGE_KEY,
+  type RouteStop,
+} from '@/lib/routes';
+import { normalizeUiLocale } from '@/lib/ui-copy';
 
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -22,6 +30,9 @@ const EXAMPLE_URLS = [
 ];
 
 export default function AnalyzePage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = normalizeUiLocale(params.locale);
   const [url, setUrl] = useState('');
   const [status, setStatus] = useState<AnalysisStatus>('idle');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -61,6 +72,61 @@ export default function AnalyzePage() {
     setStatus('idle');
     setResult(null);
     setErrorMsg('');
+  }
+
+  function placesWithCoordinates(places: AnalysisPlace[]) {
+    return places.filter((place): place is AnalysisPlace & { lat: number; lng: number } => {
+      return Number.isFinite(place.lat) && Number.isFinite(place.lng);
+    });
+  }
+
+  function viewPlaceOnMap(place: AnalysisPlace) {
+    if (place.lat === null || place.lng === null) return;
+    const searchParams = new URLSearchParams({
+      lat: String(place.lat),
+      lng: String(place.lng),
+      q: place.name,
+      source: 'analyze',
+    });
+    router.push(`/${locale}/map?${searchParams.toString()}`);
+  }
+
+  function saveAnalysisRoute() {
+    if (!result) return;
+    const candidates = placesWithCoordinates(result.places);
+    if (candidates.length === 0) return;
+
+    const stops: RouteStop[] = candidates.map((place, index) => ({
+      id: `analysis-${result.video_id}-${index}`,
+      name: place.name,
+      category: 'SNS',
+      address: 'Detected from YouTube analysis',
+      crowdLevel: place.confidence >= 0.9 ? 'mid' : 'low',
+      lat: place.lat,
+      lng: place.lng,
+      stayMinutes: 45,
+      startTime: 'Flexible',
+      description: place.reason,
+      tags: ['sns', 'analysis'],
+    }));
+
+    const plan = createLocalRoutePlan({
+      id: `analysis-${result.video_id}`,
+      title: 'SNS Analysis Route',
+      theme: 'mood',
+      detail: 'analysis',
+      summary: `Route drafted from ${result.title}.`,
+      stops,
+    });
+
+    window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
+    router.push(`/${locale}/route`);
+  }
+
+  function viewFirstResultOnMap() {
+    if (!result) return;
+    const first = placesWithCoordinates(result.places)[0];
+    if (first) viewPlaceOnMap(first);
   }
 
   return (
@@ -224,14 +290,39 @@ export default function AnalyzePage() {
                       {Math.round(place.confidence * 100)}%
                     </p>
                     <p className="text-[10px] text-white/30">confidence</p>
+                    {place.lat !== null && place.lng !== null && (
+                      <button
+                        type="button"
+                        onClick={() => viewPlaceOnMap(place)}
+                        className="mt-2 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+                      >
+                        Map
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
 
-              <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20">
-                <MapPin size={14} />
-                View on Map
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={viewFirstResultOnMap}
+                  disabled={placesWithCoordinates(result.places).length === 0}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <MapPin size={14} />
+                  View on Map
+                </button>
+                <button
+                  type="button"
+                  onClick={saveAnalysisRoute}
+                  disabled={placesWithCoordinates(result.places).length === 0}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Compass size={14} />
+                  Build Route
+                </button>
+              </div>
             </div>
           )}
 

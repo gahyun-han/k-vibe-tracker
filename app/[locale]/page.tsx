@@ -7,10 +7,18 @@ import LoginModal from '@/components/auth/LoginModal';
 import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const FEATURES = [
-  { id: 'map', icon: Map },
-  { id: 'analyze', icon: Search },
-  { id: 'route', icon: Compass },
-  { id: 'radar', icon: Radar },
+  { id: 'map', icon: Map, path: '/map' },
+  { id: 'analyze', icon: Search, path: '/analyze' },
+  { id: 'route', icon: Compass, path: '/persona' },
+  { id: 'radar', icon: Radar, path: '/radar' },
+] as const;
+
+const TRENDING_DESTINATIONS = [
+  { lat: 37.5447, lng: 127.0564 },
+  { lat: 37.5701, lng: 126.9996 },
+  { lat: 37.5796, lng: 126.977 },
+  { lat: 37.5563, lng: 126.9236 },
+  { lat: 37.51, lng: 126.9955 },
 ] as const;
 
 export default function LandingPage() {
@@ -26,6 +34,17 @@ export default function LandingPage() {
 
   function handleLangChange(code: string) {
     router.push(`/${code}`);
+  }
+
+  function openTrending(index: number, label: string) {
+    const destination = TRENDING_DESTINATIONS[index] ?? TRENDING_DESTINATIONS[0];
+    const searchParams = new URLSearchParams({
+      lat: String(destination.lat),
+      lng: String(destination.lng),
+      q: label,
+      source: 'home',
+    });
+    router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
   return (
@@ -65,12 +84,17 @@ export default function LandingPage() {
         </p>
 
         <div className="grid grid-cols-2 gap-2">
-          {FEATURES.map(({ id, icon: Icon }) => (
-            <div key={id} className="rounded-xl border border-[#2E2E4A] bg-[#1E1E30] p-3">
+          {FEATURES.map(({ id, icon: Icon, path }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => router.push(`/${locale}${path}`)}
+              className="rounded-xl border border-[#2E2E4A] bg-[#1E1E30] p-3 text-left transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#24243A]"
+            >
               <Icon size={18} className="mb-2 text-[#FF3A5C]" />
               <p className="text-sm font-semibold text-white">{copy.nav[id]}</p>
               <p className="mt-1 text-xs leading-5 text-[#8B8BA8]">{copy.landing.features[id]}</p>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -90,13 +114,15 @@ export default function LandingPage() {
             {copy.landing.trendingLabel}
           </p>
           <div className="flex flex-wrap gap-2">
-            {copy.landing.trendingTags.map((tag) => (
-              <span
+            {copy.landing.trendingTags.map((tag, index) => (
+              <button
                 key={tag}
+                type="button"
+                onClick={() => openTrending(index, tag)}
                 className="rounded-full border border-[#FF3A5C]/30 bg-[#FF3A5C]/15 px-2.5 py-1 text-xs font-medium text-[#FF3A5C]"
               >
                 {tag}
-              </span>
+              </button>
             ))}
           </div>
         </div>

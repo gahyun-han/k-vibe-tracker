@@ -110,9 +110,9 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 ## Frontend Flow
 
-- `/[locale]`: landing and language entry point with local-first development status and quick access to the map.
+- `/[locale]`: actionable home entry with language selection, feature shortcuts, and trend chips that open focused map views.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
-- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
+- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
@@ -257,6 +257,8 @@ ai-worker/      # FastAPI prototype
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
+  - Analyze results now link detected places into the map and can create a local editable route from candidates.
+  - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
   - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
