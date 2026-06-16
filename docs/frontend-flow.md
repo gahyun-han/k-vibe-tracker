@@ -21,6 +21,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
 - Shared toast UI lives in `components/common/Toast.tsx` and is mounted by `app/[locale]/layout.tsx`, so home and app screens share one localized toast root. Toasts use localized dismiss labels, lucide status icons, and alert/status roles.
+- Locale segment error recovery lives in `app/[locale]/error.tsx`, using the shared localized common error copy plus a retry action so Home and app screens have a route-level fallback outside page-specific boundaries.
 - The home entry at `/[locale]` presents a root S1-style visible language grid, local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards with localized crowd badges, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet. Empty filtered feeds show localized recovery actions to reset to all places or continue exploration on the map.
 - Home feed stores successful `/api/places` responses in the shared 1-hour local API cache, can display cached feed cards if live refresh fails, and exposes a localized retry button in the error state.
 - If a local persona preference exists, the home feed applies its mapped category filter on load and shows a localized personalization chip for the selected route mood.
@@ -166,6 +167,7 @@ Every data-backed page should expose:
 - The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
 - The PWA install prompt is localized for `ko`, `en`, `ja`, and `zh`.
 - Shared toast notifications use lucide icons, accessible alert/status roles, localized dismiss labels, and an icon close control.
+- Locale route errors use the shared localized error title/body and retry action for `ko`, `en`, `ja`, and `zh`.
 - Route stop detail handoff labels, route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 
