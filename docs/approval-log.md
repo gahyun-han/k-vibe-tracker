@@ -14,6 +14,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI was not used for the 2026-06-17 Analyze loading-state pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze local-cache pass because it may consume paid quota and the change could be verified locally with unit tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze SNS platform-detection pass because it may consume paid quota and the change could be verified locally with URL/API/copy tests, type-check, build, and browser inspection.
+- Claude CLI was not used for the 2026-06-17 Home story-topic pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Persona 3-step flow pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Persona theme expansion pass because it may consume paid quota and the change could be verified locally with route/API/copy tests, type-check, build, and browser inspection.
 - Supabase project credentials and Google OAuth setup: required for real login/session/profile persistence and cross-device saved-place sync. Local guest flows, local saved places, and local route editing run without these keys.

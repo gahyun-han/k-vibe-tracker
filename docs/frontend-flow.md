@@ -20,7 +20,7 @@ This project is in local-first development mode. Pages should remain usable with
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
-- The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
+- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
 - Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions and a user-clicked 100m arrival check when stop coordinates are available.

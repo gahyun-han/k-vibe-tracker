@@ -2,7 +2,24 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { AlertCircle, Bot, Compass, Heart, Languages, Map, MapPin, Radar, RefreshCw, Search, Sparkles } from 'lucide-react';
+import {
+  AlertCircle,
+  Bot,
+  Camera,
+  Compass,
+  Heart,
+  Languages,
+  Map,
+  MapPin,
+  Music2,
+  Radar,
+  RefreshCw,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Trees,
+  Utensils,
+} from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { persistPreferredLocale } from '@/lib/locale-preference';
@@ -39,6 +56,7 @@ const TRENDING_DESTINATIONS = [
 
 type ApiSource = 'mock' | 'tourapi' | 'cache';
 type FeedCategory = 'all' | 'culture' | 'food' | 'fun' | 'photo';
+type StoryTopic = 'kpop' | 'streetFood' | 'photoSpots' | 'nature' | 'shopping';
 
 interface PlacesApiResponse {
   places: NormalizedPlace[];
@@ -48,6 +66,13 @@ interface PlacesApiResponse {
 }
 
 const FEED_CATEGORIES: FeedCategory[] = ['all', 'culture', 'food', 'fun', 'photo'];
+const STORY_TOPICS: Array<{ id: StoryTopic; icon: typeof Music2; category: FeedCategory }> = [
+  { id: 'kpop', icon: Music2, category: 'fun' },
+  { id: 'streetFood', icon: Utensils, category: 'food' },
+  { id: 'photoSpots', icon: Camera, category: 'photo' },
+  { id: 'nature', icon: Trees, category: 'culture' },
+  { id: 'shopping', icon: ShoppingBag, category: 'fun' },
+];
 
 function toFeedPlace(place: NormalizedPlace, addressPending: string): SaveablePlace & { distanceM?: number } {
   return {
@@ -82,6 +107,7 @@ export default function LandingPage() {
   const [feedError, setFeedError] = useState('');
   const [feedReloadKey, setFeedReloadKey] = useState(0);
   const [feedCategory, setFeedCategory] = useState<FeedCategory>('all');
+  const [selectedStory, setSelectedStory] = useState<StoryTopic | null>(null);
   const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
   const [savedHydrated, setSavedHydrated] = useState(false);
 
@@ -237,12 +263,51 @@ export default function LandingPage() {
           </div>
 
           <div className="-mx-5 overflow-x-auto px-5">
+            <div className="flex gap-3">
+              {STORY_TOPICS.map(({ id, icon: Icon, category }) => {
+                const active = selectedStory === id;
+
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedStory(id);
+                      setFeedCategory(category);
+                    }}
+                    className="flex w-[72px] shrink-0 flex-col items-center gap-1.5 text-center"
+                    aria-label={copy.homeFeed.stories[id]}
+                  >
+                    <span
+                      className={`flex h-14 w-14 items-center justify-center rounded-full border p-0.5 transition-colors ${
+                        active
+                          ? 'border-[#FF3A5C] bg-[#FF3A5C]/15 text-[#FF8BA0]'
+                          : 'border-white/15 bg-white/5 text-white/65 hover:border-[#FF3A5C]/50 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex h-full w-full items-center justify-center rounded-full bg-[#0D0D1A]">
+                        <Icon size={21} />
+                      </span>
+                    </span>
+                    <span className="line-clamp-2 min-h-8 text-[11px] font-semibold leading-4 text-white/65">
+                      {copy.homeFeed.stories[id]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="-mx-5 overflow-x-auto px-5">
             <div className="flex gap-2">
               {FEED_CATEGORIES.map((category) => (
                 <button
                   key={category}
                   type="button"
-                  onClick={() => setFeedCategory(category)}
+                  onClick={() => {
+                    setSelectedStory(null);
+                    setFeedCategory(category);
+                  }}
                   className={`whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                     feedCategory === category
                       ? 'bg-[#FF3A5C] text-white'

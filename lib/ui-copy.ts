@@ -114,6 +114,13 @@ const UI_COPY = {
     homeFeed: {
       eyebrow: 'Live Seoul feed',
       title: 'Trending K-spots nearby',
+      stories: {
+        kpop: 'K-Pop',
+        streetFood: 'Street Food',
+        photoSpots: 'Photo Spots',
+        nature: 'Nature',
+        shopping: 'Shopping',
+      },
       refresh: 'Refresh feed',
       openMap: 'Open in Map',
       empty: 'No feed places found for this filter.',
@@ -540,6 +547,13 @@ const UI_COPY = {
     homeFeed: {
       eyebrow: '서울 실시간 피드',
       title: '지금 뜨는 K-스팟',
+      stories: {
+        kpop: 'K-Pop',
+        streetFood: '길거리 음식',
+        photoSpots: '포토 스팟',
+        nature: '자연',
+        shopping: '쇼핑',
+      },
       refresh: '피드 새로고침',
       openMap: '지도에서 보기',
       empty: '이 필터에 맞는 피드 장소가 없어요.',
@@ -966,6 +980,13 @@ const UI_COPY = {
     homeFeed: {
       eyebrow: 'ソウルライブフィード',
       title: 'いま注目のKスポット',
+      stories: {
+        kpop: 'K-Pop',
+        streetFood: 'ストリートフード',
+        photoSpots: 'フォトスポット',
+        nature: '自然',
+        shopping: 'ショッピング',
+      },
       refresh: 'フィード更新',
       openMap: '地図で開く',
       empty: 'このフィルターに合うスポットはありません。',
@@ -1392,6 +1413,13 @@ const UI_COPY = {
     homeFeed: {
       eyebrow: '首尔实时动态',
       title: '正在流行的K-spot',
+      stories: {
+        kpop: 'K-Pop',
+        streetFood: '街头美食',
+        photoSpots: '拍照点',
+        nature: '自然',
+        shopping: '购物',
+      },
       refresh: '刷新动态',
       openMap: '在地图中打开',
       empty: '此筛选下没有找到地点。',
