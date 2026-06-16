@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Home PWA/offline prompt coverage pass because it may consume paid quota and the local UI-only change could be verified with type-check, build, and static home-page checks.
 - Claude CLI was not used for the 2026-06-17 localized route error recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Radar refresh-failure toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static radar-page checks.
 - Claude CLI was not used for the 2026-06-17 Map refresh-failure toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static map-page checks.
@@ -91,6 +92,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost Place detail toast feedback that reuses existing local save/share/route actions in the shared in-browser toast provider, with localized labels and no new external providers, API calls, maps, AI, GPS, or backend writes beyond existing localStorage route/saved-place state.
 - No-cost Route toast feedback that reuses existing local route action messages in the shared in-browser toast provider, with localized dismiss labels and no external providers, API calls, maps, AI, GPS, or backend writes beyond the existing localStorage route state.
 - No-cost Home language grid that displays existing supported locale names and only persists the selected locale in localStorage/cookie, without external providers, APIs, maps, AI, or backend writes.
+- No-cost Home PWA/offline prompt coverage that mounts existing local browser event listeners and localized copy on the home page without external providers, APIs, maps, AI, backend writes, GPS, or storage services beyond existing localStorage dismissal state.
 - No-cost Tutorial sheet viewport fit that uses CSS-only max-height and scrolling for existing localized guide copy without external providers, API calls, storage, or AI.
 - No-cost Tutorial and language-switcher accessibility labels/state that update local UI semantics only and do not call external providers, APIs, storage services, maps, or AI.
 - No-cost localized route error recovery that renders shared local copy and retries the route segment without calling external providers, APIs, maps, AI, backend writes, GPS, or monitoring services.

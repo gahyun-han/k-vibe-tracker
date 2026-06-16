@@ -21,6 +21,8 @@ import {
   Utensils,
 } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
+import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
+import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { useToast } from '@/components/common/Toast';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
@@ -272,6 +274,11 @@ export default function LandingPage() {
 
   return (
     <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] px-5 pb-28 pt-6">
+      <div className="-mx-5">
+        <NetworkStatusBanner locale={locale} />
+        <PwaInstallPrompt locale={locale} />
+      </div>
+
       <div className="w-full space-y-2" role="group" aria-label={copy.landing.languageTitle}>
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#8B8BA8]">
           <Languages size={14} className="text-[#FF3A5C]" />
