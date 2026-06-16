@@ -91,7 +91,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/saved-places.ts`
 - Local persistence key: `k-vibe-saved-places`
 - Saved places remain available in guest mode and open focused map detail views with `source=saved`, `detail=1`, category/address/tags, crowd level, and TourAPI content identifiers when available.
-- The same Profile page also reads `k-vibe-current-route` and `k-vibe-route-progress` to show the local My Routes card with progress percentage, completed count, next stop, a whole-card route-detail tap target, Continue/Edit actions, and a create-first-route empty-state CTA. Saved-place grids default to four visible tiles and reveal the rest through localized See all/Show less controls.
+- The same Profile page also reads `k-vibe-current-route` and `k-vibe-route-progress` to show the local My Routes card with progress percentage, completed count, next stop, a whole-card route-detail tap target, Continue/Edit actions, and a create-first-route empty-state CTA. Saved-place grids default to four visible tiles and reveal the rest through localized See all/Show less controls, while the no-saved-places state offers a localized map CTA.
 - Supabase cross-device sync is still approval/credential-gated; the local contract is ready to sync later.
 
 ### Analysis

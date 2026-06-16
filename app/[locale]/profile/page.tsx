@@ -265,6 +265,14 @@ export default function ProfilePage() {
             <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
               <p className="text-sm font-semibold text-white/75">{copy.profile.noSavedPlaces}</p>
               <p className="mt-1 text-xs leading-5 text-white/40">{copy.profile.noSavedPlacesHint}</p>
+              <button
+                type="button"
+                onClick={() => router.push(`/${locale}/map`)}
+                className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+              >
+                <Map size={15} />
+                {copy.profile.openMap}
+              </button>
             </div>
           )}
         </section>
