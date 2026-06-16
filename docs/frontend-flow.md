@@ -87,6 +87,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/analysis.ts`, `lib/youtube.ts`
 - Development fallback: deterministic mock spot extraction localized for `ko`, `en`, `ja`, and `zh`.
 - Analyze input detects YouTube and Instagram URLs to match the root S5 platform direction. YouTube remains the only analyzable local/mock path; Instagram links show a localized approval-gated notice and do not call a provider.
+- Analyze example cards now match the root S5 flow: selecting a YouTube example fills the input and starts the local/mock analysis immediately, while selecting the Instagram example fills the input and shows the approval-gated pending state without calling a provider.
 - The Analyze page sends the active URL locale to `/api/analyze`; local mock titles, place names, and reasons follow the same locale, and enabled AI worker requests receive the locale value for future provider-side localization.
 - Analyze stores successful same-video, same-locale results in the shared 1-hour local API cache. Cache hits skip the network call and show a localized previous-result source label.
 - Analyze loading uses a localized 4-step progress panel with an expected wait hint and cold-start note, matching the root S6 loading-state direction without calling any paid provider.

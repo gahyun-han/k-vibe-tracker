@@ -62,14 +62,18 @@ export default function AnalyzePage() {
     return () => window.clearInterval(timer);
   }, [copy.loadingSteps.length, status]);
 
-  async function analyze() {
-    if (!urlValid || !videoId) return;
+  async function analyze(targetUrl = url) {
+    const nextUrl = targetUrl.trim();
+    const nextVideoId = extractVideoId(nextUrl);
+    if (targetUrl !== url) setUrl(nextUrl);
+    if (detectSnsPlatform(nextUrl) !== 'youtube' || !nextVideoId) return;
+
     setStatus('loading');
     setResult(null);
     setErrorMsg('');
     setLoadingStepIndex(0);
 
-    const localCacheKey = buildAnalysisLocalCacheKey({ locale, videoId });
+    const localCacheKey = buildAnalysisLocalCacheKey({ locale, videoId: nextVideoId });
     const cachedResult = readLocalApiCache<AnalysisResult>(window.localStorage, localCacheKey);
     if (cachedResult) {
       setResult({ ...cachedResult, cached: true });
@@ -82,7 +86,7 @@ export default function AnalyzePage() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ youtube_url: url, locale }),
+        body: JSON.stringify({ youtube_url: nextUrl, locale }),
       });
       const data = (await res.json()) as AnalysisResult & { error?: string };
 
@@ -110,6 +114,10 @@ export default function AnalyzePage() {
     setResult(null);
     setErrorMsg('');
     setLoadingStepIndex(0);
+
+    if (detectSnsPlatform(exampleUrl) === 'youtube' && extractVideoId(exampleUrl)) {
+      void analyze(exampleUrl);
+    }
   }
 
   function placesWithCoordinates(places: AnalysisPlace[]) {
@@ -248,7 +256,7 @@ export default function AnalyzePage() {
             )}
 
             <button
-              onClick={analyze}
+              onClick={() => void analyze()}
               disabled={!urlValid || status === 'loading'}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"
             >
@@ -267,16 +275,33 @@ export default function AnalyzePage() {
 
             <div>
               <p className="mb-1.5 text-xs text-white/30">{copy.examplesLabel}</p>
-              <div className="space-y-1">
-                {EXAMPLE_URLS.map((exampleUrl) => (
-                  <button
-                    key={exampleUrl}
-                    onClick={() => setExample(exampleUrl)}
-                    className="w-full truncate rounded-lg px-2 py-1 text-left text-xs text-white/40 transition-colors hover:bg-white/5 hover:text-white/70"
-                  >
-                    {exampleUrl}
-                  </button>
-                ))}
+              <div className="space-y-2">
+                {EXAMPLE_URLS.map((exampleUrl) => {
+                  const platform = detectSnsPlatform(exampleUrl);
+                  const ExampleIcon = platform === 'instagram' ? Instagram : Youtube;
+                  const platformLabel = platform === 'instagram' ? copy.instagramPending : copy.youtubeSupported;
+
+                  return (
+                    <button
+                      key={exampleUrl}
+                      type="button"
+                      onClick={() => setExample(exampleUrl)}
+                      disabled={status === 'loading'}
+                      aria-label={`${copy.examplesLabel}: ${exampleUrl}`}
+                      className="flex w-full items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left transition-colors hover:border-[#FF3A5C]/30 hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                        platform === 'instagram' ? 'bg-pink-400/10 text-pink-200' : 'bg-red-400/10 text-red-200'
+                      }`}>
+                        <ExampleIcon size={15} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-xs font-semibold text-white/70">{platformLabel}</span>
+                        <span className="block truncate font-mono text-[11px] text-white/35">{exampleUrl}</span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -334,7 +359,7 @@ export default function AnalyzePage() {
                 </div>
               </div>
               <button
-                onClick={analyze}
+                onClick={() => void analyze()}
                 className="mt-3 flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300"
               >
                 <RotateCcw size={12} />
