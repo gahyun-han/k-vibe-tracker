@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Compass, HelpCircle, Map, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
+import { Compass, HelpCircle, Map, Mic2, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
-const STEP_ICONS = [Map, Search, Compass, Radar, User] as const;
+const STEP_ICONS = [Map, Search, Compass, Mic2, Radar, User] as const;
 
 export function TutorialButton() {
   const params = useParams();

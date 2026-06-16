@@ -12,7 +12,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Live facility data sources: required for production restroom, pharmacy, convenience store, and pop-up data. `/api/facilities` uses local mock data until source terms, quotas, and any costs are approved.
 - YouTube Data API key: required for live K-content video metadata.
 - AI worker analysis: disabled by default. `/api/analyze` only calls `AI_WORKER_URL` when `ENABLE_AI_WORKER_ANALYSIS=true`, because the worker may consume OpenAI or hosting quota.
-- OpenAI API key: required for AI-generated route or recommendation features. `/api/routes/generate` uses local deterministic route plans until this is approved.
+- OpenAI API key: required for AI-generated route, recommendation, or provider TTS features. `/api/routes/generate` uses local deterministic route plans, and `/[locale]/docent` uses no-cost browser speech synthesis until this is approved.
 - Kakao Maps JavaScript key: provided by the user for local development and stored only in `.env.local`, which is gitignored. Current verification shows Kakao returns `OPEN_MAP_AND_LOCAL service disabled`, so Kakao Developers needs [Kakao Map] usage enabled for the app before the real SDK can render. The app still has a no-cost fallback and only attempts Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured.
 - Upstash Redis credentials: required for external Redis caching.
 - Push access to `gahyun-han/k-vibe-tracker`: needs repository permission from the owner if that upstream should receive changes.

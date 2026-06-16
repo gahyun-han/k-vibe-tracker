@@ -19,11 +19,12 @@ This log tracks concrete product and implementation improvements made while alig
 - Added Kakao Maps JavaScript SDK scaffolding behind `NEXT_PUBLIC_KAKAO_MAP_KEY`. The app now uses the real map renderer only when a client key exists and otherwise keeps the no-cost local preview map.
 - Connected the home trend chips to focused map views so the first screen behaves more like the wireframed Home Feed instead of a static landing page.
 - Connected Analyze results to downstream workflows: individual detected places can open the map, and the full candidate set can draft an editable local route.
+- Added a no-cost local AI Docent page. Route stops now open captions and browser `speechSynthesis` playback without calling a paid TTS provider.
 
 ## Still Gated Or Larger Scope
 
-- Kakao Maps JavaScript SDK requires a browser key from Kakao Developers before the real map renders in local or production environments.
+- Kakao Maps JavaScript SDK has a local browser key configured, but Kakao Developers still needs the Map/Local service enabled for the app before the real SDK can render.
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
-- AI analysis, AI route generation, and AI docent features remain local/mock-first until model/provider keys and any cost approval are explicit.
-- Home Feed and full AI Docent screens are present in the root wireframes but are not yet implemented as first-class pages.
+- AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.
+- A richer Home Feed and full TourAPI detail pages are still larger-scope follow-ups from the root wireframes.

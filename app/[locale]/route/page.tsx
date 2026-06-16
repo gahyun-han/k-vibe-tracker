@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Clock, GripVertical, MapPin, Navigation, Plus, Share2, X } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { Clock, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
+import { normalizeUiLocale } from '@/lib/ui-copy';
 import {
   calculateWalkingMinutes,
   createLocalRoutePlan,
@@ -37,6 +39,9 @@ const EXTRA_STOP: RouteStop = {
 };
 
 export default function RoutePage() {
+  const router = useRouter();
+  const params = useParams();
+  const locale = normalizeUiLocale(params.locale);
   const [planTitle, setPlanTitle] = useState('Cafe day Seoul Route');
   const [planMeta, setPlanMeta] = useState<RoutePlanMeta>({
     id: 'mood-cafe',
@@ -173,8 +178,28 @@ export default function RoutePage() {
     }
   }
 
+  function openDocent(spot: RouteStop) {
+    const query = new URLSearchParams({
+      name: spot.name,
+      category: spot.category,
+      address: spot.address,
+      description: spot.description,
+      stayMinutes: String(spot.stayMinutes),
+      startTime: spot.startTime,
+      tags: spot.tags.join(','),
+    });
+    query.set('lat', String(spot.lat));
+    query.set('lng', String(spot.lng));
+    router.push(`/${locale}/docent?${query.toString()}`);
+  }
+
   function startGuidance() {
-    setStatus('Guidance preview is local-only for now');
+    if (spots.length === 0) {
+      setStatus('Add a stop before starting guidance');
+      return;
+    }
+
+    openDocent(spots[0]);
   }
 
   return (
@@ -234,6 +259,16 @@ export default function RoutePage() {
               <div className="flex shrink-0 items-center gap-1">
                 <GripVertical size={16} className="text-white/20" />
                 <button
+                  type="button"
+                  onClick={() => openDocent(spot)}
+                  aria-label={`Open docent for ${spot.name}`}
+                  title="Open docent"
+                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
+                >
+                  <Mic2 size={14} />
+                </button>
+                <button
+                  type="button"
                   onClick={() => removeSpot(spot.id)}
                   aria-label={`Remove ${spot.name}`}
                   className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-white/70"

@@ -115,6 +115,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
+- `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode account state when Supabase is not configured.
 
@@ -213,6 +214,7 @@ app/
     analyze/    # SNS analyzer UI
     persona/    # persona route generator UI
     route/      # route timeline UI
+    docent/     # local speech-synthesis docent UI
     radar/      # facility radar UI
     profile/    # auth/profile UI
   api/
@@ -259,6 +261,7 @@ ai-worker/      # FastAPI prototype
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
+  - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
   - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.

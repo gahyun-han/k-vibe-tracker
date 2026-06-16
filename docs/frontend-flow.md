@@ -19,6 +19,7 @@ This project is in local-first development mode. Pages should remain usable with
 - The home entry at `/[locale]` presents local-first status, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
+- Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions.
 
 ## Account Flow
 
@@ -61,12 +62,14 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Generator UI: `app/[locale]/persona/page.tsx`
 - Editor UI: `app/[locale]/route/page.tsx`
+- Docent UI: `app/[locale]/docent/page.tsx`
 - API: `app/api/routes/generate/route.ts`
 - Helpers: `lib/routes.ts`
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Local persistence key: `k-vibe-current-route`
 - Route editor mutations are written back to the same local persistence key.
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
+- Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. It does not call OpenAI TTS or any paid API.
 
 ## Expected Page States
 
