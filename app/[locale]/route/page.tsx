@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
@@ -156,6 +156,20 @@ export default function RoutePage() {
     setDragOverId(null);
   }, []);
 
+  function moveSpot(id: string, direction: -1 | 1) {
+    setSpots((prev) => {
+      const fromIdx = prev.findIndex((spot) => spot.id === id);
+      const toIdx = fromIdx + direction;
+      if (fromIdx === -1 || toIdx < 0 || toIdx >= prev.length) return prev;
+
+      const next = [...prev];
+      const [item] = next.splice(fromIdx, 1);
+      next.splice(toIdx, 0, item);
+      return next;
+    });
+    setStatus(copy.orderUpdated);
+  }
+
   function removeSpot(id: string) {
     setSpots((prev) => prev.filter((spot) => spot.id !== id));
     setStatus(copy.stopRemoved);
@@ -226,7 +240,7 @@ export default function RoutePage() {
 
   return (
     <AppLayout activeTab="route" title={copy.title}>
-      <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-24">
+      <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-24 lg:pb-6">
         <div className="px-4 pb-3 pt-4">
           <p className="text-xs font-semibold text-[#FF3A5C]">{copy.editableEyebrow}</p>
           <h2 className="mt-0.5 text-lg font-bold text-white">{planTitle}</h2>
@@ -254,6 +268,35 @@ export default function RoutePage() {
           openStopMapLabel={copy.openStopMap}
           onOpenStopMap={openStopMap}
         />
+
+        {spots.length > 0 && (
+          <div className="sticky bottom-20 z-20 mb-4 px-4 lg:bottom-4">
+            <div className="flex gap-2 rounded-2xl border border-white/10 bg-[#0D0D1A]/95 p-2 shadow-2xl shadow-black/30 backdrop-blur">
+              <button
+                onClick={openDirections}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+              >
+                <Navigation size={16} />
+                {copy.openDirections}
+              </button>
+              <button
+                onClick={startGuidance}
+                title={copy.startGuidance}
+                aria-label={copy.startGuidance}
+                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+              >
+                <Mic2 size={16} />
+              </button>
+              <button
+                onClick={shareRoute}
+                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+              >
+                <Share2 size={16} />
+                {copy.share}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-2 px-4">
           {spots.map((spot, idx) => (
@@ -287,6 +330,26 @@ export default function RoutePage() {
               </div>
 
               <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => moveSpot(spot.id, -1)}
+                  disabled={idx === 0}
+                  aria-label={`Move ${spot.name} up`}
+                  title={copy.orderUpdated}
+                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
+                >
+                  <ChevronUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSpot(spot.id, 1)}
+                  disabled={idx === spots.length - 1}
+                  aria-label={`Move ${spot.name} down`}
+                  title={copy.orderUpdated}
+                  className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
+                >
+                  <ChevronDown size={14} />
+                </button>
                 <GripVertical size={16} className="text-white/20" />
                 <button
                   type="button"
@@ -328,35 +391,6 @@ export default function RoutePage() {
         </div>
 
         {status && <p className="mt-4 px-4 text-center text-xs text-white/35">{status}</p>}
-
-        {spots.length > 0 && (
-          <div className="fixed bottom-20 left-0 right-0 mx-auto max-w-md px-4">
-            <div className="flex gap-2">
-              <button
-                onClick={openDirections}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
-              >
-                <Navigation size={16} />
-                {copy.openDirections}
-              </button>
-              <button
-                onClick={startGuidance}
-                title={copy.startGuidance}
-                aria-label={copy.startGuidance}
-                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
-              >
-                <Mic2 size={16} />
-              </button>
-              <button
-                onClick={shareRoute}
-                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
-              >
-                <Share2 size={16} />
-                {copy.share}
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </AppLayout>
   );

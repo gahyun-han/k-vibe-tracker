@@ -26,6 +26,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added a responsive app shell that keeps the bottom tab bar on mobile and switches to a left navigation rail on desktop, matching the root UI design direction without changing page-level workflow logic.
 - Made the home language buttons persist the selected locale to `localStorage` and the `NEXT_LOCALE` cookie, matching the shared language switcher behavior.
 - Connected the Radar popup facility path to TourAPI `searchFestival2` when `TOUR_API_KEY` is configured. Nearby event/festival results are normalized as `popup` facilities, locale-aware cache keys now separate Radar responses, and the endpoint still falls back to local mock facilities when TourAPI is unavailable or returns no nearby events.
+- Improved the Route editor for the responsive app shell by replacing the viewport-fixed CTA bar with an in-content sticky action bar and adding icon move controls so stops can be reordered without drag-and-drop.
 
 ## 2026-06-16
 

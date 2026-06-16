@@ -111,7 +111,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Local persistence key: `k-vibe-current-route`
 - Route editor mutations are written back to the same local persistence key.
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
-- Route editor shows a no-cost local mini map preview. Stop pins and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
+- Route editor shows a no-cost local mini map preview. Stops can be reordered through drag-and-drop or icon move controls, and the sticky action bar stays inside the responsive app shell on mobile and desktop. Stop pins and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
 - Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. It does not call OpenAI TTS or any paid API.
 - Docent arrival checking reads `lat` and `lng` from the query string, asks for browser geolocation only after a user tap, computes distance locally with Haversine, and treats 100m as the ready radius. Automatic polling, push prompts, and provider TTS remain approval-gated.
 
