@@ -41,15 +41,19 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
       }
     >
       <ToastProvider>
-        <div className="min-h-screen bg-[#0D0D1A] flex flex-col max-w-md mx-auto relative">
-          <TopBar title={title} showBack={showBack} />
-          <main className="flex-1 overflow-y-auto pt-14">
-            <NetworkStatusBanner locale={locale} />
-            <PwaInstallPrompt locale={locale} />
-            {children}
-          </main>
-          <TutorialButton />
-          <BottomNav active={activeTab} />
+        <div className="min-h-screen bg-[#080812] lg:px-4">
+          <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] shadow-2xl shadow-black/30 lg:h-screen lg:max-w-6xl lg:flex-row lg:overflow-hidden lg:border-x lg:border-white/10">
+            <BottomNav active={activeTab} />
+            <div className="flex min-h-screen min-w-0 flex-1 flex-col lg:min-h-0">
+              <TopBar title={title} showBack={showBack} />
+              <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+                <NetworkStatusBanner locale={locale} />
+                <PwaInstallPrompt locale={locale} />
+                {children}
+              </main>
+            </div>
+            <TutorialButton />
+          </div>
         </div>
       </ToastProvider>
     </ErrorBoundary>

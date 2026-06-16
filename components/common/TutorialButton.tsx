@@ -43,7 +43,7 @@ export function TutorialButton() {
         onClick={() => setOpen(true)}
         title={copy.tutorial.buttonLabel}
         aria-label={copy.tutorial.buttonLabel}
-        className="absolute bottom-20 right-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e]"
+        className="absolute bottom-20 right-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e] lg:bottom-6 lg:right-6"
       >
         <HelpCircle size={22} />
       </button>

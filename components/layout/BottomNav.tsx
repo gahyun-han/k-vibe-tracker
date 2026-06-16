@@ -21,30 +21,76 @@ export default function BottomNav({ active }: { active: TabId }) {
   const copy = getUiCopy(locale);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex h-16 max-w-md items-center border-t border-[#2E2E4A] bg-[#1A1A2E]/95 backdrop-blur-sm">
-      {TABS.map((tab) => {
-        const isActive = active === tab.id;
-        const Icon = tab.icon;
-        const label = copy.nav[tab.id];
-        return (
-          <button
-            key={tab.id}
-            onClick={() => router.push(`/${locale}${tab.path}`)}
-            className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
-              isActive ? 'text-[#FF3A5C]' : 'text-[#8B8BA8] hover:text-white'
-            }`}
-            aria-label={label}
-          >
-            <Icon size={20} />
-            <span className={`text-[9px] font-semibold tracking-wide ${isActive ? 'text-[#FF3A5C]' : ''}`}>
-              {label}
-            </span>
-            {isActive && (
-              <span className="absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-b-full bg-[#FF3A5C]" />
-            )}
-          </button>
-        );
-      })}
-    </nav>
+    <>
+      <nav
+        aria-label={copy.common.appName}
+        className="hidden h-screen w-60 shrink-0 flex-col border-r border-[#2E2E4A] bg-[#10101F]/95 lg:flex"
+      >
+        <div className="border-b border-white/10 px-5 py-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF3A5C]">K-Vibe</p>
+          <p className="mt-1 text-lg font-black text-white">Tracker</p>
+        </div>
+        <div className="flex flex-1 flex-col gap-1 px-3 py-4">
+          {TABS.map((tab) => {
+            const isActive = active === tab.id;
+            const Icon = tab.icon;
+            const label = copy.nav[tab.id];
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => router.push(`/${locale}${tab.path}`)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors ${
+                  isActive
+                    ? 'bg-[#FF3A5C]/15 text-white'
+                    : 'text-[#8B8BA8] hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                    isActive ? 'bg-[#FF3A5C] text-white' : 'bg-white/10 text-white/55 group-hover:text-white'
+                  }`}
+                >
+                  <Icon size={18} />
+                </span>
+                <span className="text-sm font-semibold">{label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <nav
+        aria-label={copy.common.appName}
+        className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex h-16 max-w-md items-center border-t border-[#2E2E4A] bg-[#1A1A2E]/95 backdrop-blur-sm lg:hidden"
+      >
+        {TABS.map((tab) => {
+          const isActive = active === tab.id;
+          const Icon = tab.icon;
+          const label = copy.nav[tab.id];
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => router.push(`/${locale}${tab.path}`)}
+              className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
+                isActive ? 'text-[#FF3A5C]' : 'text-[#8B8BA8] hover:text-white'
+              }`}
+              aria-label={label}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon size={20} />
+              <span className={`text-[9px] font-semibold tracking-wide ${isActive ? 'text-[#FF3A5C]' : ''}`}>
+                {label}
+              </span>
+              {isActive && (
+                <span className="absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-b-full bg-[#FF3A5C]" />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+    </>
   );
 }

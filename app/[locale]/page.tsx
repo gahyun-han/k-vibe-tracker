@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Bot, Compass, Heart, Languages, Map, MapPin, Radar, RefreshCw, Search, Sparkles } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
+import { persistPreferredLocale } from '@/lib/locale-preference';
 import {
   hasSavedPlace,
   parseSavedPlaces,
@@ -16,7 +17,7 @@ import {
   type SavedPlace,
 } from '@/lib/saved-places';
 import type { NormalizedPlace } from '@/lib/tourapi';
-import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const FEED_RADIUS_M = 2_000;
@@ -141,7 +142,10 @@ export default function LandingPage() {
     router.push(`/${locale}/map`);
   }
 
-  function handleLangChange(code: string) {
+  function handleLangChange(code: UiLocale) {
+    persistPreferredLocale(code, window.localStorage, (value) => {
+      document.cookie = value;
+    });
     router.push(`/${code}`);
   }
 

@@ -37,7 +37,7 @@ export default function TopBar({ title, showBack }: TopBarProps) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-30 mx-auto flex h-14 max-w-md items-center gap-2 border-b border-[#2E2E4A] bg-[#1A1A2E]/95 px-4 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 flex h-14 w-full shrink-0 items-center gap-2 border-b border-[#2E2E4A] bg-[#1A1A2E]/95 px-4 backdrop-blur-sm">
         {showBack ? (
           <button
             onClick={() => router.back()}

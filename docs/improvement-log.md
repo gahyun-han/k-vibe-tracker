@@ -23,6 +23,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Clarified the Chinese language selector label as Simplified Chinese and added test coverage for non-empty, non-placeholder language names.
 - Added a localized no-cost PWA install prompt that listens for the browser `beforeinstallprompt` event, lets users add K-Vibe to the home screen, and remembers dismissals locally.
 - Replaced Radar text abbreviations such as `WC`, `Rx`, and `Pop` with shared lucide facility icons across filters, map pins, and facility cards, and normalized the Radar status separator for more reliable rendering.
+- Added a responsive app shell that keeps the bottom tab bar on mobile and switches to a left navigation rail on desktop, matching the root UI design direction without changing page-level workflow logic.
+- Made the home language buttons persist the selected locale to `localStorage` and the `NEXT_LOCALE` cookie, matching the shared language switcher behavior.
 
 ## 2026-06-16
 

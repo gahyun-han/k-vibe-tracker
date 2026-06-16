@@ -13,9 +13,9 @@ This project is in local-first development mode. Pages should remain usable with
 
 ## Navigation
 
-- Bottom navigation lives in `components/layout/BottomNav.tsx`.
+- Responsive app navigation lives in `components/layout/BottomNav.tsx`: it renders the bottom tab bar on mobile and a left navigation rail on desktop-width screens.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
-- `components/common/LanguageSwitcher.tsx` persists the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity.
+- `components/common/LanguageSwitcher.tsx` and the home language buttons persist the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
