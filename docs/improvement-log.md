@@ -16,6 +16,9 @@ This log tracks concrete product and implementation improvements made while alig
 - Added a shared 1-hour local API response cache for Map places and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.
 - Localized Map and Radar data-source labels for TourAPI, mock, and cache states.
 - Added a localized offline-mode banner in the shared app layout. It listens to browser `online`/`offline` events and tells users that cached places, facilities, and app screens are being shown when available.
+- Persisted the active locale in `localStorage` and the `NEXT_LOCALE` cookie from the language switcher so language choice survives app reloads and future server-side locale reads.
+- Replaced corrupted toast symbols with lucide icons, accessible alert/status roles, and an icon close button.
+- Re-verified Kakao Maps after localhost domain registration in Chrome and fixed the Map screen height so the live Kakao renderer receives a nonzero viewport-sized container.
 
 ## 2026-06-16
 
@@ -48,7 +51,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## Still Gated Or Larger Scope
 
-- Kakao Maps JavaScript SDK is configured and verified for `http://localhost:3000`; `127.0.0.1` still returns a Kakao domain mismatch unless that host is registered too.
+- Kakao Maps JavaScript SDK is configured and verified for `http://localhost:3000`; `127.0.0.1` must still be registered separately in Kakao Developers if that host should load the SDK.
 - Kakao Mobility routing remains gated; the current route screen uses user-clicked Google Maps URLs for no-key walking directions.
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.

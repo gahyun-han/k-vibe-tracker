@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
+import { AlertTriangle, CheckCircle2, Info, X, XCircle, type LucideIcon } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -17,18 +18,18 @@ interface ToastContextValue {
 
 const ToastContext = createContext<ToastContextValue>({ toast: () => {} });
 
-const ICONS: Record<ToastType, string> = {
-  success: '✅',
-  error:   '❌',
-  warning: '⚠️',
-  info:    '☕',
+const ICONS: Record<ToastType, LucideIcon> = {
+  success: CheckCircle2,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info,
 };
 
-const BG: Record<ToastType, string> = {
-  success: 'bg-[#065F46]',
-  error:   'bg-[#991B1B]',
-  warning: 'bg-[#92400E]',
-  info:    'bg-[#1E3A5F]',
+const TOAST_STYLE: Record<ToastType, string> = {
+  success: 'border-emerald-300/20 bg-emerald-900/95 text-emerald-50',
+  error: 'border-red-300/20 bg-red-950/95 text-red-50',
+  warning: 'border-amber-300/20 bg-amber-950/95 text-amber-50',
+  info: 'border-sky-300/20 bg-sky-950/95 text-sky-50',
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -39,7 +40,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setToasts((prev) => [...prev, { id, type, message, duration }]);
 
     if (type !== 'error') {
-      setTimeout(() => {
+      window.setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, duration);
     }
@@ -52,18 +53,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      {/* Toast 컨테이너 */}
-      <div className="fixed top-16 left-0 right-0 max-w-md mx-auto px-4 z-50 space-y-2 pointer-events-none">
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={`${BG[t.type]} rounded-xl px-4 py-3 flex items-center gap-3 shadow-xl pointer-events-auto animate-slide-up`}
-          >
-            <span>{ICONS[t.type]}</span>
-            <p className="flex-1 text-white text-sm font-semibold">{t.message}</p>
-            <button onClick={() => dismiss(t.id)} className="text-white/60 hover:text-white text-lg leading-none">×</button>
-          </div>
-        ))}
+      <div className="pointer-events-none fixed left-0 right-0 top-16 z-50 mx-auto max-w-md space-y-2 px-4">
+        {toasts.map((t) => {
+          const Icon = ICONS[t.type];
+
+          return (
+            <div
+              key={t.id}
+              role={t.type === 'error' ? 'alert' : 'status'}
+              className={`${TOAST_STYLE[t.type]} pointer-events-auto flex items-start gap-3 rounded-xl border px-4 py-3 shadow-xl animate-slide-up`}
+            >
+              <Icon size={18} className="mt-0.5 shrink-0" />
+              <p className="flex-1 text-sm font-semibold leading-5">{t.message}</p>
+              <button
+                type="button"
+                onClick={() => dismiss(t.id)}
+                aria-label="Dismiss notification"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-current/60 transition-colors hover:bg-white/10 hover:text-current"
+              >
+                <X size={15} />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );

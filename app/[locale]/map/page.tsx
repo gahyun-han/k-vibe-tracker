@@ -385,7 +385,7 @@ export default function MapPage() {
 
   return (
     <AppLayout activeTab="map">
-      <div className="flex h-full flex-col bg-[#0D0D1A]">
+      <div className="flex h-[calc(100dvh-3.5rem)] flex-col bg-[#0D0D1A]">
         <div className="relative min-h-0 flex-1 overflow-hidden bg-[#101827]">
           <KakaoMapView
             center={coords}
@@ -462,7 +462,7 @@ export default function MapPage() {
             </div>
           )}
 
-          <div className="max-h-60 overflow-y-auto pb-2">
+          <div className="max-h-60 overflow-y-auto pb-20">
             {!loading && filtered.length === 0 ? (
               <div className="py-8 text-center text-sm text-white/35">{copy.map.noPlaces}</div>
             ) : (

@@ -104,7 +104,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK. The current local Kakao domain verification is for `http://localhost:3000`; `127.0.0.1` must be registered separately in Kakao Developers if you want to use that host.
+`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK. The current local Kakao domain verification is for `http://localhost:3000`; `/ko/map` reaches the live Kakao renderer in Chrome with no console errors. `127.0.0.1` must be registered separately in Kakao Developers if you want to use that host.
 
 `TOUR_API_KEY` is optional during development. When it is present, `/api/places` uses Korea Tourism Organization TourAPI through the server route only. If it is missing or TourAPI fails, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
@@ -120,6 +120,8 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
+
+The language switcher persists the active locale in `localStorage` and the `NEXT_LOCALE` cookie so reloads and future server-side locale reads can keep the same language choice.
 
 The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback. `components/common/NetworkStatusBanner.tsx` shows a localized offline-mode banner when the browser reports a network disconnect.
 

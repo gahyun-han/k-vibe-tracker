@@ -15,6 +15,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
+- `components/common/LanguageSwitcher.tsx` persists the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
@@ -58,7 +59,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Map uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Map stores successful `/api/places` responses in the shared local API cache and displays cached place lists while a fresh same-query request is pending or if it fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
-- Current local verification shows the Kakao SDK loads on `http://localhost:3000` and `/ko/map` reaches `data-map-mode="ready"` in Chrome with no console errors.
+- Current local verification shows the Kakao SDK loads on `http://localhost:3000`, `/ko/map` reaches `data-map-mode="ready"` in Chrome with a nonzero map container, and there are no Kakao console errors.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
@@ -126,6 +127,7 @@ Every data-backed page should expose:
 - Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
 - Map/Radar data-source labels are localized for TourAPI, mock, and cache states.
 - The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
+- Shared toast notifications use lucide icons, accessible alert/status roles, and an icon close control.
 - Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 

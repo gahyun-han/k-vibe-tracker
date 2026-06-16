@@ -4,6 +4,7 @@ import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Check, Globe2 } from 'lucide-react';
+import { persistPreferredLocale } from '@/lib/locale-preference';
 import { LANGUAGE_NAMES, SUPPORTED_LOCALES, type UiLocale } from '@/lib/ui-copy';
 
 export function LanguageSwitcher() {
@@ -16,6 +17,10 @@ export function LanguageSwitcher() {
   const current = SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
 
   useEffect(() => {
+    saveLocalePreference(current);
+  }, [current]);
+
+  useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
@@ -25,8 +30,15 @@ export function LanguageSwitcher() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  function switchLocale(code: string) {
+  function saveLocalePreference(code: UiLocale) {
+    persistPreferredLocale(code, window.localStorage, (cookieValue) => {
+      document.cookie = cookieValue;
+    });
+  }
+
+  function switchLocale(code: UiLocale) {
     const segments = pathname.split('/');
+    saveLocalePreference(code);
     segments[1] = code;
     router.push(segments.join('/'));
     setOpen(false);
