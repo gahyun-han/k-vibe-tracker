@@ -1,6 +1,6 @@
 import { haversineKm, walkingMinutes } from '@/lib/haversine';
 
-export const ROUTE_THEMES = ['kpop', 'drama', 'mood'] as const;
+export const ROUTE_THEMES = ['kpop', 'drama', 'mood', 'foodie', 'creator', 'history'] as const;
 export const CURRENT_ROUTE_STORAGE_KEY = 'k-vibe-current-route';
 export const ROUTE_PROGRESS_STORAGE_KEY = 'k-vibe-route-progress';
 export type RouteTheme = (typeof ROUTE_THEMES)[number];
@@ -15,6 +15,7 @@ export interface RouteDetailOption {
 
 export interface RouteThemeOption {
   id: RouteTheme;
+  badge: string;
   label: string;
   description: string;
   details: RouteDetailOption[];
@@ -104,6 +105,7 @@ export interface LocalizedRoutePlanCopy {
 export const ROUTE_THEME_OPTIONS: RouteThemeOption[] = [
   {
     id: 'kpop',
+    badge: 'KPOP',
     label: 'K-pop Pilgrimage',
     description: 'Agency streets, fan photo spots, music stores, and night views.',
     details: [
@@ -115,6 +117,7 @@ export const ROUTE_THEME_OPTIONS: RouteThemeOption[] = [
   },
   {
     id: 'drama',
+    badge: 'TV',
     label: 'K-drama Scenes',
     description: 'Palaces, alleys, markets, and cinematic walking routes.',
     details: [
@@ -126,6 +129,7 @@ export const ROUTE_THEME_OPTIONS: RouteThemeOption[] = [
   },
   {
     id: 'mood',
+    badge: 'MOOD',
     label: 'Mood Travel',
     description: 'Aesthetic Seoul routes tuned for pace, photos, and recovery time.',
     details: [
@@ -133,6 +137,42 @@ export const ROUTE_THEME_OPTIONS: RouteThemeOption[] = [
       { id: 'photo', label: 'Photo walk', description: 'Color, texture, and easy photo stops.' },
       { id: 'healing', label: 'Healing', description: 'Parks, riverside walks, and lower crowd pressure.' },
       { id: 'food', label: 'Food crawl', description: 'Markets, snacks, and dinner-friendly routing.' },
+    ],
+  },
+  {
+    id: 'foodie',
+    badge: 'FOOD',
+    label: 'Foodie Explorer',
+    description: 'Street food, markets, desserts, and late meals in a walkable day.',
+    details: [
+      { id: 'market', label: 'Market tasting', description: 'Classic alleys, small bites, and lively stalls.' },
+      { id: 'dessert', label: 'Dessert hop', description: 'Cafes, bakeries, and sweet photo stops.' },
+      { id: 'night_food', label: 'Night food', description: 'Dinner, neon streets, and easy final transit.' },
+      { id: 'local_table', label: 'Local table', description: 'Comfort food, tea, and slower neighborhood pacing.' },
+    ],
+  },
+  {
+    id: 'creator',
+    badge: 'SHOT',
+    label: 'Content Creator',
+    description: 'Photogenic backdrops, design streets, and short-form-friendly stops.',
+    details: [
+      { id: 'reels', label: 'Reels walk', description: 'Compact spots with quick transitions and texture.' },
+      { id: 'fashion', label: 'Fashion street', description: 'Style-led neighborhoods and boutique windows.' },
+      { id: 'design', label: 'Design frame', description: 'Architecture, galleries, and clean composition.' },
+      { id: 'night_shot', label: 'Night shots', description: 'Lights, reflections, and skyline-friendly pacing.' },
+    ],
+  },
+  {
+    id: 'history',
+    badge: 'HIST',
+    label: 'History Buff',
+    description: 'Palaces, hanok alleys, museums, and heritage-focused walking routes.',
+    details: [
+      { id: 'palace_day', label: 'Palace day', description: 'Royal sites, gates, and hanbok-friendly timing.' },
+      { id: 'hanok_walk', label: 'Hanok walk', description: 'Traditional alleys with tea and craft stops.' },
+      { id: 'museum', label: 'Museum route', description: 'Indoor culture stops for weather-safe exploring.' },
+      { id: 'heritage_food', label: 'Heritage food', description: 'Old Seoul streets with classic market meals.' },
     ],
   },
 ];
@@ -286,6 +326,156 @@ const ROUTE_TEMPLATES: Record<RouteTheme, StopTemplate[]> = {
       stayMinutes: 80,
       description: 'End around small restaurants, desserts, and evening alley lights.',
       tags: ['food', 'hanok'],
+    },
+  ],
+  foodie: [
+    {
+      id: 'gwangjang-foodie',
+      name: 'Gwangjang Market Food Alley',
+      category: 'Food',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'high',
+      lat: 37.5701,
+      lng: 126.9996,
+      stayMinutes: 80,
+      description: 'Start with iconic market bites and a busy, easy-to-read Seoul food scene.',
+      tags: ['market', 'street food'],
+    },
+    {
+      id: 'ikseon-dessert',
+      name: 'Ikseon-dong Dessert Alley',
+      category: 'Dessert',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'high',
+      lat: 37.574,
+      lng: 126.9897,
+      stayMinutes: 70,
+      description: 'Move into hanok cafes, desserts, and softer photo corners after the market.',
+      tags: ['dessert', 'hanok'],
+    },
+    {
+      id: 'seongsu-bakery',
+      name: 'Seongsu Bakery Loop',
+      category: 'Cafe',
+      address: 'Seongsu-dong, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5447,
+      lng: 127.0564,
+      stayMinutes: 75,
+      description: 'Add a modern bakery and cafe district with room to rest and recharge.',
+      tags: ['bakery', 'cafe'],
+    },
+    {
+      id: 'euljiro-night-food',
+      name: 'Euljiro Night Food Street',
+      category: 'Night food',
+      address: 'Jung-gu, Seoul',
+      crowdLevel: 'high',
+      lat: 37.5661,
+      lng: 126.9919,
+      stayMinutes: 85,
+      description: 'Finish with neon-lit dinner streets and a strong end-of-day atmosphere.',
+      tags: ['night', 'local food'],
+    },
+  ],
+  creator: [
+    {
+      id: 'seoul-forest-creator',
+      name: 'Seoul Forest Photo Corners',
+      category: 'Photo',
+      address: 'Seongdong-gu, Seoul',
+      crowdLevel: 'low',
+      lat: 37.5443,
+      lng: 127.0374,
+      stayMinutes: 65,
+      description: 'Open with greenery, wide frames, and lower-pressure shooting time.',
+      tags: ['photo', 'park'],
+    },
+    {
+      id: 'seongsu-creator',
+      name: 'Seongsu Design Street',
+      category: 'Design',
+      address: 'Seongsu-dong, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5447,
+      lng: 127.0564,
+      stayMinutes: 85,
+      description: 'Collect storefronts, pop-up textures, cafes, and design-led transitions.',
+      tags: ['design', 'short-form'],
+    },
+    {
+      id: 'ddp-creator',
+      name: 'Dongdaemun Design Plaza',
+      category: 'Architecture',
+      address: 'Jung-gu, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5665,
+      lng: 127.0092,
+      stayMinutes: 70,
+      description: 'Use clean curves and open plazas for architecture and outfit frames.',
+      tags: ['architecture', 'fashion'],
+    },
+    {
+      id: 'namsan-creator',
+      name: 'Namsan Seoul Tower View',
+      category: 'View',
+      address: 'Yongsan-gu, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5512,
+      lng: 126.9882,
+      stayMinutes: 80,
+      description: 'Close with skyline light and an easy final clip for the route recap.',
+      tags: ['skyline', 'night'],
+    },
+  ],
+  history: [
+    {
+      id: 'gyeongbokgung-history',
+      name: 'Gyeongbokgung Palace',
+      category: 'Culture',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'high',
+      lat: 37.5796,
+      lng: 126.977,
+      stayMinutes: 95,
+      description: 'Begin with the royal palace axis, gates, courtyards, and classic Seoul context.',
+      tags: ['palace', 'heritage'],
+    },
+    {
+      id: 'bukchon-history',
+      name: 'Bukchon Hanok Village',
+      category: 'Culture',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5826,
+      lng: 126.983,
+      stayMinutes: 70,
+      description: 'Continue through hanok alleys with slower pacing and neighborhood etiquette.',
+      tags: ['hanok', 'walk'],
+    },
+    {
+      id: 'insadong-history',
+      name: 'Insadong Culture Street',
+      category: 'Craft',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'mid',
+      lat: 37.5743,
+      lng: 126.9853,
+      stayMinutes: 65,
+      description: 'Add galleries, crafts, tea, and souvenir stops without leaving the heritage district.',
+      tags: ['craft', 'tea'],
+    },
+    {
+      id: 'gwangjang-history',
+      name: 'Gwangjang Market Heritage Meal',
+      category: 'Food',
+      address: 'Jongno-gu, Seoul',
+      crowdLevel: 'high',
+      lat: 37.5701,
+      lng: 126.9996,
+      stayMinutes: 75,
+      description: 'Finish with a traditional market meal that keeps the route practical and memorable.',
+      tags: ['market', 'classic food'],
     },
   ],
 };

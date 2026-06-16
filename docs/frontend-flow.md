@@ -113,7 +113,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/routes.ts`
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Route generation accepts the active locale and uses `lib/ui-copy.ts` to localize mock plan titles, summaries, persona themes, and detail options.
-- Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview.
+- Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview. The local generator now covers K-pop, drama, mood travel, Foodie Explorer, Content Creator, and History Buff persona themes.
 - Local persistence key: `k-vibe-current-route`
 - Local progress key: `k-vibe-route-progress`
 - Route editor mutations are written back to the same local persistence key.

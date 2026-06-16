@@ -10,6 +10,7 @@ import {
   LANGUAGE_NAMES,
   SUPPORTED_LOCALES,
 } from '@/lib/ui-copy';
+import { ROUTE_THEME_OPTIONS } from '@/lib/routes';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
@@ -65,6 +66,14 @@ describe('ui copy', () => {
       expect(copy.persona.confirmTitle.length).toBeGreaterThan(0);
       expect(copy.persona.selectedTheme.length).toBeGreaterThan(0);
       expect(copy.persona.routeTitle).toContain('{detail}');
+      for (const theme of ROUTE_THEME_OPTIONS) {
+        const themeCopy = copy.persona.themes[theme.id];
+        const detailCopy = themeCopy.details as Record<string, { label: string }>;
+        expect(themeCopy.label.length).toBeGreaterThan(0);
+        for (const detail of theme.details) {
+          expect(detailCopy[detail.id].label.length).toBeGreaterThan(0);
+        }
+      }
 
       expect(copy.tutorial.steps).toHaveLength(6);
       for (const step of copy.tutorial.steps) {

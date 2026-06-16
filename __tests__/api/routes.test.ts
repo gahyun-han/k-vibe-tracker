@@ -34,6 +34,17 @@ describe('POST /api/routes/generate', () => {
     expect(data.plan.summary).toContain('로컬 미리보기 루트');
   });
 
+  it('generates wireframe persona route themes', async () => {
+    const res = await POST(makeRequest({ theme: 'creator', detail: 'reels', start_time: '12:00', locale: 'en' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.plan.id).toBe('creator-reels');
+    expect(data.plan.title).toBe('Reels walk Seoul Route');
+    expect(data.plan.stops).toHaveLength(4);
+    expect(data.plan.stops[0].startTime).toBe('12:00');
+  });
+
   it('rejects invalid themes', async () => {
     const res = await POST(makeRequest({ theme: 'sports', detail: 'cafe' }));
     const data = await res.json();

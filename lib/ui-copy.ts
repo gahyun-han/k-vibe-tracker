@@ -385,6 +385,36 @@ const UI_COPY = {
             food: { label: 'Food crawl', description: 'Markets, snacks, and dinner-friendly routing.' },
           },
         },
+        foodie: {
+          label: 'Foodie Explorer',
+          description: 'Street food, markets, desserts, and late meals in a walkable day.',
+          details: {
+            market: { label: 'Market tasting', description: 'Classic alleys, small bites, and lively stalls.' },
+            dessert: { label: 'Dessert hop', description: 'Cafes, bakeries, and sweet photo stops.' },
+            night_food: { label: 'Night food', description: 'Dinner, neon streets, and easy final transit.' },
+            local_table: { label: 'Local table', description: 'Comfort food, tea, and slower neighborhood pacing.' },
+          },
+        },
+        creator: {
+          label: 'Content Creator',
+          description: 'Photogenic backdrops, design streets, and short-form-friendly stops.',
+          details: {
+            reels: { label: 'Reels walk', description: 'Compact spots with quick transitions and texture.' },
+            fashion: { label: 'Fashion street', description: 'Style-led neighborhoods and boutique windows.' },
+            design: { label: 'Design frame', description: 'Architecture, galleries, and clean composition.' },
+            night_shot: { label: 'Night shots', description: 'Lights, reflections, and skyline-friendly pacing.' },
+          },
+        },
+        history: {
+          label: 'History Buff',
+          description: 'Palaces, hanok alleys, museums, and heritage-focused walking routes.',
+          details: {
+            palace_day: { label: 'Palace day', description: 'Royal sites, gates, and hanbok-friendly timing.' },
+            hanok_walk: { label: 'Hanok walk', description: 'Traditional alleys with tea and craft stops.' },
+            museum: { label: 'Museum route', description: 'Indoor culture stops for weather-safe exploring.' },
+            heritage_food: { label: 'Heritage food', description: 'Old Seoul streets with classic market meals.' },
+          },
+        },
       },
     },
     docent: {
@@ -772,6 +802,36 @@ const UI_COPY = {
             photo: { label: '포토 워크', description: '색감과 질감이 좋은 쉬운 사진 스팟.' },
             healing: { label: '힐링', description: '공원, 강변 산책, 낮은 혼잡도.' },
             food: { label: '푸드 크롤', description: '시장, 간식, 저녁 식사에 좋은 동선.' },
+          },
+        },
+        foodie: {
+          label: '푸디 탐험',
+          description: '길거리 음식, 시장, 디저트, 늦은 식사를 하루 동선으로 묶습니다.',
+          details: {
+            market: { label: '시장 맛보기', description: '오래된 골목, 한입 간식, 활기 있는 노점.' },
+            dessert: { label: '디저트 홉', description: '카페, 베이커리, 달콤한 사진 스팟.' },
+            night_food: { label: '나이트 푸드', description: '저녁 식사, 네온 거리, 쉬운 귀가 동선.' },
+            local_table: { label: '로컬 밥상', description: '편안한 음식, 차, 느린 동네 산책.' },
+          },
+        },
+        creator: {
+          label: '콘텐츠 크리에이터',
+          description: '사진 배경, 디자인 거리, 숏폼에 좋은 스팟을 잇습니다.',
+          details: {
+            reels: { label: '릴스 워크', description: '전환과 질감이 좋은 촘촘한 촬영 동선.' },
+            fashion: { label: '패션 스트리트', description: '스타일 있는 동네와 부티크 쇼윈도.' },
+            design: { label: '디자인 프레임', description: '건축, 갤러리, 깔끔한 구도의 장소.' },
+            night_shot: { label: '야간 촬영', description: '조명, 반사, 스카이라인에 좋은 일정.' },
+          },
+        },
+        history: {
+          label: '역사 애호가',
+          description: '궁궐, 한옥 골목, 박물관, 문화유산 중심의 도보 루트입니다.',
+          details: {
+            palace_day: { label: '궁궐 데이', description: '왕실 유적, 문, 한복 사진에 좋은 타이밍.' },
+            hanok_walk: { label: '한옥 산책', description: '전통 골목, 차, 공예를 천천히 잇는 동선.' },
+            museum: { label: '뮤지엄 루트', description: '날씨 영향을 덜 받는 실내 문화 코스.' },
+            heritage_food: { label: '헤리티지 푸드', description: '오래된 서울 거리와 전통 시장 식사.' },
           },
         },
       },
@@ -1163,6 +1223,36 @@ const UI_COPY = {
             food: { label: 'フード巡り', description: '市場、軽食、夕食にも向いた動線。' },
           },
         },
+        foodie: {
+          label: 'フーディー探索',
+          description: '屋台、市場、スイーツ、遅めの食事を歩きやすい1日にまとめます。',
+          details: {
+            market: { label: '市場テイスティング', description: '昔ながらの路地、軽い一口、活気ある屋台。' },
+            dessert: { label: 'スイーツ巡り', description: 'カフェ、ベーカリー、甘い写真スポット。' },
+            night_food: { label: '夜ごはん', description: '夕食、ネオンの通り、帰りやすい終点。' },
+            local_table: { label: 'ローカル食卓', description: 'ほっとする食事、お茶、ゆっくりした街歩き。' },
+          },
+        },
+        creator: {
+          label: 'コンテンツクリエイター',
+          description: '写真映えする背景、デザイン通り、ショート動画向きスポットを巡ります。',
+          details: {
+            reels: { label: 'リール散歩', description: '切り替えや質感を撮りやすいコンパクトな動線。' },
+            fashion: { label: 'ファッション通り', description: 'スタイルのある街とブティックのショーウィンドウ。' },
+            design: { label: 'デザインフレーム', description: '建築、ギャラリー、構図を作りやすい場所。' },
+            night_shot: { label: '夜景ショット', description: '光、反射、スカイラインを撮りやすい進行。' },
+          },
+        },
+        history: {
+          label: '歴史好き',
+          description: '宮殿、韓屋の路地、博物館、文化遺産中心の徒歩ルートです。',
+          details: {
+            palace_day: { label: '宮殿デー', description: '王宮、門、韓服写真に合うタイミング。' },
+            hanok_walk: { label: '韓屋散歩', description: '伝統的な路地、お茶、工芸をゆっくり巡る動線。' },
+            museum: { label: 'ミュージアムルート', description: '天候に左右されにくい屋内文化コース。' },
+            heritage_food: { label: 'ヘリテージフード', description: '古いソウルの通りと昔ながらの市場ごはん。' },
+          },
+        },
       },
     },
     docent: {
@@ -1550,6 +1640,36 @@ const UI_COPY = {
             photo: { label: '拍照散步', description: '色彩、质感和轻松拍照点。' },
             healing: { label: '疗愈', description: '公园、河边散步和较低拥挤度。' },
             food: { label: '美食巡游', description: '市场、小吃和适合晚餐的动线。' },
+          },
+        },
+        foodie: {
+          label: '美食探索者',
+          description: '把街头小吃、市场、甜点和夜间用餐串成适合步行的一天。',
+          details: {
+            market: { label: '市场试吃', description: '经典小巷、小份美食和热闹摊位。' },
+            dessert: { label: '甜点跳点', description: '咖啡馆、面包店和甜美拍照点。' },
+            night_food: { label: '夜间美食', description: '晚餐、霓虹街道和方便返程的终点。' },
+            local_table: { label: '本地餐桌', description: '舒适餐食、茶和慢节奏街区。' },
+          },
+        },
+        creator: {
+          label: '内容创作者',
+          description: '串联上镜背景、设计街区和适合短视频的地点。',
+          details: {
+            reels: { label: '短视频散步', description: '适合快速转场和质感镜头的紧凑动线。' },
+            fashion: { label: '时尚街区', description: '有风格的街区和精品店橱窗。' },
+            design: { label: '设计构图', description: '建筑、画廊和构图干净的场景。' },
+            night_shot: { label: '夜景拍摄', description: '灯光、倒影和天际线友好的节奏。' },
+          },
+        },
+        history: {
+          label: '历史爱好者',
+          description: '以宫殿、韩屋小巷、博物馆和文化遗产为核心的步行路线。',
+          details: {
+            palace_day: { label: '宫殿日', description: '王室遗迹、城门和适合韩服照片的时间。' },
+            hanok_walk: { label: '韩屋散步', description: '传统小巷、茶和工艺的慢节奏动线。' },
+            museum: { label: '博物馆路线', description: '不太受天气影响的室内文化路线。' },
+            heritage_food: { label: '传统美食', description: '老首尔街道和经典市场餐食。' },
           },
         },
       },

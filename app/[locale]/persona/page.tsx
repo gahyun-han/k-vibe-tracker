@@ -254,7 +254,7 @@ export default function PersonaPage() {
                     className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-left transition-all hover:border-[#FF3A5C]/50 hover:bg-[#FF3A5C]/5"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-xs font-bold text-[#FF3A5C]">
-                      {option.id.toUpperCase()}
+                      {option.badge}
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-white">{themeCopy.label}</p>

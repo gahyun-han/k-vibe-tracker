@@ -10,6 +10,7 @@ import {
   encodeRoutePlanForShare,
   generateMockRoutePlan,
   parseRouteProgressState,
+  ROUTE_THEME_OPTIONS,
   ROUTE_PROGRESS_STORAGE_KEY,
   type RouteStop,
 } from '@/lib/routes';
@@ -73,6 +74,26 @@ describe('route helpers', () => {
     expect(plan.stops[0].startTime).toBe('09:00');
     expect(plan.totalMinutes).toBe(plan.walkingMinutes + plan.stayMinutes);
     expect(plan.shareText).toContain(plan.title);
+  });
+
+  it('generates routes for the wireframe persona themes', () => {
+    expect(ROUTE_THEME_OPTIONS.map((theme) => theme.id)).toEqual([
+      'kpop',
+      'drama',
+      'mood',
+      'foodie',
+      'creator',
+      'history',
+    ]);
+
+    const foodie = generateMockRoutePlan({ theme: 'foodie', detail: 'market', startTime: '11:30' });
+    const creator = generateMockRoutePlan({ theme: 'creator', detail: 'reels' });
+    const history = generateMockRoutePlan({ theme: 'history', detail: 'palace_day' });
+
+    expect(foodie.stops.map((stop) => stop.category)).toContain('Food');
+    expect(foodie.stops[0].startTime).toBe('11:30');
+    expect(creator.stops.map((stop) => stop.tags).flat()).toContain('short-form');
+    expect(history.stops.map((stop) => stop.tags).flat()).toContain('heritage');
   });
 
   it('builds free Google Maps walking links for route guidance', () => {
