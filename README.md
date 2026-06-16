@@ -121,6 +121,8 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
+The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback.
+
 Additional frontend flow notes are in [docs/frontend-flow.md](docs/frontend-flow.md).
 Implemented product and API improvements are tracked in [docs/improvement-log.md](docs/improvement-log.md).
 
@@ -249,6 +251,7 @@ app/
     analyze/    # AI worker proxy
 components/
   common/
+    PwaRuntime.tsx
   layout/
   map/
   radar/
@@ -278,6 +281,7 @@ ai-worker/      # FastAPI prototype
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
+  - PWA runtime now updates the document `lang` attribute per locale and registers a production-only static service worker without affecting local development caches.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
   - Map place details lazy-load TourAPI overview, image gallery, phone, operating time, rest day, and parking fields.
   - Map place details can save or unsave a selected place, add it into the shared local route plan, open the route editor, or launch the local Docent flow.

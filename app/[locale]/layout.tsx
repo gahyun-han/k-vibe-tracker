@@ -1,6 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import PwaRuntime from '@/components/common/PwaRuntime';
 
 const locales = ['ko', 'en', 'ja', 'zh'];
 
@@ -23,6 +24,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      <PwaRuntime locale={locale} />
       {children}
     </NextIntlClientProvider>
   );

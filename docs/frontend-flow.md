@@ -16,6 +16,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
+- PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
@@ -30,6 +31,15 @@ This project is in local-first development mode. Pages should remain usable with
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
+
+### PWA Shell
+
+- Runtime: `components/common/PwaRuntime.tsx`
+- Service worker: `public/sw.js`
+- The root document defaults to `lang="ko"` before hydration, then the runtime updates it to `ko`, `en`, `ja`, or `zh` based on the active URL locale.
+- The service worker precaches the manifest, icons, Open Graph image, and Korean start route, then caches Next static chunks and same-origin navigations on demand.
+- Service worker registration is production-only so local development is not affected by stale caches.
+- Offline maps, offline TourAPI data packs, and synced offline account history are still larger-scope follow-ups.
 
 ### Places
 
