@@ -123,6 +123,7 @@ export default function RoutePage() {
         announceStatus(copy.sharedRouteLoaded, 'success');
         return;
       }
+      announceStatus(copy.sharedRouteInvalid, 'warning');
     }
 
     if (!stored) {
@@ -150,7 +151,7 @@ export default function RoutePage() {
     }
 
     applyPlan(fallbackPlan);
-  }, [announceStatus, copy.sharedRouteLoaded, fallbackPlan]);
+  }, [announceStatus, copy.sharedRouteInvalid, copy.sharedRouteLoaded, fallbackPlan]);
 
   useEffect(() => {
     if (!hydrated || spots.length === 0) return;

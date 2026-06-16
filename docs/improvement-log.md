@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S9 Route shared-link recovery. Invalid or stale `route=` payloads now show a localized warning toast and fall back to the local/starter route instead of silently replacing the user's context.
 - Added root S3-style Map empty-result recovery. When search or category filters remove all nearby places, the bottom sheet now shows localized guidance plus Reset filters and Refresh location actions.
 - Added root S3/S11-style location fallback feedback. Map and Radar now show localized warning toasts when browser geolocation is unavailable, while continuing to use the last-known or Seoul fallback position without adding external providers.
 - Added root S11-style Radar facility-card quick map actions. Facility cards now keep the expandable details area while exposing a localized header map button that opens the existing no-key Google Maps handoff after a user click.
