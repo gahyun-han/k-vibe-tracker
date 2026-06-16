@@ -41,7 +41,7 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         {showBack ? (
           <button
             onClick={() => router.back()}
-            aria-label="Go back"
+            aria-label={copy.common.goBack}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] transition-colors hover:bg-white/10 hover:text-white"
           >
             <ArrowLeft size={18} />
@@ -59,12 +59,12 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         {user ? (
           <button
             onClick={() => router.push(`/${locale}/profile`)}
-            aria-label="Open profile"
+            aria-label={copy.common.openProfile}
             className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[#FF3A5C]/50"
           >
             {user.user_metadata?.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.user_metadata.avatar_url} alt="avatar" className="h-full w-full object-cover" />
+              <img src={user.user_metadata.avatar_url} alt={copy.common.avatarAlt} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/20 text-xs font-bold text-white">
                 {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? 'U').toUpperCase()}

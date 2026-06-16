@@ -24,6 +24,7 @@ This project is in local-first development mode. Pages should remain usable with
 ## Account Flow
 
 - Login UI lives in `components/auth/LoginModal.tsx`.
+- Login UI copy comes from `lib/ui-copy.ts` for `ko`, `en`, `ja`, and `zh`; the modal exposes dialog semantics with `aria-modal` and a labelled title.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
 - Profile stays usable without Supabase credentials, shows local saved places, shows the current local route, and explains that account sync is disabled in local development.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
@@ -41,6 +42,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
 - Home feed requests the same `/api/places` contract with the active locale, shows the response source, supports local category filters, can save places, and hands selected cards to the map with `source=home`.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
+- Current local verification shows the Kakao SDK loads on `http://localhost:3000` and `/ko/map` reaches `data-map-mode="ready"` in Chrome with no console errors.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
@@ -98,6 +100,7 @@ Every data-backed page should expose:
 - Shared navigation, landing, tutorial, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
+- Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
 
 ## Approval-Gated Work
 

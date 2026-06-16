@@ -39,7 +39,14 @@ interface PlaceDetailModalProps {
     parking: string;
     loadingDetail: string;
     detailFallback: string;
+    closeDetail: string;
+    crowd: {
+      low: string;
+      mid: string;
+      high: string;
+    };
   };
+  categoryLabels?: Readonly<Partial<Record<string, string>>>;
   isSaved?: boolean;
   onClose: () => void;
   onAddToRoute?: (place: Place) => void;
@@ -48,9 +55,9 @@ interface PlaceDetailModalProps {
 }
 
 const CROWD_CONFIG = {
-  low: { label: 'Quiet', color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
-  mid: { label: 'Normal', color: 'text-yellow-400', bg: 'bg-yellow-400/10', dot: 'bg-yellow-400' },
-  high: { label: 'Busy', color: 'text-red-400', bg: 'bg-red-400/10', dot: 'bg-red-400' },
+  low: { color: 'text-emerald-400', bg: 'bg-emerald-400/10', dot: 'bg-emerald-400' },
+  mid: { color: 'text-yellow-400', bg: 'bg-yellow-400/10', dot: 'bg-yellow-400' },
+  high: { color: 'text-red-400', bg: 'bg-red-400/10', dot: 'bg-red-400' },
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -72,12 +79,19 @@ const DEFAULT_LABELS = {
   parking: 'Parking',
   loadingDetail: 'Loading TourAPI detail',
   detailFallback: 'Detail fallback active',
+  closeDetail: 'Close place detail',
+  crowd: {
+    low: 'Quiet',
+    mid: 'Normal',
+    high: 'Busy',
+  },
 };
 
 export function PlaceDetailModal({
   place,
   locale = 'ko',
   labels,
+  categoryLabels,
   isSaved = false,
   onClose,
   onAddToRoute,
@@ -174,7 +188,7 @@ export function PlaceDetailModal({
 
   const mergedPlace = displayPlace ?? place;
   const crowd = mergedPlace.crowdLevel ? CROWD_CONFIG[mergedPlace.crowdLevel] : null;
-  const categoryLabel = CATEGORY_LABEL[mergedPlace.category] ?? mergedPlace.category;
+  const categoryLabel = categoryLabels?.[mergedPlace.category] ?? CATEGORY_LABEL[mergedPlace.category] ?? mergedPlace.category;
   const imageUrl = mergedPlace.images?.[0] ?? mergedPlace.imageUrl;
   const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
   const text = { ...DEFAULT_LABELS, ...labels };
@@ -213,7 +227,7 @@ export function PlaceDetailModal({
                   {crowd && (
                     <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${crowd.bg} ${crowd.color}`}>
                       <span className={`h-1.5 w-1.5 rounded-full ${crowd.dot}`} />
-                      {crowd.label}
+                      {text.crowd[mergedPlace.crowdLevel ?? 'mid']}
                     </span>
                   )}
                 </div>
@@ -242,7 +256,7 @@ export function PlaceDetailModal({
                 </button>
                 <button
                   onClick={onClose}
-                  aria-label="Close place detail"
+                  aria-label={text.closeDetail}
                   className="rounded-lg p-1.5 text-white/60 hover:bg-white/10"
                 >
                   <X size={18} />

@@ -1,22 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { CheckCircle2, Lock, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 interface LoginModalProps {
   onClose: () => void;
   redirectTo: string;
 }
 
-const GUEST_FEATURES = [
-  'Map exploration and place search',
-  'SNS spot analyzer',
-  'Route generation preview',
-  'Facility radar',
-];
-
 export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
+  const params = useParams();
+  const locale = normalizeUiLocale(params.locale);
+  const copy = getUiCopy(locale).login;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,7 +25,7 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
     try {
       const supabase = createClient();
       if (!supabase) {
-        throw new Error('Supabase env is not configured. Continue as Guest for local development.');
+        throw new Error(copy.supabaseMissing);
       }
 
       const { error: loginError } = await supabase.auth.signInWithOAuth({
@@ -38,13 +36,16 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
       });
       if (loginError) throw loginError;
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Login failed. Please try again.');
+      setError(e instanceof Error ? e.message : copy.failed);
       setLoading(false);
     }
   }
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="login-modal-title"
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 pt-16 backdrop-blur-sm animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
@@ -55,15 +56,15 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
 
         <div className="mb-5 flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold text-[#FF3A5C]">Account</p>
-            <h3 className="mt-1 text-xl font-bold text-white">Sign in to K-Vibe</h3>
+            <p className="text-xs font-semibold text-[#FF3A5C]">{copy.eyebrow}</p>
+            <h3 id="login-modal-title" className="mt-1 text-xl font-bold text-white">{copy.title}</h3>
             <p className="mt-1 text-sm leading-5 text-[#8B8BA8]">
-              Save routes and sync preferences when Supabase is configured.
+              {copy.subtitle}
             </p>
           </div>
           <button
             onClick={onClose}
-            aria-label="Close sign in"
+            aria-label={copy.close}
             className="rounded-lg p-2 text-white/45 transition-colors hover:bg-white/10 hover:text-white"
           >
             <X size={18} />
@@ -85,7 +86,7 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
           )}
-          Continue with Google
+          {copy.continueGoogle}
         </button>
 
         {error && <p className="mt-3 text-center text-xs text-red-400">{error}</p>}
@@ -94,12 +95,12 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
           onClick={onClose}
           className="mb-5 mt-3 w-full py-3 text-sm text-[#8B8BA8] transition-colors hover:text-white"
         >
-          Continue as Guest
+          {copy.continueGuest}
         </button>
 
         <div className="space-y-2 rounded-xl bg-[#252540] p-3 text-xs text-[#8B8BA8]">
-          <p className="mb-2 text-xs font-semibold text-white">Available without login</p>
-          {GUEST_FEATURES.map((feature) => (
+          <p className="mb-2 text-xs font-semibold text-white">{copy.availableWithoutLogin}</p>
+          {copy.guestFeatures.map((feature) => (
             <p key={feature} className="flex items-center gap-2">
               <CheckCircle2 size={13} className="shrink-0 text-emerald-400" />
               {feature}
@@ -107,7 +108,7 @@ export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
           ))}
           <p className="mt-3 flex items-center gap-2 font-semibold text-[#FF3A5C]">
             <Lock size={13} className="shrink-0" />
-            Login required later: saved routes, sharing history, account sync
+            {copy.loginRequiredLater}
           </p>
         </div>
       </div>

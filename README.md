@@ -104,7 +104,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK.
+`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK. The current local Kakao domain verification is for `http://localhost:3000`; `127.0.0.1` must be registered separately in Kakao Developers if you want to use that host.
 
 `TOUR_API_KEY` is optional during development. When it is present, `/api/places` uses Korea Tourism Organization TourAPI through the server route only. If it is missing or TourAPI fails, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
@@ -295,7 +295,8 @@ ai-worker/      # FastAPI prototype
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
   - Profile now works as a guest-mode dashboard with local saved places and the current local route, matching the root saved-places grid direction without needing Supabase.
-  - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
+  - Landing, login modal, top bar, language switcher, profile page, common error fallback, and key map/detail labels now use locale-aware copy for Korean, English, Japanese, and Chinese.
+  - Login modal now exposes accessible dialog semantics while keeping the local guest flow available without Supabase credentials.
   - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 

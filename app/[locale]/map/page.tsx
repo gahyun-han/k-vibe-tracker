@@ -48,12 +48,6 @@ const CROWD_DOT: Record<string, string> = {
   high: 'bg-red-400',
 };
 
-const CROWD_LABEL: Record<string, string> = {
-  low: 'Quiet',
-  mid: 'Normal',
-  high: 'Busy',
-};
-
 const CATEGORY_ICON: Record<string, string> = {
   all: 'Map',
   cafe: 'Cafe',
@@ -172,13 +166,13 @@ export default function MapPage() {
         ...existingStops.filter((stop) => stop.id !== routeStop.id),
         routeStop,
       ];
-      const title = existingPlan?.title ?? 'Map Saved Route';
+      const title = existingPlan?.title ?? copy.map.savedRouteTitle;
       const plan = createLocalRoutePlan({
         id: existingPlan?.id ?? 'map-saved-route',
         title,
         theme: existingPlan?.theme ?? 'mood',
         detail: existingPlan?.detail ?? 'map',
-        summary: existingPlan?.summary ?? 'Custom route assembled from map selections.',
+        summary: existingPlan?.summary ?? copy.map.savedRouteSummary,
         stops: nextStops,
       });
 
@@ -187,7 +181,7 @@ export default function MapPage() {
     } catch {
       setError('ROUTE_SAVE_FAILED');
     }
-  }, [copy.categories, copy.map.addedFromMap, locale, router]);
+  }, [copy.categories, copy.map.addedFromMap, copy.map.savedRouteSummary, copy.map.savedRouteTitle, locale, router]);
 
   const openPlaceDocent = useCallback((place: Place) => {
     const category = copy.categories[place.category as PlaceCategory] ?? place.category;
@@ -385,7 +379,8 @@ export default function MapPage() {
           <button
             onClick={requestLocation}
             className="absolute bottom-4 right-4 z-30 rounded-full bg-[#FF3A5C] p-3 text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e]"
-            aria-label="Refresh current location"
+            aria-label={copy.map.refreshLocation}
+            title={copy.map.refreshLocation}
           >
             <Navigation size={20} />
           </button>
@@ -464,7 +459,7 @@ export default function MapPage() {
                               : 'text-red-400'
                         }`}
                       >
-                        {CROWD_LABEL[place.crowdLevel]}
+                        {copy.map.crowd[place.crowdLevel]}
                       </p>
                     )}
                   </div>
@@ -478,6 +473,7 @@ export default function MapPage() {
           place={selectedPlace}
           locale={locale}
           labels={copy.placeDetail}
+          categoryLabels={copy.categories}
           isSaved={selectedPlace ? hasSavedPlace(savedPlaces, selectedPlace) : false}
           onClose={() => setSelectedPlace(null)}
           onAddToRoute={addPlaceToRoute}

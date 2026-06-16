@@ -20,6 +20,21 @@ describe('ui copy', () => {
       expect(copy.route.startGuidance.length).toBeGreaterThan(0);
       expect(copy.route.extraStop.name.length).toBeGreaterThan(0);
 
+      expect(copy.common.goBack.length).toBeGreaterThan(0);
+      expect(copy.common.openProfile.length).toBeGreaterThan(0);
+      expect(copy.common.unexpectedErrorTitle.length).toBeGreaterThan(0);
+
+      expect(copy.login.title.length).toBeGreaterThan(0);
+      expect(copy.login.continueGuest.length).toBeGreaterThan(0);
+      expect(copy.login.guestFeatures).toHaveLength(4);
+
+      expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
+      expect(copy.map.savedRouteTitle.length).toBeGreaterThan(0);
+      expect(copy.map.crowd.low.length).toBeGreaterThan(0);
+
+      expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.crowd.high.length).toBeGreaterThan(0);
+
       expect(copy.persona.title.length).toBeGreaterThan(0);
       expect(copy.persona.themes.kpop.details.bts.label.length).toBeGreaterThan(0);
       expect(copy.persona.routeTitle).toContain('{detail}');
