@@ -20,7 +20,7 @@ This project is in local-first development mode. Pages should remain usable with
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
-- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards with localized crowd badges, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
+- The home entry at `/[locale]` presents a root S1-style visible language grid, local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards with localized crowd badges, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
 - Home feed stores successful `/api/places` responses in the shared 1-hour local API cache, can display cached feed cards if live refresh fails, and exposes a localized retry button in the error state.
 - If a local persona preference exists, the home feed applies its mapped category filter on load and shows a localized personalization chip for the selected route mood.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
@@ -153,7 +153,7 @@ Every data-backed page should expose:
 - Error state with a retry path.
 - Mock/source hint while the app is running without external integrations.
 - Clear copy that tells developers whether a local mock or external source produced the result.
-- Shared navigation, landing, tutorial, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
+- Shared navigation, landing, tutorial, visible home language selection, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
 - Language switcher names are covered by tests so supported locale names do not regress to placeholders or mojibake.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.

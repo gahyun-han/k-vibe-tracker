@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Home language-grid pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
 - Claude CLI was not used for the 2026-06-17 Tutorial and language accessibility pass because it may consume paid quota and the local UI/copy change could be verified with type-check, copy tests, and build.
 - Claude CLI was not used for the 2026-06-17 Tutorial sheet viewport pass because it may consume paid quota and the CSS-only layout change could be verified with local type-check and build.
 - Claude CLI was not used for the 2026-06-17 Map nearby-spots header pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
@@ -66,6 +67,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost Home language grid that displays existing supported locale names and only persists the selected locale in localStorage/cookie, without external providers, APIs, maps, AI, or backend writes.
 - No-cost Tutorial sheet viewport fit that uses CSS-only max-height and scrolling for existing localized guide copy without external providers, API calls, storage, or AI.
 - No-cost Tutorial and language-switcher accessibility labels/state that update local UI semantics only and do not call external providers, APIs, storage services, maps, or AI.
 - No-cost Docent script progress UI that uses local caption sections and does not call OpenAI TTS, speech providers, geolocation, or backend audio storage.

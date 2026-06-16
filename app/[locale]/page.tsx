@@ -270,23 +270,30 @@ export default function LandingPage() {
 
   return (
     <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] px-5 pb-28 pt-6">
-      <div className="flex w-full justify-end gap-2">
-        {SUPPORTED_LOCALES.map((code) => (
-          <button
-            key={code}
-            onClick={() => handleLangChange(code)}
-            title={LANGUAGE_NAMES[code]}
-            aria-label={`${LANGUAGE_NAMES[code]} (${code.toUpperCase()})`}
-            aria-pressed={locale === code}
-            className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-              locale === code
-                ? 'border-[#FF3A5C] bg-[#FF3A5C] font-bold text-white'
-                : 'border-[#2E2E4A] text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white'
-            }`}
-          >
-            {code.toUpperCase()}
-          </button>
-        ))}
+      <div className="w-full space-y-2" role="group" aria-label={copy.landing.languageTitle}>
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#8B8BA8]">
+          <Languages size={14} className="text-[#FF3A5C]" />
+          {copy.landing.languageTitle}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {SUPPORTED_LOCALES.map((code) => (
+            <button
+              key={code}
+              onClick={() => handleLangChange(code)}
+              title={LANGUAGE_NAMES[code]}
+              aria-label={`${LANGUAGE_NAMES[code]} (${code.toUpperCase()})`}
+              aria-pressed={locale === code}
+              className={`flex min-h-11 items-center gap-2 rounded-xl border px-3 text-left transition-colors ${
+                locale === code
+                  ? 'border-[#FF3A5C] bg-[#FF3A5C] font-bold text-white'
+                  : 'border-[#2E2E4A] bg-white/5 text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white'
+              }`}
+            >
+              <span className="w-8 shrink-0 text-xs font-black uppercase">{code}</span>
+              <span className="min-w-0 truncate text-sm">{LANGUAGE_NAMES[code]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex w-full flex-col gap-5 pt-6">

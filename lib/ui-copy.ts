@@ -96,6 +96,7 @@ const UI_COPY = {
     },
     landing: {
       eyebrow: 'Local-first travel lab',
+      languageTitle: 'Choose your language',
       description:
         'Discover Korea through K-content inspired places, routes, and nearby travel helpers. TourAPI place data is used when a key is configured, with safe local fallbacks for development.',
       start: 'Explore K-Vibe',
@@ -581,6 +582,7 @@ const UI_COPY = {
     },
     landing: {
       eyebrow: '로컬 우선 여행 실험실',
+      languageTitle: '언어를 선택하세요',
       description:
         'K-콘텐츠 감성의 장소, 루트, 주변 편의 정보를 통해 한국 여행을 발견하세요. 키가 설정되면 TourAPI 장소 데이터를 사용하고, 개발 중에는 안전한 로컬 대체 데이터를 유지합니다.',
       start: 'K-Vibe 둘러보기',
@@ -1066,6 +1068,7 @@ const UI_COPY = {
     },
     landing: {
       eyebrow: 'ローカル優先の旅行ラボ',
+      languageTitle: '言語を選択',
       description:
         'Kコンテンツに着想を得た場所、ルート、周辺ヘルプで韓国旅行を見つけましょう。キーが設定されている場合はTourAPIを使い、開発中は安全なローカルデータに戻ります。',
       start: 'K-Vibeを探す',
@@ -1551,6 +1554,7 @@ const UI_COPY = {
     },
     landing: {
       eyebrow: '本地优先旅行实验室',
+      languageTitle: '选择语言',
       description:
         '通过受K-content启发的地点、路线和周边旅行助手探索韩国。配置密钥后使用TourAPI地点数据，开发时保留安全的本地兜底数据。',
       start: '探索K-Vibe',
