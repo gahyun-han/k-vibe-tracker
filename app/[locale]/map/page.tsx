@@ -284,6 +284,9 @@ export default function MapPage() {
     const sourceParam = searchParams.get('source');
     const openDetail = searchParams.get('detail') === '1';
     const description = searchParams.get('description')?.trim();
+    const category = searchParams.get('category')?.trim() || 'photo';
+    const address = searchParams.get('address')?.trim();
+    const tags = searchParams.get('tags')?.split(',').map((tag) => tag.trim()).filter(Boolean) ?? [];
 
     if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
@@ -291,13 +294,13 @@ export default function MapPage() {
       const focusedPlace = {
         id: `analysis-${focusLat}-${focusLng}`,
         name: focusName,
-        category: 'photo',
-        address: nextLocationLabel,
+        category,
+        address: address || nextLocationLabel,
         lat: focusLat,
         lng: focusLng,
         overview: description || undefined,
         crowdLevel: undefined,
-        tags: ['SNS'],
+        tags: tags.length > 0 ? tags : sourceParam === 'analyze' ? ['SNS'] : [],
         distanceM: 0,
       } satisfies Place & { distanceM?: number };
       setCoords({ lat: focusLat, lng: focusLng });

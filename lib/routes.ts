@@ -710,6 +710,23 @@ export function buildGoogleMapsPlaceUrl(stop: Pick<RouteStop, 'lat' | 'lng'>) {
   return url.toString();
 }
 
+export function buildRouteStopDetailUrl(stop: RouteStop, locale: string) {
+  const params = new URLSearchParams({
+    lat: String(stop.lat),
+    lng: String(stop.lng),
+    q: stop.name,
+    source: 'route',
+    detail: '1',
+    category: stop.category,
+    address: stop.address,
+    description: stop.description,
+  });
+
+  if (stop.tags.length > 0) params.set('tags', stop.tags.join(','));
+
+  return `/${locale}/map?${params.toString()}`;
+}
+
 export function formatDuration(minutes: number) {
   if (minutes < 60) return `${minutes}min`;
   const hours = Math.floor(minutes / 60);

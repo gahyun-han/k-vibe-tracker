@@ -3,6 +3,7 @@ import {
   buildLocalRouteShareUrl,
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
+  buildRouteStopDetailUrl,
   createLocalRoutePlan,
   createRouteProgressState,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -118,6 +119,21 @@ describe('route helpers', () => {
     expect(multiStop.searchParams.get('destination')).toBe('37.5701,126.9996');
     expect(waypointStop.searchParams.get('waypoints')).toBe('37.5665,126.978');
     expect(place.searchParams.get('query')).toBe('37.5447,127.0564');
+  });
+
+  it('builds in-app map detail handoff links for route stops', () => {
+    const detailUrl = new URL(buildRouteStopDetailUrl(STOPS[0], 'ko'), 'http://localhost:3000');
+
+    expect(detailUrl.pathname).toBe('/ko/map');
+    expect(detailUrl.searchParams.get('lat')).toBe('37.5447');
+    expect(detailUrl.searchParams.get('lng')).toBe('127.0564');
+    expect(detailUrl.searchParams.get('q')).toBe('First stop');
+    expect(detailUrl.searchParams.get('source')).toBe('route');
+    expect(detailUrl.searchParams.get('detail')).toBe('1');
+    expect(detailUrl.searchParams.get('category')).toBe('Cafe');
+    expect(detailUrl.searchParams.get('address')).toBe('Seoul');
+    expect(detailUrl.searchParams.get('description')).toBe('A test stop.');
+    expect(detailUrl.searchParams.get('tags')).toBe('cafe');
   });
 
   it('builds and restores no-cost local route share URLs', () => {

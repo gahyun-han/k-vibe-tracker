@@ -124,7 +124,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
 - Route sharing is no-cost and local-first: `lib/routes.ts` encodes the current plan into a same-origin `route=` URL parameter, and `/[locale]/route` restores that payload into the editor before falling back to `localStorage`.
 - Route progress is no-cost and local-first: completed stop IDs are stored per route, invalid/deleted stops are filtered out, and Start Guidance opens the next incomplete stop before showing the all-complete state.
-- Route editor shows a no-cost local mini map preview. Stops can be reordered through drag-and-drop or icon move controls, and the sticky action bar stays inside the responsive app shell on mobile and desktop. Stop pins and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
+- Route editor shows a no-cost local mini map preview. Stops can be reordered through drag-and-drop or icon move controls, and the sticky action bar stays inside the responsive app shell on mobile and desktop. Selecting a stop body follows the root S9 flow by opening `/[locale]/map` with `detail=1`, focusing that stop, and showing the local place detail sheet with route context. Stop pins, explicit Google Maps icons, and the primary directions CTA open Google Maps URLs in a new tab only after the user clicks; no Maps Directions API, Kakao Mobility API, or paid route calculation is called.
 - Docent playback uses browser `speechSynthesis` with generated captions from the selected route stop. The script is split into intro, details, tags, and next-step sections; speech boundary events highlight and scroll the active section when supported. It does not call OpenAI TTS or any paid API.
 - Docent arrival checking reads `lat` and `lng` from the query string, asks for browser geolocation only after a user tap, computes distance locally with Haversine, and treats 100m as the ready radius. Automatic polling, push prompts, and provider TTS remain approval-gated.
 
@@ -147,7 +147,7 @@ Every data-backed page should expose:
 - The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
 - The PWA install prompt is localized for `ko`, `en`, `ja`, and `zh`.
 - Shared toast notifications use lucide icons, accessible alert/status roles, and an icon close control.
-- Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
+- Route stop detail handoff labels, route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 
 ## Approval-Gated Work

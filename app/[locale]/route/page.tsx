@@ -11,6 +11,7 @@ import {
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
   buildLocalRouteShareUrl,
+  buildRouteStopDetailUrl,
   calculateWalkingMinutes,
   createLocalRoutePlan,
   createRouteProgressState,
@@ -275,6 +276,10 @@ export default function RoutePage() {
     window.open(buildGoogleMapsPlaceUrl(spot), '_blank', 'noopener,noreferrer');
   }
 
+  function openStopDetail(spot: RouteStop) {
+    router.push(buildRouteStopDetailUrl(spot, locale));
+  }
+
   function openDirections() {
     if (!directionsUrl) {
       setStatus(copy.addStopBeforeGuidance);
@@ -372,7 +377,7 @@ export default function RoutePage() {
               onDragOver={(e) => onDragOver(e, spot.id)}
               onDrop={() => onDrop(spot.id)}
               onDragEnd={onDragEnd}
-              className={`relative flex cursor-grab items-center gap-3 rounded-xl border bg-white/5 p-3 transition-all active:cursor-grabbing ${
+              className={`relative flex cursor-grab items-center gap-2 rounded-xl border bg-white/5 p-2 transition-all active:cursor-grabbing ${
                 dragOverId === spot.id
                   ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5'
                   : isCompleted
@@ -380,34 +385,42 @@ export default function RoutePage() {
                     : 'border-white/10'
               } ${draggingId === spot.id ? 'opacity-40' : 'opacity-100'}`}
             >
-              <div
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
-                  isCompleted ? 'bg-emerald-500' : 'bg-[#FF3A5C]'
-                }`}
+              <button
+                type="button"
+                onClick={() => openStopDetail(spot)}
+                aria-label={copy.openStopDetail.replace('{name}', spot.name)}
+                title={copy.openStopDetailTitle}
+                className="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 text-left transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/40"
               >
-                {isCompleted ? <CheckCircle2 size={15} /> : idx + 1}
-              </div>
+                <div
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
+                    isCompleted ? 'bg-emerald-500' : 'bg-[#FF3A5C]'
+                  }`}
+                >
+                  {isCompleted ? <CheckCircle2 size={15} /> : idx + 1}
+                </div>
 
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <p className={`text-sm font-semibold ${isCompleted ? 'text-white/55 line-through' : 'text-white'}`}>
-                    {spot.name}
-                  </p>
-                  <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
-                  {isCompleted && (
-                    <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
-                      {copy.completed}
-                    </span>
-                  )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <p className={`text-sm font-semibold ${isCompleted ? 'text-white/55 line-through' : 'text-white'}`}>
+                      {spot.name}
+                    </p>
+                    <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
+                    {isCompleted && (
+                      <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                        {copy.completed}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-0.5 flex items-center gap-2">
+                    <span className="text-xs text-white/40">{spot.category}</span>
+                    <span className="text-white/20">.</span>
+                    <span className="text-xs text-white/40">{spot.stayMinutes}{copy.staySuffix}</span>
+                    <span className="text-white/20">.</span>
+                    <span className="text-xs text-white/40">{spot.startTime}</span>
+                  </div>
                 </div>
-                <div className="mt-0.5 flex items-center gap-2">
-                  <span className="text-xs text-white/40">{spot.category}</span>
-                  <span className="text-white/20">.</span>
-                  <span className="text-xs text-white/40">{spot.stayMinutes}{copy.staySuffix}</span>
-                  <span className="text-white/20">.</span>
-                  <span className="text-xs text-white/40">{spot.startTime}</span>
-                </div>
-              </div>
+              </button>
 
               <div className="flex shrink-0 items-center gap-1">
                 <button
