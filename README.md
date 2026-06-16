@@ -110,7 +110,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 ## Frontend Flow
 
-- `/[locale]`: actionable home entry with language selection, feature shortcuts, and trend chips that open focused map views.
+- `/[locale]`: actionable home feed with language selection, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
@@ -289,6 +289,7 @@ ai-worker/      # FastAPI prototype
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
+  - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
   - Profile now works as a guest-mode dashboard with local saved places and the current local route, matching the root saved-places grid direction without needing Supabase.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.

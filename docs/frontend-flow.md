@@ -16,7 +16,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens.
-- The home entry at `/[locale]` presents local-first status, feature shortcuts, and trend chips that open focused map views.
+- The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
 - Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions.
@@ -32,12 +32,14 @@ This project is in local-first development mode. Pages should remain usable with
 
 ### Places
 
+- Home feed UI: `app/[locale]/page.tsx`
 - UI: `app/[locale]/map/page.tsx`
 - Map renderer: `components/map/KakaoMapView.tsx`
 - API: `app/api/places/route.ts`
 - Detail API: `app/api/places/[contentId]/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
+- Home feed requests the same `/api/places` contract with the active locale, shows the response source, supports local category filters, can save places, and hands selected cards to the map with `source=home`.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
