@@ -71,6 +71,10 @@ describe('ui copy', () => {
       expect(copy.route.openStopDetail).toContain('{name}');
       expect(copy.route.openStopDetailTitle.length).toBeGreaterThan(0);
       expect(copy.route.openStopMap).toContain('{name}');
+      expect(copy.route.moveStopUp).toContain('{name}');
+      expect(copy.route.moveStopDown).toContain('{name}');
+      expect(copy.route.moveStopUpTitle.length).toBeGreaterThan(0);
+      expect(copy.route.moveStopDownTitle.length).toBeGreaterThan(0);
       expect(copy.route.extraStop.name.length).toBeGreaterThan(0);
 
       expect(copy.common.goBack.length).toBeGreaterThan(0);

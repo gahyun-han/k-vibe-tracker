@@ -382,6 +382,10 @@ const UI_COPY = {
       markIncomplete: 'Reopen {name}',
       markCompleteTitle: 'Mark complete',
       markIncompleteTitle: 'Reopen stop',
+      moveStopUp: 'Move {name} up',
+      moveStopDown: 'Move {name} down',
+      moveStopUpTitle: 'Move up',
+      moveStopDownTitle: 'Move down',
       removeStop: 'Remove {name}',
       extraStop: {
         id: 'cheonggyecheon-stream',
@@ -877,6 +881,10 @@ const UI_COPY = {
       markIncomplete: '{name} 다시 열기',
       markCompleteTitle: '완료 표시',
       markIncompleteTitle: '다시 열기',
+      moveStopUp: '{name} 위로 이동',
+      moveStopDown: '{name} 아래로 이동',
+      moveStopUpTitle: '위로 이동',
+      moveStopDownTitle: '아래로 이동',
       removeStop: '{name} 삭제',
       extraStop: {
         id: 'cheonggyecheon-stream',
@@ -1372,6 +1380,10 @@ const UI_COPY = {
       markIncomplete: '{name}を再開する',
       markCompleteTitle: '完了にする',
       markIncompleteTitle: '再開する',
+      moveStopUp: '{name}を上へ移動',
+      moveStopDown: '{name}を下へ移動',
+      moveStopUpTitle: '上へ移動',
+      moveStopDownTitle: '下へ移動',
       removeStop: '{name}を削除',
       extraStop: {
         id: 'cheonggyecheon-stream',
@@ -1867,6 +1879,10 @@ const UI_COPY = {
       markIncomplete: '重新打开{name}',
       markCompleteTitle: '标记完成',
       markIncompleteTitle: '重新打开',
+      moveStopUp: '上移{name}',
+      moveStopDown: '下移{name}',
+      moveStopUpTitle: '上移',
+      moveStopDownTitle: '下移',
       removeStop: '删除{name}',
       extraStop: {
         id: 'cheonggyecheon-stream',

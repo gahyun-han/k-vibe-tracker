@@ -397,7 +397,10 @@ export default function RoutePage() {
         <div className="px-4 pb-3 pt-4">
           <p className="text-xs font-semibold text-[#FF3A5C]">{copy.editableEyebrow}</p>
           <h2 className="mt-0.5 text-lg font-bold text-white">{planTitle}</h2>
-          <p className="mt-1 text-xs text-white/40">{copy.helper}</p>
+          {planMeta.summary && (
+            <p className="mt-1 text-sm leading-5 text-white/70">{planMeta.summary}</p>
+          )}
+          <p className="mt-1 text-xs leading-5 text-white/40">{copy.helper}</p>
         </div>
 
         <div className="mx-4 mb-4 grid grid-cols-4 gap-2">
@@ -588,8 +591,8 @@ export default function RoutePage() {
                       type="button"
                       onClick={() => moveSpot(spot.id, -1)}
                       disabled={idx === 0}
-                      aria-label={`Move ${spot.name} up`}
-                      title={copy.orderUpdated}
+                      aria-label={copy.moveStopUp.replace('{name}', spot.name)}
+                      title={copy.moveStopUpTitle}
                       className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
                     >
                       <ChevronUp size={14} />
@@ -598,8 +601,8 @@ export default function RoutePage() {
                       type="button"
                       onClick={() => moveSpot(spot.id, 1)}
                       disabled={idx === spots.length - 1}
-                      aria-label={`Move ${spot.name} down`}
-                      title={copy.orderUpdated}
+                      aria-label={copy.moveStopDown.replace('{name}', spot.name)}
+                      title={copy.moveStopDownTitle}
                       className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C] disabled:opacity-25"
                     >
                       <ChevronDown size={14} />
