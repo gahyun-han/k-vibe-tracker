@@ -46,6 +46,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Connected S9 Route stop cards to the S4-style place detail flow. Tapping a stop body now opens the in-app map with `detail=1`, preserves route stop category/address/tags/description context, and leaves explicit Google Maps buttons as separate user-clicked external handoffs.
 - Connected S2 Home feed cards to the S4-style place detail flow. Feed image/text taps and the map CTA now open the in-app map with `detail=1`, preserving category, address, tags, image URL, and TourAPI content identifiers for detail enrichment.
 - Connected S12 Profile saved-place tiles to the S4-style place detail flow. Saved grid taps now open the in-app map with `detail=1`, preserving saved category, address, tags, image, overview, and TourAPI content identifiers when available.
+- Added no-cost S4 place detail sharing. The detail sheet now exposes a localized share action that uses Web Share or clipboard to hand off a same-origin focused map detail URL without Supabase public links, Kakao Mobility, or paid routing APIs.
 
 ## 2026-06-16
 

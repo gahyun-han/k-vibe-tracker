@@ -111,7 +111,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 ## Frontend Flow
 
 - `/[locale]`: actionable home feed with language selection, root-aligned story topic filters, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps now open the in-app map detail sheet with TourAPI detail context when available.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, caches same-query place responses locally for 1 hour, lazy-loads `/api/places/[contentId]` details and image galleries for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, exposes the root S3 SNS analyzer FAB, and can add a selected place into the local route editor.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, caches same-query place responses locally for 1 hour, lazy-loads `/api/places/[contentId]` details and image galleries for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, exposes the root S3 SNS analyzer FAB, and can add or share a selected place through local route/detail URLs.
 - `/[locale]/analyze`: SNS URL analyzer. It detects YouTube and Instagram links, presents platform-aware example cards, immediately runs local/mock analysis for YouTube examples, calls `/api/analyze` for YouTube with the active locale, shows a localized 4-step loading state, caches same-video analysis results locally for 1 hour, returns localized local mock spot extraction by default, lets detected spot cards open the map with the place detail sheet already focused, can draft a local route from detected places, and keeps live Instagram extraction deferred until an approved no-cost/provider path exists.
 - `/[locale]/persona`: K-content route generator. It guides users through a localized 3-step theme, mood, and confirmation flow with six root-aligned persona themes, calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, in-app stop detail handoff to the map sheet, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
@@ -162,6 +162,7 @@ all, cafe, photo, fun, culture, food, stay
 
 - Storage key: `k-vibe-saved-places`
 - Map place detail sheets can save or unsave a selected place with the heart control.
+- Map place detail sheets can share a same-origin `/[locale]/map?detail=1&source=share` URL through Web Share or clipboard without creating a backend public-link record.
 - Saved places are visible in `/[locale]/profile` even in guest mode.
 - Saved place cards open the in-app map detail sheet with `source=saved`, `detail=1`, coordinates, category/address/tags, and TourAPI content identifiers when available.
 - Supabase account sync for saved places is still deferred until credentials are configured.
@@ -301,6 +302,7 @@ ai-worker/      # FastAPI prototype
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
   - Map place details lazy-load TourAPI overview, image gallery, phone, operating time, rest day, and parking fields.
   - Map place details can save or unsave a selected place, add it into the shared local route plan, open the route editor, or launch the local Docent flow.
+  - Map place details can share focused same-origin detail URLs through Web Share or clipboard without Supabase public links or paid provider calls.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, localized facility cards, a local radar map preview, and no-key Google Maps handoff links.
   - Radar popup facilities can now be enriched from TourAPI `searchFestival2` with locale-aware facility cache keys while keeping mock fallback behavior.

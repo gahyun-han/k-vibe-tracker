@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Clock, ExternalLink, Heart, MapPin, Mic2, Phone, RefreshCw, Star, Tags, X } from 'lucide-react';
+import { Clock, ExternalLink, Heart, MapPin, Mic2, Phone, RefreshCw, Share2, Star, Tags, X } from 'lucide-react';
 import { buildPlaceImageGallery } from '@/lib/place-images';
+import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
 import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
 
 export interface Place {
@@ -42,6 +43,10 @@ interface PlaceDetailModalProps {
     detailFallback: string;
     closeDetail: string;
     imagePreview: string;
+    share: string;
+    shared: string;
+    copied: string;
+    shareUnavailable: string;
     crowd: {
       low: string;
       mid: string;
@@ -83,6 +88,10 @@ const DEFAULT_LABELS = {
   detailFallback: 'Detail fallback active',
   closeDetail: 'Close place detail',
   imagePreview: 'Preview image {index}',
+  share: 'Share',
+  shared: 'Shared',
+  copied: 'Copied link',
+  shareUnavailable: 'Share unavailable',
   crowd: {
     low: 'Quiet',
     mid: 'Normal',
@@ -105,6 +114,7 @@ export function PlaceDetailModal({
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [shareStatus, setShareStatus] = useState('');
 
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
@@ -126,6 +136,7 @@ export function PlaceDetailModal({
     setDetail(null);
     setDetailError('');
     setSelectedImageIndex(0);
+    setShareStatus('');
 
     if (!place?.contentId || place.contentId.startsWith('mock_')) return;
 
@@ -206,6 +217,27 @@ export function PlaceDetailModal({
   const imageUrl = imageGallery[selectedImageIndex] ?? mergedPlace.imageUrl;
   const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
   const text = { ...DEFAULT_LABELS, ...labels };
+
+  async function sharePlace() {
+    const shareUrl = buildPlaceDetailShareUrl(mergedPlace, locale, window.location.href);
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: mergedPlace.name,
+          text: mergedPlace.address,
+          url: shareUrl,
+        });
+        setShareStatus(text.shared);
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareUrl);
+      setShareStatus(text.copied);
+    } catch {
+      setShareStatus(text.shareUnavailable);
+    }
+  }
 
   return (
     <>
@@ -365,33 +397,46 @@ export function PlaceDetailModal({
               </div>
             )}
 
-            <div className="flex gap-2 pt-1">
+            <div className="flex flex-wrap gap-2 pt-1">
               <button
                 onClick={() => onAddToRoute?.(mergedPlace)}
-                className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+                className="min-w-[150px] flex-[2_1_150px] rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 {text.addToRoute}
               </button>
               <button
                 type="button"
                 onClick={() => onOpenDocent?.(mergedPlace)}
-                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
               >
                 <Mic2 size={14} />
                 {text.docent}
+              </button>
+              <button
+                type="button"
+                onClick={sharePlace}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+              >
+                <Share2 size={14} />
+                {text.share}
               </button>
               {externalUrl && (
                 <a
                   href={externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
                 >
                   <ExternalLink size={14} />
                   {text.details}
                 </a>
               )}
             </div>
+            {shareStatus && (
+              <p role="status" className="text-center text-xs text-white/40">
+                {shareStatus}
+              </p>
+            )}
           </div>
         </div>
       </div>

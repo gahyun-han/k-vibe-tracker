@@ -69,6 +69,7 @@ This project is in local-first development mode. Pages should remain usable with
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
 - Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places`.
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields. When multiple images are available, the detail sheet exposes a compact image gallery that switches the hero image without another provider call.
+- Place detail sharing is no-cost and local-first: the sheet uses Web Share when available, otherwise copies a same-origin `/[locale]/map?detail=1&source=share` URL with coordinates, category, address, tags, and optional TourAPI identifiers. It does not create a backend public-link row or call a paid maps/routing provider.
 - Place detail sheets can open `/[locale]/docent` with the selected place overview and coordinates as the local guide caption and arrival-check source.
 
 ### Saved Places

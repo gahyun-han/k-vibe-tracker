@@ -180,6 +180,10 @@ const UI_COPY = {
       detailFallback: 'Detail fallback active',
       closeDetail: 'Close place detail',
       imagePreview: 'Preview image {index}',
+      share: 'Share',
+      shared: 'Shared',
+      copied: 'Copied link',
+      shareUnavailable: 'Share unavailable',
       crowd: {
         low: 'Quiet',
         mid: 'Normal',
@@ -620,6 +624,10 @@ const UI_COPY = {
       detailFallback: '상세 대체 모드',
       closeDetail: '장소 상세 닫기',
       imagePreview: '{index}번째 이미지 보기',
+      share: '공유',
+      shared: '공유했어요',
+      copied: '링크를 복사했어요',
+      shareUnavailable: '공유할 수 없어요',
       crowd: {
         low: '여유',
         mid: '보통',
@@ -1060,6 +1068,10 @@ const UI_COPY = {
       detailFallback: '詳細フォールバック',
       closeDetail: 'スポット詳細を閉じる',
       imagePreview: '{index}枚目の画像を表示',
+      share: '共有',
+      shared: '共有しました',
+      copied: 'リンクをコピーしました',
+      shareUnavailable: '共有できません',
       crowd: {
         low: '空き',
         mid: '通常',
@@ -1500,6 +1512,10 @@ const UI_COPY = {
       detailFallback: '详情兜底模式',
       closeDetail: '关闭地点详情',
       imagePreview: '查看第{index}张图片',
+      share: '分享',
+      shared: '已分享',
+      copied: '已复制链接',
+      shareUnavailable: '无法分享',
       crowd: {
         low: '较空',
         mid: '普通',
