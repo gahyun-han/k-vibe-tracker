@@ -24,7 +24,7 @@ import {
 } from '@/lib/routes';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
-type Step = 1 | 2;
+type Step = 1 | 2 | 3;
 
 interface GenerateRouteResponse {
   plan: RoutePlan;
@@ -52,6 +52,11 @@ export default function PersonaPage() {
     [theme]
   );
   const selectedThemeCopy = selectedTheme ? copy.themes[selectedTheme.id] : null;
+  const selectedDetailCopy = useMemo(() => {
+    if (!detail || !selectedThemeCopy) return null;
+    const details = selectedThemeCopy.details as Record<string, { label: string; description: string }>;
+    return details[detail] ?? null;
+  }, [detail, selectedThemeCopy]);
 
   async function generateRoute() {
     if (!theme || !detail) return;
@@ -211,7 +216,7 @@ export default function PersonaPage() {
             {copy.subtitle}
           </p>
           <div className="mt-4 flex gap-1.5">
-            {([1, 2] as const).map((item) => (
+            {([1, 2, 3] as const).map((item) => (
               <div
                 key={item}
                 className={`h-1 flex-1 rounded-full transition-all ${step >= item ? 'bg-[#FF3A5C]' : 'bg-white/10'}`}
@@ -300,6 +305,49 @@ export default function PersonaPage() {
               </div>
             </>
           )}
+
+          {step === 3 && selectedThemeCopy && selectedDetailCopy && (
+            <>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setStep(2)}
+                  className="rounded-lg bg-white/10 p-2 text-white/50 hover:text-white"
+                  aria-label={copy.backToMoods}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <div>
+                  <p className="text-xs text-white/40">{copy.confirmEyebrow}</p>
+                  <h3 className="text-base font-bold text-white">{copy.confirmTitle}</h3>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <p className="text-sm leading-6 text-white/60">{copy.confirmBody}</p>
+                <div className="mt-4 grid gap-2">
+                  {[
+                    { label: copy.selectedTheme, value: selectedThemeCopy.label },
+                    { label: copy.selectedDetail, value: selectedDetailCopy.label },
+                    { label: copy.selectedStart, value: startTime },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex items-center justify-between gap-3 rounded-xl bg-[#0D0D1A] px-3 py-2">
+                      <span className="text-xs text-white/40">{label}</span>
+                      <span className="text-right text-sm font-semibold text-white">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-semibold text-white/65 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <ChevronLeft size={16} />
+                {copy.adjustSelection}
+              </button>
+            </>
+          )}
         </div>
 
         {error && (
@@ -310,6 +358,19 @@ export default function PersonaPage() {
         )}
 
         {step === 2 && (
+          <div className="px-4 pb-4">
+            <button
+              onClick={() => setStep(3)}
+              disabled={!detail}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white disabled:opacity-40"
+            >
+              <ChevronRight size={16} />
+              {copy.reviewSelection}
+            </button>
+          </div>
+        )}
+
+        {step === 3 && (
           <div className="px-4 pb-4">
             <button
               onClick={generateRoute}

@@ -61,6 +61,9 @@ describe('ui copy', () => {
 
       expect(copy.persona.title.length).toBeGreaterThan(0);
       expect(copy.persona.themes.kpop.details.bts.label.length).toBeGreaterThan(0);
+      expect(copy.persona.reviewSelection.length).toBeGreaterThan(0);
+      expect(copy.persona.confirmTitle.length).toBeGreaterThan(0);
+      expect(copy.persona.selectedTheme.length).toBeGreaterThan(0);
       expect(copy.persona.routeTitle).toContain('{detail}');
 
       expect(copy.tutorial.steps).toHaveLength(6);
