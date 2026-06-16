@@ -374,6 +374,7 @@ export default function LandingPage() {
                     }}
                     className="flex w-[72px] shrink-0 flex-col items-center gap-1.5 text-center"
                     aria-label={copy.homeFeed.stories[id]}
+                    aria-pressed={active}
                   >
                     <span
                       className={`flex h-14 w-14 items-center justify-center rounded-full border p-0.5 transition-colors ${
@@ -401,6 +402,7 @@ export default function LandingPage() {
                 <button
                   key={category}
                   type="button"
+                  aria-pressed={feedCategory === category}
                   onClick={() => {
                     setSelectedStory(null);
                     setFeedCategory(category);
