@@ -46,7 +46,9 @@ describe('ui copy', () => {
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);
+      expect(copy.radar.filters.atm.length).toBeGreaterThan(0);
       expect(copy.radar.facilityTypes.restroom.length).toBeGreaterThan(0);
+      expect(copy.radar.facilityTypes.atm.length).toBeGreaterThan(0);
       expect(copy.radar.viewOnMap.length).toBeGreaterThan(0);
       expect(copy.radar.expandRadius.length).toBeGreaterThan(0);
 

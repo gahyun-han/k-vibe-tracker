@@ -19,6 +19,7 @@ const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const FILTER_TABS: { id: FacilityFilter }[] = [
   { id: 'all' },
   { id: 'restroom' },
+  { id: 'atm' },
   { id: 'cafe_toilet' },
   { id: 'pharmacy' },
   { id: 'convenience' },

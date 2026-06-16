@@ -1,5 +1,6 @@
 import {
   Coffee,
+  Landmark,
   Pill,
   ShoppingBag,
   Sparkles,
@@ -21,6 +22,12 @@ export const FACILITY_TYPE_UI: Record<FacilityType, FacilityTypeUi> = {
     color: 'text-blue-400',
     bg: 'bg-blue-400/10',
     pin: 'bg-blue-400 text-[#0D0D1A]',
+  },
+  atm: {
+    Icon: Landmark,
+    color: 'text-cyan-400',
+    bg: 'bg-cyan-400/10',
+    pin: 'bg-cyan-400 text-[#0D0D1A]',
   },
   pharmacy: {
     Icon: Pill,

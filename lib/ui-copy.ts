@@ -253,6 +253,7 @@ const UI_COPY = {
       filters: {
         all: 'All',
         restroom: 'Restroom',
+        atm: 'ATM',
         cafe_toilet: 'Cafe WC',
         pharmacy: 'Pharmacy',
         convenience: 'Store',
@@ -260,6 +261,7 @@ const UI_COPY = {
       },
       facilityTypes: {
         restroom: 'Restroom',
+        atm: 'ATM',
         pharmacy: 'Pharmacy',
         cafe_toilet: 'Cafe restroom',
         convenience: 'Convenience',
@@ -726,6 +728,7 @@ const UI_COPY = {
       filters: {
         all: '전체',
         restroom: '화장실',
+        atm: 'ATM',
         cafe_toilet: '카페 화장실',
         pharmacy: '약국',
         convenience: '편의점',
@@ -733,6 +736,7 @@ const UI_COPY = {
       },
       facilityTypes: {
         restroom: '화장실',
+        atm: 'ATM',
         pharmacy: '약국',
         cafe_toilet: '카페 화장실',
         convenience: '편의점',
@@ -1199,6 +1203,7 @@ const UI_COPY = {
       filters: {
         all: 'すべて',
         restroom: 'トイレ',
+        atm: 'ATM',
         cafe_toilet: 'カフェWC',
         pharmacy: '薬局',
         convenience: 'コンビニ',
@@ -1206,6 +1211,7 @@ const UI_COPY = {
       },
       facilityTypes: {
         restroom: 'トイレ',
+        atm: 'ATM',
         pharmacy: '薬局',
         cafe_toilet: 'カフェトイレ',
         convenience: 'コンビニ',
@@ -1672,6 +1678,7 @@ const UI_COPY = {
       filters: {
         all: '全部',
         restroom: '洗手间',
+        atm: 'ATM',
         cafe_toilet: '咖啡店WC',
         pharmacy: '药店',
         convenience: '便利店',
@@ -1679,6 +1686,7 @@ const UI_COPY = {
       },
       facilityTypes: {
         restroom: '洗手间',
+        atm: 'ATM',
         pharmacy: '药店',
         cafe_toilet: '咖啡店洗手间',
         convenience: '便利店',

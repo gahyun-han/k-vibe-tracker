@@ -3,6 +3,7 @@ import type { TourApiFestivalItem, TourApiLocale } from '@/lib/tourapi';
 
 export const FACILITY_TYPES = [
   'restroom',
+  'atm',
   'pharmacy',
   'cafe_toilet',
   'convenience',
@@ -60,6 +61,16 @@ const FACILITY_BLUEPRINTS: FacilityBlueprint[] = [
     isOpen: true,
     offsetLat: 0.0016,
     offsetLng: 0.0012,
+  },
+  {
+    id: 'facility_atm_bank',
+    type: 'atm',
+    name: 'KB ATM Seongsu Branch',
+    address: '82 Seongsui-ro, Seongdong-gu',
+    is24h: true,
+    extra: 'International cards may vary by issuer',
+    offsetLat: 0.001,
+    offsetLng: -0.0009,
   },
   {
     id: 'facility_convenience_cu',

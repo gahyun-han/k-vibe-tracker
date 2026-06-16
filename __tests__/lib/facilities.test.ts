@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildFacilitiesCacheKey,
   buildGoogleMapsFacilityUrl,
+  FACILITY_TYPES,
   getMockFacilities,
   normalizeTourApiFestivalFacilities,
   type Facility,
@@ -31,6 +32,20 @@ describe('facility helpers', () => {
     expect(facilities.map((facility) => facility.distance)).toEqual(
       [...facilities.map((facility) => facility.distance)].sort((a, b) => a - b),
     );
+  });
+
+  it('includes ATM as a first-class local facility type', () => {
+    expect(FACILITY_TYPES).toContain('atm');
+
+    const facilities = getMockFacilities({
+      lat: 37.5665,
+      lng: 126.978,
+      radius: 500,
+      type: 'atm',
+    });
+
+    expect(facilities.length).toBeGreaterThan(0);
+    expect(facilities.every((facility) => facility.type === 'atm')).toBe(true);
   });
 
   it('builds no-key Google Maps facility handoff URLs', () => {
