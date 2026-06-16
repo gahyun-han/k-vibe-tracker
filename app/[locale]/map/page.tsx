@@ -395,6 +395,13 @@ export default function MapPage() {
     });
   }, [categories, focusPlace, places, search]);
 
+  function resetMapFilters() {
+    setSearch('');
+    setCategories(['all']);
+    setFocusPlace(null);
+    setSelectedPlace(null);
+  }
+
   return (
     <AppLayout activeTab="map">
       <div className="flex h-[calc(100dvh-3.5rem)] flex-col bg-[#0D0D1A]">
@@ -493,7 +500,28 @@ export default function MapPage() {
 
           <div className="max-h-60 overflow-y-auto pb-20">
             {!loading && filtered.length === 0 ? (
-              <div className="py-8 text-center text-sm text-white/35">{copy.map.noPlaces}</div>
+              <div className="space-y-3 px-4 py-8 text-center">
+                <div>
+                  <p className="text-sm font-semibold text-white/55">{copy.map.noPlaces}</p>
+                  <p className="mt-1 text-xs leading-5 text-white/35">{copy.map.noPlacesHint}</p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={resetMapFilters}
+                    className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white/65 transition-colors hover:border-[#FF3A5C]/50 hover:text-white"
+                  >
+                    {copy.map.resetFilters}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={requestLocation}
+                    className="rounded-xl bg-[#FF3A5C]/15 px-3 py-2 text-xs font-semibold text-[#FF8BA0] transition-colors hover:bg-[#FF3A5C]/25 hover:text-white"
+                  >
+                    {copy.map.refreshLocation}
+                  </button>
+                </div>
+              </div>
             ) : (
               filtered.map((place) => {
                 const CategoryIcon = getCategoryIcon(place.category);

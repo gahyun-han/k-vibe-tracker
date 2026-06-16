@@ -100,6 +100,8 @@ describe('ui copy', () => {
       expect(copy.landing.languageTitle.length).toBeGreaterThan(0);
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
       expect(copy.map.resultCount).toContain('{count}');
+      expect(copy.map.noPlacesHint.length).toBeGreaterThan(0);
+      expect(copy.map.resetFilters.length).toBeGreaterThan(0);
       expect(Object.values(copy.homeFeed.stories)).toHaveLength(5);
       expect(copy.homeFeed.openPlaceDetail).toContain('{name}');
       expect(copy.homeFeed.personalizedFor).toContain('{persona}');
