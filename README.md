@@ -111,7 +111,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 ## Frontend Flow
 
 - `/[locale]`: actionable home entry with language selection, feature shortcuts, and trend chips that open focused map views.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
@@ -150,6 +150,23 @@ Categories:
 ```text
 all, cafe, photo, fun, culture, food, stay
 ```
+
+### `GET /api/places/[contentId]`
+
+Query:
+
+```text
+/api/places/126128?contentTypeId=12&locale=en
+```
+
+Behavior:
+
+- Validates the TourAPI content ID, optional `contentTypeId`, and optional `locale=ko|en|ja|zh`.
+- Uses TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` when `TOUR_API_KEY` exists.
+- Keeps the TourAPI key server-side and never returns it in JSON payloads.
+- Normalizes overview, address, image gallery, phone, homepage, operating time, rest day, and parking fields for the place detail sheet.
+- Falls back to a safe mock detail payload when the key is missing or TourAPI detail calls fail.
+- Builds a stable detail cache key so Redis can be added later without changing the frontend contract.
 
 ### `GET /api/facilities`
 
@@ -247,12 +264,14 @@ ai-worker/      # FastAPI prototype
 - Sprint 1 is in progress:
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - `/api/places` now supports locale-aware TourAPI service routing for Korean, English, Japanese, and Chinese.
+  - `/api/places/[contentId]` now supports TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` with safe mock fallback.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
-  - Map place details can add a selected place into the shared local route plan and open the route editor.
+  - Map place details lazy-load TourAPI overview, image gallery, phone, operating time, rest day, and parking fields.
+  - Map place details can add a selected place into the shared local route plan, open the route editor, or launch the local Docent flow.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.

@@ -74,6 +74,8 @@ function toCrowdLevel(value: number | null): Place['crowdLevel'] {
 function toPlace(place: NormalizedPlace, addressPending: string): Place & { distanceM?: number } {
   return {
     id: place.id,
+    contentId: place.content_id,
+    contentTypeId: place.content_type,
     name: place.name || place.name_en || place.name_ko,
     category: place.category,
     address: place.address ?? addressPending,
@@ -166,6 +168,22 @@ export default function MapPage() {
     }
   }, [copy.categories, copy.map.addedFromMap, locale, router]);
 
+  const openPlaceDocent = useCallback((place: Place) => {
+    const category = copy.categories[place.category as PlaceCategory] ?? place.category;
+    const query = new URLSearchParams({
+      name: place.name,
+      category,
+      address: place.address,
+      description: place.overview ?? copy.map.addedFromMap.replace('{category}', category.toLowerCase()),
+      stayMinutes: String(DEFAULT_STAY_MINUTES[place.category] ?? 60),
+      startTime: 'Flexible',
+      tags: (place.tags ?? [category]).join(','),
+    });
+    query.set('lat', String(place.lat));
+    query.set('lng', String(place.lng));
+    router.push(`/${locale}/docent?${query.toString()}`);
+  }, [copy.categories, copy.map.addedFromMap, locale, router]);
+
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setFocusPlace(null);
@@ -200,12 +218,13 @@ export default function MapPage() {
     initialLocationApplied.current = true;
 
     const searchParams = new URLSearchParams(window.location.search);
+    const hasFocusCoords = searchParams.has('lat') && searchParams.has('lng');
     const focusLat = Number(searchParams.get('lat'));
     const focusLng = Number(searchParams.get('lng'));
     const query = searchParams.get('q')?.trim();
     const sourceParam = searchParams.get('source');
 
-    if (Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
+    if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
       const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
       setCoords({ lat: focusLat, lng: focusLng });
@@ -416,8 +435,10 @@ export default function MapPage() {
 
         <PlaceDetailModal
           place={selectedPlace}
+          locale={locale}
           onClose={() => setSelectedPlace(null)}
           onAddToRoute={addPlaceToRoute}
+          onOpenDocent={openPlaceDocent}
         />
       </div>
     </AppLayout>

@@ -22,6 +22,24 @@ export interface NormalizedPlace {
   distance_m?: number;
 }
 
+export interface NormalizedPlaceDetail {
+  content_id: string;
+  content_type: number | null;
+  name: string | null;
+  address: string | null;
+  lat: number | null;
+  lng: number | null;
+  overview: string | null;
+  image_url: string | null;
+  images: string[];
+  tel: string | null;
+  homepage: string | null;
+  open_hours: string | null;
+  rest_date: string | null;
+  parking: string | null;
+  use_time: string | null;
+}
+
 export interface TourApiItem {
   contentid?: string | number;
   contenttypeid?: string | number;
@@ -31,6 +49,54 @@ export interface TourApiItem {
   addr1?: string;
   firstimage?: string;
   dist?: string | number;
+}
+
+export interface TourApiCommonItem extends TourApiItem {
+  addr2?: string;
+  tel?: string;
+  homepage?: string;
+  overview?: string;
+  firstimage2?: string;
+}
+
+export interface TourApiIntroItem {
+  contentid?: string | number;
+  contenttypeid?: string | number;
+  infocenter?: string;
+  infocenterculture?: string;
+  infocenterfood?: string;
+  infocenterlodging?: string;
+  infocenterleports?: string;
+  infocentershopping?: string;
+  opentime?: string;
+  opentimefood?: string;
+  usetime?: string;
+  usetimeculture?: string;
+  usetimeleports?: string;
+  playtime?: string;
+  restdate?: string;
+  restdateculture?: string;
+  restdatefood?: string;
+  restdateleports?: string;
+  restdateshopping?: string;
+  parking?: string;
+  parkingculture?: string;
+  parkingfood?: string;
+  parkinglodging?: string;
+  parkingleports?: string;
+  parkingshopping?: string;
+  checkintime?: string;
+  checkouttime?: string;
+  firstmenu?: string;
+  treatmenu?: string;
+  eventstartdate?: string;
+  eventenddate?: string;
+}
+
+export interface TourApiImageItem {
+  contentid?: string | number;
+  originimgurl?: string;
+  smallimageurl?: string;
 }
 
 export const PLACE_CATEGORIES: PlaceCategory[] = [
@@ -124,6 +190,47 @@ export function buildPlacesCacheKey({
   return `places:${locale}:${lat.toFixed(2)}:${lng.toFixed(2)}:r${radius}:c${category}`;
 }
 
+export function buildPlaceDetailCacheKey({
+  contentId,
+  contentTypeId,
+  locale = 'ko',
+}: {
+  contentId: string;
+  contentTypeId?: number | null;
+  locale?: TourApiLocale;
+}) {
+  return `place-detail:${locale}:${contentId}:t${contentTypeId ?? 'unknown'}`;
+}
+
+function encodeServiceKey(serviceKey: string) {
+  return /%[0-9A-Fa-f]{2}/.test(serviceKey)
+    ? serviceKey
+    : encodeURIComponent(serviceKey);
+}
+
+function buildTourApiUrl({
+  serviceKey,
+  locale,
+  operation,
+  params,
+}: {
+  serviceKey: string;
+  locale: TourApiLocale;
+  operation: string;
+  params: Record<string, string>;
+}) {
+  const searchParams = new URLSearchParams({
+    MobileOS: 'ETC',
+    MobileApp: 'K-Vibe-Tracker',
+    _type: 'json',
+    pageNo: '1',
+    numOfRows: '10',
+    ...params,
+  });
+
+  return `https://apis.data.go.kr/B551011/${getTourApiServiceForLocale(locale)}/${operation}?serviceKey=${encodeServiceKey(serviceKey)}&${searchParams.toString()}`;
+}
+
 export function buildTourApiLocationUrl({
   serviceKey,
   lat,
@@ -158,11 +265,79 @@ export function buildTourApiLocationUrl({
     params.set('contentTypeId', String(contentTypeId));
   }
 
-  const encodedKey = /%[0-9A-Fa-f]{2}/.test(serviceKey)
-    ? serviceKey
-    : encodeURIComponent(serviceKey);
+  return `https://apis.data.go.kr/B551011/${getTourApiServiceForLocale(locale)}/locationBasedList2?serviceKey=${encodeServiceKey(serviceKey)}&${params.toString()}`;
+}
 
-  return `https://apis.data.go.kr/B551011/${getTourApiServiceForLocale(locale)}/locationBasedList2?serviceKey=${encodedKey}&${params.toString()}`;
+export function buildTourApiDetailCommonUrl({
+  serviceKey,
+  contentId,
+  locale = 'ko',
+}: {
+  serviceKey: string;
+  contentId: string;
+  locale?: TourApiLocale;
+}) {
+  return buildTourApiUrl({
+    serviceKey,
+    locale,
+    operation: 'detailCommon2',
+    params: {
+      contentId,
+      defaultYN: 'Y',
+      firstImageYN: 'Y',
+      areacodeYN: 'Y',
+      catcodeYN: 'Y',
+      addrinfoYN: 'Y',
+      mapinfoYN: 'Y',
+      overviewYN: 'Y',
+    },
+  });
+}
+
+export function buildTourApiDetailIntroUrl({
+  serviceKey,
+  contentId,
+  contentTypeId,
+  locale = 'ko',
+}: {
+  serviceKey: string;
+  contentId: string;
+  contentTypeId: number;
+  locale?: TourApiLocale;
+}) {
+  return buildTourApiUrl({
+    serviceKey,
+    locale,
+    operation: 'detailIntro2',
+    params: {
+      contentId,
+      contentTypeId: String(contentTypeId),
+    },
+  });
+}
+
+export function buildTourApiDetailImageUrl({
+  serviceKey,
+  contentId,
+  locale = 'ko',
+  rows = 8,
+}: {
+  serviceKey: string;
+  contentId: string;
+  locale?: TourApiLocale;
+  rows?: number;
+}) {
+  return buildTourApiUrl({
+    serviceKey,
+    locale,
+    operation: 'detailImage2',
+    params: {
+      contentId,
+      imageYN: 'Y',
+      subImageYN: 'Y',
+      numOfRows: String(rows),
+    },
+  });
 }
 
 export function normalizeTourApiItems({
@@ -231,8 +406,12 @@ export function normalizeTourApiItem(
 }
 
 export function toTourApiItemArray(payload: unknown): TourApiItem[] {
+  return toTourApiArray<TourApiItem>(payload);
+}
+
+export function toTourApiArray<T>(payload: unknown): T[] {
   const item = (payload as {
-    response?: { body?: { items?: { item?: TourApiItem | TourApiItem[] } | '' } };
+    response?: { body?: { items?: { item?: T | T[] } | '' } };
   })?.response?.body?.items;
 
   if (!item || typeof item === 'string') return [];
@@ -241,4 +420,133 @@ export function toTourApiItemArray(payload: unknown): TourApiItem[] {
   if (!raw) return [];
 
   return Array.isArray(raw) ? raw : [raw];
+}
+
+export function cleanTourApiText(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const decoded = value
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ');
+  const text = decodeHtml(decoded)
+    .replace(/\r/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+  return text || null;
+}
+
+function decodeHtml(value: string) {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function firstText(...values: unknown[]) {
+  for (const value of values) {
+    const cleaned = cleanTourApiText(value);
+    if (cleaned) return cleaned;
+  }
+  return null;
+}
+
+function firstImage(...values: unknown[]) {
+  for (const value of values) {
+    if (typeof value !== 'string') continue;
+    const trimmed = value.trim();
+    if (trimmed) return trimmed;
+  }
+  return null;
+}
+
+function normalizeDate(value: unknown) {
+  const text = cleanTourApiText(value);
+  if (!text || !/^\d{8}$/.test(text)) return text;
+  return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
+}
+
+export function normalizeTourApiPlaceDetail({
+  common,
+  intro,
+  images,
+  contentId,
+  contentTypeId,
+}: {
+  common?: TourApiCommonItem | null;
+  intro?: TourApiIntroItem | null;
+  images?: TourApiImageItem[];
+  contentId: string;
+  contentTypeId?: number | null;
+}): NormalizedPlaceDetail {
+  const imageUrls = [
+    firstImage(common?.firstimage, common?.firstimage2),
+    ...(images ?? []).map((image) => firstImage(image.originimgurl, image.smallimageurl)),
+  ].filter((url): url is string => Boolean(url));
+  const uniqueImages = Array.from(new Set(imageUrls));
+  const introContentType = Number(intro?.contenttypeid ?? common?.contenttypeid ?? contentTypeId);
+  const lat = Number(common?.mapy);
+  const lng = Number(common?.mapx);
+  const addr1 = cleanTourApiText(common?.addr1);
+  const addr2 = cleanTourApiText(common?.addr2);
+  const address = [addr1, addr2].filter(Boolean).join(' ') || null;
+  const openHours = firstText(
+    intro?.opentime,
+    intro?.opentimefood,
+    intro?.usetime,
+    intro?.usetimeculture,
+    intro?.usetimeleports,
+    intro?.playtime,
+  );
+  const restDate = firstText(
+    intro?.restdate,
+    intro?.restdateculture,
+    intro?.restdatefood,
+    intro?.restdateleports,
+    intro?.restdateshopping,
+  );
+  const parking = firstText(
+    intro?.parking,
+    intro?.parkingculture,
+    intro?.parkingfood,
+    intro?.parkinglodging,
+    intro?.parkingleports,
+    intro?.parkingshopping,
+  );
+  const eventDates = [normalizeDate(intro?.eventstartdate), normalizeDate(intro?.eventenddate)]
+    .filter(Boolean)
+    .join(' - ');
+  const checkInOut = [firstText(intro?.checkintime), firstText(intro?.checkouttime)]
+    .filter(Boolean)
+    .join(' - ');
+
+  return {
+    content_id: String(common?.contentid ?? intro?.contentid ?? contentId),
+    content_type: Number.isFinite(introContentType) ? introContentType : contentTypeId ?? null,
+    name: cleanTourApiText(common?.title),
+    address,
+    lat: Number.isFinite(lat) ? lat : null,
+    lng: Number.isFinite(lng) ? lng : null,
+    overview: cleanTourApiText(common?.overview),
+    image_url: uniqueImages[0] ?? null,
+    images: uniqueImages,
+    tel: firstText(
+      common?.tel,
+      intro?.infocenter,
+      intro?.infocenterculture,
+      intro?.infocenterfood,
+      intro?.infocenterlodging,
+      intro?.infocenterleports,
+      intro?.infocentershopping,
+    ),
+    homepage: cleanTourApiText(common?.homepage),
+    open_hours: openHours,
+    rest_date: restDate,
+    parking,
+    use_time: eventDates || checkInOut || openHours,
+  };
 }

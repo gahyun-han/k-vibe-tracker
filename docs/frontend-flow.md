@@ -35,6 +35,7 @@ This project is in local-first development mode. Pages should remain usable with
 - UI: `app/[locale]/map/page.tsx`
 - Map renderer: `components/map/KakaoMapView.tsx`
 - API: `app/api/places/route.ts`
+- Detail API: `app/api/places/[contentId]/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
@@ -42,6 +43,8 @@ This project is in local-first development mode. Pages should remain usable with
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
+- Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields.
+- Place detail sheets can open `/[locale]/docent` with the selected place overview as the local guide caption source.
 
 ### Analysis
 

@@ -1,9 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildPlacesCacheKey,
+  buildPlaceDetailCacheKey,
+  buildTourApiDetailCommonUrl,
+  buildTourApiDetailImageUrl,
+  buildTourApiDetailIntroUrl,
   buildTourApiLocationUrl,
+  cleanTourApiText,
   getContentTypeIdForCategory,
   getTourApiServiceForLocale,
+  normalizeTourApiPlaceDetail,
   normalizeTourApiItems,
   toTourApiItemArray,
 } from '@/lib/tourapi';
@@ -64,6 +70,36 @@ describe('tourapi helpers', () => {
     expect(url).toContain('contentTypeId=82');
   });
 
+  it('builds TourAPI detail URLs without exposing raw keys in cache keys', () => {
+    expect(buildPlaceDetailCacheKey({ contentId: '126128', contentTypeId: 12, locale: 'en' }))
+      .toBe('place-detail:en:126128:t12');
+
+    const commonUrl = buildTourApiDetailCommonUrl({
+      serviceKey: 'abc%2B123',
+      contentId: '126128',
+      locale: 'en',
+    });
+    const introUrl = buildTourApiDetailIntroUrl({
+      serviceKey: 'abc%2B123',
+      contentId: '126128',
+      contentTypeId: 12,
+      locale: 'en',
+    });
+    const imageUrl = buildTourApiDetailImageUrl({
+      serviceKey: 'abc%2B123',
+      contentId: '126128',
+      locale: 'en',
+    });
+
+    expect(commonUrl).toContain('/EngService2/detailCommon2?');
+    expect(commonUrl).toContain('overviewYN=Y');
+    expect(introUrl).toContain('/EngService2/detailIntro2?');
+    expect(introUrl).toContain('contentTypeId=12');
+    expect(imageUrl).toContain('/EngService2/detailImage2?');
+    expect(imageUrl).toContain('imageYN=Y');
+    expect(imageUrl).toContain('subImageYN=Y');
+  });
+
   it('normalizes single-object TourAPI item payloads', () => {
     const items = toTourApiItemArray({
       response: {
@@ -118,5 +154,41 @@ describe('tourapi helpers', () => {
     expect(places).toHaveLength(1);
     expect(places[0].content_id).toBe('near');
     expect(places[0].category).toBe('culture');
+  });
+
+  it('normalizes TourAPI place detail fields', () => {
+    const detail = normalizeTourApiPlaceDetail({
+      contentId: '126128',
+      contentTypeId: 12,
+      common: {
+        contentid: '126128',
+        contenttypeid: '12',
+        title: 'Dongchon Resort',
+        mapx: '128.65',
+        mapy: '35.88',
+        addr1: 'Dong-gu',
+        addr2: 'Daegu',
+        overview: '<p>A riverside&nbsp;spot.</p>',
+        firstimage: 'https://example.com/hero.jpg',
+      },
+      intro: {
+        contenttypeid: '12',
+        usetime: '09:00-18:00',
+        restdate: 'Open year-round',
+        parking: 'Available',
+      },
+      images: [
+        { originimgurl: 'https://example.com/hero.jpg' },
+        { originimgurl: 'https://example.com/detail.jpg' },
+      ],
+    });
+
+    expect(detail.name).toBe('Dongchon Resort');
+    expect(detail.address).toBe('Dong-gu Daegu');
+    expect(detail.overview).toBe('A riverside spot.');
+    expect(detail.images).toEqual(['https://example.com/hero.jpg', 'https://example.com/detail.jpg']);
+    expect(detail.open_hours).toBe('09:00-18:00');
+    expect(detail.parking).toBe('Available');
+    expect(cleanTourApiText('<b>Hello</b><br>World')).toBe('Hello\nWorld');
   });
 });

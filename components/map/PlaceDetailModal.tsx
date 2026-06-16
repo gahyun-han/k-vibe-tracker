@@ -1,18 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Clock, ExternalLink, MapPin, Phone, Star, Tags, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Clock, ExternalLink, MapPin, Mic2, Phone, RefreshCw, Star, Tags, X } from 'lucide-react';
+import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
 
 export interface Place {
   id: string;
+  contentId?: string;
+  contentTypeId?: number;
   name: string;
   category: string;
   address: string;
   lat: number;
   lng: number;
   imageUrl?: string;
+  images?: string[];
+  overview?: string;
   phone?: string;
   openHours?: string;
+  restDate?: string;
+  parking?: string;
   rating?: number;
   reviewCount?: number;
   crowdLevel?: 'low' | 'mid' | 'high';
@@ -22,8 +29,10 @@ export interface Place {
 
 interface PlaceDetailModalProps {
   place: Place | null;
+  locale?: TourApiLocale;
   onClose: () => void;
   onAddToRoute?: (place: Place) => void;
+  onOpenDocent?: (place: Place) => void;
 }
 
 const CROWD_CONFIG = {
@@ -42,7 +51,17 @@ const CATEGORY_LABEL: Record<string, string> = {
   stay: 'Stay',
 };
 
-export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailModalProps) {
+export function PlaceDetailModal({
+  place,
+  locale = 'ko',
+  onClose,
+  onAddToRoute,
+  onOpenDocent,
+}: PlaceDetailModalProps) {
+  const [detail, setDetail] = useState<NormalizedPlaceDetail | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState('');
+
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';
@@ -59,10 +78,79 @@ export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailMo
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    setDetail(null);
+    setDetailError('');
+
+    if (!place?.contentId || place.contentId.startsWith('mock_')) return;
+
+    const contentId = place.contentId;
+    const controller = new AbortController();
+    const params = new URLSearchParams();
+    params.set('locale', locale);
+    if (place.contentTypeId) params.set('contentTypeId', String(place.contentTypeId));
+
+    async function loadDetail() {
+      setDetailLoading(true);
+
+      try {
+        const res = await fetch(`/api/places/${encodeURIComponent(contentId)}?${params.toString()}`, {
+          signal: controller.signal,
+        });
+        const data = (await res.json()) as {
+          detail?: NormalizedPlaceDetail;
+          error?: string;
+        };
+
+        if (!res.ok || !data.detail) {
+          throw new Error(data.error ?? 'PLACE_DETAIL_FAILED');
+        }
+
+        setDetail(data.detail);
+      } catch (error) {
+        if ((error as Error).name === 'AbortError') return;
+        setDetailError(error instanceof Error ? error.message : 'PLACE_DETAIL_FAILED');
+      } finally {
+        if (!controller.signal.aborted) setDetailLoading(false);
+      }
+    }
+
+    loadDetail();
+    return () => controller.abort();
+  }, [locale, place?.contentId, place?.contentTypeId]);
+
+  const displayPlace = useMemo<Place | null>(() => {
+    if (!place) return null;
+    if (!detail) return place;
+
+    const images = detail.images.length > 0 ? detail.images : place.images;
+
+    return {
+      ...place,
+      contentId: detail.content_id,
+      contentTypeId: detail.content_type ?? place.contentTypeId,
+      name: detail.name ?? place.name,
+      address: detail.address ?? place.address,
+      lat: detail.lat ?? place.lat,
+      lng: detail.lng ?? place.lng,
+      imageUrl: detail.image_url ?? place.imageUrl,
+      images,
+      overview: detail.overview ?? place.overview,
+      phone: detail.tel ?? place.phone,
+      openHours: detail.open_hours ?? detail.use_time ?? place.openHours,
+      restDate: detail.rest_date ?? place.restDate,
+      parking: detail.parking ?? place.parking,
+      tourApiUrl: detail.homepage ?? place.tourApiUrl,
+    };
+  }, [detail, place]);
+
   if (!place) return null;
 
-  const crowd = place.crowdLevel ? CROWD_CONFIG[place.crowdLevel] : null;
-  const categoryLabel = CATEGORY_LABEL[place.category] ?? place.category;
+  const mergedPlace = displayPlace ?? place;
+  const crowd = mergedPlace.crowdLevel ? CROWD_CONFIG[mergedPlace.crowdLevel] : null;
+  const categoryLabel = CATEGORY_LABEL[mergedPlace.category] ?? mergedPlace.category;
+  const imageUrl = mergedPlace.images?.[0] ?? mergedPlace.imageUrl;
+  const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
 
   return (
     <>
@@ -74,10 +162,10 @@ export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailMo
             <div className="h-1 w-10 rounded-full bg-white/20" />
           </div>
 
-          {place.imageUrl ? (
+          {imageUrl ? (
             <div className="relative mx-4 mt-2 h-44 overflow-hidden rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={place.imageUrl} alt={place.name} className="h-full w-full object-cover" />
+              <img src={imageUrl} alt={mergedPlace.name} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
           ) : (
@@ -102,13 +190,13 @@ export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailMo
                     </span>
                   )}
                 </div>
-                <h2 className="text-lg font-bold text-white">{place.name}</h2>
-                {place.rating && (
+                <h2 className="text-lg font-bold text-white">{mergedPlace.name}</h2>
+                {mergedPlace.rating && (
                   <div className="mt-0.5 flex items-center gap-1">
                     <Star size={12} className="fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold text-yellow-400">{place.rating}</span>
-                    {place.reviewCount && (
-                      <span className="text-xs text-white/40">({place.reviewCount.toLocaleString()})</span>
+                    <span className="text-sm font-semibold text-yellow-400">{mergedPlace.rating}</span>
+                    {mergedPlace.reviewCount && (
+                      <span className="text-xs text-white/40">({mergedPlace.reviewCount.toLocaleString()})</span>
                     )}
                   </div>
                 )}
@@ -122,9 +210,9 @@ export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailMo
               </button>
             </div>
 
-            {place.tags && place.tags.length > 0 && (
+            {mergedPlace.tags && mergedPlace.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {place.tags.map((tag) => (
+                {mergedPlace.tags.map((tag) => (
                   <span key={tag} className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/60">
                     #{tag}
                   </span>
@@ -135,32 +223,72 @@ export function PlaceDetailModal({ place, onClose, onAddToRoute }: PlaceDetailMo
             <div className="space-y-2">
               <div className="flex items-start gap-2.5 text-sm text-white/70">
                 <MapPin size={14} className="mt-0.5 shrink-0 text-[#FF3A5C]" />
-                <span>{place.address}</span>
+                <span>{mergedPlace.address}</span>
               </div>
-              {place.openHours && (
+              {mergedPlace.openHours && (
                 <div className="flex items-center gap-2.5 text-sm text-white/70">
                   <Clock size={14} className="shrink-0 text-[#FF3A5C]" />
-                  <span>{place.openHours}</span>
+                  <span>{mergedPlace.openHours}</span>
                 </div>
               )}
-              {place.phone && (
+              {mergedPlace.restDate && (
+                <div className="flex items-center gap-2.5 text-sm text-white/70">
+                  <Clock size={14} className="shrink-0 text-[#FF3A5C]" />
+                  <span>{mergedPlace.restDate}</span>
+                </div>
+              )}
+              {mergedPlace.phone && (
                 <div className="flex items-center gap-2.5 text-sm text-white/70">
                   <Phone size={14} className="shrink-0 text-[#FF3A5C]" />
-                  <span>{place.phone}</span>
+                  <span>{mergedPlace.phone}</span>
                 </div>
               )}
             </div>
 
+            {detailLoading && (
+              <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/45">
+                <RefreshCw size={14} className="animate-spin text-[#FF3A5C]" />
+                Loading TourAPI detail
+              </div>
+            )}
+
+            {detailError && (
+              <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/10 p-3 text-xs text-yellow-100/75">
+                Detail fallback active: {detailError}
+              </div>
+            )}
+
+            {mergedPlace.overview && (
+              <p className="rounded-xl bg-white/5 p-3 text-sm leading-6 text-white/65">
+                {mergedPlace.overview}
+              </p>
+            )}
+
+            {mergedPlace.parking && (
+              <div className="rounded-xl bg-white/5 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/35">Parking</p>
+                <p className="mt-1 text-sm leading-6 text-white/65">{mergedPlace.parking}</p>
+              </div>
+            )}
+
             <div className="flex gap-2 pt-1">
               <button
-                onClick={() => onAddToRoute?.(place)}
+                onClick={() => onAddToRoute?.(mergedPlace)}
                 className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 Add to Route
               </button>
-              {place.tourApiUrl && (
+              <button
+                type="button"
+                onClick={() => onOpenDocent?.(mergedPlace)}
+                className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
+              >
+                <Mic2 size={14} />
+                Docent
+              </button>
+              {externalUrl && (
                 <a
-                  href={place.tourApiUrl}
+                  href={externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
