@@ -92,6 +92,7 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/facilities/route.ts`
 - Helpers: `lib/facilities.ts`
 - Development fallback: deterministic mock facilities until live facility sources are approved.
+- TourAPI popup enrichment: when `TOUR_API_KEY` is configured, `/api/facilities` uses `searchFestival2` for `popup` or `all` requests, filters returned event coordinates by the requested radius, and appends nearby events as `popup` facilities. If TourAPI fails or has no nearby results, the local mock list remains the response.
 - Radar uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Radar stores successful `/api/facilities` responses in the shared local API cache and displays cached facility lists while a fresh same-query request is pending or if it fails.
 - Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.

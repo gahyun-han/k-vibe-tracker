@@ -1,4 +1,5 @@
 import { haversineKm } from '@/lib/haversine';
+import type { TourApiFestivalItem, TourApiLocale } from '@/lib/tourapi';
 
 export const FACILITY_TYPES = [
   'restroom',
@@ -36,6 +37,7 @@ interface FacilityQuery {
   lng: number;
   radius: number;
   type: FacilityFilter;
+  locale?: TourApiLocale;
 }
 
 const FACILITY_BLUEPRINTS: FacilityBlueprint[] = [
@@ -109,8 +111,8 @@ export function isFacilityFilter(value: string): value is FacilityFilter {
   return value === 'all' || isFacilityType(value);
 }
 
-export function buildFacilitiesCacheKey({ lat, lng, radius, type }: FacilityQuery) {
-  return `facilities:${lat.toFixed(4)}:${lng.toFixed(4)}:${radius}:${type}`;
+export function buildFacilitiesCacheKey({ lat, lng, radius, type, locale = 'ko' }: FacilityQuery) {
+  return `facilities:${locale}:${lat.toFixed(4)}:${lng.toFixed(4)}:${radius}:${type}`;
 }
 
 export function getMockFacilities({ lat, lng, radius, type }: FacilityQuery): Facility[] {
@@ -132,6 +134,63 @@ export function getMockFacilities({ lat, lng, radius, type }: FacilityQuery): Fa
     .sort((a, b) => a.distance - b.distance);
 }
 
+export function normalizeTourApiFestivalFacilities({
+  items,
+  lat,
+  lng,
+  radius,
+  type,
+}: {
+  items: TourApiFestivalItem[];
+  lat: number;
+  lng: number;
+  radius: number;
+  type: FacilityFilter;
+}): Facility[] {
+  if (type !== 'all' && type !== 'popup') return [];
+
+  return items
+    .map((item) => {
+      const contentId = String(item.contentid ?? '').trim();
+      const title = String(item.title ?? '').trim();
+      const facilityLat = Number(item.mapy);
+      const facilityLng = Number(item.mapx);
+
+      if (!contentId || !title || !Number.isFinite(facilityLat) || !Number.isFinite(facilityLng)) {
+        return null;
+      }
+
+      const distance = Math.round(haversineKm(lat, lng, facilityLat, facilityLng) * 1000);
+      const address = [item.addr1, item.addr2]
+        .map((value) => String(value ?? '').trim())
+        .filter(Boolean)
+        .join(' ');
+      const extra = [
+        formatTourApiDateRange(item.eventstartdate, item.eventenddate),
+        String(item.progresstype ?? '').trim(),
+        String(item.festivaltype ?? '').trim(),
+      ]
+        .filter(Boolean)
+        .join(' / ');
+
+      const facility: Facility = {
+        id: `tourapi_popup_${contentId}`,
+        type: 'popup' as const,
+        name: title,
+        address: address || 'TourAPI event location',
+        distance,
+        isOpen: true,
+        lat: roundCoordinate(facilityLat),
+        lng: roundCoordinate(facilityLng),
+        extra: extra || undefined,
+      };
+      return facility;
+    })
+    .filter((facility): facility is Facility => Boolean(facility))
+    .filter((facility) => facility.distance <= radius)
+    .sort((a, b) => a.distance - b.distance);
+}
+
 export function buildGoogleMapsFacilityUrl(facility: Pick<Facility, 'lat' | 'lng'>) {
   const url = new URL('https://www.google.com/maps/search/');
   url.searchParams.set('api', '1');
@@ -141,4 +200,17 @@ export function buildGoogleMapsFacilityUrl(facility: Pick<Facility, 'lat' | 'lng
 
 function roundCoordinate(value: number) {
   return Number(value.toFixed(6));
+}
+
+function formatTourApiDateRange(start: unknown, end: unknown) {
+  const startDate = formatTourApiDate(start);
+  const endDate = formatTourApiDate(end);
+  if (startDate && endDate && startDate !== endDate) return `${startDate} - ${endDate}`;
+  return startDate ?? endDate ?? '';
+}
+
+function formatTourApiDate(value: unknown) {
+  const text = String(value ?? '').replace(/\D/g, '');
+  if (text.length !== 8) return '';
+  return `${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`;
 }

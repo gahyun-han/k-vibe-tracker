@@ -116,7 +116,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions, browser `speechSynthesis` voice playback, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
-- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
@@ -188,13 +188,15 @@ Behavior:
 Query:
 
 ```text
-/api/facilities?lat=37.5665&lng=126.978&radius=500&type=all
+/api/facilities?lat=37.5665&lng=126.978&radius=500&type=all&locale=en
 ```
 
 Behavior:
 
 - Validates coordinates, radius, and facility type.
+- Validates optional `locale=ko|en|ja|zh`.
 - Returns deterministic local mock data sorted by walking distance.
+- Adds nearby TourAPI `searchFestival2` event/festival results as `popup` facilities when `TOUR_API_KEY` exists and the request type is `all` or `popup`.
 - Builds a stable cache key so future external facility sources or Redis can be added without changing the route contract.
 
 Facility types:
@@ -299,6 +301,7 @@ ai-worker/      # FastAPI prototype
   - Map place details can save or unsave a selected place, add it into the shared local route plan, open the route editor, or launch the local Docent flow.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, localized facility cards, a local radar map preview, and no-key Google Maps handoff links.
+  - Radar popup facilities can now be enriched from TourAPI `searchFestival2` with locale-aware facility cache keys while keeping mock fallback behavior.
   - `/api/routes/generate` now supports validated mock-backed route generation.
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
   - Route page now includes a no-cost mini map preview, per-stop Google Maps open actions, and a walking directions CTA without calling Kakao Mobility or a paid Directions API.

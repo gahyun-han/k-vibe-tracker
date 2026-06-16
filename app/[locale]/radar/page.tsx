@@ -32,7 +32,7 @@ interface Coordinates {
 interface FacilitiesApiResponse {
   facilities: Facility[];
   cached: boolean;
-  source: 'mock' | 'cache';
+  source: 'mock' | 'tourapi' | 'cache';
   cache_key: string;
 }
 
@@ -47,7 +47,7 @@ export default function RadarPage() {
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
   const [locationMode, setLocationMode] = useState<'seoul' | 'current' | 'cached'>('seoul');
   const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [source, setSource] = useState<'mock' | 'cache'>('mock');
+  const [source, setSource] = useState<'mock' | 'tourapi' | 'cache'>('mock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
@@ -112,6 +112,7 @@ export default function RadarPage() {
         lng: String(coords.lng),
         radius: String(radius),
         type: filter,
+        locale,
       };
       const params = new URLSearchParams(query);
       const localCacheKey = buildLocalApiCacheKey('facilities', query);
@@ -184,7 +185,7 @@ export default function RadarPage() {
                 {' / '}
                 {copy.found.replace('{count}', String(facilities.length))}
                 {' / '}
-                {source === 'mock' ? sourceCopy.mock : sourceCopy.cache}
+                {source === 'tourapi' ? sourceCopy.tourApi : source === 'mock' ? sourceCopy.mock : sourceCopy.cache}
               </p>
             </div>
             <button

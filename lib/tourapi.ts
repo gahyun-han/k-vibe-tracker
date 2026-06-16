@@ -51,6 +51,14 @@ export interface TourApiItem {
   dist?: string | number;
 }
 
+export interface TourApiFestivalItem extends TourApiItem {
+  addr2?: string;
+  eventstartdate?: string | number;
+  eventenddate?: string | number;
+  progresstype?: string;
+  festivaltype?: string;
+}
+
 export interface TourApiCommonItem extends TourApiItem {
   addr2?: string;
   tel?: string;
@@ -335,6 +343,32 @@ export function buildTourApiDetailImageUrl({
       contentId,
       imageYN: 'Y',
       subImageYN: 'Y',
+      numOfRows: String(rows),
+    },
+  });
+}
+
+export function buildTourApiFestivalUrl({
+  serviceKey,
+  locale = 'ko',
+  startDate,
+  endDate,
+  rows = 30,
+}: {
+  serviceKey: string;
+  locale?: TourApiLocale;
+  startDate: string;
+  endDate?: string;
+  rows?: number;
+}) {
+  return buildTourApiUrl({
+    serviceKey,
+    locale,
+    operation: 'searchFestival2',
+    params: {
+      arrange: 'O',
+      eventStartDate: startDate,
+      ...(endDate ? { eventEndDate: endDate } : {}),
       numOfRows: String(rows),
     },
   });
