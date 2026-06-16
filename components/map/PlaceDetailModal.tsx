@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Clock, ExternalLink, Heart, MapPin, Mic2, Phone, RefreshCw, Share2, Star, Tags, X } from 'lucide-react';
+import { Clock, ExternalLink, Heart, Instagram, MapPin, Mic2, Phone, RefreshCw, Share2, Star, Tags, X, Youtube } from 'lucide-react';
 import { buildPlaceImageGallery } from '@/lib/place-images';
 import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
+import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/place-social-proof';
 import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
 
 export interface Place {
@@ -43,6 +44,9 @@ interface PlaceDetailModalProps {
     detailFallback: string;
     closeDetail: string;
     imagePreview: string;
+    seenInTitle: string;
+    seenInYoutube: string;
+    seenInInstagram: string;
     share: string;
     shared: string;
     copied: string;
@@ -88,6 +92,9 @@ const DEFAULT_LABELS = {
   detailFallback: 'Detail fallback active',
   closeDetail: 'Close place detail',
   imagePreview: 'Preview image {index}',
+  seenInTitle: 'Seen in',
+  seenInYoutube: 'YouTube {count} videos',
+  seenInInstagram: 'Instagram {count} posts',
   share: 'Share',
   shared: 'Shared',
   copied: 'Copied link',
@@ -217,6 +224,9 @@ export function PlaceDetailModal({
   const imageUrl = imageGallery[selectedImageIndex] ?? mergedPlace.imageUrl;
   const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
   const text = { ...DEFAULT_LABELS, ...labels };
+  const seenInStats = buildPlaceSeenInStats(mergedPlace);
+  const youtubeLabel = text.seenInYoutube.replace('{count}', formatCompactSocialCount(seenInStats.youtubeVideos));
+  const instagramLabel = text.seenInInstagram.replace('{count}', formatCompactSocialCount(seenInStats.instagramPosts));
 
   async function sharePlace() {
     const shareUrl = buildPlaceDetailShareUrl(mergedPlace, locale, window.location.href);
@@ -389,6 +399,22 @@ export function PlaceDetailModal({
                 {mergedPlace.overview}
               </p>
             )}
+
+            <section className="rounded-xl bg-white/5 p-3" aria-labelledby="place-seen-in-title">
+              <h3 id="place-seen-in-title" className="text-xs font-semibold uppercase tracking-wide text-white/35">
+                {text.seenInTitle}
+              </h3>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <div className="flex min-h-14 items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-red-100">
+                  <Youtube size={16} className="shrink-0 text-red-300" />
+                  <span className="min-w-0 text-xs font-semibold leading-4">{youtubeLabel}</span>
+                </div>
+                <div className="flex min-h-14 items-center gap-2 rounded-lg bg-fuchsia-500/10 px-3 py-2 text-fuchsia-100">
+                  <Instagram size={16} className="shrink-0 text-fuchsia-300" />
+                  <span className="min-w-0 text-xs font-semibold leading-4">{instagramLabel}</span>
+                </div>
+              </div>
+            </section>
 
             {mergedPlace.parking && (
               <div className="rounded-xl bg-white/5 p-3">

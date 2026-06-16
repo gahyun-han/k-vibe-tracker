@@ -49,6 +49,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added no-cost S4 place detail sharing. The detail sheet now exposes a localized share action that uses Web Share or clipboard to hand off a same-origin focused map detail URL without Supabase public links, Kakao Mobility, or paid routing APIs.
 - Added no-cost S8 feed personalization. Persona theme/detail choices are stored locally, can return users to a personalized Home feed category, and appear in the Profile hero without calling AI, Supabase, or a recommendation provider.
 - Added the root S9 no-cost Open in Map CTA to the Route screen. The sticky action bar now sends the whole route to the in-app map with `source=route-map`, centered on the first stop, while keeping Google Maps walking directions as a separate user-clicked external handoff.
+- Added root S4-style no-cost Seen in badges to the place detail sheet. YouTube video and Instagram post counts are deterministic local signals from place metadata, localized in Korean, English, Japanese, and Chinese, and do not call live SNS APIs or scraping providers.
 
 ## 2026-06-16
 

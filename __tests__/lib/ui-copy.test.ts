@@ -14,6 +14,13 @@ import { ROUTE_THEME_OPTIONS } from '@/lib/routes';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
+    const expectedSeenInTitle = {
+      en: 'Seen in',
+      ko: '콘텐츠 노출',
+      ja: '登場コンテンツ',
+      zh: '出现于',
+    };
+
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
 
@@ -79,6 +86,10 @@ describe('ui copy', () => {
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
       expect(copy.placeDetail.imagePreview).toContain('{index}');
+      expect(copy.placeDetail.seenInTitle).toBe(expectedSeenInTitle[locale]);
+      expect(copy.placeDetail.seenInTitle.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.seenInYoutube).toContain('{count}');
+      expect(copy.placeDetail.seenInInstagram).toContain('{count}');
       expect(copy.placeDetail.share.length).toBeGreaterThan(0);
       expect(copy.placeDetail.shared.length).toBeGreaterThan(0);
       expect(copy.placeDetail.copied.length).toBeGreaterThan(0);
