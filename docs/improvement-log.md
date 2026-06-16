@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Re-tested the Kakao domain setup in Chrome after the user's latest confirmation. The direct SDK referer probe returned `200 text/javascript` with no auth/domain patterns, and `/ko/map` reached live Kakao mode with 26 rendered tile images, 16 visible app pin buttons, and no console warnings/errors.
 - Repaired localized Home/Landing entry copy in Korean, Japanese, and Simplified Chinese, including language prompts, start/trending labels, home feed story filters, nav labels, and category labels, with exact UI-copy assertions.
 - Repaired localized common app chrome and Login modal copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for sign-in, back/close labels, login titles, guest entry, and no-login availability copy.
 - Repaired localized Profile settings and Docent arrival-check copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for high-visibility settings labels and proximity actions.
