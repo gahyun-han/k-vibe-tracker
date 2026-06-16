@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
+import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
 import {
   createLocalRoutePlan,
@@ -88,14 +89,6 @@ function toPlace(place: NormalizedPlace, addressPending: string): Place & { dist
 function formatDistance(meters?: number) {
   if (!meters && meters !== 0) return '';
   return meters < 1000 ? `${meters}m` : `${(meters / 1000).toFixed(1)}km`;
-}
-
-function pinPosition(place: Place, center: Coordinates) {
-  const lngOffset = (place.lng - center.lng) * 2600;
-  const latOffset = (center.lat - place.lat) * 3600;
-  const x = Math.max(8, Math.min(92, 50 + lngOffset));
-  const y = Math.max(10, Math.min(88, 50 + latOffset));
-  return { left: `${x}%`, top: `${y}%` };
 }
 
 function toRouteStop(
@@ -258,8 +251,14 @@ export default function MapPage() {
     <AppLayout activeTab="map">
       <div className="flex h-full flex-col bg-[#0D0D1A]">
         <div className="relative min-h-0 flex-1 overflow-hidden bg-[#101827]">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:42px_42px]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,58,92,0.20),transparent_32%),radial-gradient(circle_at_30%_70%,rgba(16,185,129,0.14),transparent_24%)]" />
+          <KakaoMapView
+            center={coords}
+            places={filtered}
+            selectedPlaceId={selectedPlace?.id}
+            onSelectPlace={setSelectedPlace}
+            formatDistance={formatDistance}
+            categoryIcon={CATEGORY_ICON}
+          />
 
           <div className="absolute left-4 top-4 rounded-xl border border-white/10 bg-black/35 px-3 py-2 backdrop-blur">
             <p className="text-xs font-semibold text-white">{locationLabel}</p>
@@ -274,25 +273,6 @@ export default function MapPage() {
             </p>
             <p className="text-[10px] text-white/45">{SEARCH_RADIUS_M / 1000}{copy.map.radiusLabel}</p>
           </div>
-
-          {filtered.slice(0, 16).map((place) => {
-            const selected = selectedPlace?.id === place.id;
-            return (
-              <button
-                key={place.id}
-                onClick={() => setSelectedPlace(place)}
-                className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all ${
-                  selected
-                    ? 'border-[#FF3A5C] bg-[#FF3A5C] text-white'
-                    : 'border-white/20 bg-[#1A1A2E]/90 text-white/85 hover:border-[#FF3A5C]/70'
-                }`}
-                style={pinPosition(place, coords)}
-              >
-                <span className="mr-1">{CATEGORY_ICON[place.category] ?? 'Spot'}</span>
-                {formatDistance(place.distanceM)}
-              </button>
-            );
-          })}
 
           {loading && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#101827]/70">

@@ -16,10 +16,11 @@ This log tracks concrete product and implementation improvements made while alig
 - Localized visible landing, bottom navigation, language labels, map category filters, and key map state text.
 - Fixed corrupted app metadata and web app manifest descriptions.
 - Generated missing PWA icons, favicon, shortcut icons, and Open Graph image assets referenced by the manifest and metadata.
+- Added Kakao Maps JavaScript SDK scaffolding behind `NEXT_PUBLIC_KAKAO_MAP_KEY`. The app now uses the real map renderer only when a client key exists and otherwise keeps the no-cost local preview map.
 
 ## Still Gated Or Larger Scope
 
-- Kakao Maps JavaScript SDK requires a browser key and should stay behind approval until provided.
+- Kakao Maps JavaScript SDK requires a browser key from Kakao Developers before the real map renders in local or production environments.
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and AI docent features remain local/mock-first until model/provider keys and any cost approval are explicit.

@@ -104,12 +104,14 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
+`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK.
+
 `TOUR_API_KEY` is optional during development. When it is present, `/api/places` uses Korea Tourism Organization TourAPI through the server route only. If it is missing or TourAPI fails, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
 ## Frontend Flow
 
 - `/[locale]`: landing and language entry point with local-first development status and quick access to the map.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, renders a lightweight map preview with pins, icon-based category filters, place details, and can add a selected place into the local route editor.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
@@ -244,6 +246,7 @@ ai-worker/      # FastAPI prototype
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - `/api/places` now supports locale-aware TourAPI service routing for Korean, English, Japanese, and Chinese.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
