@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Captions, LocateFixed, MapPin, Mic2, Navigation, Pause, Play, RotateCcw, Square, VolumeX } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
+import { buildDocentScriptSections, getDocentSectionIndexForChar, joinDocentScript } from '@/lib/docent';
 import { haversineKm } from '@/lib/haversine';
 import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
@@ -29,10 +30,6 @@ const SPEECH_LANG: Record<UiLocale, string> = {
   ja: 'ja-JP',
   zh: 'zh-CN',
 };
-
-function formatTemplate(template: string, values: Record<string, string>) {
-  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
-}
 
 function getQueryValue(search: { get: (key: string) => string | null }, key: string, fallback: string) {
   const value = search.get(key)?.trim();
@@ -70,11 +67,13 @@ function DocentContent() {
   const copy = getUiCopy(locale);
   const proximityCopy = getDocentProximityCopy(locale);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const sectionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
   const [proximityStatus, setProximityStatus] = useState<ProximityStatus>('idle');
   const [distanceMeters, setDistanceMeters] = useState<number | null>(null);
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
 
   const place = useMemo<DocentPlace>(() => {
     const tags = getQueryValue(searchParams, 'tags', '')
@@ -108,25 +107,21 @@ function DocentContent() {
     setDistanceMeters(null);
   }, [place.lat, place.lng]);
 
-  const script = useMemo(() => {
-    const values = {
-      name: place.name,
-      category: place.category,
-      address: place.address,
-      description: place.description,
-      stayMinutes: place.stayMinutes,
-      tags: place.tags.join(', '),
-    };
+  const scriptSections = useMemo(() => buildDocentScriptSections(place, copy.docent), [copy.docent, place]);
+  const script = useMemo(() => joinDocentScript(scriptSections), [scriptSections]);
 
-    return [
-      formatTemplate(copy.docent.scriptIntro, values),
-      formatTemplate(copy.docent.scriptBody, values),
-      place.tags.length > 0 ? formatTemplate(copy.docent.scriptTags, values) : '',
-      copy.docent.scriptOutro,
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }, [copy.docent.scriptBody, copy.docent.scriptIntro, copy.docent.scriptOutro, copy.docent.scriptTags, place]);
+  useEffect(() => {
+    setActiveSectionIndex(0);
+  }, [script]);
+
+  useEffect(() => {
+    if (!speaking) return;
+
+    sectionRefs.current[activeSectionIndex]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
+  }, [activeSectionIndex, speaking]);
 
   function resetSpeechState() {
     setSpeaking(false);
@@ -152,10 +147,17 @@ function DocentContent() {
     utterance.onstart = () => {
       setSpeaking(true);
       setPaused(false);
+      setActiveSectionIndex(0);
     };
     utterance.onpause = () => setPaused(true);
     utterance.onresume = () => setPaused(false);
-    utterance.onend = resetSpeechState;
+    utterance.onboundary = (event) => {
+      setActiveSectionIndex(getDocentSectionIndexForChar(scriptSections, event.charIndex));
+    };
+    utterance.onend = () => {
+      setActiveSectionIndex(Math.max(0, scriptSections.length - 1));
+      resetSpeechState();
+    };
     utterance.onerror = resetSpeechState;
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
@@ -171,6 +173,7 @@ function DocentContent() {
     if (!speechSupported) return;
     window.speechSynthesis.cancel();
     resetSpeechState();
+    setActiveSectionIndex(0);
   }
 
   function replayScript() {
@@ -225,6 +228,7 @@ function DocentContent() {
   const isActive = speaking && !paused;
   const primaryLabel = paused ? copy.docent.resume : copy.docent.play;
   const hasCoordinates = place.lat !== null && place.lng !== null;
+  const activeSection = scriptSections[activeSectionIndex] ?? scriptSections[0];
   const proximityMessage = (() => {
     switch (proximityStatus) {
       case 'near':
@@ -381,11 +385,44 @@ function DocentContent() {
         </section>
 
         <section className="mx-4 mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-white">
-            <Captions size={16} className="text-[#FF3A5C]" />
-            {copy.docent.captionTitle}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-sm font-semibold text-white">
+              <Captions size={16} className="text-[#FF3A5C]" />
+              {copy.docent.captionTitle}
+            </div>
+            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-white/45">
+              {copy.docent.textOnly}
+            </span>
           </div>
-          <p className="mt-3 text-sm leading-7 text-white/70">{script}</p>
+
+          {activeSection && (
+            <div className="mt-3 border-l-2 border-[#FF3A5C] bg-[#FF3A5C]/10 py-3 pl-3 pr-2">
+              <p className="text-[11px] font-semibold uppercase text-[#FF8BA0]">{activeSection.title}</p>
+              <p className="mt-1 text-sm leading-7 text-white">{activeSection.text}</p>
+            </div>
+          )}
+
+          <div className="mt-3 max-h-72 divide-y divide-white/10 overflow-y-auto pr-1" aria-label={copy.docent.captionTitle}>
+            {scriptSections.map((section, index) => {
+              const active = index === activeSectionIndex;
+              return (
+                <div
+                  key={section.id}
+                  ref={(node) => {
+                    sectionRefs.current[index] = node;
+                  }}
+                  aria-current={active ? 'step' : undefined}
+                  className={`border-l-2 py-3 pl-3 transition-colors ${
+                    active ? 'border-[#FF3A5C] text-white' : 'border-white/10 text-white/55'
+                  }`}
+                >
+                  <p className={`text-xs font-semibold ${active ? 'text-[#FF8BA0]' : 'text-white/45'}`}>{section.title}</p>
+                  <p className="mt-1 text-sm leading-7">{section.text}</p>
+                </div>
+              );
+            })}
+          </div>
+
           {place.tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {place.tags.map((tag) => (
