@@ -205,6 +205,27 @@ export default function ProfilePage() {
           </section>
         )}
 
+        {!user && supabaseConfigured && (
+          <section className="rounded-xl border border-[#FF3A5C]/25 bg-[#FF3A5C]/10 p-3">
+            <div className="flex items-start gap-3">
+              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FF3A5C]/15 text-[#FF8BA0]">
+                <Lock size={15} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-white">{copy.profile.signInTitle}</p>
+                <p className="mt-1 text-xs leading-5 text-white/55">{copy.profile.signInDescription}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLogin(true)}
+                className="shrink-0 rounded-xl bg-[#FF3A5C] px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#e02e4e]"
+              >
+                {copy.common.signIn}
+              </button>
+            </div>
+          </section>
+        )}
+
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-bold text-white">

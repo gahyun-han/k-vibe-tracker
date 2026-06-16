@@ -94,6 +94,8 @@ describe('ui copy', () => {
       expect(copy.profile.openMap.length).toBeGreaterThan(0);
       expect(copy.profile.personaLabel.length).toBeGreaterThan(0);
       expect(copy.profile.personaUnset.length).toBeGreaterThan(0);
+      expect(copy.profile.signInTitle.length).toBeGreaterThan(0);
+      expect(copy.profile.signInDescription.length).toBeGreaterThan(0);
       expect(copy.profile.seeAll.length).toBeGreaterThan(0);
       expect(copy.profile.showLess.length).toBeGreaterThan(0);
 
