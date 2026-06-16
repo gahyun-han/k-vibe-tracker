@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { getDataSourceCopy, getDocentProximityCopy, getLocationStatusCopy, getProfileSettingsCopy, getUiCopy, SUPPORTED_LOCALES } from '@/lib/ui-copy';
+import {
+  getDataSourceCopy,
+  getDocentProximityCopy,
+  getLocationStatusCopy,
+  getNetworkStatusCopy,
+  getProfileSettingsCopy,
+  getUiCopy,
+  SUPPORTED_LOCALES,
+} from '@/lib/ui-copy';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
@@ -70,6 +78,10 @@ describe('ui copy', () => {
       expect(dataSource.cache.length).toBeGreaterThan(0);
       expect(dataSource.mock.length).toBeGreaterThan(0);
       expect(dataSource.tourApi).toBe('TourAPI');
+
+      const networkStatus = getNetworkStatusCopy(locale);
+      expect(networkStatus.offlineTitle.length).toBeGreaterThan(0);
+      expect(networkStatus.offlineBody.length).toBeGreaterThan(0);
     }
   });
 });

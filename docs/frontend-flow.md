@@ -17,6 +17,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
+- Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
@@ -41,6 +42,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Service worker registration is production-only so local development is not affected by stale caches.
 - Last known GPS position is stored in `localStorage` through `lib/location-cache.ts` with a 30-minute TTL. Map and Radar read it before requesting fresh geolocation so the UI can render immediately in poor network or indoor GPS conditions.
 - Map and Radar API responses are stored in `localStorage` through `lib/local-api-cache.ts` with a 1-hour TTL. Pages render cached results immediately on revisit and fall back to cached content when a same-query fetch fails.
+- The shared offline banner listens to browser `online` and `offline` events and shows localized copy explaining that cached places, facilities, and app screens are used when available.
 - Offline maps, IndexedDB TourAPI/POI data packs, and synced offline account history are still larger-scope follow-ups.
 
 ### Places
@@ -123,6 +125,7 @@ Every data-backed page should expose:
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
 - Profile settings rows and Docent arrival-check messages are localized for `ko`, `en`, `ja`, and `zh`.
 - Map/Radar data-source labels are localized for TourAPI, mock, and cache states.
+- The shared offline network banner is localized for `ko`, `en`, `ja`, and `zh`.
 - Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
 - Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 

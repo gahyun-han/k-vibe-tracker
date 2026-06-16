@@ -5,6 +5,7 @@ import TopBar from './TopBar';
 import BottomNav from './BottomNav';
 import { ToastProvider } from '@/components/common/Toast';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
@@ -42,6 +43,7 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
         <div className="min-h-screen bg-[#0D0D1A] flex flex-col max-w-md mx-auto relative">
           <TopBar title={title} showBack={showBack} />
           <main className="flex-1 overflow-y-auto pt-14">
+            <NetworkStatusBanner locale={locale} />
             {children}
           </main>
           <TutorialButton />

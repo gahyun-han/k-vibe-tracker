@@ -121,7 +121,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
-The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback.
+The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback. `components/common/NetworkStatusBanner.tsx` shows a localized offline-mode banner when the browser reports a network disconnect.
 
 Additional frontend flow notes are in [docs/frontend-flow.md](docs/frontend-flow.md).
 Implemented product and API improvements are tracked in [docs/improvement-log.md](docs/improvement-log.md).
@@ -251,6 +251,7 @@ app/
     analyze/    # AI worker proxy
 components/
   common/
+    NetworkStatusBanner.tsx
     PwaRuntime.tsx
   layout/
   map/
@@ -282,6 +283,7 @@ ai-worker/      # FastAPI prototype
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
   - Map and Radar now share a 30-minute last-known-location cache so they can render the previous GPS position immediately while fresh geolocation is pending or unavailable.
   - Map and Radar now share a 1-hour local API response cache so same-query place/facility results can render immediately and survive temporary fetch failures.
+  - App screens now show a localized offline-mode banner when the browser reports a network disconnect, matching the root network-state wireframe.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.

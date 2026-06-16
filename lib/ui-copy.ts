@@ -42,6 +42,11 @@ interface DataSourceCopy {
   mock: string;
 }
 
+interface NetworkStatusCopy {
+  offlineTitle: string;
+  offlineBody: string;
+}
+
 export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
@@ -1608,6 +1613,25 @@ const DATA_SOURCE_COPY: Record<UiLocale, DataSourceCopy> = {
   },
 };
 
+const NETWORK_STATUS_COPY: Record<UiLocale, NetworkStatusCopy> = {
+  en: {
+    offlineTitle: 'Offline mode',
+    offlineBody: 'Showing cached places, facilities, and app screens when available.',
+  },
+  ko: {
+    offlineTitle: '오프라인 모드',
+    offlineBody: '사용 가능한 캐시 장소, 편의시설, 앱 화면을 표시합니다.',
+  },
+  ja: {
+    offlineTitle: 'オフラインモード',
+    offlineBody: '利用可能なキャッシュ済みスポット、施設、アプリ画面を表示します。',
+  },
+  zh: {
+    offlineTitle: '离线模式',
+    offlineBody: '显示可用的缓存地点、设施和应用页面。',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -1631,4 +1655,8 @@ export function getLocationStatusCopy(locale: string | string[] | undefined) {
 
 export function getDataSourceCopy(locale: string | string[] | undefined) {
   return DATA_SOURCE_COPY[normalizeUiLocale(locale)];
+}
+
+export function getNetworkStatusCopy(locale: string | string[] | undefined) {
+  return NETWORK_STATUS_COPY[normalizeUiLocale(locale)];
 }
