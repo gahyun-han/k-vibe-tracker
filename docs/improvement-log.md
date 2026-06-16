@@ -33,6 +33,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Upgraded the no-cost Docent captions into structured script sections for intro, details, tags, and next step. Browser speech boundary events now highlight and scroll the active section while playback runs, keeping the S10 script guidance useful without paid TTS.
 - Localized the no-cost Analyze mock results. `/[locale]/analyze` now sends the active locale to `/api/analyze`, and the deterministic fallback returns translated titles, place names, and reasons for Korean, English, Japanese, and Chinese.
 - Upgraded the Analyze loading and empty states for the root S6/S7 flow. Loading now shows a localized 4-step progress panel with an expected wait and cold-start hint, and zero-place worker responses now get a localized empty-results state.
+- Added no-cost local caching for Analyze results. Same-video, same-locale analysis responses are stored in the shared 1-hour local API cache, cache hits skip the network call, and the result source label changes to a localized previous-result state.
 
 ## 2026-06-16
 

@@ -16,7 +16,8 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import { extractVideoId, getThumbnailUrl, isValidYoutubeUrl } from '@/lib/youtube';
-import type { AnalysisPlace, AnalysisResult } from '@/lib/analysis';
+import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/analysis';
+import { readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -56,11 +57,20 @@ export default function AnalyzePage() {
   }, [copy.loadingSteps.length, status]);
 
   async function analyze() {
-    if (!urlValid) return;
+    if (!urlValid || !videoId) return;
     setStatus('loading');
     setResult(null);
     setErrorMsg('');
     setLoadingStepIndex(0);
+
+    const localCacheKey = buildAnalysisLocalCacheKey({ locale, videoId });
+    const cachedResult = readLocalApiCache<AnalysisResult>(window.localStorage, localCacheKey);
+    if (cachedResult) {
+      setResult({ ...cachedResult, cached: true });
+      setStatus('success');
+      setLoadingStepIndex(copy.loadingSteps.length - 1);
+      return;
+    }
 
     try {
       const res = await fetch('/api/analyze', {
@@ -74,7 +84,13 @@ export default function AnalyzePage() {
         throw new Error(data.error ?? 'ANALYSIS_REQUEST_FAILED');
       }
 
-      setResult(data);
+      const nextResult = {
+        ...data,
+        cached: Boolean(data.cached),
+      };
+
+      writeLocalApiCache(window.localStorage, localCacheKey, nextResult);
+      setResult(nextResult);
       setStatus('success');
     } catch (e) {
       setErrorMsg(e instanceof Error ? e.message : 'ANALYSIS_REQUEST_FAILED');
@@ -308,7 +324,7 @@ export default function AnalyzePage() {
                   <p className="truncate text-xs text-white/40">{result.title}</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-semibold text-purple-400">
-                  {result.source === 'worker' ? copy.sourceWorker : copy.sourceMock}
+                  {result.cached ? copy.sourceCache : result.source === 'worker' ? copy.sourceWorker : copy.sourceMock}
                 </span>
               </div>
 

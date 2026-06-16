@@ -112,7 +112,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 - `/[locale]`: actionable home feed with language selection, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, caches same-query place responses locally for 1 hour, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
-- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` with the active locale, shows a localized 4-step loading state, returns localized local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
+- `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze` with the active locale, shows a localized 4-step loading state, caches same-video analysis results locally for 1 hour, returns localized local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with structured captions, browser `speechSynthesis` voice playback with active script-section highlighting when supported, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
@@ -239,6 +239,7 @@ Behavior:
 - Validates optional `locale=ko|en|ja|zh` and localizes deterministic mock titles, place names, and reasons.
 - Calls the AI worker only when `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is set.
 - Falls back to local mock analysis if the enabled worker cannot be reached.
+- The frontend stores successful same-video, same-locale results in the shared 1-hour local API cache and labels cache hits as previous results.
 
 ## Project Structure
 

@@ -1,3 +1,5 @@
+import { buildLocalApiCacheKey } from '@/lib/local-api-cache';
+
 export interface AnalysisPlace {
   name: string;
   lat: number | null;
@@ -127,6 +129,10 @@ const MOCK_ANALYSIS_COPY: Record<AnalysisLocale, Omit<AnalysisResult, 'video_id'
 
 export function isAnalysisLocale(value: string): value is AnalysisLocale {
   return ANALYSIS_LOCALES.includes(value as AnalysisLocale);
+}
+
+export function buildAnalysisLocalCacheKey({ locale, videoId }: { locale: AnalysisLocale; videoId: string }) {
+  return buildLocalApiCacheKey('analyze', { locale, videoId });
 }
 
 export function buildMockAnalysis(videoId: string, locale: AnalysisLocale = 'en'): AnalysisResult {

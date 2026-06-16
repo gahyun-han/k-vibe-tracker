@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildMockAnalysis, isAnalysisLocale, type AnalysisLocale } from '@/lib/analysis';
+import { buildAnalysisLocalCacheKey, buildMockAnalysis, isAnalysisLocale, type AnalysisLocale } from '@/lib/analysis';
 
 describe('analysis helpers', () => {
   it('localizes deterministic mock analysis results', () => {
@@ -24,5 +24,11 @@ describe('analysis helpers', () => {
     expect(isAnalysisLocale('en')).toBe(true);
     expect(isAnalysisLocale('ko')).toBe(true);
     expect(isAnalysisLocale('fr')).toBe(false);
+  });
+
+  it('builds locale-aware local analysis cache keys', () => {
+    const key = buildAnalysisLocalCacheKey({ locale: 'ko', videoId: 'dQw4w9WgXcQ' });
+
+    expect(key).toBe('k-vibe-api-cache:analyze?locale=ko&videoId=dQw4w9WgXcQ');
   });
 });

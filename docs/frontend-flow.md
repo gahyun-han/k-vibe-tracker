@@ -86,6 +86,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/analysis.ts`, `lib/youtube.ts`
 - Development fallback: deterministic mock spot extraction localized for `ko`, `en`, `ja`, and `zh`.
 - The Analyze page sends the active URL locale to `/api/analyze`; local mock titles, place names, and reasons follow the same locale, and enabled AI worker requests receive the locale value for future provider-side localization.
+- Analyze stores successful same-video, same-locale results in the shared 1-hour local API cache. Cache hits skip the network call and show a localized previous-result source label.
 - Analyze loading uses a localized 4-step progress panel with an expected wait hint and cold-start note, matching the root S6 loading-state direction without calling any paid provider.
 - Analyze success includes a localized empty-results state when a worker returns no places, while local mock fallback still returns deterministic candidates.
 - AI worker calls are disabled unless `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is configured.
