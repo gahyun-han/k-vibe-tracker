@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AlertCircle, Radar, RefreshCw } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
 import { FacilityCard } from '@/components/radar/FacilityCard';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
@@ -46,6 +47,7 @@ export default function RadarPage() {
   const copy = getUiCopy(locale).radar;
   const locationCopy = getLocationStatusCopy(locale);
   const sourceCopy = getDataSourceCopy(locale);
+  const { toast } = useToast();
   const [radius, setRadius] = useState(500);
   const [filter, setFilter] = useState<FacilityFilter>('all');
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
@@ -68,10 +70,12 @@ export default function RadarPage() {
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      if (applyLastKnownLocation()) return;
-      setCoords(SEOUL_CENTER);
-      setLocationMode('seoul');
-      setReloadKey((key) => key + 1);
+      if (!applyLastKnownLocation()) {
+        setCoords(SEOUL_CENTER);
+        setLocationMode('seoul');
+        setReloadKey((key) => key + 1);
+      }
+      toast(copy.locationUnavailable, 'warning');
       return;
     }
 
@@ -90,14 +94,16 @@ export default function RadarPage() {
         setReloadKey((key) => key + 1);
       },
       () => {
-        if (applyLastKnownLocation()) return;
-        setCoords(SEOUL_CENTER);
-        setLocationMode('seoul');
-        setReloadKey((key) => key + 1);
+        if (!applyLastKnownLocation()) {
+          setCoords(SEOUL_CENTER);
+          setLocationMode('seoul');
+          setReloadKey((key) => key + 1);
+        }
+        toast(copy.locationUnavailable, 'warning');
       },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
     );
-  }, [applyLastKnownLocation]);
+  }, [applyLastKnownLocation, copy.locationUnavailable, toast]);
 
   useEffect(() => {
     applyLastKnownLocation();

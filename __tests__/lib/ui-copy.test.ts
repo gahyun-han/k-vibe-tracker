@@ -96,6 +96,7 @@ describe('ui copy', () => {
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
+      expect(copy.map.locationUnavailable.length).toBeGreaterThan(0);
       expect(copy.landing.languageTitle.length).toBeGreaterThan(0);
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
       expect(copy.map.resultCount).toContain('{count}');
@@ -114,6 +115,7 @@ describe('ui copy', () => {
       expect(copy.map.crowd.low.length).toBeGreaterThan(0);
       expect(copy.radar.mapTitle.length).toBeGreaterThan(0);
       expect(copy.radar.openFacilityMap).toContain('{name}');
+      expect(copy.radar.locationUnavailable.length).toBeGreaterThan(0);
       expect(copy.analyze.confidence.length).toBeGreaterThan(0);
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);

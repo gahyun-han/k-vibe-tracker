@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
+import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
@@ -117,6 +118,7 @@ export default function MapPage() {
   const copy = getUiCopy(locale);
   const locationCopy = getLocationStatusCopy(locale);
   const sourceCopy = getDataSourceCopy(locale);
+  const { toast } = useToast();
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
@@ -226,11 +228,13 @@ export default function MapPage() {
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      if (applyLastKnownLocation()) return;
-      setFocusPlace(null);
-      setCoords(SEOUL_CENTER);
-      setLocationLabel(copy.map.seoulFallback);
-      setReloadKey((key) => key + 1);
+      if (!applyLastKnownLocation()) {
+        setFocusPlace(null);
+        setCoords(SEOUL_CENTER);
+        setLocationLabel(copy.map.seoulFallback);
+        setReloadKey((key) => key + 1);
+      }
+      toast(copy.map.locationUnavailable, 'warning');
       return;
     }
 
@@ -250,15 +254,17 @@ export default function MapPage() {
         setReloadKey((key) => key + 1);
       },
       () => {
-        if (applyLastKnownLocation()) return;
-        setFocusPlace(null);
-        setCoords(SEOUL_CENTER);
-        setLocationLabel(copy.map.seoulFallback);
-        setReloadKey((key) => key + 1);
+        if (!applyLastKnownLocation()) {
+          setFocusPlace(null);
+          setCoords(SEOUL_CENTER);
+          setLocationLabel(copy.map.seoulFallback);
+          setReloadKey((key) => key + 1);
+        }
+        toast(copy.map.locationUnavailable, 'warning');
       },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
     );
-  }, [applyLastKnownLocation, copy.map.currentLocation, copy.map.seoulFallback]);
+  }, [applyLastKnownLocation, copy.map.currentLocation, copy.map.locationUnavailable, copy.map.seoulFallback, toast]);
 
   useEffect(() => {
     if (initialLocationApplied.current) return;

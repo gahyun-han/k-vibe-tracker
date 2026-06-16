@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S3/S11-style location fallback feedback. Map and Radar now show localized warning toasts when browser geolocation is unavailable, while continuing to use the last-known or Seoul fallback position without adding external providers.
 - Added root S11-style Radar facility-card quick map actions. Facility cards now keep the expandable details area while exposing a localized header map button that opens the existing no-key Google Maps handoff after a user click.
 - Added a root S12-style Profile saved-place empty-state CTA. When no local saved places exist, Profile now offers a localized Open in Map action so users can immediately start saving places.
 - Verified the latest Kakao Maps domain setup in Chrome and fixed visible Map pins. `/ko/map` now reaches Kakao live-map mode with rendered tiles and no console warnings/errors, while the app renders clickable React place pins over the map instead of relying on Kakao `CustomOverlay` DOM insertion.

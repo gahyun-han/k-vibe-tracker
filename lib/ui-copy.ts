@@ -159,6 +159,7 @@ const UI_COPY = {
     map: {
       seoulFallback: 'Seoul fallback',
       currentLocation: 'Current location',
+      locationUnavailable: 'Location permission is unavailable. Showing a saved or fallback position.',
       analysisResult: 'Analysis result',
       searchPlaceholder: 'Search places',
       loadingNearby: 'Loading nearby places',
@@ -254,6 +255,7 @@ const UI_COPY = {
       title: 'Facility Radar',
       locationSeoul: 'Seoul fallback',
       locationCurrent: 'Current location',
+      locationUnavailable: 'Location permission is unavailable. Showing saved or fallback facilities.',
       found: '{count} found',
       refresh: 'Refresh facilities',
       radius: 'Radius',
@@ -661,6 +663,7 @@ const UI_COPY = {
     map: {
       seoulFallback: '서울 기본 위치',
       currentLocation: '현재 위치',
+      locationUnavailable: '위치 권한을 사용할 수 없어 저장된 위치나 기본 위치를 표시합니다.',
       analysisResult: '분석 결과 위치',
       searchPlaceholder: '장소 검색',
       loadingNearby: '주변 장소를 불러오는 중',
@@ -756,6 +759,7 @@ const UI_COPY = {
       title: '편의시설 레이더',
       locationSeoul: '서울 기본 위치',
       locationCurrent: '현재 위치',
+      locationUnavailable: '위치 권한을 사용할 수 없어 저장된 위치나 기본 위치의 편의시설을 표시합니다.',
       found: '{count}개 발견',
       refresh: '편의시설 새로고침',
       radius: '반경',
@@ -1163,6 +1167,7 @@ const UI_COPY = {
     map: {
       seoulFallback: 'ソウル初期位置',
       currentLocation: '現在地',
+      locationUnavailable: '位置情報の許可を利用できないため、保存済みまたは既定の位置を表示しています。',
       analysisResult: '分析結果の位置',
       searchPlaceholder: '場所を検索',
       loadingNearby: '周辺スポットを読み込み中',
@@ -1258,6 +1263,7 @@ const UI_COPY = {
       title: '便利施設レーダー',
       locationSeoul: 'ソウル既定位置',
       locationCurrent: '現在地',
+      locationUnavailable: '位置情報の許可を利用できないため、保存済みまたは既定の位置の施設を表示しています。',
       found: '{count}件',
       refresh: '便利施設を更新',
       radius: '半径',
@@ -1665,6 +1671,7 @@ const UI_COPY = {
     map: {
       seoulFallback: '首尔默认位置',
       currentLocation: '当前位置',
+      locationUnavailable: '无法使用位置权限，正在显示已保存位置或默认位置。',
       analysisResult: '分析结果位置',
       searchPlaceholder: '搜索地点',
       loadingNearby: '正在加载周边地点',
@@ -1760,6 +1767,7 @@ const UI_COPY = {
       title: '便利设施雷达',
       locationSeoul: '首尔默认位置',
       locationCurrent: '当前位置',
+      locationUnavailable: '无法使用位置权限，正在显示已保存位置或默认位置附近的设施。',
       found: '找到{count}个',
       refresh: '刷新便利设施',
       radius: '半径',

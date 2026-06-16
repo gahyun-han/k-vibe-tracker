@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Map/Radar location-fallback toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Radar card quick-map pass because it may consume paid quota and the local UI-only change could be verified with type-check, tests, build, and static radar-page checks.
 - Claude CLI was not used for the 2026-06-17 Profile saved-place empty CTA pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static profile-page checks.
 - Claude CLI was not used for the 2026-06-17 Home feed empty-state recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static home-page checks.
@@ -101,6 +102,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost Place detail Seen-in badges that derive YouTube/Instagram counts from local place metadata and do not call YouTube, Instagram, scraping providers, AI, or paid APIs.
 - No-cost Map nearby-spots result header that counts the already-loaded local/cached place list after current filters and does not call TourAPI, Kakao Maps, geolocation, AI, or any backend endpoint by itself.
 - No-cost Map visible-pin layer that renders already-loaded place pins in React over the current map/fallback view and opens the existing local detail sheet on click, without Kakao Mobility, Directions APIs, AI, Supabase writes, or additional backend lookups by itself.
+- No-cost Map/Radar location-fallback toast feedback that explains browser geolocation failure while continuing to use local last-known-location or Seoul fallback state, without automatic GPS polling, external providers, AI, backend writes, Kakao Mobility, or Directions APIs.
 - No-cost Persona feed personalization that stores the selected theme/detail in localStorage and filters the existing Home feed locally without calling AI, Supabase, or a recommendation provider.
 - No-cost Home feed local API cache fallback that stores same-locale `/api/places` feed responses in `localStorage`, shows cached cards when live refresh fails, and does not call AI, Supabase, Redis, or recommendation providers.
 - No-cost Home feed crowd badges that render the existing `/api/places` `crowd_level` field locally and preserve that value through same-origin map/detail and saved-place flows.

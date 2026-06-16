@@ -47,7 +47,7 @@ This project is in local-first development mode. Pages should remain usable with
 - The service worker precaches the manifest, icons, Open Graph image, and Korean start route, then caches Next static chunks and same-origin navigations on demand.
 - Service worker registration is production-only so local development is not affected by stale caches.
 - The install prompt listens for browser install eligibility and is localized for `ko`, `en`, `ja`, and `zh`. It does not call an external provider.
-- Last known GPS position is stored in `localStorage` through `lib/location-cache.ts` with a 30-minute TTL. Map and Radar read it before requesting fresh geolocation so the UI can render immediately in poor network or indoor GPS conditions.
+- Last known GPS position is stored in `localStorage` through `lib/location-cache.ts` with a 30-minute TTL. Map and Radar read it before requesting fresh geolocation so the UI can render immediately in poor network or indoor GPS conditions, then show localized warning toast feedback when geolocation is unavailable and a saved or Seoul fallback position is used.
 - Map and Radar API responses are stored in `localStorage` through `lib/local-api-cache.ts` with a 1-hour TTL. Pages render cached results immediately on revisit and fall back to cached content when a same-query fetch fails.
 - The shared offline banner listens to browser `online` and `offline` events and shows localized copy explaining that cached places, facilities, and app screens are used when available.
 - Offline maps, IndexedDB TourAPI/POI data packs, and synced offline account history are still larger-scope follow-ups.
