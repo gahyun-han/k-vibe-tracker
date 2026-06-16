@@ -67,6 +67,7 @@ describe('ui copy', () => {
       expect(copy.radar.openFacilityMap).toContain('{name}');
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.imagePreview).toContain('{index}');
       expect(copy.placeDetail.crowd.high.length).toBeGreaterThan(0);
 
       expect(copy.persona.title.length).toBeGreaterThan(0);

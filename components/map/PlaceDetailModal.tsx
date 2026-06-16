@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, ExternalLink, Heart, MapPin, Mic2, Phone, RefreshCw, Star, Tags, X } from 'lucide-react';
+import { buildPlaceImageGallery } from '@/lib/place-images';
 import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
 
 export interface Place {
@@ -40,6 +41,7 @@ interface PlaceDetailModalProps {
     loadingDetail: string;
     detailFallback: string;
     closeDetail: string;
+    imagePreview: string;
     crowd: {
       low: string;
       mid: string;
@@ -80,6 +82,7 @@ const DEFAULT_LABELS = {
   loadingDetail: 'Loading TourAPI detail',
   detailFallback: 'Detail fallback active',
   closeDetail: 'Close place detail',
+  imagePreview: 'Preview image {index}',
   crowd: {
     low: 'Quiet',
     mid: 'Normal',
@@ -101,6 +104,7 @@ export function PlaceDetailModal({
   const [detail, setDetail] = useState<NormalizedPlaceDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     if (place) document.body.style.overflow = 'hidden';
@@ -121,6 +125,7 @@ export function PlaceDetailModal({
   useEffect(() => {
     setDetail(null);
     setDetailError('');
+    setSelectedImageIndex(0);
 
     if (!place?.contentId || place.contentId.startsWith('mock_')) return;
 
@@ -184,12 +189,21 @@ export function PlaceDetailModal({
     };
   }, [detail, place]);
 
+  const imageGallery = useMemo(() => {
+    const source = displayPlace ?? place;
+    return buildPlaceImageGallery(source, 4);
+  }, [displayPlace, place]);
+
+  useEffect(() => {
+    if (selectedImageIndex >= imageGallery.length) setSelectedImageIndex(0);
+  }, [imageGallery.length, selectedImageIndex]);
+
   if (!place) return null;
 
   const mergedPlace = displayPlace ?? place;
   const crowd = mergedPlace.crowdLevel ? CROWD_CONFIG[mergedPlace.crowdLevel] : null;
   const categoryLabel = categoryLabels?.[mergedPlace.category] ?? CATEGORY_LABEL[mergedPlace.category] ?? mergedPlace.category;
-  const imageUrl = mergedPlace.images?.[0] ?? mergedPlace.imageUrl;
+  const imageUrl = imageGallery[selectedImageIndex] ?? mergedPlace.imageUrl;
   const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
   const text = { ...DEFAULT_LABELS, ...labels };
 
@@ -208,6 +222,11 @@ export function PlaceDetailModal({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={imageUrl} alt={mergedPlace.name} className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              {imageGallery.length > 1 && (
+                <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-semibold text-white/80 backdrop-blur">
+                  {selectedImageIndex + 1}/{imageGallery.length}
+                </div>
+              )}
             </div>
           ) : (
             <div className="mx-4 mt-2 flex h-36 items-center justify-center rounded-xl bg-white/5">
@@ -218,6 +237,27 @@ export function PlaceDetailModal({
           )}
 
           <div className="space-y-3 p-4">
+            {imageGallery.length > 1 && (
+              <div className="-mt-1 grid grid-cols-4 gap-2">
+                {imageGallery.map((url, index) => (
+                  <button
+                    key={url}
+                    type="button"
+                    onClick={() => setSelectedImageIndex(index)}
+                    aria-label={text.imagePreview.replace('{index}', String(index + 1))}
+                    className={`relative aspect-square overflow-hidden rounded-lg border transition-colors ${
+                      selectedImageIndex === index
+                        ? 'border-[#FF3A5C] ring-2 ring-[#FF3A5C]/30'
+                        : 'border-white/10 opacity-75 hover:border-white/30 hover:opacity-100'
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="" className="h-full w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="mb-1 flex flex-wrap items-center gap-2">
