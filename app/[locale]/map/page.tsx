@@ -421,14 +421,24 @@ export default function MapPage() {
             </div>
           )}
 
-          <button
-            onClick={requestLocation}
-            className="absolute bottom-4 right-4 z-30 rounded-full bg-[#FF3A5C] p-3 text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e]"
-            aria-label={copy.map.refreshLocation}
-            title={copy.map.refreshLocation}
-          >
-            <Navigation size={20} />
-          </button>
+          <div className="absolute bottom-4 right-4 z-30 flex flex-col gap-3">
+            <button
+              onClick={() => router.push(`/${locale}/analyze`)}
+              className="rounded-full border border-white/10 bg-black/45 p-3 text-white shadow-lg backdrop-blur transition-colors hover:border-[#FF3A5C]/40 hover:bg-[#FF3A5C]/90"
+              aria-label={copy.map.openAnalyzer}
+              title={copy.map.openAnalyzer}
+            >
+              <Search size={20} />
+            </button>
+            <button
+              onClick={requestLocation}
+              className="rounded-full bg-[#FF3A5C] p-3 text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e]"
+              aria-label={copy.map.refreshLocation}
+              title={copy.map.refreshLocation}
+            >
+              <Navigation size={20} />
+            </button>
+          </div>
         </div>
 
         <div className="border-t border-white/10 bg-[#0D0D1A]">

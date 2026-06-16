@@ -62,6 +62,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Map stores successful `/api/places` responses in the shared local API cache and displays cached place lists while a fresh same-query request is pending or if it fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
 - Current local verification shows the Kakao SDK loads on `http://localhost:3000`, `/ko/map` reaches `data-map-mode="ready"` in Chrome with a nonzero map container, and there are no Kakao console errors.
+- Map FAB stack follows the root S3 direction: the search FAB opens `/[locale]/analyze` for SNS spot analysis, and the location FAB refreshes the current/last-known location.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters, map list icons, live Kakao overlay labels, fallback pin labels, and place detail sheets use lucide icons plus locale-aware labels instead of hardcoded English category strings.

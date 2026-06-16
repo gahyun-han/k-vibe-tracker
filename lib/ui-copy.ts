@@ -159,6 +159,7 @@ const UI_COPY = {
       addedFromMap: 'Added from the map as a {category} stop.',
       radiusLabel: 'km radius',
       refreshLocation: 'Refresh current location',
+      openAnalyzer: 'Open SNS analyzer',
       savedRouteTitle: 'Map Saved Route',
       savedRouteSummary: 'Custom route assembled from map selections.',
       crowd: {
@@ -593,6 +594,7 @@ const UI_COPY = {
       addedFromMap: '지도에서 {category} 방문지로 추가했어요.',
       radiusLabel: 'km 반경',
       refreshLocation: '현재 위치 새로고침',
+      openAnalyzer: 'SNS 분석 열기',
       savedRouteTitle: '지도 저장 루트',
       savedRouteSummary: '지도에서 선택한 장소로 만든 맞춤 루트입니다.',
       crowd: {
@@ -1027,6 +1029,7 @@ const UI_COPY = {
       addedFromMap: '地図から{category}スポットとして追加しました。',
       radiusLabel: 'km圏内',
       refreshLocation: '現在地を更新',
+      openAnalyzer: 'SNS分析を開く',
       savedRouteTitle: '地図保存ルート',
       savedRouteSummary: '地図で選んだスポットから作成したカスタムルートです。',
       crowd: {
@@ -1461,6 +1464,7 @@ const UI_COPY = {
       addedFromMap: '已从地图添加为{category}站点。',
       radiusLabel: 'km范围',
       refreshLocation: '刷新当前位置',
+      openAnalyzer: '打开SNS分析',
       savedRouteTitle: '地图保存路线',
       savedRouteSummary: '由地图选择地点组成的自定义路线。',
       crowd: {

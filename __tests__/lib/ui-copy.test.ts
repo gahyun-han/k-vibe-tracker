@@ -57,6 +57,7 @@ describe('ui copy', () => {
       expect(copy.login.guestFeatures).toHaveLength(4);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
+      expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
       expect(Object.values(copy.homeFeed.stories)).toHaveLength(5);
       for (const storyLabel of Object.values(copy.homeFeed.stories)) {
         expect(storyLabel.length).toBeGreaterThan(0);
