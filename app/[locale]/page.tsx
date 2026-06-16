@@ -23,6 +23,7 @@ import {
 import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { persistPreferredLocale } from '@/lib/locale-preference';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
   getPersonaFeedCategory,
   parsePersonaPreference,
@@ -115,6 +116,7 @@ export default function LandingPage() {
   const [feedSource, setFeedSource] = useState<ApiSource>('mock');
   const [feedLoading, setFeedLoading] = useState(true);
   const [feedError, setFeedError] = useState('');
+  const [feedErrorIsCacheFallback, setFeedErrorIsCacheFallback] = useState(false);
   const [feedReloadKey, setFeedReloadKey] = useState(0);
   const [feedCategory, setFeedCategory] = useState<FeedCategory>('all');
   const [selectedStory, setSelectedStory] = useState<StoryTopic | null>(null);
@@ -143,16 +145,27 @@ export default function LandingPage() {
     const controller = new AbortController();
 
     async function loadFeed() {
-      setFeedLoading(true);
       setFeedError('');
+      setFeedErrorIsCacheFallback(false);
 
-      const searchParams = new URLSearchParams({
+      const query = {
         lat: String(SEOUL_CENTER.lat),
         lng: String(SEOUL_CENTER.lng),
         radius: String(FEED_RADIUS_M),
         category: 'all',
         locale,
-      });
+      };
+      const searchParams = new URLSearchParams(query);
+      const localCacheKey = buildLocalApiCacheKey('home-feed', query);
+      const cachedData = readLocalApiCache<PlacesApiResponse>(window.localStorage, localCacheKey);
+
+      if (cachedData) {
+        setFeedPlaces(cachedData.places.map((place) => toFeedPlace(place, copy.map.addressPending)));
+        setFeedSource('cache');
+        setFeedLoading(false);
+      } else {
+        setFeedLoading(true);
+      }
 
       try {
         const res = await fetch(`/api/places?${searchParams.toString()}`, {
@@ -164,11 +177,26 @@ export default function LandingPage() {
           throw new Error(data.error ?? 'HOME_FEED_FAILED');
         }
 
-        setFeedPlaces((data.places ?? []).map((place) => toFeedPlace(place, copy.map.addressPending)));
-        setFeedSource(data.source ?? 'mock');
+        const nextData: PlacesApiResponse = {
+          places: data.places ?? [],
+          cached: Boolean(data.cached),
+          source: data.source ?? 'mock',
+          cache_key: data.cache_key ?? localCacheKey,
+        };
+        setFeedPlaces(nextData.places.map((place) => toFeedPlace(place, copy.map.addressPending)));
+        setFeedSource(nextData.source);
+        writeLocalApiCache(window.localStorage, localCacheKey, nextData);
       } catch (error) {
         if ((error as Error).name === 'AbortError') return;
+        if (cachedData) {
+          setFeedPlaces(cachedData.places.map((place) => toFeedPlace(place, copy.map.addressPending)));
+          setFeedSource('cache');
+          setFeedError(copy.homeFeed.cachedFallback);
+          setFeedErrorIsCacheFallback(true);
+          return;
+        }
         setFeedError(error instanceof Error ? error.message : 'HOME_FEED_FAILED');
+        setFeedErrorIsCacheFallback(false);
       } finally {
         if (!controller.signal.aborted) setFeedLoading(false);
       }
@@ -176,7 +204,7 @@ export default function LandingPage() {
 
     loadFeed();
     return () => controller.abort();
-  }, [copy.map.addressPending, feedReloadKey, locale]);
+  }, [copy.homeFeed.cachedFallback, copy.map.addressPending, feedReloadKey, locale]);
 
   const filteredFeed = useMemo(() => {
     return feedPlaces.filter((place) => feedCategory === 'all' || place.category === feedCategory);
@@ -370,7 +398,16 @@ export default function LandingPage() {
           {feedError && (
             <div className="flex items-start gap-2 rounded-xl border border-red-400/25 bg-red-400/10 p-3 text-xs text-red-100">
               <AlertCircle size={14} className="mt-0.5 shrink-0" />
-              <span>{copy.homeFeed.error}: {feedError}</span>
+              <span className="min-w-0 flex-1">
+                {feedErrorIsCacheFallback ? feedError : `${copy.homeFeed.error}: ${feedError}`}
+              </span>
+              <button
+                type="button"
+                onClick={() => setFeedReloadKey((key) => key + 1)}
+                className="shrink-0 rounded-lg bg-red-400/15 px-2 py-1 font-semibold text-red-50 transition-colors hover:bg-red-400/25"
+              >
+                {copy.homeFeed.retry}
+              </button>
             </div>
           )}
 

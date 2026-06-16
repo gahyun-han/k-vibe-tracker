@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added 1-hour local API caching and retry/fallback handling to the S2 Home feed. Successful `/api/places` feed responses are cached locally, cached cards can render when live refresh fails, and the error state now has a localized retry action.
 - Added a no-cost S9 Route current-distance panel. It checks distance to the next incomplete stop only after a user taps the button, using browser geolocation and local Haversine math without automatic GPS polling, Kakao Mobility, or Directions API calls.
 - Made the S12 Profile My Routes card itself tappable so saved local routes open `/[locale]/route` from the card body as well as the Continue/Edit buttons, without Supabase or a backend route lookup.
 - Added a no-cost S10 Docent script progress bar and current-section status. It uses local script sections and browser speech state without OpenAI TTS or provider audio.
@@ -16,7 +17,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows hardcoded in English.
 - Added a production-only PWA runtime that updates the document `lang` attribute from the active locale and registers a static service worker for app icons, manifest, static chunks, and a basic navigation fallback.
 - Added a shared 30-minute last-known-location cache in `localStorage`, then connected Map and Radar so they can show the previous GPS position immediately while fresh geolocation is being requested or when GPS fails.
-- Added a shared 1-hour local API response cache for Map places and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.
+- Added a shared 1-hour local API response cache for Home feed places, Map places, and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.
 - Localized Map and Radar data-source labels for TourAPI, mock, and cache states.
 - Added a localized offline-mode banner in the shared app layout. It listens to browser `online`/`offline` events and tells users that cached places, facilities, and app screens are being shown when available.
 - Persisted the active locale in `localStorage` and the `NEXT_LOCALE` cookie from the language switcher so language choice survives app reloads and future server-side locale reads.
