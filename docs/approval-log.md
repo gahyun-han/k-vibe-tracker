@@ -15,6 +15,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI was not used for the 2026-06-17 Route current-distance pass because it may consume paid quota and the change could be verified locally with copy/Haversine/route tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Home feed cache fallback pass because it may consume paid quota and the change could be verified locally with cache/copy/API tests, type-check, build, and Chrome inspection.
 - Claude CLI read-only review was attempted on 2026-06-17 with a `$0.03` max budget and read/search-only tools, but it stopped at the budget cap with no review result applied.
+- Claude CLI was not used for the 2026-06-17 Route transit-hint pass because it may consume paid quota and the local deterministic helper/UI change could be verified with unit tests, type-check, and build.
 - Claude CLI was not used for the 2026-06-17 Radar ATM pass because it may consume paid quota and the low-risk local/mock facility change could be verified with type-check, unit tests, build, and a no-external `type=atm` API probe.
 - Claude CLI was not used for the 2026-06-17 Home crowd-badge pass because it may consume paid quota and the change could be derived from the root HTML plus verified locally with type-check, tests, and build.
 - Claude CLI was not used for the 2026-06-17 Analyze confidence-bar pass because it may consume paid quota and the change could be verified locally with analyze/copy tests, type-check, build, and Chrome inspection.
@@ -64,6 +65,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost local Route stop detail handoff that sends route stop coordinates and copy to the in-app map detail sheet without Kakao Mobility, Google Directions API, or a backend route lookup.
 - No-cost local Route map handoff that sends the route title plus first-stop coordinates to `/[locale]/map?source=route-map` without Kakao Mobility, Google Directions API, or a backend route lookup.
 - No-cost local Route travel segments that estimate leg duration and distance with Haversine math and do not call Kakao Mobility, Google Directions API, browser GPS, or a backend route lookup.
+- No-cost local Route transit hints that classify longer timeline legs with deterministic distance thresholds and estimated minutes, without Kakao Mobility, Directions APIs, transit APIs, browser GPS, or backend route lookup.
 - No-cost local Route current-distance checks that run only after a user tap, use browser geolocation plus Haversine math, and do not call Kakao Mobility, Google Directions API, automatic GPS polling, or a backend route lookup.
 - No-cost Profile saved-place detail handoff that sends locally saved place metadata to the in-app map detail sheet without Supabase sync or a backend saved-place lookup.
 - No-cost Profile My Routes route-card tap target that opens the local route editor from `localStorage` without Supabase sync, GPS, Kakao Mobility, or backend route lookup.

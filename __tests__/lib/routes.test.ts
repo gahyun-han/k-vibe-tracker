@@ -124,10 +124,14 @@ describe('route helpers', () => {
     expect(place.searchParams.get('query')).toBe('37.5447,127.0564');
   });
 
-  it('builds no-cost walking legs for route timeline segments', () => {
+  it('builds no-cost local travel legs for route timeline segments', () => {
     expect(calculateRouteLegs([STOPS[0]])).toEqual([]);
 
     const legs = calculateRouteLegs(STOPS);
+    const shortLegs = calculateRouteLegs([
+      STOPS[0],
+      { ...STOPS[0], id: 'nearby', name: 'Nearby stop', lat: 37.545, lng: 127.057 },
+    ]);
 
     expect(legs).toHaveLength(1);
     expect(legs[0].fromStopId).toBe('one');
@@ -136,6 +140,12 @@ describe('route helpers', () => {
     expect(legs[0].toName).toBe('Second stop');
     expect(legs[0].distanceM).toBeGreaterThan(0);
     expect(legs[0].walkingMinutes).toBe(calculateWalkingMinutes(STOPS));
+    expect(legs[0].mode).toBe('transit');
+    expect(legs[0].travelMinutes).toBeLessThan(legs[0].walkingMinutes);
+    expect(shortLegs[0]).toMatchObject({
+      mode: 'walk',
+      travelMinutes: shortLegs[0].walkingMinutes,
+    });
   });
 
   it('builds in-app map detail handoff links for route stops', () => {

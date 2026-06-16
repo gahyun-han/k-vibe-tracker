@@ -2,7 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, LocateFixed, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, LocateFixed, Map, MapPin, Mic2, Navigation, Plus, Share2, TrainFront, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
@@ -500,9 +500,10 @@ export default function RoutePage() {
           {spots.map((spot, idx) => {
             const isCompleted = completedStopIds.includes(spot.id);
             const leg = routeLegs[idx];
+            const LegIcon = leg?.mode === 'transit' ? TrainFront : Footprints;
             const legLabel = leg
-              ? copy.travelSegment
-                .replace('{duration}', formatDuration(leg.walkingMinutes))
+              ? (leg.mode === 'transit' ? copy.transitSegment : copy.travelSegment)
+                .replace('{duration}', formatDuration(leg.travelMinutes))
                 .replace('{distance}', formatLegDistance(leg.distanceM))
               : '';
             const legBetween = leg
@@ -633,8 +634,12 @@ export default function RoutePage() {
                   >
                     <div className="flex flex-col items-center">
                       <div className="h-3 border-l border-dashed border-white/15" />
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-dashed border-white/15 bg-white/[0.03] text-white/40">
-                        <Footprints size={14} />
+                      <div className={`flex h-7 w-7 items-center justify-center rounded-full border border-dashed ${
+                        leg.mode === 'transit'
+                          ? 'border-cyan-300/25 bg-cyan-300/10 text-cyan-200'
+                          : 'border-white/15 bg-white/[0.03] text-white/40'
+                      }`}>
+                        <LegIcon size={14} />
                       </div>
                       <div className="h-3 border-l border-dashed border-white/15" />
                     </div>

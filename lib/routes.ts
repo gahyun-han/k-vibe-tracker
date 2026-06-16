@@ -55,7 +55,9 @@ export interface RouteLeg {
   toStopId: string;
   fromName: string;
   toName: string;
+  mode: 'walk' | 'transit';
   distanceM: number;
+  travelMinutes: number;
   walkingMinutes: number;
 }
 
@@ -489,6 +491,10 @@ const ROUTE_TEMPLATES: Record<RouteTheme, StopTemplate[]> = {
   ],
 };
 
+const TRANSIT_HINT_DISTANCE_M = 2500;
+const TRANSIT_AVERAGE_KMH = 24;
+const TRANSIT_BUFFER_MINUTES = 8;
+
 export function isRouteTheme(value: string): value is RouteTheme {
   return ROUTE_THEMES.includes(value as RouteTheme);
 }
@@ -568,18 +574,27 @@ export function calculateRouteLegs(stops: Pick<RouteStop, 'id' | 'name' | 'lat' 
     const from = stops[i];
     const to = stops[i + 1];
     const distanceKm = haversineKm(from.lat, from.lng, to.lat, to.lng);
+    const distanceM = Math.round(distanceKm * 1000);
+    const legWalkingMinutes = walkingMinutes(distanceKm);
+    const mode = distanceM >= TRANSIT_HINT_DISTANCE_M ? 'transit' : 'walk';
 
     legs.push({
       fromStopId: from.id,
       toStopId: to.id,
       fromName: from.name,
       toName: to.name,
-      distanceM: Math.round(distanceKm * 1000),
-      walkingMinutes: walkingMinutes(distanceKm),
+      mode,
+      distanceM,
+      travelMinutes: mode === 'transit' ? estimateTransitMinutes(distanceKm) : legWalkingMinutes,
+      walkingMinutes: legWalkingMinutes,
     });
   }
 
   return legs;
+}
+
+function estimateTransitMinutes(distanceKm: number) {
+  return Math.max(8, Math.round((distanceKm / TRANSIT_AVERAGE_KMH) * 60) + TRANSIT_BUFFER_MINUTES);
 }
 
 export function createLocalRoutePlan({
