@@ -1,6 +1,7 @@
 import { haversineKm } from '@/lib/haversine';
 
 export type PlaceCategory = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay';
+export type TourApiLocale = 'ko' | 'en' | 'ja' | 'zh';
 
 export interface NormalizedPlace {
   id: string;
@@ -42,13 +43,31 @@ export const PLACE_CATEGORIES: PlaceCategory[] = [
   'stay',
 ];
 
-const CATEGORY_TO_CONTENT_TYPE: Partial<Record<PlaceCategory, number>> = {
+export const TOUR_API_LOCALES: TourApiLocale[] = ['ko', 'en', 'ja', 'zh'];
+
+const TOUR_API_SERVICE_BY_LOCALE: Record<TourApiLocale, string> = {
+  ko: 'KorService2',
+  en: 'EngService2',
+  ja: 'JpnService2',
+  zh: 'ChsService2',
+};
+
+const CATEGORY_TO_KOREAN_CONTENT_TYPE: Partial<Record<PlaceCategory, number>> = {
   cafe: 39,
   food: 39,
   photo: 12,
   fun: 28,
   culture: 14,
   stay: 32,
+};
+
+const CATEGORY_TO_MULTILINGUAL_CONTENT_TYPE: Partial<Record<PlaceCategory, number>> = {
+  cafe: 82,
+  food: 82,
+  photo: 76,
+  fun: 75,
+  culture: 78,
+  stay: 80,
 };
 
 const CONTENT_TYPE_TO_CATEGORY: Record<number, PlaceCategory> = {
@@ -60,14 +79,33 @@ const CONTENT_TYPE_TO_CATEGORY: Record<number, PlaceCategory> = {
   32: 'stay',
   38: 'fun',
   39: 'food',
+  75: 'fun',
+  76: 'culture',
+  78: 'culture',
+  80: 'stay',
+  82: 'food',
+  85: 'fun',
 };
 
 export function isPlaceCategory(value: string | null): value is PlaceCategory {
   return value !== null && PLACE_CATEGORIES.includes(value as PlaceCategory);
 }
 
-export function getContentTypeIdForCategory(category: PlaceCategory): number | undefined {
-  return CATEGORY_TO_CONTENT_TYPE[category];
+export function isTourApiLocale(value: string | null): value is TourApiLocale {
+  return value !== null && TOUR_API_LOCALES.includes(value as TourApiLocale);
+}
+
+export function getTourApiServiceForLocale(locale: TourApiLocale = 'ko') {
+  return TOUR_API_SERVICE_BY_LOCALE[locale];
+}
+
+export function getContentTypeIdForCategory(
+  category: PlaceCategory,
+  locale: TourApiLocale = 'ko',
+): number | undefined {
+  const map =
+    locale === 'ko' ? CATEGORY_TO_KOREAN_CONTENT_TYPE : CATEGORY_TO_MULTILINGUAL_CONTENT_TYPE;
+  return map[category];
 }
 
 export function buildPlacesCacheKey({
@@ -75,13 +113,15 @@ export function buildPlacesCacheKey({
   lng,
   radius,
   category = 'all',
+  locale = 'ko',
 }: {
   lat: number;
   lng: number;
   radius: number;
   category?: PlaceCategory;
+  locale?: TourApiLocale;
 }) {
-  return `places:${lat.toFixed(2)}:${lng.toFixed(2)}:r${radius}:c${category}`;
+  return `places:${locale}:${lat.toFixed(2)}:${lng.toFixed(2)}:r${radius}:c${category}`;
 }
 
 export function buildTourApiLocationUrl({
@@ -90,6 +130,7 @@ export function buildTourApiLocationUrl({
   lng,
   radius,
   category = 'all',
+  locale = 'ko',
   rows = 20,
 }: {
   serviceKey: string;
@@ -97,6 +138,7 @@ export function buildTourApiLocationUrl({
   lng: number;
   radius: number;
   category?: PlaceCategory;
+  locale?: TourApiLocale;
   rows?: number;
 }) {
   const params = new URLSearchParams({
@@ -105,13 +147,13 @@ export function buildTourApiLocationUrl({
     _type: 'json',
     numOfRows: String(rows),
     pageNo: '1',
-    arrange: 'E',
+    arrange: 'S',
     mapX: String(lng),
     mapY: String(lat),
     radius: String(radius),
   });
 
-  const contentTypeId = getContentTypeIdForCategory(category);
+  const contentTypeId = getContentTypeIdForCategory(category, locale);
   if (contentTypeId) {
     params.set('contentTypeId', String(contentTypeId));
   }
@@ -120,7 +162,7 @@ export function buildTourApiLocationUrl({
     ? serviceKey
     : encodeURIComponent(serviceKey);
 
-  return `https://apis.data.go.kr/B551011/KorService2/locationBasedList2?serviceKey=${encodedKey}&${params.toString()}`;
+  return `https://apis.data.go.kr/B551011/${getTourApiServiceForLocale(locale)}/locationBasedList2?serviceKey=${encodedKey}&${params.toString()}`;
 }
 
 export function normalizeTourApiItems({

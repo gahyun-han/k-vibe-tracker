@@ -3,10 +3,12 @@ import {
   buildPlacesCacheKey,
   buildTourApiLocationUrl,
   isPlaceCategory,
+  isTourApiLocale,
   normalizeTourApiItems,
   toTourApiItemArray,
   type NormalizedPlace,
   type PlaceCategory,
+  type TourApiLocale,
 } from '@/lib/tourapi';
 
 const DEFAULT_RADIUS = 1000;
@@ -99,12 +101,18 @@ function mockPlaces(lat: number, lng: number, category: PlaceCategory): Normaliz
   return category === 'all' ? places : places.filter((place) => place.category === category);
 }
 
-function mockResponse(lat: number, lng: number, radius: number, category: PlaceCategory) {
+function mockResponse(
+  lat: number,
+  lng: number,
+  radius: number,
+  category: PlaceCategory,
+  locale: TourApiLocale,
+) {
   return NextResponse.json({
     places: mockPlaces(lat, lng, category),
     cached: false,
     source: 'mock',
-    cache_key: buildPlacesCacheKey({ lat, lng, radius, category }),
+    cache_key: buildPlacesCacheKey({ lat, lng, radius, category, locale }),
   });
 }
 
@@ -114,6 +122,7 @@ export async function GET(request: NextRequest) {
   const lng = parseCoordinate(searchParams.get('lng'), -180, 180);
   const radius = parseRadius(searchParams.get('radius'));
   const categoryParam = searchParams.get('category') ?? 'all';
+  const localeParam = searchParams.get('locale') ?? 'ko';
 
   if (lat === null || lng === null) {
     return NextResponse.json({ error: 'INVALID_COORDINATES' }, { status: 400 });
@@ -127,29 +136,34 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'INVALID_CATEGORY' }, { status: 400 });
   }
 
+  if (!isTourApiLocale(localeParam)) {
+    return NextResponse.json({ error: 'INVALID_LOCALE' }, { status: 400 });
+  }
+
   const category = categoryParam;
-  const cacheKey = buildPlacesCacheKey({ lat, lng, radius, category });
+  const locale = localeParam;
+  const cacheKey = buildPlacesCacheKey({ lat, lng, radius, category, locale });
   const serviceKey = process.env.TOUR_API_KEY;
 
   if (!serviceKey) {
-    return mockResponse(lat, lng, radius, category);
+    return mockResponse(lat, lng, radius, category, locale);
   }
 
   try {
     const res = await fetch(
-      buildTourApiLocationUrl({ serviceKey, lat, lng, radius, category }),
+      buildTourApiLocationUrl({ serviceKey, lat, lng, radius, category, locale }),
       { signal: AbortSignal.timeout(8_000) }
     );
 
     if (!res.ok) {
       console.error(`[places] TourAPI fallback: HTTP ${res.status}`);
-      return mockResponse(lat, lng, radius, category);
+      return mockResponse(lat, lng, radius, category, locale);
     }
 
     const payload = await res.json().catch(() => null);
     if (!payload) {
       console.error('[places] TourAPI fallback: invalid JSON response');
-      return mockResponse(lat, lng, radius, category);
+      return mockResponse(lat, lng, radius, category, locale);
     }
 
     const places = normalizeTourApiItems({
@@ -168,6 +182,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[places] TourAPI fallback:', error);
-    return mockResponse(lat, lng, radius, category);
+    return mockResponse(lat, lng, radius, category, locale);
   }
 }

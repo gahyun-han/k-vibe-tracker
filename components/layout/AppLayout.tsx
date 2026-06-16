@@ -4,6 +4,7 @@ import TopBar from './TopBar';
 import BottomNav from './BottomNav';
 import { ToastProvider } from '@/components/common/Toast';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { TutorialButton } from '@/components/common/TutorialButton';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
           <main className="flex-1 overflow-y-auto pt-14">
             {children}
           </main>
+          <TutorialButton />
           <BottomNav active={activeTab} />
         </div>
       </ToastProvider>

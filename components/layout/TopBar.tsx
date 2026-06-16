@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { createClient } from '@/lib/supabase/client';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import type { User } from '@supabase/supabase-js';
 
 interface TopBarProps {
@@ -16,7 +17,8 @@ interface TopBarProps {
 export default function TopBar({ title, showBack }: TopBarProps) {
   const router = useRouter();
   const params = useParams();
-  const locale = (params.locale as string) ?? 'en';
+  const locale = normalizeUiLocale(params.locale);
+  const copy = getUiCopy(locale);
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
@@ -49,7 +51,7 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         )}
 
         <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-white">
-          {title ?? 'K-Vibe Tracker'}
+          {title ?? copy.common.appName}
         </h1>
 
         <LanguageSwitcher />
@@ -74,7 +76,7 @@ export default function TopBar({ title, showBack }: TopBarProps) {
             onClick={() => setShowLogin(true)}
             className="shrink-0 rounded-full border border-[#2E2E4A] px-3 py-1.5 text-xs text-[#8B8BA8] transition-colors hover:border-[#FF3A5C] hover:text-white"
           >
-            Sign in
+            {copy.common.signIn}
           </button>
         )}
       </header>

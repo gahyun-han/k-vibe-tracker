@@ -12,7 +12,8 @@ import {
   type RoutePlan,
   type RouteStop,
 } from '@/lib/routes';
-import type { NormalizedPlace } from '@/lib/tourapi';
+import type { NormalizedPlace, PlaceCategory } from '@/lib/tourapi';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const SEARCH_RADIUS_M = 2_000;
@@ -53,16 +54,6 @@ const CATEGORY_ICON: Record<string, string> = {
   stay: 'Stay',
 };
 
-const CATEGORY_LABEL: Record<string, string> = {
-  all: 'Spot',
-  cafe: 'Cafe',
-  photo: 'Photo',
-  fun: 'Fun',
-  culture: 'Culture',
-  food: 'Food',
-  stay: 'Stay',
-};
-
 const DEFAULT_STAY_MINUTES: Record<string, number> = {
   cafe: 75,
   photo: 45,
@@ -79,12 +70,12 @@ function toCrowdLevel(value: number | null): Place['crowdLevel'] {
   return 'high';
 }
 
-function toPlace(place: NormalizedPlace): Place & { distanceM?: number } {
+function toPlace(place: NormalizedPlace, addressPending: string): Place & { distanceM?: number } {
   return {
     id: place.id,
     name: place.name || place.name_en || place.name_ko,
     category: place.category,
-    address: place.address ?? 'Address pending',
+    address: place.address ?? addressPending,
     lat: place.lat,
     lng: place.lng,
     imageUrl: place.image_url ?? undefined,
@@ -107,8 +98,12 @@ function pinPosition(place: Place, center: Coordinates) {
   return { left: `${x}%`, top: `${y}%` };
 }
 
-function toRouteStop(place: Place): RouteStop {
-  const category = CATEGORY_LABEL[place.category] ?? place.category;
+function toRouteStop(
+  place: Place,
+  categoryLabels: Readonly<Record<PlaceCategory | 'spot', string>>,
+  descriptionTemplate: string,
+): RouteStop {
+  const category = categoryLabels[place.category as PlaceCategory] ?? place.category;
 
   return {
     id: `map-${place.id}`,
@@ -120,7 +115,7 @@ function toRouteStop(place: Place): RouteStop {
     lng: place.lng,
     stayMinutes: DEFAULT_STAY_MINUTES[place.category] ?? 60,
     startTime: 'Flexible',
-    description: `Added from the map as a ${category.toLowerCase()} stop.`,
+    description: descriptionTemplate.replace('{category}', category.toLowerCase()),
     tags: place.tags ?? [category],
   };
 }
@@ -128,12 +123,13 @@ function toRouteStop(place: Place): RouteStop {
 export default function MapPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = (params.locale as string) ?? 'en';
+  const locale = normalizeUiLocale(params.locale);
+  const copy = getUiCopy(locale);
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
-  const [locationLabel, setLocationLabel] = useState('Seoul fallback');
+  const [locationLabel, setLocationLabel] = useState<string>(copy.map.seoulFallback);
   const [places, setPlaces] = useState<(Place & { distanceM?: number })[]>([]);
   const [source, setSource] = useState<ApiSource>('mock');
   const [loading, setLoading] = useState(true);
@@ -153,7 +149,7 @@ export default function MapPage() {
         }
       }
 
-      const routeStop = toRouteStop(place);
+      const routeStop = toRouteStop(place, copy.categories, copy.map.addedFromMap);
       const nextStops = [
         ...existingStops.filter((stop) => stop.id !== routeStop.id),
         routeStop,
@@ -173,12 +169,12 @@ export default function MapPage() {
     } catch {
       setError('ROUTE_SAVE_FAILED');
     }
-  }, [locale, router]);
+  }, [copy.categories, copy.map.addedFromMap, locale, router]);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setCoords(SEOUL_CENTER);
-      setLocationLabel('Seoul fallback');
+      setLocationLabel(copy.map.seoulFallback);
       setReloadKey((key) => key + 1);
       return;
     }
@@ -189,17 +185,17 @@ export default function MapPage() {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
-        setLocationLabel('Current location');
+        setLocationLabel(copy.map.currentLocation);
         setReloadKey((key) => key + 1);
       },
       () => {
         setCoords(SEOUL_CENTER);
-        setLocationLabel('Seoul fallback');
+        setLocationLabel(copy.map.seoulFallback);
         setReloadKey((key) => key + 1);
       },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
     );
-  }, []);
+  }, [copy.map.currentLocation, copy.map.seoulFallback]);
 
   useEffect(() => {
     requestLocation();
@@ -217,6 +213,7 @@ export default function MapPage() {
         lng: String(coords.lng),
         radius: String(SEARCH_RADIUS_M),
         category: 'all',
+        locale,
       });
 
       try {
@@ -229,7 +226,7 @@ export default function MapPage() {
           throw new Error(data.error ?? 'PLACES_REQUEST_FAILED');
         }
 
-        setPlaces((data.places ?? []).map(toPlace));
+        setPlaces((data.places ?? []).map((place) => toPlace(place, copy.map.addressPending)));
         setSource(data.source ?? 'mock');
       } catch (e) {
         if ((e as Error).name === 'AbortError') return;
@@ -241,7 +238,7 @@ export default function MapPage() {
 
     loadPlaces();
     return () => controller.abort();
-  }, [coords.lat, coords.lng, reloadKey]);
+  }, [coords.lat, coords.lng, copy.map.addressPending, locale, reloadKey]);
 
   const filtered = useMemo(() => {
     return places.filter((place) => {
@@ -275,7 +272,7 @@ export default function MapPage() {
             <p className="text-xs font-semibold text-white">
               {source === 'tourapi' ? 'TourAPI' : source === 'cache' ? 'Cache' : 'Mock'}
             </p>
-            <p className="text-[10px] text-white/45">{SEARCH_RADIUS_M / 1000}km radius</p>
+            <p className="text-[10px] text-white/45">{SEARCH_RADIUS_M / 1000}{copy.map.radiusLabel}</p>
           </div>
 
           {filtered.slice(0, 16).map((place) => {
@@ -301,7 +298,7 @@ export default function MapPage() {
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#101827]/70">
               <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/70">
                 <RefreshCw size={16} className="animate-spin text-[#FF3A5C]" />
-                Loading nearby places
+                {copy.map.loadingNearby}
               </div>
             </div>
           )}
@@ -325,32 +322,32 @@ export default function MapPage() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search places"
+                placeholder={copy.map.searchPlaceholder}
                 className="w-full rounded-xl border border-white/10 bg-white/8 py-2 pl-8 pr-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#FF3A5C]/50"
               />
             </div>
-            <CategoryFilter selected={categories} onChange={setCategories} />
+            <CategoryFilter selected={categories} onChange={setCategories} labels={copy.categories} />
           </div>
 
           {error && (
             <div className="mx-4 mb-2 flex items-start gap-2 rounded-xl border border-red-400/25 bg-red-400/10 p-3 text-xs text-red-200">
               <AlertCircle size={14} className="mt-0.5 shrink-0" />
               <div className="flex-1">
-                <p className="font-semibold">Places could not be loaded</p>
+                <p className="font-semibold">{copy.map.placesError}</p>
                 <p className="mt-0.5 text-red-200/70">{error}</p>
               </div>
               <button
                 onClick={() => setReloadKey((key) => key + 1)}
                 className="rounded-lg bg-red-400/15 px-2 py-1 font-semibold text-red-100"
               >
-                Retry
+                {copy.map.retry}
               </button>
             </div>
           )}
 
           <div className="max-h-60 overflow-y-auto pb-2">
             {!loading && filtered.length === 0 ? (
-              <div className="py-8 text-center text-sm text-white/35">No places found</div>
+              <div className="py-8 text-center text-sm text-white/35">{copy.map.noPlaces}</div>
             ) : (
               filtered.map((place) => (
                 <button

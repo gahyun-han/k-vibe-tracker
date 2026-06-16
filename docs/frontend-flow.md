@@ -15,6 +15,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
+- The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens.
 - The landing page at `/[locale]` presents the local-first development status and sends users to `/[locale]/map`.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
@@ -34,6 +35,8 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/places/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
+- Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
+- Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
 
@@ -71,6 +74,7 @@ Every data-backed page should expose:
 - Error state with a retry path.
 - Mock/source hint while the app is running without external integrations.
 - Clear copy that tells developers whether a local mock or external source produced the result.
+- Shared navigation, landing, tutorial, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
 
 ## Approval-Gated Work
 

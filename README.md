@@ -104,7 +104,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`TOUR_API_KEY` is optional during development. If it is missing, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
+`TOUR_API_KEY` is optional during development. When it is present, `/api/places` uses Korea Tourism Organization TourAPI through the server route only. If it is missing or TourAPI fails, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
 ## Frontend Flow
 
@@ -119,6 +119,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
 Additional frontend flow notes are in [docs/frontend-flow.md](docs/frontend-flow.md).
+Implemented product and API improvements are tracked in [docs/improvement-log.md](docs/improvement-log.md).
 
 ## API Notes
 
@@ -127,13 +128,16 @@ Additional frontend flow notes are in [docs/frontend-flow.md](docs/frontend-flow
 Query:
 
 ```text
-/api/places?lat=37.5665&lng=126.978&radius=2000&category=all
+/api/places?lat=37.5665&lng=126.978&radius=2000&category=all&locale=en
 ```
 
 Behavior:
 
 - Validates coordinates, radius, and category.
+- Validates optional `locale=ko|en|ja|zh`.
 - Uses TourAPI `locationBasedList2` when `TOUR_API_KEY` exists.
+- Routes locale requests to `KorService2`, `EngService2`, `JpnService2`, or `ChsService2`.
+- Uses Korean content type IDs for `ko` and multilingual content type IDs for `en`, `ja`, and `zh`.
 - Falls back to local mock data when the key is missing, TourAPI fails, or TourAPI returns invalid JSON.
 - Normalizes TourAPI responses into a frontend-friendly place shape.
 - Builds a stable cache key now so Redis can be added later without changing the route contract.
@@ -238,7 +242,10 @@ ai-worker/      # FastAPI prototype
 - Sprint 0 foundation is in place: Next.js, i18n, Supabase clients, layouts, API skeletons, tests.
 - Sprint 1 is in progress:
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
+  - `/api/places` now supports locale-aware TourAPI service routing for Korean, English, Japanese, and Chinese.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
+  - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
   - Map place details can add a selected place into the shared local route plan and open the route editor.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
@@ -248,6 +255,7 @@ ai-worker/      # FastAPI prototype
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
+  - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.
 
 ## Collaboration Workflow

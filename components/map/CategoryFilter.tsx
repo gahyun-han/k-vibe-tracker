@@ -7,6 +7,7 @@ export type Category = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | '
 interface CategoryFilterProps {
   selected: Category[];
   onChange: (cats: Category[]) => void;
+  labels?: Readonly<Partial<Record<Category, string>>>;
 }
 
 const CATEGORIES = [
@@ -19,7 +20,7 @@ const CATEGORIES = [
   { id: 'stay', label: 'Stay', icon: Building2 },
 ] satisfies { id: Category; label: string; icon: typeof Map }[];
 
-export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
+export function CategoryFilter({ selected, onChange, labels }: CategoryFilterProps) {
   function toggle(id: Category) {
     if (id === 'all') {
       onChange(['all']);
@@ -36,6 +37,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
       {CATEGORIES.map(({ id, label, icon: Icon }) => {
         const active = selected.includes(id) || (id === 'all' && selected.includes('all'));
+        const displayLabel = labels?.[id] ?? label;
         return (
           <button
             key={id}
@@ -47,7 +49,7 @@ export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
             }`}
           >
             <Icon size={14} />
-            <span>{label}</span>
+            <span>{displayLabel}</span>
           </button>
         );
       })}

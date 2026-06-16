@@ -13,8 +13,13 @@ function getMetadataBase() {
 export const metadata: Metadata = {
   metadataBase: getMetadataBase(),
   title: 'K-Vibe Tracker',
-  description: 'AI 기반 K-컬처 관광 가이드 — SNS 트렌드 장소 발견, 페르소나 루트 생성',
+  description:
+    'K-content travel discovery, TourAPI place search, route planning, and nearby helper radar for visitors in Korea.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/icons/icon-192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -23,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     title: 'K-Vibe Tracker',
-    description: 'AI가 찾아주는 K-컬처 핫플레이스',
+    description: 'Discover Korea through K-content inspired places, routes, and nearby travel helpers.',
     images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
 };

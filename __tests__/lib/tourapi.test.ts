@@ -3,6 +3,7 @@ import {
   buildPlacesCacheKey,
   buildTourApiLocationUrl,
   getContentTypeIdForCategory,
+  getTourApiServiceForLocale,
   normalizeTourApiItems,
   toTourApiItemArray,
 } from '@/lib/tourapi';
@@ -11,7 +12,7 @@ describe('tourapi helpers', () => {
   it('builds stable quantized cache keys', () => {
     expect(
       buildPlacesCacheKey({ lat: 37.56649, lng: 126.97803, radius: 1000, category: 'all' })
-    ).toBe('places:37.57:126.98:r1000:call');
+    ).toBe('places:ko:37.57:126.98:r1000:call');
   });
 
   it('maps app categories to TourAPI content type ids', () => {
@@ -20,6 +21,16 @@ describe('tourapi helpers', () => {
     expect(getContentTypeIdForCategory('culture')).toBe(14);
     expect(getContentTypeIdForCategory('stay')).toBe(32);
     expect(getContentTypeIdForCategory('all')).toBeUndefined();
+  });
+
+  it('maps locale-specific TourAPI services and multilingual content type ids', () => {
+    expect(getTourApiServiceForLocale('ko')).toBe('KorService2');
+    expect(getTourApiServiceForLocale('en')).toBe('EngService2');
+    expect(getTourApiServiceForLocale('ja')).toBe('JpnService2');
+    expect(getTourApiServiceForLocale('zh')).toBe('ChsService2');
+    expect(getContentTypeIdForCategory('food', 'en')).toBe(82);
+    expect(getContentTypeIdForCategory('culture', 'ja')).toBe(78);
+    expect(getContentTypeIdForCategory('stay', 'zh')).toBe(80);
   });
 
   it('does not double encode already encoded service keys', () => {
@@ -32,9 +43,25 @@ describe('tourapi helpers', () => {
     });
 
     expect(url).toContain('serviceKey=abc%2B123%3D');
+    expect(url).toContain('/KorService2/locationBasedList2?');
     expect(url).toContain('mapX=127');
     expect(url).toContain('mapY=37.5');
+    expect(url).toContain('arrange=S');
     expect(url).toContain('contentTypeId=39');
+  });
+
+  it('builds multilingual TourAPI location URLs', () => {
+    const url = buildTourApiLocationUrl({
+      serviceKey: 'abc',
+      lat: 37.5,
+      lng: 127,
+      radius: 1000,
+      category: 'food',
+      locale: 'en',
+    });
+
+    expect(url).toContain('/EngService2/locationBasedList2?');
+    expect(url).toContain('contentTypeId=82');
   });
 
   it('normalizes single-object TourAPI item payloads', () => {

@@ -56,6 +56,7 @@ describe('GET /api/places', () => {
     expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', radius: '0' }))).status).toBe(400);
     expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', radius: '20001' }))).status).toBe(400);
     expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', category: 'unknown' }))).status).toBe(400);
+    expect((await GET(makeRequest({ lat: '37.5', lng: '127.0', locale: 'fr' }))).status).toBe(400);
   });
 
   it('keeps legacy mock offsets stable', async () => {
@@ -112,9 +113,11 @@ describe('GET /api/places', () => {
     expect(res.status).toBe(200);
     expect(data.source).toBe('tourapi');
     expect(calledUrl).toContain('locationBasedList2');
+    expect(calledUrl).toContain('/KorService2/');
     expect(calledUrl).toContain('serviceKey=encoded%2Bkey');
     expect(calledUrl).toContain('mapX=126.9995');
     expect(calledUrl).toContain('mapY=37.5701');
+    expect(calledUrl).toContain('arrange=S');
     expect(calledUrl).toContain('contentTypeId=39');
     expect(data.places[0]).toMatchObject({
       content_id: '264337',
@@ -126,6 +129,48 @@ describe('GET /api/places', () => {
       distance_m: 120,
     });
     expect(JSON.stringify(data)).not.toContain('encoded%2Bkey');
+  });
+
+  it('passes locale through to multilingual TourAPI services', async () => {
+    process.env.TOUR_API_KEY = 'plain-key';
+    mockFetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          response: {
+            body: {
+              items: {
+                item: {
+                  contentid: '100',
+                  contenttypeid: '82',
+                  title: 'Myeongdong Restaurant',
+                  mapx: '126.985',
+                  mapy: '37.564',
+                  dist: '100',
+                },
+              },
+            },
+          },
+        }),
+        { status: 200 }
+      )
+    );
+
+    const res = await GET(
+      makeRequest({
+        lat: '37.564',
+        lng: '126.985',
+        radius: '1000',
+        category: 'food',
+        locale: 'en',
+      })
+    );
+    const calledUrl = String(mockFetch.mock.calls[0][0]);
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(calledUrl).toContain('/EngService2/locationBasedList2');
+    expect(calledUrl).toContain('contentTypeId=82');
+    expect(data.cache_key).toBe('places:en:37.56:126.98:r1000:cfood');
   });
 
   it('falls back to mock places when TourAPI fails', async () => {
