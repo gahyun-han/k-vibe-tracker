@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added no-cost recovery actions to Analyze and Radar empty states from the root UI design guidance. Analyze empty results can start a sample YouTube analysis, and Radar empty results can expand to the next radius step without adding a new provider.
 - Re-tested Kakao Maps after the latest Kakao domain setup. Chrome loaded `/ko/map` on `http://localhost:3000` in live map mode, rendered Kakao tiles from `mts.daumcdn.net`, and reported no console warnings or errors.
 - Added S7 Analyze confidence bars to result cards. The UI now turns each local/mock confidence score into an accessible progress bar while keeping the existing map and route handoffs.
 - Added 1-hour local API caching and retry/fallback handling to the S2 Home feed. Successful `/api/places` feed responses are cached locally, cached cards can render when live refresh fails, and the error state now has a localized retry action.

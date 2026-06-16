@@ -105,7 +105,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Analyze result cards follow the root S7 flow: each candidate shows a localized confidence label plus an accessible progress bar, and selecting a coordinate-backed spot opens `/[locale]/map` with `detail=1`, focuses the analysis location, and opens the local place detail sheet with the analysis reason as context.
 - Analyze stores successful same-video, same-locale results in the shared 1-hour local API cache. Cache hits skip the network call and show a localized previous-result source label.
 - Analyze loading uses a localized 4-step progress panel with an expected wait hint and cold-start note, matching the root S6 loading-state direction without calling any paid provider.
-- Analyze success includes a localized empty-results state when a worker returns no places, while local mock fallback still returns deterministic candidates.
+- Analyze success includes a localized empty-results state when a worker returns no places, with a sample YouTube retry action from the root UI empty-state guidance, while local mock fallback still returns deterministic candidates.
 - AI worker calls are disabled unless `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is configured.
 
 ### Facilities
@@ -118,6 +118,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Radar uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Radar stores successful `/api/facilities` responses in the shared local API cache and displays cached facility lists while a fresh same-query request is pending or if it fails.
 - Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.
+- Radar empty results include a localized Expand radius action that advances to the next predefined radius step before refetching facilities, matching the root UI empty-state guidance.
 - Radar filter chips, preview pins, and facility cards use shared lucide facility icons so labels stay localized and iconography stays consistent.
 - Radar pins and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
 

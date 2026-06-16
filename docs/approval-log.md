@@ -14,6 +14,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI was not used for the 2026-06-17 Profile route-card tap pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Route current-distance pass because it may consume paid quota and the change could be verified locally with copy/Haversine/route tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Home feed cache fallback pass because it may consume paid quota and the change could be verified locally with cache/copy/API tests, type-check, build, and Chrome inspection.
+- Claude CLI read-only review was attempted on 2026-06-17 with a `$0.03` max budget and read/search-only tools, but it stopped at the budget cap with no review result applied.
 - Claude CLI was not used for the 2026-06-17 Analyze confidence-bar pass because it may consume paid quota and the change could be verified locally with analyze/copy tests, type-check, build, and Chrome inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze locale pass because it may consume paid quota and the change could be verified locally with deterministic unit/API tests and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Analyze loading-state pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
@@ -68,5 +69,6 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost Persona feed personalization that stores the selected theme/detail in localStorage and filters the existing Home feed locally without calling AI, Supabase, or a recommendation provider.
 - No-cost Home feed local API cache fallback that stores same-locale `/api/places` feed responses in `localStorage`, shows cached cards when live refresh fails, and does not call AI, Supabase, Redis, or recommendation providers.
 - No-cost Analyze confidence bars that render existing local/mock confidence scores in the browser and do not call AI workers or external providers.
+- No-cost Analyze and Radar empty-state recovery actions that reuse existing local/mock flows: a sample YouTube analysis button and a user-clicked radius expansion.
 - No-cost Profile My Routes card that reads local route/progress state and does not use Supabase, GPS, Kakao Mobility, or backend route sessions.
 - Commits and pushes to the already writable `hslee-origin/hslee` branch.

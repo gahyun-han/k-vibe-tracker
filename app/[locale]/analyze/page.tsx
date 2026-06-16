@@ -388,6 +388,14 @@ export default function AnalyzePage() {
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                   <p className="text-sm font-semibold text-white">{copy.emptyTitle}</p>
                   <p className="mt-1 text-xs leading-5 text-white/45">{copy.emptyBody}</p>
+                  <button
+                    type="button"
+                    onClick={() => setExample(EXAMPLE_URLS[0])}
+                    className="mt-3 flex items-center gap-2 rounded-xl border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-3 py-2 text-sm font-semibold text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/20 hover:text-white"
+                  >
+                    <Youtube size={15} />
+                    {copy.tryExample}
+                  </button>
                 </div>
               ) : (
                 result.places.map((place, idx) => {

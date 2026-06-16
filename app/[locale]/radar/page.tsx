@@ -11,6 +11,7 @@ import { RadiusSlider } from '@/components/radar/RadiusSlider';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
+import { getNextRadarRadius } from '@/lib/radar-radius';
 import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
@@ -163,6 +164,12 @@ export default function RadarPage() {
     window.open(buildGoogleMapsFacilityUrl(facility), '_blank', 'noopener,noreferrer');
   }
 
+  const nextRadius = getNextRadarRadius(radius);
+
+  function expandSearchRadius() {
+    if (nextRadius) setRadius(nextRadius);
+  }
+
   const locationLabel =
     locationMode === 'current'
       ? copy.locationCurrent
@@ -256,6 +263,15 @@ export default function RadarPage() {
             <p className="text-3xl text-white/30">0</p>
             <p className="text-sm text-white/40">{copy.emptyTitle}</p>
             <p className="text-xs text-white/30">{copy.emptyHint}</p>
+            {nextRadius && (
+              <button
+                type="button"
+                onClick={expandSearchRadius}
+                className="mt-3 rounded-xl border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-4 py-2 text-sm font-semibold text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/20 hover:text-white"
+              >
+                {copy.expandRadius}
+              </button>
+            )}
           </div>
         ) : (
           <>

@@ -34,6 +34,7 @@ describe('ui copy', () => {
       expect(copy.analyze.loadingSteps).toHaveLength(4);
       expect(copy.analyze.emptyTitle.length).toBeGreaterThan(0);
       expect(copy.analyze.emptyBody.length).toBeGreaterThan(0);
+      expect(copy.analyze.tryExample.length).toBeGreaterThan(0);
       expect(copy.analyze.sourceCache.length).toBeGreaterThan(0);
       expect(copy.analyze.unsupportedUrl.length).toBeGreaterThan(0);
       expect(copy.analyze.youtubeSupported.length).toBeGreaterThan(0);
@@ -47,6 +48,7 @@ describe('ui copy', () => {
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);
       expect(copy.radar.facilityTypes.restroom.length).toBeGreaterThan(0);
       expect(copy.radar.viewOnMap.length).toBeGreaterThan(0);
+      expect(copy.radar.expandRadius.length).toBeGreaterThan(0);
 
       expect(copy.route.title.length).toBeGreaterThan(0);
       expect(copy.route.startGuidance.length).toBeGreaterThan(0);
