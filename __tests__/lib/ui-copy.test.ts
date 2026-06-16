@@ -102,6 +102,11 @@ describe('ui copy', () => {
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
       expect(copy.map.resultCount).toContain('{count}');
       expect(copy.map.noPlacesHint.length).toBeGreaterThan(0);
+      expect(copy.map.searchSuggestionsLabel.length).toBeGreaterThan(0);
+      expect(copy.map.searchSuggestions.length).toBeGreaterThan(0);
+      for (const suggestion of copy.map.searchSuggestions) {
+        expect(suggestion.length).toBeGreaterThan(0);
+      }
       expect(copy.map.resetFilters.length).toBeGreaterThan(0);
       expect(Object.values(copy.homeFeed.stories)).toHaveLength(5);
       expect(copy.homeFeed.openPlaceDetail).toContain('{name}');

@@ -394,9 +394,20 @@ export default function MapPage() {
       return matchCat && matchSearch;
     });
   }, [categories, focusPlace, places, search]);
+  const searchSuggestions = useMemo(() => {
+    const currentSearch = search.trim().toLowerCase();
+    return copy.map.searchSuggestions.filter((suggestion) => suggestion.toLowerCase() !== currentSearch);
+  }, [copy.map.searchSuggestions, search]);
 
   function resetMapFilters() {
     setSearch('');
+    setCategories(['all']);
+    setFocusPlace(null);
+    setSelectedPlace(null);
+  }
+
+  function applySearchSuggestion(suggestion: string) {
+    setSearch(suggestion);
     setCategories(['all']);
     setFocusPlace(null);
     setSelectedPlace(null);
@@ -505,6 +516,25 @@ export default function MapPage() {
                   <p className="text-sm font-semibold text-white/55">{copy.map.noPlaces}</p>
                   <p className="mt-1 text-xs leading-5 text-white/35">{copy.map.noPlacesHint}</p>
                 </div>
+                {search.trim() && searchSuggestions.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-white/35">
+                      {copy.map.searchSuggestionsLabel}
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {searchSuggestions.map((suggestion) => (
+                        <button
+                          key={suggestion}
+                          type="button"
+                          onClick={() => applySearchSuggestion(suggestion)}
+                          className="rounded-full border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-3 py-1.5 text-xs font-semibold text-[#FF8BA0] transition-colors hover:bg-[#FF3A5C]/20 hover:text-white"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="flex flex-wrap justify-center gap-2">
                   <button
                     type="button"
