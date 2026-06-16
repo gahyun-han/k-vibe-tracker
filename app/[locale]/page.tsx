@@ -192,7 +192,15 @@ export default function LandingPage() {
       lng: String(place.lng),
       q: place.name,
       source: 'home',
+      detail: '1',
+      category: place.category,
+      address: place.address,
     });
+    if (place.contentId) searchParams.set('contentId', place.contentId);
+    if (place.contentTypeId) searchParams.set('contentTypeId', String(place.contentTypeId));
+    if (place.imageUrl) searchParams.set('imageUrl', place.imageUrl);
+    if (place.overview) searchParams.set('description', place.overview);
+    if (place.tags?.length) searchParams.set('tags', place.tags.join(','));
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }, [locale, router]);
 
@@ -344,38 +352,51 @@ export default function LandingPage() {
                       className="w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#1E1E30]"
                     >
                       <div className="relative h-32 bg-white/5">
-                        {place.imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={place.imageUrl} alt="" className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/15 text-[#FF3A5C]">
-                            <MapPin size={28} />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <button
+                          type="button"
+                          onClick={() => openFeedPlace(place)}
+                          aria-label={copy.homeFeed.openPlaceDetail.replace('{name}', place.name)}
+                          className="absolute inset-0 block h-full w-full text-left"
+                        >
+                          {place.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={place.imageUrl} alt="" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/15 text-[#FF3A5C]">
+                              <MapPin size={28} />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        </button>
                         <button
                           type="button"
                           onClick={() => toggleSavedPlace(place)}
                           aria-label={saved ? copy.placeDetail.saved : copy.placeDetail.save}
-                          className={`absolute right-3 top-3 rounded-full bg-black/45 p-2 backdrop-blur transition-colors ${
+                          className={`absolute right-3 top-3 z-10 rounded-full bg-black/45 p-2 backdrop-blur transition-colors ${
                             saved ? 'text-[#FF3A5C]' : 'text-white'
                           }`}
                         >
                           <Heart size={16} className={saved ? 'fill-current' : ''} />
                         </button>
-                        <span className="absolute bottom-3 left-3 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/75 backdrop-blur">
+                        <span className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/75 backdrop-blur">
                           {copy.categories[place.category as keyof typeof copy.categories] ?? place.category}
                         </span>
                       </div>
                       <div className="space-y-3 p-3">
-                        <div>
-                          <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-white">{place.name}</h3>
-                          <p className="mt-1 line-clamp-1 text-xs text-white/40">{place.address}</p>
-                          {distance && <p className="mt-1 text-xs font-semibold text-[#FF3A5C]">{distance}</p>}
-                        </div>
                         <button
                           type="button"
                           onClick={() => openFeedPlace(place)}
+                          aria-label={copy.homeFeed.openPlaceDetail.replace('{name}', place.name)}
+                          className="block w-full rounded-lg text-left transition-colors hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/40"
+                        >
+                          <h3 className="line-clamp-2 min-h-10 text-sm font-bold leading-5 text-white">{place.name}</h3>
+                          <p className="mt-1 line-clamp-1 text-xs text-white/40">{place.address}</p>
+                          {distance && <p className="mt-1 text-xs font-semibold text-[#FF3A5C]">{distance}</p>}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openFeedPlace(place)}
+                          aria-label={copy.homeFeed.openPlaceDetail.replace('{name}', place.name)}
                           className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 text-sm font-semibold text-white/75 transition-colors hover:bg-white/20"
                         >
                           <Map size={15} />

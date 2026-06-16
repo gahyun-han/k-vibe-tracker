@@ -20,7 +20,7 @@ This project is in local-first development mode. Pages should remain usable with
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
-- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
+- The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
 - Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions and a user-clicked 100m arrival check when stop coordinates are available.
@@ -57,7 +57,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Detail API: `app/api/places/[contentId]/route.ts`
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
-- Home feed requests the same `/api/places` contract with the active locale, shows the response source, supports local category filters, can save places, and hands selected cards to the map with `source=home`.
+- Home feed requests the same `/api/places` contract with the active locale, shows the response source, supports local category filters, can save places, and hands selected cards to the map with `source=home`, `detail=1`, category/address/tags, and TourAPI content identifiers when available.
 - Map uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Map stores successful `/api/places` responses in the shared local API cache and displays cached place lists while a fresh same-query request is pending or if it fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.

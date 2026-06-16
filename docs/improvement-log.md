@@ -44,6 +44,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Upgraded Persona route generation to a localized 3-step S8 flow: choose route theme, choose mood/detail, then confirm selected inputs before generating the no-cost local preview route.
 - Expanded Persona route generation to cover the root S8 Foodie Explorer, Content Creator, and History Buff directions with new no-cost local route templates and localized detail copy for Korean, English, Japanese, and Chinese.
 - Connected S9 Route stop cards to the S4-style place detail flow. Tapping a stop body now opens the in-app map with `detail=1`, preserves route stop category/address/tags/description context, and leaves explicit Google Maps buttons as separate user-clicked external handoffs.
+- Connected S2 Home feed cards to the S4-style place detail flow. Feed image/text taps and the map CTA now open the in-app map with `detail=1`, preserving category, address, tags, image URL, and TourAPI content identifiers for detail enrichment.
 
 ## 2026-06-16
 

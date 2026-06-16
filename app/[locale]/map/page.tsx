@@ -287,17 +287,24 @@ export default function MapPage() {
     const category = searchParams.get('category')?.trim() || 'photo';
     const address = searchParams.get('address')?.trim();
     const tags = searchParams.get('tags')?.split(',').map((tag) => tag.trim()).filter(Boolean) ?? [];
+    const contentId = searchParams.get('contentId')?.trim();
+    const contentTypeIdParam = searchParams.get('contentTypeId');
+    const contentTypeId = contentTypeIdParam ? Number(contentTypeIdParam) : null;
+    const imageUrl = searchParams.get('imageUrl')?.trim();
 
     if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
       const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
       const focusedPlace = {
-        id: `analysis-${focusLat}-${focusLng}`,
+        id: contentId || `${sourceParam || 'focus'}-${focusLat}-${focusLng}`,
+        contentId: contentId || undefined,
+        contentTypeId: contentTypeId !== null && Number.isFinite(contentTypeId) ? contentTypeId : undefined,
         name: focusName,
         category,
         address: address || nextLocationLabel,
         lat: focusLat,
         lng: focusLng,
+        imageUrl: imageUrl?.startsWith('http') ? imageUrl : undefined,
         overview: description || undefined,
         crowdLevel: undefined,
         tags: tags.length > 0 ? tags : sourceParam === 'analyze' ? ['SNS'] : [],
