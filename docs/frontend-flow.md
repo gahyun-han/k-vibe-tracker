@@ -84,7 +84,8 @@ This project is in local-first development mode. Pages should remain usable with
 - UI: `app/[locale]/analyze/page.tsx`
 - API: `app/api/analyze/route.ts`
 - Helpers: `lib/analysis.ts`, `lib/youtube.ts`
-- Development fallback: deterministic mock spot extraction.
+- Development fallback: deterministic mock spot extraction localized for `ko`, `en`, `ja`, and `zh`.
+- The Analyze page sends the active URL locale to `/api/analyze`; local mock titles, place names, and reasons follow the same locale, and enabled AI worker requests receive the locale value for future provider-side localization.
 - AI worker calls are disabled unless `ENABLE_AI_WORKER_ANALYSIS=true` and `AI_WORKER_URL` is configured.
 
 ### Facilities

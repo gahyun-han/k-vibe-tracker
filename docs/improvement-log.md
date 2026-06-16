@@ -31,6 +31,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Added no-cost Route progress tracking. Travelers can mark stops complete in the local editor, completed stops get a clear check state, progress is stored locally per route, and Start Guidance opens the next incomplete stop instead of always restarting at stop one.
 - Upgraded the guest Profile route card to match the root My Routes direction: it now shows the current local route's progress percentage, completed stop count, next stop, duration, Continue/Edit actions, and a create-first-route CTA when no route exists.
 - Upgraded the no-cost Docent captions into structured script sections for intro, details, tags, and next step. Browser speech boundary events now highlight and scroll the active section while playback runs, keeping the S10 script guidance useful without paid TTS.
+- Localized the no-cost Analyze mock results. `/[locale]/analyze` now sends the active locale to `/api/analyze`, and the deterministic fallback returns translated titles, place names, and reasons for Korean, English, Japanese, and Chinese.
 
 ## 2026-06-16
 

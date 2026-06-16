@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { buildMockAnalysis, shouldCallAiWorker, type AnalysisResult } from '@/lib/analysis';
+import { buildMockAnalysis, isAnalysisLocale, shouldCallAiWorker, type AnalysisResult } from '@/lib/analysis';
 import { extractVideoId } from '@/lib/youtube';
 
 export async function POST(req: NextRequest) {
@@ -16,21 +16,26 @@ export async function POST(req: NextRequest) {
   }
 
   const youtubeUrl = typeof body.youtube_url === 'string' ? body.youtube_url : '';
+  const localeParam = typeof body.locale === 'string' ? body.locale : 'en';
   const videoId = extractVideoId(youtubeUrl);
 
   if (!videoId) {
     return NextResponse.json({ error: 'INVALID_YOUTUBE_URL' }, { status: 400 });
   }
 
+  if (!isAnalysisLocale(localeParam)) {
+    return NextResponse.json({ error: 'INVALID_LOCALE' }, { status: 400 });
+  }
+
   if (!shouldCallAiWorker()) {
-    return NextResponse.json(buildMockAnalysis(videoId));
+    return NextResponse.json(buildMockAnalysis(videoId, localeParam));
   }
 
   try {
     const res = await fetch(`${process.env.AI_WORKER_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ youtube_url: youtubeUrl }),
+      body: JSON.stringify({ youtube_url: youtubeUrl, locale: localeParam }),
       signal: AbortSignal.timeout(15_000),
     });
 
@@ -51,7 +56,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('[analyze] AI worker fallback:', error);
-    return NextResponse.json(buildMockAnalysis(videoId));
+    return NextResponse.json(buildMockAnalysis(videoId, localeParam));
   }
 }
 

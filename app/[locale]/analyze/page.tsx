@@ -52,7 +52,7 @@ export default function AnalyzePage() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ youtube_url: url }),
+        body: JSON.stringify({ youtube_url: url, locale }),
       });
       const data = (await res.json()) as AnalysisResult & { error?: string };
 
