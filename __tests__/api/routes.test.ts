@@ -25,6 +25,15 @@ describe('POST /api/routes/generate', () => {
     expect(data.plan.totalMinutes).toBe(data.plan.walkingMinutes + data.plan.stayMinutes);
   });
 
+  it('localizes generated mock route titles when locale is provided', async () => {
+    const res = await POST(makeRequest({ theme: 'mood', detail: 'cafe', start_time: '09:30', locale: 'ko' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(data.plan.title).toBe('카페 데이 서울 루트');
+    expect(data.plan.summary).toContain('로컬 미리보기 루트');
+  });
+
   it('rejects invalid themes', async () => {
     const res = await POST(makeRequest({ theme: 'sports', detail: 'cafe' }));
     const data = await res.json();

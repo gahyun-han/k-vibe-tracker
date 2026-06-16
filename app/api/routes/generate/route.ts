@@ -5,6 +5,7 @@ import {
   isRouteTheme,
   parseStartTime,
 } from '@/lib/routes';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -22,6 +23,7 @@ export async function POST(request: NextRequest) {
   const theme = typeof body.theme === 'string' ? body.theme : '';
   const detail = typeof body.detail === 'string' ? body.detail : '';
   const startTime = typeof body.start_time === 'string' ? body.start_time : '10:00';
+  const locale = normalizeUiLocale(typeof body.locale === 'string' ? body.locale : undefined);
 
   if (!isRouteTheme(theme)) {
     return NextResponse.json({ error: 'INVALID_THEME' }, { status: 400 });
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({
-    plan: generateMockRoutePlan({ theme, detail, startTime }),
+    plan: generateMockRoutePlan({ theme, detail, startTime, copy: getUiCopy(locale).persona }),
     cached: false,
     source: 'mock',
   });

@@ -12,6 +12,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Changed TourAPI location search ordering to distance order for nearby map results.
 - Added locale-aware place API cache keys so future Redis caching can safely separate Korean and multilingual responses.
 - Added an always-available feature guide button inside the app shell. The guide explains Map, Analyze, Route, Radar, and Profile capabilities in the active locale.
+- Upgraded the feature guide with per-feature shortcut buttons so users can jump directly into Map, Analyze, Route generation, Route/Docent, Radar, or Profile from the tutorial sheet.
 - Repaired broken Korean, Japanese, and Chinese locale message files and added readable translations for shared MVP copy.
 - Localized visible landing, bottom navigation, language labels, map category filters, and key map state text.
 - Fixed corrupted app metadata and web app manifest descriptions.
@@ -20,6 +21,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Connected the home trend chips to focused map views so the first screen behaves more like the wireframed Home Feed instead of a static landing page.
 - Reworked the home entry into a TourAPI-backed Seoul K-spot feed with horizontal cards, category filters, local save controls, and focused map handoff links.
 - Localized the Analyze and Radar user-facing screens through the shared UI copy table so the root 4-language requirement covers the shipped local-first workflows.
+- Localized the Persona and Route user-facing screens through the same shared UI copy table, including route editor status messages, sample stop copy, persona option labels, and generated mock route titles/summaries.
+- Updated `/api/routes/generate` to accept `locale=ko|en|ja|zh` in the request body and use localized route plan copy while keeping the deterministic no-cost mock generator.
 - Connected Analyze results to downstream workflows: individual detected places can open the map, and the full candidate set can draft an editable local route.
 - Added a no-cost local AI Docent page. Route stops now open captions and browser `speechSynthesis` playback without calling a paid TTS provider.
 - Added a TourAPI-backed place detail endpoint using `detailCommon2`, `detailIntro2`, and `detailImage2`, with mock fallback and cache-key preparation.
@@ -28,7 +31,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## Still Gated Or Larger Scope
 
-- Kakao Maps JavaScript SDK has a local browser key configured, but Kakao Developers still needs the Map/Local service enabled for the app before the real SDK can render.
+- Kakao Maps JavaScript SDK is configured for `http://localhost:3000`; `127.0.0.1` still needs separate Kakao domain registration if that host is used.
 - Supabase auth persistence requires project credentials and OAuth setup.
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.

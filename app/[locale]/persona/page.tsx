@@ -22,6 +22,7 @@ import {
   type RoutePlan,
   type RouteTheme,
 } from '@/lib/routes';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 type Step = 1 | 2;
 
@@ -34,7 +35,9 @@ interface GenerateRouteResponse {
 export default function PersonaPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = (params.locale as string) ?? 'en';
+  const locale = normalizeUiLocale(params.locale);
+  const uiCopy = getUiCopy(locale);
+  const copy = uiCopy.persona;
   const [step, setStep] = useState<Step>(1);
   const [theme, setTheme] = useState<RouteTheme | ''>('');
   const [detail, setDetail] = useState('');
@@ -48,6 +51,7 @@ export default function PersonaPage() {
     () => ROUTE_THEME_OPTIONS.find((option) => option.id === theme),
     [theme]
   );
+  const selectedThemeCopy = selectedTheme ? copy.themes[selectedTheme.id] : null;
 
   async function generateRoute() {
     if (!theme || !detail) return;
@@ -60,7 +64,7 @@ export default function PersonaPage() {
       const res = await fetch('/api/routes/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ theme, detail, start_time: startTime }),
+        body: JSON.stringify({ theme, detail, start_time: startTime, locale }),
       });
       const data = (await res.json()) as Partial<GenerateRouteResponse> & { error?: string };
 
@@ -97,14 +101,14 @@ export default function PersonaPage() {
     try {
       if (navigator.share) {
         await navigator.share({ title: plan.title, text: plan.shareText, url: window.location.href });
-        setShareStatus('Shared');
+        setShareStatus(copy.shared);
         return;
       }
 
       await navigator.clipboard.writeText(plan.shareText);
-      setShareStatus('Copied');
+      setShareStatus(copy.copied);
     } catch {
-      setShareStatus('Share unavailable');
+      setShareStatus(copy.shareUnavailable);
     }
   }
 
@@ -115,13 +119,13 @@ export default function PersonaPage() {
           <div className="space-y-4 px-4 pt-4">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-[#FF3A5C]">Local route preview</p>
+                <p className="text-xs font-semibold text-[#FF3A5C]">{copy.previewEyebrow}</p>
                 <h2 className="mt-0.5 text-lg font-bold text-white">{plan.title}</h2>
                 <p className="mt-1 text-xs leading-5 text-white/45">{plan.summary}</p>
               </div>
               <button
                 onClick={reset}
-                aria-label="Create another route"
+                aria-label={copy.createAnother}
                 className="rounded-xl bg-white/10 p-2 text-white/60 hover:bg-white/20"
               >
                 <RotateCcw size={16} />
@@ -130,9 +134,9 @@ export default function PersonaPage() {
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label: 'Stops', value: String(plan.stops.length), icon: MapPin },
-                { label: 'Walking', value: formatDuration(plan.walkingMinutes), icon: Clock },
-                { label: 'Total', value: formatDuration(plan.totalMinutes), icon: Sparkles },
+                { label: copy.stops, value: String(plan.stops.length), icon: MapPin },
+                { label: copy.walking, value: formatDuration(plan.walkingMinutes), icon: Clock },
+                { label: copy.total, value: formatDuration(plan.totalMinutes), icon: Sparkles },
               ].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="rounded-xl bg-white/5 p-3 text-center">
                   <Icon size={14} className="mx-auto mb-1 text-[#FF3A5C]" />
@@ -166,7 +170,7 @@ export default function PersonaPage() {
                       </div>
                       <div className="shrink-0 text-right">
                         <p className="text-xs font-semibold text-[#FF3A5C]">{stop.startTime}</p>
-                        <p className="text-[10px] text-white/30">{stop.stayMinutes}min</p>
+                        <p className="text-[10px] text-white/30">{stop.stayMinutes}{uiCopy.route.staySuffix}</p>
                       </div>
                     </div>
                   </div>
@@ -180,14 +184,14 @@ export default function PersonaPage() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 <Save size={16} />
-                Edit Route
+                {copy.editRoute}
               </button>
               <button
                 onClick={shareRoute}
                 className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 hover:bg-white/20"
               >
                 <Share2 size={16} />
-                Share
+                {copy.share}
               </button>
             </div>
             {shareStatus && <p className="text-center text-xs text-white/35">{shareStatus}</p>}
@@ -201,10 +205,10 @@ export default function PersonaPage() {
     <AppLayout activeTab="route">
       <div className="flex h-full flex-col bg-[#0D0D1A] pb-24">
         <div className="px-4 pt-4">
-          <p className="text-xs font-semibold text-[#FF3A5C]">Route generator</p>
-          <h2 className="mt-1 text-lg font-bold text-white">Build a K-content day plan</h2>
+          <p className="text-xs font-semibold text-[#FF3A5C]">{copy.generatorEyebrow}</p>
+          <h2 className="mt-1 text-lg font-bold text-white">{copy.title}</h2>
           <p className="mt-1 text-xs leading-5 text-white/45">
-            Pick a theme and route mood. This local generator is deterministic while paid AI is approval-gated.
+            {copy.subtitle}
           </p>
           <div className="mt-4 flex gap-1.5">
             {([1, 2] as const).map((item) => (
@@ -221,7 +225,7 @@ export default function PersonaPage() {
             <>
               <div className="rounded-xl bg-white/5 p-3">
                 <label className="text-xs font-semibold text-white/50" htmlFor="start-time">
-                  Start time
+                  {copy.startTime}
                 </label>
                 <input
                   id="start-time"
@@ -232,60 +236,67 @@ export default function PersonaPage() {
                 />
               </div>
 
-              {ROUTE_THEME_OPTIONS.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => {
-                    setTheme(option.id);
-                    setDetail('');
-                    setStep(2);
-                  }}
-                  className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-left transition-all hover:border-[#FF3A5C]/50 hover:bg-[#FF3A5C]/5"
-                >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-xs font-bold text-[#FF3A5C]">
-                    {option.id.toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-white">{option.label}</p>
-                    <p className="text-xs leading-5 text-white/40">{option.description}</p>
-                  </div>
-                  <ChevronRight size={16} className="ml-auto shrink-0 text-white/30" />
-                </button>
-              ))}
+              {ROUTE_THEME_OPTIONS.map((option) => {
+                const themeCopy = copy.themes[option.id];
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => {
+                      setTheme(option.id);
+                      setDetail('');
+                      setStep(2);
+                    }}
+                    className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 text-left transition-all hover:border-[#FF3A5C]/50 hover:bg-[#FF3A5C]/5"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-xs font-bold text-[#FF3A5C]">
+                      {option.id.toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-white">{themeCopy.label}</p>
+                      <p className="text-xs leading-5 text-white/40">{themeCopy.description}</p>
+                    </div>
+                    <ChevronRight size={16} className="ml-auto shrink-0 text-white/30" />
+                  </button>
+                );
+              })}
             </>
           )}
 
-          {step === 2 && selectedTheme && (
+          {step === 2 && selectedTheme && selectedThemeCopy && (
             <>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setStep(1)}
                   className="rounded-lg bg-white/10 p-2 text-white/50 hover:text-white"
-                  aria-label="Back to route themes"
+                  aria-label={copy.backToThemes}
                 >
                   <ChevronLeft size={16} />
                 </button>
                 <div>
-                  <p className="text-xs text-white/40">{selectedTheme.label}</p>
-                  <h3 className="text-base font-bold text-white">Choose the route mood</h3>
+                  <p className="text-xs text-white/40">{selectedThemeCopy.label}</p>
+                  <h3 className="text-base font-bold text-white">{copy.chooseMood}</h3>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                {selectedTheme.details.map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => setDetail(option.id)}
-                    className={`min-h-[112px] rounded-xl border p-3 text-left transition-all ${
-                      detail === option.id
-                        ? 'border-[#FF3A5C] bg-[#FF3A5C]/20 text-white'
-                        : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30'
-                    }`}
-                  >
-                    <p className="text-sm font-semibold">{option.label}</p>
-                    <p className="mt-1 text-xs leading-5 text-white/45">{option.description}</p>
-                  </button>
-                ))}
+                {selectedTheme.details.map((option) => {
+                  const details = selectedThemeCopy.details as Record<string, { label: string; description: string }>;
+                  const detailCopy = details[option.id] ?? option;
+                  return (
+                    <button
+                      key={option.id}
+                      onClick={() => setDetail(option.id)}
+                      className={`min-h-[112px] rounded-xl border p-3 text-left transition-all ${
+                        detail === option.id
+                          ? 'border-[#FF3A5C] bg-[#FF3A5C]/20 text-white'
+                          : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30'
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">{detailCopy.label}</p>
+                      <p className="mt-1 text-xs leading-5 text-white/45">{detailCopy.description}</p>
+                    </button>
+                  );
+                })}
               </div>
             </>
           )}
@@ -308,12 +319,12 @@ export default function PersonaPage() {
               {loading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Generating route...
+                  {copy.generating}
                 </>
               ) : (
                 <>
                   <Sparkles size={16} />
-                  Generate Route
+                  {copy.generate}
                 </>
               )}
             </button>

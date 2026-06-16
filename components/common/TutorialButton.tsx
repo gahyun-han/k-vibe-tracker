@@ -1,17 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Compass, HelpCircle, Map, Mic2, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const STEP_ICONS = [Map, Search, Compass, Mic2, Radar, User] as const;
+const STEP_PATHS = ['/map', '/analyze', '/persona', '/route', '/radar', '/profile'] as const;
 
 export function TutorialButton() {
+  const router = useRouter();
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
   const [open, setOpen] = useState(false);
+
+  function openStep(index: number) {
+    const path = STEP_PATHS[index] ?? '/map';
+    setOpen(false);
+    router.push(`/${locale}${path}`);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -82,9 +90,16 @@ export function TutorialButton() {
                       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#FF3A5C]">
                         <Icon size={17} />
                       </div>
-                      <div>
+                      <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-white">{step.title}</p>
                         <p className="mt-1 text-xs leading-5 text-white/55">{step.body}</p>
+                        <button
+                          type="button"
+                          onClick={() => openStep(index)}
+                          className="mt-2 rounded-lg border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-2.5 py-1.5 text-xs font-semibold text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/20 hover:text-white"
+                        >
+                          {step.action}
+                        </button>
                       </div>
                     </div>
                   );

@@ -51,6 +51,7 @@ interface GenerateRoutePlanInput {
   theme: RouteTheme;
   detail: string;
   startTime?: string;
+  copy?: LocalizedRoutePlanCopy;
 }
 
 interface CreateLocalRoutePlanInput {
@@ -63,6 +64,24 @@ interface CreateLocalRoutePlanInput {
 }
 
 type StopTemplate = Omit<RouteStop, 'startTime'>;
+
+export interface LocalizedRouteOptionCopy {
+  label: string;
+  description: string;
+}
+
+export interface LocalizedRoutePlanCopy {
+  routeTitle: string;
+  routeSummary: string;
+  themes: Record<
+    RouteTheme,
+    {
+      label: string;
+      description: string;
+      details: Record<string, LocalizedRouteOptionCopy>;
+    }
+  >;
+}
 
 export const ROUTE_THEME_OPTIONS: RouteThemeOption[] = [
   {
@@ -265,9 +284,11 @@ export function isRouteDetailForTheme(theme: RouteTheme, detail: string) {
   return getRouteDetails(theme).some((option) => option.id === detail);
 }
 
-export function generateMockRoutePlan({ theme, detail, startTime = '10:00' }: GenerateRoutePlanInput): RoutePlan {
+export function generateMockRoutePlan({ theme, detail, startTime = '10:00', copy }: GenerateRoutePlanInput): RoutePlan {
   const themeOption = ROUTE_THEME_OPTIONS.find((option) => option.id === theme)!;
   const detailOption = themeOption.details.find((option) => option.id === detail);
+  const localizedTheme = copy?.themes[theme];
+  const localizedDetail = localizedTheme?.details[detail];
   const baseStops = ROUTE_TEMPLATES[theme];
   const startMinutes = parseStartTime(startTime) ?? 600;
 
@@ -288,14 +309,29 @@ export function generateMockRoutePlan({ theme, detail, startTime = '10:00' }: Ge
 
   const walking = calculateWalkingMinutes(stops);
   const stay = stops.reduce((total, stop) => total + stop.stayMinutes, 0);
-  const title = `${detailOption?.label ?? themeOption.label} Seoul Route`;
+  const duration = formatDuration(walking + stay);
+  const title = formatRouteTemplate(copy?.routeTitle ?? '{detail} Seoul Route', {
+    detail: localizedDetail?.label ?? detailOption?.label ?? localizedTheme?.label ?? themeOption.label,
+    theme: localizedTheme?.label ?? themeOption.label,
+    duration,
+  });
+  const summary = formatRouteTemplate(
+    copy?.routeSummary ?? '{themeDescription} Planned as a {duration} local preview route.',
+    {
+      theme: localizedTheme?.label ?? themeOption.label,
+      themeDescription: localizedTheme?.description ?? themeOption.description,
+      detail: localizedDetail?.label ?? detailOption?.label ?? '',
+      detailDescription: localizedDetail?.description ?? detailOption?.description ?? '',
+      duration,
+    },
+  );
 
   return createLocalRoutePlan({
     id: `${theme}-${detail}`,
     title,
     theme,
     detail,
-    summary: `${themeOption.description} Planned as a ${formatDuration(walking + stay)} local preview route.`,
+    summary,
     stops,
   });
 }
@@ -353,4 +389,8 @@ function formatClock(minutes: number) {
   const hours = Math.floor(normalized / 60);
   const mins = normalized % 60;
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
+
+function formatRouteTemplate(template: string, values: Record<string, string>) {
+  return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '');
 }

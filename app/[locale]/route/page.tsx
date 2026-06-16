@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Clock, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
-import { normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import {
   calculateWalkingMinutes,
   createLocalRoutePlan,
@@ -24,39 +24,43 @@ interface RoutePlanMeta {
   summary: string;
 }
 
-const EXTRA_STOP: RouteStop = {
-  id: 'cheonggyecheon-stream',
-  name: 'Cheonggyecheon Stream',
-  category: 'Walk',
-  address: 'Jongno-gu, Seoul',
-  crowdLevel: 'mid',
-  lat: 37.569,
-  lng: 126.9786,
-  stayMinutes: 45,
-  startTime: '17:30',
-  description: 'A flexible walking stop that fits between old Seoul and evening neighborhoods.',
-  tags: ['walk', 'river'],
-};
-
 export default function RoutePage() {
   const router = useRouter();
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
-  const [planTitle, setPlanTitle] = useState('Cafe day Seoul Route');
+  const uiCopy = getUiCopy(locale);
+  const copy = uiCopy.route;
+  const fallbackPlan = useMemo(
+    () => generateMockRoutePlan({ theme: 'mood', detail: 'cafe', copy: uiCopy.persona }),
+    [uiCopy.persona],
+  );
+  const [planTitle, setPlanTitle] = useState(fallbackPlan.title);
   const [planMeta, setPlanMeta] = useState<RoutePlanMeta>({
-    id: 'mood-cafe',
-    theme: 'mood',
-    detail: 'cafe',
-    summary: 'Editable local route.',
+    id: fallbackPlan.id,
+    theme: fallbackPlan.theme,
+    detail: fallbackPlan.detail,
+    summary: fallbackPlan.summary,
   });
   const [spots, setSpots] = useState<RouteStop[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [status, setStatus] = useState('');
+  const extraStop = useMemo<RouteStop>(() => ({
+    id: copy.extraStop.id,
+    name: copy.extraStop.name,
+    category: copy.extraStop.category,
+    address: copy.extraStop.address,
+    crowdLevel: 'mid',
+    lat: 37.569,
+    lng: 126.9786,
+    stayMinutes: 45,
+    startTime: '17:30',
+    description: copy.extraStop.description,
+    tags: [...copy.extraStop.tags],
+  }), [copy]);
 
   useEffect(() => {
-    const fallback = generateMockRoutePlan({ theme: 'mood', detail: 'cafe' });
     const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
 
     function applyPlan(plan: RoutePlan) {
@@ -72,7 +76,7 @@ export default function RoutePage() {
     }
 
     if (!stored) {
-      applyPlan(fallback);
+      applyPlan(fallbackPlan);
       return;
     }
 
@@ -80,13 +84,13 @@ export default function RoutePage() {
       const parsed = JSON.parse(stored) as Partial<RoutePlan>;
       if (Array.isArray(parsed.stops) && parsed.stops.length > 0) {
         applyPlan({
-          ...fallback,
+          ...fallbackPlan,
           ...parsed,
-          id: parsed.id ?? fallback.id,
-          title: parsed.title ?? fallback.title,
-          theme: parsed.theme ?? fallback.theme,
-          detail: parsed.detail ?? fallback.detail,
-          summary: parsed.summary ?? fallback.summary,
+          id: parsed.id ?? fallbackPlan.id,
+          title: parsed.title ?? fallbackPlan.title,
+          theme: parsed.theme ?? fallbackPlan.theme,
+          detail: parsed.detail ?? fallbackPlan.detail,
+          summary: parsed.summary ?? fallbackPlan.summary,
           stops: parsed.stops as RouteStop[],
         });
         return;
@@ -95,8 +99,8 @@ export default function RoutePage() {
       window.localStorage.removeItem(CURRENT_ROUTE_STORAGE_KEY);
     }
 
-    applyPlan(fallback);
-  }, []);
+    applyPlan(fallbackPlan);
+  }, [fallbackPlan]);
 
   useEffect(() => {
     if (!hydrated || spots.length === 0) return;
@@ -141,8 +145,8 @@ export default function RoutePage() {
     });
     setDraggingId(null);
     setDragOverId(null);
-    setStatus('Route order updated');
-  }, [draggingId]);
+    setStatus(copy.orderUpdated);
+  }, [copy.orderUpdated, draggingId]);
   const onDragEnd = useCallback(() => {
     setDraggingId(null);
     setDragOverId(null);
@@ -150,15 +154,15 @@ export default function RoutePage() {
 
   function removeSpot(id: string) {
     setSpots((prev) => prev.filter((spot) => spot.id !== id));
-    setStatus('Stop removed');
+    setStatus(copy.stopRemoved);
   }
 
   function addSampleStop() {
     setSpots((prev) => {
-      if (prev.some((spot) => spot.id === EXTRA_STOP.id)) return prev;
-      return [...prev, EXTRA_STOP];
+      if (prev.some((spot) => spot.id === extraStop.id)) return prev;
+      return [...prev, extraStop];
     });
-    setStatus('Sample stop added');
+    setStatus(copy.sampleStopAdded);
   }
 
   async function shareRoute() {
@@ -167,14 +171,14 @@ export default function RoutePage() {
     try {
       if (navigator.share) {
         await navigator.share({ title: planTitle, text: shareText, url: window.location.href });
-        setStatus('Shared');
+        setStatus(copy.shared);
         return;
       }
 
       await navigator.clipboard.writeText(shareText);
-      setStatus('Copied route summary');
+      setStatus(copy.copiedSummary);
     } catch {
-      setStatus('Share unavailable');
+      setStatus(copy.shareUnavailable);
     }
   }
 
@@ -195,7 +199,7 @@ export default function RoutePage() {
 
   function startGuidance() {
     if (spots.length === 0) {
-      setStatus('Add a stop before starting guidance');
+      setStatus(copy.addStopBeforeGuidance);
       return;
     }
 
@@ -203,19 +207,19 @@ export default function RoutePage() {
   }
 
   return (
-    <AppLayout activeTab="route">
+    <AppLayout activeTab="route" title={copy.title}>
       <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-24">
         <div className="px-4 pb-3 pt-4">
-          <p className="text-xs font-semibold text-[#FF3A5C]">Editable itinerary</p>
+          <p className="text-xs font-semibold text-[#FF3A5C]">{copy.editableEyebrow}</p>
           <h2 className="mt-0.5 text-lg font-bold text-white">{planTitle}</h2>
-          <p className="mt-1 text-xs text-white/40">Drag stops to reorder. Local save/auth sync is approval-gated.</p>
+          <p className="mt-1 text-xs text-white/40">{copy.helper}</p>
         </div>
 
         <div className="mx-4 mb-4 grid grid-cols-3 gap-2">
           {[
-            { label: 'Stops', value: String(spots.length), icon: MapPin },
-            { label: 'Walking', value: formatDuration(stats.walking), icon: Navigation },
-            { label: 'Total', value: formatDuration(stats.total), icon: Clock },
+            { label: copy.stops, value: String(spots.length), icon: MapPin },
+            { label: copy.walking, value: formatDuration(stats.walking), icon: Navigation },
+            { label: copy.total, value: formatDuration(stats.total), icon: Clock },
           ].map(({ label, value, icon: Icon }) => (
             <div key={label} className="rounded-xl bg-white/5 p-3 text-center">
               <Icon size={14} className="mx-auto mb-1 text-[#FF3A5C]" />
@@ -250,7 +254,7 @@ export default function RoutePage() {
                 <div className="mt-0.5 flex items-center gap-2">
                   <span className="text-xs text-white/40">{spot.category}</span>
                   <span className="text-white/20">.</span>
-                  <span className="text-xs text-white/40">{spot.stayMinutes}min stay</span>
+                  <span className="text-xs text-white/40">{spot.stayMinutes}{copy.staySuffix}</span>
                   <span className="text-white/20">.</span>
                   <span className="text-xs text-white/40">{spot.startTime}</span>
                 </div>
@@ -261,8 +265,8 @@ export default function RoutePage() {
                 <button
                   type="button"
                   onClick={() => openDocent(spot)}
-                  aria-label={`Open docent for ${spot.name}`}
-                  title="Open docent"
+                  aria-label={copy.openDocent.replace('{name}', spot.name)}
+                  title={copy.openDocentTitle}
                   className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-[#FF3A5C]"
                 >
                   <Mic2 size={14} />
@@ -270,7 +274,7 @@ export default function RoutePage() {
                 <button
                   type="button"
                   onClick={() => removeSpot(spot.id)}
-                  aria-label={`Remove ${spot.name}`}
+                  aria-label={copy.removeStop.replace('{name}', spot.name)}
                   className="rounded-lg p-1 text-white/30 transition-colors hover:bg-white/10 hover:text-white/70"
                 >
                   <X size={14} />
@@ -284,7 +288,7 @@ export default function RoutePage() {
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 py-3 text-sm text-white/40 transition-colors hover:border-[#FF3A5C]/50 hover:text-[#FF3A5C]/70"
           >
             <Plus size={16} />
-            Add sample stop
+            {copy.addSampleStop}
           </button>
         </div>
 
@@ -298,14 +302,14 @@ export default function RoutePage() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
                 <Navigation size={16} />
-                Start Guidance
+                {copy.startGuidance}
               </button>
               <button
                 onClick={shareRoute}
                 className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
               >
                 <Share2 size={16} />
-                Share
+                {copy.share}
               </button>
             </div>
           </div>

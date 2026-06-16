@@ -15,7 +15,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Bottom navigation lives in `components/layout/BottomNav.tsx`.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
-- The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens.
+- The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow.
 - The home entry at `/[locale]` presents local-first status, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
@@ -80,6 +80,7 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/routes/generate/route.ts`
 - Helpers: `lib/routes.ts`
 - Development fallback: deterministic mock route plans until AI generation is approved.
+- Route generation accepts the active locale and uses `lib/ui-copy.ts` to localize mock plan titles, summaries, persona themes, and detail options.
 - Local persistence key: `k-vibe-current-route`
 - Route editor mutations are written back to the same local persistence key.
 - Analyze results can write a draft route into this same key and open `/[locale]/route`.
@@ -96,6 +97,7 @@ Every data-backed page should expose:
 - Clear copy that tells developers whether a local mock or external source produced the result.
 - Shared navigation, landing, tutorial, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
+- Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 
 ## Approval-Gated Work
 

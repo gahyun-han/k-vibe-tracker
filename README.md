@@ -113,8 +113,8 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]`: actionable home feed with language selection, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
-- `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate`, renders a local route preview, and can save the plan into `localStorage`.
-- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
+- `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
+- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places and the current local route when Supabase is not configured.
@@ -201,13 +201,13 @@ all, restroom, pharmacy, cafe_toilet, convenience, popup
 Accepts:
 
 ```json
-{ "theme": "mood", "detail": "cafe", "start_time": "10:00" }
+{ "theme": "mood", "detail": "cafe", "start_time": "10:00", "locale": "en" }
 ```
 
 Behavior:
 
-- Validates theme, detail, and optional start time.
-- Returns a deterministic local route plan with stops, crowd levels, stay minutes, walking minutes, total duration, and share text.
+- Validates theme, detail, optional start time, and optional `locale=ko|en|ja|zh`.
+- Returns a deterministic local route plan with localized title/summary, stops, crowd levels, stay minutes, walking minutes, total duration, and share text.
 - Keeps the route generation contract stable so an AI-backed planner can replace the mock implementation later.
 
 Themes:
@@ -284,11 +284,13 @@ ai-worker/      # FastAPI prototype
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.
-  - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and English UI.
+  - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Analyze and Radar screen copy now comes from shared locale resources for Korean, English, Japanese, and Chinese.
+  - Persona and Route screen copy now comes from shared locale resources, and route generation localizes mock plan titles/summaries when a locale is provided.
+  - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
