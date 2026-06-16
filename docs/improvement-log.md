@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Improved Tutorial guide semantics. The feature guide trigger now announces that it opens a dialog, the six feature shortcuts render as an ordered list, and each shortcut action has a feature-specific accessible label.
 - Added root FilterChips selected-state accessibility. Home story/feed chips and Map category chips now expose `aria-pressed` for active selections, and Map filter buttons explicitly use button semantics.
 - Added S12-style Profile sign-in prompt coverage. When Supabase account sync is configured but the traveler is still in guest mode, Profile now shows a localized login prompt banner while keeping the no-Supabase local guest warning for development.
 - Added root accessibility coverage for main map pins. The clickable Kakao/local map pin buttons now expose accessible labels containing the place name, localized category, and distance, with helper test coverage.

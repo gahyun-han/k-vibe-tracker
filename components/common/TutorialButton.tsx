@@ -85,6 +85,7 @@ export function TutorialButton() {
         onClick={() => setOpen(true)}
         title={copy.tutorial.buttonLabel}
         aria-label={copy.tutorial.buttonLabel}
+        aria-haspopup="dialog"
         aria-controls="tutorial-sheet"
         aria-expanded={open}
         className="absolute bottom-20 right-4 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30 transition-colors hover:bg-[#e02e4e] lg:bottom-6 lg:right-6"
@@ -130,11 +131,11 @@ export function TutorialButton() {
                 </button>
               </div>
 
-              <div className="mt-4 divide-y divide-white/10 overflow-hidden rounded-xl border border-white/10">
+              <ol className="mt-4 divide-y divide-white/10 overflow-hidden rounded-xl border border-white/10">
                 {copy.tutorial.steps.map((step, index) => {
                   const Icon = STEP_ICONS[index] ?? HelpCircle;
                   return (
-                    <div key={step.title} className="flex gap-3 bg-white/[0.03] p-3">
+                    <li key={step.title} className="flex gap-3 bg-white/[0.03] p-3">
                       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[#FF3A5C]">
                         <Icon size={17} />
                       </div>
@@ -144,15 +145,16 @@ export function TutorialButton() {
                         <button
                           type="button"
                           onClick={() => openStep(index)}
+                          aria-label={`${step.action} - ${step.title}`}
                           className="mt-2 rounded-lg border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-2.5 py-1.5 text-xs font-semibold text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/20 hover:text-white"
                         >
                           {step.action}
                         </button>
                       </div>
-                    </div>
+                    </li>
                   );
                 })}
-              </div>
+              </ol>
 
               <p id="tutorial-footer" className="mt-3 text-xs leading-5 text-white/40">{copy.tutorial.footer}</p>
             </div>
