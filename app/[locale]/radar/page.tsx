@@ -157,9 +157,11 @@ export default function RadarPage() {
         if (cachedData?.facilities?.length) {
           setFacilities(cachedData.facilities);
           setSource('cache');
+          toast(copy.cachedFallback, 'warning', 5000);
           return;
         }
         setError(e instanceof Error ? e.message : 'FACILITIES_REQUEST_FAILED');
+        toast(copy.errorTitle, 'error');
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -167,7 +169,17 @@ export default function RadarPage() {
 
     loadFacilities();
     return () => controller.abort();
-  }, [coords.lat, coords.lng, filter, radius, reloadKey]);
+  }, [
+    coords.lat,
+    coords.lng,
+    copy.cachedFallback,
+    copy.errorTitle,
+    filter,
+    locale,
+    radius,
+    reloadKey,
+    toast,
+  ]);
 
   function openFacilityMap(facility: Facility) {
     window.open(buildGoogleMapsFacilityUrl(facility), '_blank', 'noopener,noreferrer');

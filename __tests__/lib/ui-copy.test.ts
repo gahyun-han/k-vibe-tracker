@@ -125,6 +125,7 @@ describe('ui copy', () => {
       expect(copy.radar.mapTitle.length).toBeGreaterThan(0);
       expect(copy.radar.openFacilityMap).toContain('{name}');
       expect(copy.radar.locationUnavailable.length).toBeGreaterThan(0);
+      expect(copy.radar.cachedFallback.length).toBeGreaterThan(0);
       expect(copy.analyze.confidence.length).toBeGreaterThan(0);
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
