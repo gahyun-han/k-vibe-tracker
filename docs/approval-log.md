@@ -26,6 +26,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Claude CLI was not used for the 2026-06-17 Home feed detail-handoff pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Profile saved-detail handoff pass because it may consume paid quota and the change could be verified locally with copy tests, type-check, build, and browser inspection.
 - Claude CLI was not used for the 2026-06-17 Place detail share pass because it may consume paid quota and the change could be verified locally with copy/helper tests and type-check.
+- Claude CLI was not used for the 2026-06-17 Persona feed-personalization pass because it may consume paid quota and the change could be verified locally with helper/copy tests, type-check, and build.
 - Supabase project credentials and Google OAuth setup: required for real login/session/profile persistence and cross-device saved-place sync. Local guest flows, local saved places, and local route editing run without these keys.
 - TourAPI key: provided by the user for local development and stored only in `.env.local`, which is gitignored. The user confirmed all 26 Korea Tourism Organization OpenAPI service applications are approved under the same key. `/api/places`, `/api/places/[contentId]`, and Radar popup enrichment through `searchFestival2` still use mock fallback if the key is absent or TourAPI fails. TourAPI is a public-data API, but local live checks consume the development account request quota; one `/api/facilities` popup verification call, one `/ko/map` page verification, one S4 place-detail gallery verification that opened a local map result plus two place detail sheets, one S3 analyzer-FAB map verification, one S7 analyze-to-map detail handoff verification, one S9 route-stop detail handoff verification, one S2 home-feed detail handoff verification, one S12 profile saved-detail handoff verification, and one follow-up `/api/places` Kakao-domain check probe were made on 2026-06-17.
 - Live facility data sources: still required for production restroom, pharmacy, convenience store, and cafe restroom data. `/api/facilities` uses local mock data for those facility types until source terms, quotas, and any costs are approved.
@@ -38,6 +39,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Upstash Redis credentials: required for external Redis caching.
 - Push access to `gahyun-han/k-vibe-tracker`: needs repository permission from the owner if that upstream should receive changes.
 - Chrome automation using the user's logged-in browser state: requires explicit approval because it can access private session context.
+- In-app browser verification for the 2026-06-17 Persona feed-personalization pass was attempted, but the Browser tab crashed at `about:blank` before reaching localhost and Browser Use blocked further interaction with the crash data URL. No local app interaction was completed through that browser session.
 
 ## Safe Without Additional Approval
 
@@ -48,5 +50,6 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost local Route stop detail handoff that sends route stop coordinates and copy to the in-app map detail sheet without Kakao Mobility, Google Directions API, or a backend route lookup.
 - No-cost Profile saved-place detail handoff that sends locally saved place metadata to the in-app map detail sheet without Supabase sync or a backend saved-place lookup.
 - No-cost Place detail share links that use Web Share or clipboard with a same-origin `/[locale]/map?detail=1` URL and do not create a backend public-link record.
+- No-cost Persona feed personalization that stores the selected theme/detail in localStorage and filters the existing Home feed locally without calling AI, Supabase, or a recommendation provider.
 - No-cost Profile My Routes card that reads local route/progress state and does not use Supabase, GPS, Kakao Mobility, or backend route sessions.
 - Commits and pushes to the already writable `hslee-origin/hslee` branch.

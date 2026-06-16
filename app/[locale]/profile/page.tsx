@@ -2,9 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Bell, CheckCircle2, Clock, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, PlayCircle, Route, Settings2 } from 'lucide-react';
+import { Bell, CheckCircle2, Clock, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, PlayCircle, Route, Settings2, Sparkles } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import LoginModal from '@/components/auth/LoginModal';
+import {
+  parsePersonaPreference,
+  PERSONA_PREFERENCE_STORAGE_KEY,
+  type PersonaPreference,
+} from '@/lib/persona-preference';
 import {
   CURRENT_ROUTE_STORAGE_KEY,
   formatDuration,
@@ -41,10 +46,12 @@ export default function ProfilePage() {
   const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
   const [currentRoute, setCurrentRoute] = useState<RoutePlan | null>(null);
   const [routeCompletedStopIds, setRouteCompletedStopIds] = useState<string[]>([]);
+  const [personaPreference, setPersonaPreference] = useState<PersonaPreference | null>(null);
   const supabaseConfigured = hasSupabaseEnv();
 
   useEffect(() => {
     setSavedPlaces(parseSavedPlaces(window.localStorage.getItem(SAVED_PLACES_STORAGE_KEY)));
+    setPersonaPreference(parsePersonaPreference(window.localStorage.getItem(PERSONA_PREFERENCE_STORAGE_KEY)));
 
     try {
       const route = JSON.parse(window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY) ?? 'null') as Partial<RoutePlan> | null;
@@ -126,6 +133,10 @@ export default function ProfilePage() {
   const displayName = user?.user_metadata?.full_name ?? copy.profile.guestTitle;
   const displayEmail = user?.email ?? copy.profile.guestSubtitle;
   const avatarInitial = (user?.user_metadata?.full_name?.[0] ?? user?.email?.[0] ?? 'G').toUpperCase();
+  const personaLabel = personaPreference
+    ? ((copy.persona.themes[personaPreference.theme].details as Record<string, { label: string }>)[personaPreference.detail]?.label ??
+      copy.persona.themes[personaPreference.theme].label)
+    : copy.profile.personaUnset;
   const routeCount = currentRoute ? 1 : 0;
   const routeTotalStops = currentRoute?.stops.length ?? 0;
   const routeCompletedCount = currentRoute ? routeCompletedStopIds.length : 0;
@@ -154,6 +165,11 @@ export default function ProfilePage() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-bold text-white">{displayName}</p>
               <p className="mt-0.5 line-clamp-2 text-sm leading-5 text-[#8B8BA8]">{displayEmail}</p>
+              <div className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full bg-[#FF3A5C]/10 px-2.5 py-1 text-[11px] font-semibold text-[#FF8BA0]">
+                <Sparkles size={12} className="shrink-0" />
+                <span className="shrink-0 text-white/45">{copy.profile.personaLabel}</span>
+                <span className="truncate">{personaLabel}</span>
+              </div>
             </div>
           </div>
 

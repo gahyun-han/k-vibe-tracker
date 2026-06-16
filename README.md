@@ -110,14 +110,14 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 
 ## Frontend Flow
 
-- `/[locale]`: actionable home feed with language selection, root-aligned story topic filters, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps now open the in-app map detail sheet with TourAPI detail context when available.
+- `/[locale]`: actionable home feed with language selection, root-aligned story topic filters, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps now open the in-app map detail sheet with TourAPI detail context when available, and saved persona preferences locally select a matching feed category.
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, caches same-query place responses locally for 1 hour, lazy-loads `/api/places/[contentId]` details and image galleries for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, exposes the root S3 SNS analyzer FAB, and can add or share a selected place through local route/detail URLs.
 - `/[locale]/analyze`: SNS URL analyzer. It detects YouTube and Instagram links, presents platform-aware example cards, immediately runs local/mock analysis for YouTube examples, calls `/api/analyze` for YouTube with the active locale, shows a localized 4-step loading state, caches same-video analysis results locally for 1 hour, returns localized local mock spot extraction by default, lets detected spot cards open the map with the place detail sheet already focused, can draft a local route from detected places, and keeps live Instagram extraction deferred until an approved no-cost/provider path exists.
-- `/[locale]/persona`: K-content route generator. It guides users through a localized 3-step theme, mood, and confirmation flow with six root-aligned persona themes, calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
+- `/[locale]/persona`: K-content route generator. It guides users through a localized 3-step theme, mood, and confirmation flow with six root-aligned persona themes, can save that selection as a no-cost local feed preference, calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, in-app stop detail handoff to the map sheet, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with structured captions, browser `speechSynthesis` voice playback with active script-section highlighting when supported, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
-- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, My Routes actions, and localized app settings state when Supabase is not configured.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with the active local persona, an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, My Routes actions, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -273,6 +273,7 @@ lib/
   local-api-cache.ts # 1-hour local API response cache
   location-cache.ts # 30-minute last known GPS cache
   routes.ts     # route themes, mock plans, duration helpers, local share URLs/progress
+  persona-preference.ts # local persona choice storage and Home feed category mapping
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
   saved-places.ts # local saved place storage helpers
   youtube.ts
@@ -308,6 +309,7 @@ ai-worker/      # FastAPI prototype
   - Radar popup facilities can now be enriched from TourAPI `searchFestival2` with locale-aware facility cache keys while keeping mock fallback behavior.
   - `/api/routes/generate` now supports validated mock-backed route generation.
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
+  - Persona choices can now be stored as a no-cost local Home feed preference and displayed in the guest Profile hero.
   - Route page now includes a no-cost mini map preview, per-stop Google Maps open actions, and a walking directions CTA without calling Kakao Mobility or a paid Directions API.
   - Route page now creates no-cost same-origin share links with encoded route state and restores those links without Supabase or a paid routing/link service.
   - Route page now tracks completed stops locally and starts guidance at the next incomplete stop without GPS polling or a paid navigation API.

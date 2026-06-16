@@ -59,11 +59,14 @@ describe('ui copy', () => {
       expect(copy.login.guestFeatures).toHaveLength(4);
       expect(copy.profile.openSavedDetail).toContain('{name}');
       expect(copy.profile.openSavedDetailCta.length).toBeGreaterThan(0);
+      expect(copy.profile.personaLabel.length).toBeGreaterThan(0);
+      expect(copy.profile.personaUnset.length).toBeGreaterThan(0);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
       expect(Object.values(copy.homeFeed.stories)).toHaveLength(5);
       expect(copy.homeFeed.openPlaceDetail).toContain('{name}');
+      expect(copy.homeFeed.personalizedFor).toContain('{persona}');
       for (const storyLabel of Object.values(copy.homeFeed.stories)) {
         expect(storyLabel.length).toBeGreaterThan(0);
       }
@@ -85,6 +88,8 @@ describe('ui copy', () => {
       expect(copy.persona.reviewSelection.length).toBeGreaterThan(0);
       expect(copy.persona.confirmTitle.length).toBeGreaterThan(0);
       expect(copy.persona.selectedTheme.length).toBeGreaterThan(0);
+      expect(copy.persona.personalizeFeed.length).toBeGreaterThan(0);
+      expect(copy.persona.personaSaved.length).toBeGreaterThan(0);
       expect(copy.persona.routeTitle).toContain('{detail}');
       for (const theme of ROUTE_THEME_OPTIONS) {
         const themeCopy = copy.persona.themes[theme.id];

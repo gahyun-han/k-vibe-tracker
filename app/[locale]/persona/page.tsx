@@ -22,6 +22,11 @@ import {
   type RoutePlan,
   type RouteTheme,
 } from '@/lib/routes';
+import {
+  createPersonaPreference,
+  PERSONA_PREFERENCE_STORAGE_KEY,
+  serializePersonaPreference,
+} from '@/lib/persona-preference';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 type Step = 1 | 2 | 3;
@@ -64,6 +69,7 @@ export default function PersonaPage() {
     setLoading(true);
     setError('');
     setShareStatus('');
+    savePersonaPreference(false);
 
     try {
       const res = await fetch('/api/routes/generate', {
@@ -78,6 +84,7 @@ export default function PersonaPage() {
       }
 
       setPlan(data.plan);
+      setShareStatus(copy.personaSaved);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'ROUTE_GENERATION_FAILED');
     } finally {
@@ -98,6 +105,19 @@ export default function PersonaPage() {
     if (!plan) return;
     window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
     router.push(`/${locale}/route`);
+  }
+
+  function savePersonaPreference(openHome: boolean) {
+    if (!theme || !detail) return;
+
+    window.localStorage.setItem(
+      PERSONA_PREFERENCE_STORAGE_KEY,
+      serializePersonaPreference(createPersonaPreference(theme, detail)),
+    );
+
+    if (openHome) {
+      router.push(`/${locale}`);
+    }
   }
 
   async function shareRoute() {
@@ -345,6 +365,15 @@ export default function PersonaPage() {
               >
                 <ChevronLeft size={16} />
                 {copy.adjustSelection}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => savePersonaPreference(true)}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#FF3A5C]/40 bg-[#FF3A5C]/10 py-3 text-sm font-semibold text-[#FF8BA0] transition-colors hover:bg-[#FF3A5C]/20"
+              >
+                <Sparkles size={16} />
+                {copy.personalizeFeed}
               </button>
             </>
           )}

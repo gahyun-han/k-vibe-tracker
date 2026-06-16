@@ -24,6 +24,12 @@ import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { persistPreferredLocale } from '@/lib/locale-preference';
 import {
+  getPersonaFeedCategory,
+  parsePersonaPreference,
+  PERSONA_PREFERENCE_STORAGE_KEY,
+  type PersonaPreference,
+} from '@/lib/persona-preference';
+import {
   hasSavedPlace,
   parseSavedPlaces,
   removeSavedPlace,
@@ -74,6 +80,10 @@ const STORY_TOPICS: Array<{ id: StoryTopic; icon: typeof Music2; category: FeedC
   { id: 'shopping', icon: ShoppingBag, category: 'fun' },
 ];
 
+function getStoryTopicForFeedCategory(category: FeedCategory): StoryTopic | null {
+  return STORY_TOPICS.find((topic) => topic.category === category)?.id ?? null;
+}
+
 function toFeedPlace(place: NormalizedPlace, addressPending: string): SaveablePlace & { distanceM?: number } {
   return {
     id: place.id,
@@ -110,9 +120,17 @@ export default function LandingPage() {
   const [selectedStory, setSelectedStory] = useState<StoryTopic | null>(null);
   const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
   const [savedHydrated, setSavedHydrated] = useState(false);
+  const [personaPreference, setPersonaPreference] = useState<PersonaPreference | null>(null);
 
   useEffect(() => {
     setSavedPlaces(parseSavedPlaces(window.localStorage.getItem(SAVED_PLACES_STORAGE_KEY)));
+    const preference = parsePersonaPreference(window.localStorage.getItem(PERSONA_PREFERENCE_STORAGE_KEY));
+    if (preference) {
+      const category = getPersonaFeedCategory(preference);
+      setPersonaPreference(preference);
+      setFeedCategory(category);
+      setSelectedStory(getStoryTopicForFeedCategory(category));
+    }
     setSavedHydrated(true);
   }, []);
 
@@ -163,6 +181,12 @@ export default function LandingPage() {
   const filteredFeed = useMemo(() => {
     return feedPlaces.filter((place) => feedCategory === 'all' || place.category === feedCategory);
   }, [feedCategory, feedPlaces]);
+  const personaLabel = useMemo(() => {
+    if (!personaPreference) return '';
+    const themeCopy = copy.persona.themes[personaPreference.theme];
+    const detailCopy = (themeCopy.details as Record<string, { label: string }>)[personaPreference.detail];
+    return detailCopy?.label ?? themeCopy.label;
+  }, [copy.persona, personaPreference]);
 
   function handleStart() {
     router.push(`/${locale}/map`);
@@ -269,6 +293,21 @@ export default function LandingPage() {
               </button>
             </div>
           </div>
+
+          {personaPreference && personaLabel && (
+            <button
+              type="button"
+              onClick={() => {
+                const category = getPersonaFeedCategory(personaPreference);
+                setFeedCategory(category);
+                setSelectedStory(getStoryTopicForFeedCategory(category));
+              }}
+              className="flex w-full items-center gap-2 rounded-xl border border-[#FF3A5C]/25 bg-[#FF3A5C]/10 px-3 py-2 text-left text-xs font-semibold text-[#FF8BA0] transition-colors hover:bg-[#FF3A5C]/15"
+            >
+              <Sparkles size={14} />
+              <span className="truncate">{copy.homeFeed.personalizedFor.replace('{persona}', personaLabel)}</span>
+            </button>
+          )}
 
           <div className="-mx-5 overflow-x-auto px-5">
             <div className="flex gap-3">

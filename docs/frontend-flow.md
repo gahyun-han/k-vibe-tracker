@@ -21,6 +21,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by `components/layout/AppLayout.tsx` above each screen's main content.
 - PWA install UI lives in `components/common/PwaInstallPrompt.tsx`. It appears only when the browser emits `beforeinstallprompt`, calls the browser install prompt after a user tap, and stores dismissals in `localStorage`.
 - The home entry at `/[locale]` presents local-first status, root S2-style story topic filters, TourAPI-backed Seoul feed cards, feature shortcuts, and trend chips that open focused map views. Feed card image/text taps follow the root S2 flow by opening `/[locale]/map` with `detail=1` and showing the local place detail sheet.
+- If a local persona preference exists, the home feed applies its mapped category filter on load and shows a localized personalization chip for the selected route mood.
 - The Route tab opens `/[locale]/persona` first, because route generation is the entry workflow.
 - Generated routes can be saved into `localStorage` and edited at `/[locale]/route`.
 - Route stops and the primary guidance action can open `/[locale]/docent` for local voice captions and a user-clicked 100m arrival check when stop coordinates are available.
@@ -31,6 +32,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Login UI copy comes from `lib/ui-copy.ts` for `ko`, `en`, `ja`, and `zh`; the modal exposes dialog semantics with `aria-modal` and a labelled title.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
 - Profile stays usable without Supabase credentials, shows local saved places in a root S12-style square visual grid that opens the S4-style place detail sheet, shows the current local route with route progress and next-stop context, and exposes localized settings rows for language, notifications, offline maps, and map data source state.
+- Profile also reads the local persona preference and displays the selected persona/mood in the profile hero.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
@@ -71,6 +73,15 @@ This project is in local-first development mode. Pages should remain usable with
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields. When multiple images are available, the detail sheet exposes a compact image gallery that switches the hero image without another provider call.
 - Place detail sharing is no-cost and local-first: the sheet uses Web Share when available, otherwise copies a same-origin `/[locale]/map?detail=1&source=share` URL with coordinates, category, address, tags, and optional TourAPI identifiers. It does not create a backend public-link row or call a paid maps/routing provider.
 - Place detail sheets can open `/[locale]/docent` with the selected place overview and coordinates as the local guide caption and arrival-check source.
+
+### Persona Preference
+
+- UI: `app/[locale]/persona/page.tsx`, `app/[locale]/page.tsx`, `app/[locale]/profile/page.tsx`
+- Helper: `lib/persona-preference.ts`
+- Local persistence key: `k-vibe-persona-preference`
+- The persona route generator now saves the selected theme/detail locally when generating a route, and the confirmation step also exposes a no-cost Personalize Feed action that saves the preference and returns to Home.
+- Home maps the saved persona/detail to an existing local feed category, highlights the matching story filter, and keeps using the existing `/api/places` response rather than calling an AI or recommendation provider.
+- Profile shows the active local persona/mood in the hero card. Supabase account sync for persona history remains gated.
 
 ### Saved Places
 
@@ -119,6 +130,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Route generation accepts the active locale and uses `lib/ui-copy.ts` to localize mock plan titles, summaries, persona themes, and detail options.
 - Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview. The local generator now covers K-pop, drama, mood travel, Foodie Explorer, Content Creator, and History Buff persona themes.
+- The same S8 selection can also personalize the Home feed locally through `k-vibe-persona-preference`, so persona choice affects discovery without a provider recommendation call.
 - Local persistence key: `k-vibe-current-route`
 - Local progress key: `k-vibe-route-progress`
 - Route editor mutations are written back to the same local persistence key.
