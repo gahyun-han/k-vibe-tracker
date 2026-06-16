@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Info, X, XCircle, type LucideIcon } from 'lucide-react';
 
-type ToastType = 'success' | 'error' | 'warning' | 'info';
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 interface ToastMessage {
   id: string;
@@ -32,7 +32,12 @@ const TOAST_STYLE: Record<ToastType, string> = {
   info: 'border-sky-300/20 bg-sky-950/95 text-sky-50',
 };
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+interface ToastProviderProps {
+  children: React.ReactNode;
+  dismissLabel?: string;
+}
+
+export function ToastProvider({ children, dismissLabel = 'Dismiss notification' }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const toast = useCallback((message: string, type: ToastType = 'info', duration = 3000) => {
@@ -68,7 +73,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <button
                 type="button"
                 onClick={() => dismiss(t.id)}
-                aria-label="Dismiss notification"
+                aria-label={dismissLabel}
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-current/60 transition-colors hover:bg-white/10 hover:text-current"
               >
                 <X size={15} />

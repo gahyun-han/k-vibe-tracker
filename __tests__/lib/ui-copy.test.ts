@@ -75,6 +75,7 @@ describe('ui copy', () => {
       expect(copy.common.changeLanguage.length).toBeGreaterThan(0);
       expect(copy.common.openProfile.length).toBeGreaterThan(0);
       expect(copy.common.unexpectedErrorTitle.length).toBeGreaterThan(0);
+      expect(copy.common.dismissNotification.length).toBeGreaterThan(0);
 
       expect(copy.login.title.length).toBeGreaterThan(0);
       expect(copy.login.continueGuest.length).toBeGreaterThan(0);

@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, LocateFixed, Map, MapPin, Mic2, Navigation, Plus, Share2, TrainFront, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
+import { useToast, type ToastType } from '@/components/common/Toast';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
 import { haversineKm } from '@/lib/haversine';
@@ -48,6 +49,7 @@ export default function RoutePage() {
   const locale = normalizeUiLocale(params.locale);
   const uiCopy = getUiCopy(locale);
   const copy = uiCopy.route;
+  const { toast } = useToast();
   const fallbackPlan = useMemo(
     () => generateMockRoutePlan({ theme: 'mood', detail: 'cafe', copy: uiCopy.persona }),
     [uiCopy.persona],
@@ -84,6 +86,11 @@ export default function RoutePage() {
     tags: [...copy.extraStop.tags],
   }), [copy]);
 
+  const announceStatus = useCallback((message: string, type: ToastType = 'info') => {
+    setStatus(message);
+    toast(message, type);
+  }, [toast]);
+
   useEffect(() => {
     const sharedRoute = new URLSearchParams(window.location.search).get('route');
     const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
@@ -113,7 +120,7 @@ export default function RoutePage() {
       const decoded = decodeRoutePlanFromShare(sharedRoute);
       if (decoded) {
         applyPlan(decoded, true);
-        setStatus(copy.sharedRouteLoaded);
+        announceStatus(copy.sharedRouteLoaded, 'success');
         return;
       }
     }
@@ -143,7 +150,7 @@ export default function RoutePage() {
     }
 
     applyPlan(fallbackPlan);
-  }, [copy.sharedRouteLoaded, fallbackPlan]);
+  }, [announceStatus, copy.sharedRouteLoaded, fallbackPlan]);
 
   useEffect(() => {
     if (!hydrated || spots.length === 0) return;
@@ -216,8 +223,8 @@ export default function RoutePage() {
     });
     setDraggingId(null);
     setDragOverId(null);
-    setStatus(copy.orderUpdated);
-  }, [copy.orderUpdated, draggingId]);
+    announceStatus(copy.orderUpdated, 'success');
+  }, [announceStatus, copy.orderUpdated, draggingId]);
   const onDragEnd = useCallback(() => {
     setDraggingId(null);
     setDragOverId(null);
@@ -234,12 +241,12 @@ export default function RoutePage() {
       next.splice(toIdx, 0, item);
       return next;
     });
-    setStatus(copy.orderUpdated);
+    announceStatus(copy.orderUpdated, 'success');
   }
 
   function removeSpot(id: string) {
     setSpots((prev) => prev.filter((spot) => spot.id !== id));
-    setStatus(copy.stopRemoved);
+    announceStatus(copy.stopRemoved, 'warning');
   }
 
   function addSampleStop() {
@@ -247,13 +254,13 @@ export default function RoutePage() {
       if (prev.some((spot) => spot.id === extraStop.id)) return prev;
       return [...prev, extraStop];
     });
-    setStatus(copy.sampleStopAdded);
+    announceStatus(copy.sampleStopAdded, 'success');
   }
 
   function toggleStopCompleted(id: string) {
     const isCompleted = completedStopIds.includes(id);
     setCompletedStopIds((prev) => (isCompleted ? prev.filter((stopId) => stopId !== id) : [...prev, id]));
-    setStatus(isCompleted ? copy.stopReopened : copy.stopCompleted);
+    announceStatus(isCompleted ? copy.stopReopened : copy.stopCompleted, 'success');
   }
 
   async function shareRoute() {
@@ -270,14 +277,14 @@ export default function RoutePage() {
     try {
       if (navigator.share) {
         await navigator.share({ title: plan.title, text: plan.shareText, url: shareUrl });
-        setStatus(copy.shared);
+        announceStatus(copy.shared, 'success');
         return;
       }
 
       await navigator.clipboard.writeText(shareUrl);
-      setStatus(copy.copiedSummary);
+      announceStatus(copy.copiedSummary, 'success');
     } catch {
-      setStatus(copy.shareUnavailable);
+      announceStatus(copy.shareUnavailable, 'error');
     }
   }
 
@@ -306,7 +313,7 @@ export default function RoutePage() {
 
   function openRouteMap() {
     if (!routeMapUrl) {
-      setStatus(copy.addStopBeforeGuidance);
+      announceStatus(copy.addStopBeforeGuidance, 'warning');
       return;
     }
 
@@ -315,12 +322,12 @@ export default function RoutePage() {
 
   function openDirections() {
     if (!directionsUrl) {
-      setStatus(copy.addStopBeforeGuidance);
+      announceStatus(copy.addStopBeforeGuidance, 'warning');
       return;
     }
 
     window.open(directionsUrl, '_blank', 'noopener,noreferrer');
-    setStatus(copy.directionsOpened);
+    announceStatus(copy.directionsOpened, 'success');
   }
 
   function checkNextStopDistance() {
@@ -368,12 +375,12 @@ export default function RoutePage() {
 
   function startGuidance() {
     if (spots.length === 0) {
-      setStatus(copy.addStopBeforeGuidance);
+      announceStatus(copy.addStopBeforeGuidance, 'warning');
       return;
     }
 
     if (!nextGuidanceStop) {
-      setStatus(copy.routeCompleted);
+      announceStatus(copy.routeCompleted, 'success');
       return;
     }
 

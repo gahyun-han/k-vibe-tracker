@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Activated root UI-style Route toast feedback. Route reorder, remove, completion, sharing/copying, directions, and guidance-blocked outcomes now use the shared accessible toast system with localized dismiss labels while keeping the inline status text.
 - Added a root S1-style visible language grid to the Home entry. The first screen now shows localized language names in a 2x2 selector with selected-state semantics instead of relying on EN/KO/JA/ZH codes alone.
 - Improved Tutorial and language-switcher accessibility. The guide trigger now exposes open state, focus moves into the sheet and returns on close, and language controls expose localized labels plus selected/open state for assistive tech.
 - Improved the localized Tutorial sheet viewport behavior. The guide dialog is now bounded to the visible mobile viewport and scrolls internally, so all six localized shortcut steps remain reachable on small screens.

@@ -75,6 +75,7 @@ const UI_COPY = {
       unexpectedErrorTitle: 'Something went wrong',
       unexpectedErrorBody: 'An unexpected error occurred. Please try again.',
       reloadPage: 'Reload Page',
+      dismissNotification: 'Dismiss notification',
     },
     login: {
       eyebrow: 'Account',
@@ -561,6 +562,7 @@ const UI_COPY = {
       unexpectedErrorTitle: '문제가 발생했어요',
       unexpectedErrorBody: '예상하지 못한 오류가 발생했습니다. 다시 시도해 주세요.',
       reloadPage: '페이지 새로고침',
+      dismissNotification: '알림 닫기',
     },
     login: {
       eyebrow: '계정',
@@ -1047,6 +1049,7 @@ const UI_COPY = {
       unexpectedErrorTitle: '問題が発生しました',
       unexpectedErrorBody: '予期しないエラーが発生しました。もう一度お試しください。',
       reloadPage: 'ページを再読み込み',
+      dismissNotification: '通知を閉じる',
     },
     login: {
       eyebrow: 'アカウント',
@@ -1533,6 +1536,7 @@ const UI_COPY = {
       unexpectedErrorTitle: '出现问题',
       unexpectedErrorBody: '发生了意外错误，请重试。',
       reloadPage: '重新加载页面',
+      dismissNotification: '关闭通知',
     },
     login: {
       eyebrow: '账号',

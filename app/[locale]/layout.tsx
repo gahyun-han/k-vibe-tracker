@@ -2,6 +2,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import PwaRuntime from '@/components/common/PwaRuntime';
+import { ToastProvider } from '@/components/common/Toast';
+import { getUiCopy } from '@/lib/ui-copy';
 
 const locales = ['ko', 'en', 'ja', 'zh'];
 
@@ -21,11 +23,14 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
   const messages = await getMessages();
+  const copy = getUiCopy(locale);
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <PwaRuntime locale={locale} />
-      {children}
+      <ToastProvider dismissLabel={copy.common.dismissNotification}>
+        <PwaRuntime locale={locale} />
+        {children}
+      </ToastProvider>
     </NextIntlClientProvider>
   );
 }
