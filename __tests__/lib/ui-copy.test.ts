@@ -57,6 +57,8 @@ describe('ui copy', () => {
       expect(copy.login.title.length).toBeGreaterThan(0);
       expect(copy.login.continueGuest.length).toBeGreaterThan(0);
       expect(copy.login.guestFeatures).toHaveLength(4);
+      expect(copy.profile.openSavedDetail).toContain('{name}');
+      expect(copy.profile.openSavedDetailCta.length).toBeGreaterThan(0);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);

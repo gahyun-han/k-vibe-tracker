@@ -117,7 +117,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, in-app stop detail handoff to the map sheet, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with structured captions, browser `speechSynthesis` voice playback with active script-section highlighting when supported, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
-- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with an Instagram-style local saved-place grid, current route progress/next stop, My Routes actions, and localized app settings state when Supabase is not configured.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, My Routes actions, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -163,7 +163,7 @@ all, cafe, photo, fun, culture, food, stay
 - Storage key: `k-vibe-saved-places`
 - Map place detail sheets can save or unsave a selected place with the heart control.
 - Saved places are visible in `/[locale]/profile` even in guest mode.
-- Saved place cards open focused map views with `lat`, `lng`, `q`, and `source=saved` URL parameters.
+- Saved place cards open the in-app map detail sheet with `source=saved`, `detail=1`, coordinates, category/address/tags, and TourAPI content identifiers when available.
 - Supabase account sync for saved places is still deferred until credentials are configured.
 
 ### `GET /api/places/[contentId]`

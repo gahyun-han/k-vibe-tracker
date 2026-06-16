@@ -99,7 +99,15 @@ export default function ProfilePage() {
       lng: String(place.lng),
       q: place.name,
       source: 'saved',
+      detail: '1',
+      category: place.category,
+      address: place.address,
     });
+    if (place.contentId) searchParams.set('contentId', place.contentId);
+    if (place.contentTypeId) searchParams.set('contentTypeId', String(place.contentTypeId));
+    if (place.imageUrl) searchParams.set('imageUrl', place.imageUrl);
+    if (place.overview) searchParams.set('description', place.overview);
+    if (place.tags?.length) searchParams.set('tags', place.tags.join(','));
     router.push(`/${locale}/map?${searchParams.toString()}`);
   }
 
@@ -186,7 +194,7 @@ export default function ProfilePage() {
                   key={place.id}
                   type="button"
                   onClick={() => openSavedPlace(place)}
-                  aria-label={`${copy.profile.openMap}: ${place.name}`}
+                  aria-label={copy.profile.openSavedDetail.replace('{name}', place.name)}
                   className="group relative aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/5 text-left transition-colors hover:border-[#FF3A5C]/60"
                 >
                   {place.imageUrl ? (
@@ -212,7 +220,7 @@ export default function ProfilePage() {
                     <p className="mt-1 truncate text-[11px] text-white/65">{place.address}</p>
                     <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-[#FF8BA0]">
                       <Map size={11} />
-                      {copy.profile.openMap}
+                      {copy.profile.openSavedDetailCta}
                     </p>
                   </div>
                 </button>
