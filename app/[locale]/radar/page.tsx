@@ -8,7 +8,8 @@ import { FacilityCard } from '@/components/radar/FacilityCard';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
+import { getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 
@@ -37,18 +38,30 @@ export default function RadarPage() {
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale).radar;
+  const locationCopy = getLocationStatusCopy(locale);
   const [radius, setRadius] = useState(500);
   const [filter, setFilter] = useState<FacilityFilter>('all');
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
-  const [locationMode, setLocationMode] = useState<'seoul' | 'current'>('seoul');
+  const [locationMode, setLocationMode] = useState<'seoul' | 'current' | 'cached'>('seoul');
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [source, setSource] = useState<'mock'>('mock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
 
+  const applyLastKnownLocation = useCallback(() => {
+    const cachedLocation = readLastKnownLocation(window.localStorage);
+    if (!cachedLocation) return false;
+
+    setCoords({ lat: cachedLocation.lat, lng: cachedLocation.lng });
+    setLocationMode('cached');
+    setReloadKey((key) => key + 1);
+    return true;
+  }, []);
+
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
+      if (applyLastKnownLocation()) return;
       setCoords(SEOUL_CENTER);
       setLocationMode('seoul');
       setReloadKey((key) => key + 1);
@@ -57,25 +70,32 @@ export default function RadarPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setCoords({
+        const nextCoords = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
+        };
+        writeLastKnownLocation(window.localStorage, {
+          ...nextCoords,
+          accuracyM: position.coords.accuracy,
         });
+        setCoords(nextCoords);
         setLocationMode('current');
         setReloadKey((key) => key + 1);
       },
       () => {
+        if (applyLastKnownLocation()) return;
         setCoords(SEOUL_CENTER);
         setLocationMode('seoul');
         setReloadKey((key) => key + 1);
       },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
     );
-  }, []);
+  }, [applyLastKnownLocation]);
 
   useEffect(() => {
+    applyLastKnownLocation();
     requestLocation();
-  }, [requestLocation]);
+  }, [applyLastKnownLocation, requestLocation]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -119,6 +139,13 @@ export default function RadarPage() {
     window.open(buildGoogleMapsFacilityUrl(facility), '_blank', 'noopener,noreferrer');
   }
 
+  const locationLabel =
+    locationMode === 'current'
+      ? copy.locationCurrent
+      : locationMode === 'cached'
+        ? locationCopy.lastKnownLocation
+        : copy.locationSeoul;
+
   return (
     <AppLayout activeTab="radar">
       <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-20">
@@ -130,7 +157,7 @@ export default function RadarPage() {
                 {copy.title}
               </h2>
               <p className="mt-0.5 text-xs text-white/40">
-                {locationMode === 'current' ? copy.locationCurrent : copy.locationSeoul}
+                {locationLabel}
                 {' · '}
                 {copy.found.replace('{count}', String(facilities.length))}
                 {' · '}
@@ -138,7 +165,7 @@ export default function RadarPage() {
               </p>
             </div>
             <button
-              onClick={() => setReloadKey((key) => key + 1)}
+              onClick={requestLocation}
               aria-label={copy.refresh}
               className={`rounded-xl bg-white/10 p-2 text-white/60 transition-colors hover:bg-white/20 ${
                 loading ? 'animate-spin' : ''

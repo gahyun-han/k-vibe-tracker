@@ -7,6 +7,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
+import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -23,7 +24,7 @@ import {
   type SavedPlace,
 } from '@/lib/saved-places';
 import type { NormalizedPlace, PlaceCategory } from '@/lib/tourapi';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const SEARCH_RADIUS_M = 2_000;
@@ -123,6 +124,7 @@ export default function MapPage() {
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const locationCopy = getLocationStatusCopy(locale);
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
@@ -219,8 +221,20 @@ export default function MapPage() {
     );
   }, []);
 
+  const applyLastKnownLocation = useCallback(() => {
+    const cachedLocation = readLastKnownLocation(window.localStorage);
+    if (!cachedLocation) return false;
+
+    setFocusPlace(null);
+    setCoords({ lat: cachedLocation.lat, lng: cachedLocation.lng });
+    setLocationLabel(locationCopy.lastKnownLocation);
+    setReloadKey((key) => key + 1);
+    return true;
+  }, [locationCopy.lastKnownLocation]);
+
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
+      if (applyLastKnownLocation()) return;
       setFocusPlace(null);
       setCoords(SEOUL_CENTER);
       setLocationLabel(copy.map.seoulFallback);
@@ -230,15 +244,21 @@ export default function MapPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setFocusPlace(null);
-        setCoords({
+        const nextCoords = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
+        };
+        writeLastKnownLocation(window.localStorage, {
+          ...nextCoords,
+          accuracyM: position.coords.accuracy,
         });
+        setFocusPlace(null);
+        setCoords(nextCoords);
         setLocationLabel(copy.map.currentLocation);
         setReloadKey((key) => key + 1);
       },
       () => {
+        if (applyLastKnownLocation()) return;
         setFocusPlace(null);
         setCoords(SEOUL_CENTER);
         setLocationLabel(copy.map.seoulFallback);
@@ -246,7 +266,7 @@ export default function MapPage() {
       },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 }
     );
-  }, [copy.map.currentLocation, copy.map.seoulFallback]);
+  }, [applyLastKnownLocation, copy.map.currentLocation, copy.map.seoulFallback]);
 
   useEffect(() => {
     if (initialLocationApplied.current) return;
@@ -280,8 +300,9 @@ export default function MapPage() {
       return;
     }
 
+    applyLastKnownLocation();
     requestLocation();
-  }, [copy.map.analysisResult, requestLocation]);
+  }, [applyLastKnownLocation, copy.map.analysisResult, requestLocation]);
 
   useEffect(() => {
     const controller = new AbortController();

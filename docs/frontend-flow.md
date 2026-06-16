@@ -39,7 +39,8 @@ This project is in local-first development mode. Pages should remain usable with
 - The root document defaults to `lang="ko"` before hydration, then the runtime updates it to `ko`, `en`, `ja`, or `zh` based on the active URL locale.
 - The service worker precaches the manifest, icons, Open Graph image, and Korean start route, then caches Next static chunks and same-origin navigations on demand.
 - Service worker registration is production-only so local development is not affected by stale caches.
-- Offline maps, offline TourAPI data packs, and synced offline account history are still larger-scope follow-ups.
+- Last known GPS position is stored in `localStorage` through `lib/location-cache.ts` with a 30-minute TTL. Map and Radar read it before requesting fresh geolocation so the UI can render immediately in poor network or indoor GPS conditions.
+- Offline maps, offline TourAPI/POI data packs, and synced offline account history are still larger-scope follow-ups.
 
 ### Places
 
@@ -51,6 +52,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/tourapi.ts`
 - Development fallback: deterministic mock places when `TOUR_API_KEY` is absent or TourAPI fails.
 - Home feed requests the same `/api/places` contract with the active locale, shows the response source, supports local category filters, can save places, and hands selected cards to the map with `source=home`.
+- Map uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
 - Current local verification shows the Kakao SDK loads on `http://localhost:3000` and `/ko/map` reaches `data-map-mode="ready"` in Chrome with no console errors.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
@@ -83,6 +85,7 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/facilities/route.ts`
 - Helpers: `lib/facilities.ts`
 - Development fallback: deterministic mock facilities until live facility sources are approved.
+- Radar uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.
 - Radar pins and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
 

@@ -111,12 +111,12 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 ## Frontend Flow
 
 - `/[locale]`: actionable home feed with language selection, TourAPI-backed Seoul feed cards, local save controls, feature shortcuts, and trend chips that open focused map views.
-- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
+- `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions, browser `speechSynthesis` voice playback, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
-- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, supports radius/type filtering, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, supports radius/type filtering, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
@@ -259,6 +259,7 @@ components/
 lib/
   analysis.ts   # local SNS analysis fallback and AI worker gate
   facilities.ts # facility types, cache-key, and local mock source
+  location-cache.ts # 30-minute last known GPS cache
   routes.ts     # route themes, mock plans, duration helpers
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
   saved-places.ts # local saved place storage helpers
@@ -278,6 +279,7 @@ ai-worker/      # FastAPI prototype
   - `/api/places` now supports locale-aware TourAPI service routing for Korean, English, Japanese, and Chinese.
   - `/api/places/[contentId]` now supports TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` with safe mock fallback.
   - Map page now consumes `/api/places`, supports geolocation fallback, loading/error/retry states, category filtering, search, and map pins.
+  - Map and Radar now share a 30-minute last-known-location cache so they can render the previous GPS position immediately while fresh geolocation is pending or unavailable.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, and the new in-app feature guide use readable locale-aware copy.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.

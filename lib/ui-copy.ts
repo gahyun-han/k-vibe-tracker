@@ -32,6 +32,10 @@ interface DocentProximityCopy {
   error: string;
 }
 
+interface LocationStatusCopy {
+  lastKnownLocation: string;
+}
+
 export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
@@ -1560,6 +1564,21 @@ const DOCENT_PROXIMITY_COPY: Record<UiLocale, DocentProximityCopy> = {
   },
 };
 
+const LOCATION_STATUS_COPY: Record<UiLocale, LocationStatusCopy> = {
+  en: {
+    lastKnownLocation: 'Last known location',
+  },
+  ko: {
+    lastKnownLocation: '마지막 위치',
+  },
+  ja: {
+    lastKnownLocation: '最後の位置',
+  },
+  zh: {
+    lastKnownLocation: '上次位置',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -1575,4 +1594,8 @@ export function getProfileSettingsCopy(locale: string | string[] | undefined) {
 
 export function getDocentProximityCopy(locale: string | string[] | undefined) {
   return DOCENT_PROXIMITY_COPY[normalizeUiLocale(locale)];
+}
+
+export function getLocationStatusCopy(locale: string | string[] | undefined) {
+  return LOCATION_STATUS_COPY[normalizeUiLocale(locale)];
 }
