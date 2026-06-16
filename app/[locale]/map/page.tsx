@@ -462,6 +462,13 @@ export default function MapPage() {
             <CategoryFilter selected={categories} onChange={setCategories} labels={copy.categories} />
           </div>
 
+          <div className="flex items-center justify-between px-4 pb-2 pt-1">
+            <p className="text-sm font-bold text-white">{copy.map.nearbySpots}</p>
+            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-white/45">
+              {copy.map.resultCount.replace('{count}', String(filtered.length))}
+            </span>
+          </div>
+
           {error && (
             <div className="mx-4 mb-2 flex items-start gap-2 rounded-xl border border-red-400/25 bg-red-400/10 p-3 text-xs text-red-200">
               <AlertCircle size={14} className="mt-0.5 shrink-0" />

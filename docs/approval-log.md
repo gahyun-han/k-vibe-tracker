@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Map nearby-spots header pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
 - Claude CLI was not used for the 2026-06-17 Profile saved-place preview pass because it may consume paid quota and the UI/localStorage-only change could be verified with local type-check, unit tests, and build.
 - Claude CLI was not used for the 2026-06-17 Docent proximity autoplay pass because it may consume paid quota, the prior budget-cap attempts produced no usable review, and the change could be verified locally with focused helper tests, type-check, and build.
 - Claude CLI was not used for the 2026-06-17 Docent/Profile pass because local type-check, unit tests, build, and Chrome verification were sufficient, and the previous budget cap remains in effect.
@@ -77,6 +78,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost Profile My Routes route-card tap target that opens the local route editor from `localStorage` without Supabase sync, GPS, Kakao Mobility, or backend route lookup.
 - No-cost Place detail share links that use Web Share or clipboard with a same-origin `/[locale]/map?detail=1` URL and do not create a backend public-link record.
 - No-cost Place detail Seen-in badges that derive YouTube/Instagram counts from local place metadata and do not call YouTube, Instagram, scraping providers, AI, or paid APIs.
+- No-cost Map nearby-spots result header that counts the already-loaded local/cached place list after current filters and does not call TourAPI, Kakao Maps, geolocation, AI, or any backend endpoint by itself.
 - No-cost Persona feed personalization that stores the selected theme/detail in localStorage and filters the existing Home feed locally without calling AI, Supabase, or a recommendation provider.
 - No-cost Home feed local API cache fallback that stores same-locale `/api/places` feed responses in `localStorage`, shows cached cards when live refresh fails, and does not call AI, Supabase, Redis, or recommendation providers.
 - No-cost Home feed crowd badges that render the existing `/api/places` `crowd_level` field locally and preserve that value through same-origin map/detail and saved-place flows.
