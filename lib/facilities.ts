@@ -132,6 +132,13 @@ export function getMockFacilities({ lat, lng, radius, type }: FacilityQuery): Fa
     .sort((a, b) => a.distance - b.distance);
 }
 
+export function buildGoogleMapsFacilityUrl(facility: Pick<Facility, 'lat' | 'lng'>) {
+  const url = new URL('https://www.google.com/maps/search/');
+  url.searchParams.set('api', '1');
+  url.searchParams.set('query', `${facility.lat},${facility.lng}`);
+  return url.toString();
+}
+
 function roundCoordinate(value: number) {
   return Number(value.toFixed(6));
 }

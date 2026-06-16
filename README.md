@@ -116,7 +116,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
-- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, supports radius/type filtering, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places and the current local route when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
@@ -282,7 +282,7 @@ ai-worker/      # FastAPI prototype
   - Map place details lazy-load TourAPI overview, image gallery, phone, operating time, rest day, and parking fields.
   - Map place details can save or unsave a selected place, add it into the shared local route plan, open the route editor, or launch the local Docent flow.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
-  - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
+  - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, localized facility cards, a local radar map preview, and no-key Google Maps handoff links.
   - `/api/routes/generate` now supports validated mock-backed route generation.
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
   - Route page now includes a no-cost mini map preview, per-stop Google Maps open actions, and a walking directions CTA without calling Kakao Mobility or a paid Directions API.

@@ -36,9 +36,10 @@ interface FacilityCardCopy {
 interface Props {
   facility: Facility;
   copy: FacilityCardCopy;
+  onViewMap: (facility: Facility) => void;
 }
 
-export function FacilityCard({ facility: f, copy }: Props) {
+export function FacilityCard({ facility: f, copy, onViewMap }: Props) {
   const [expanded, setExpanded] = useState(false);
   const cfg = TYPE_CONFIG[f.type];
   const distLabel = f.distance >= 1000
@@ -110,7 +111,11 @@ export function FacilityCard({ facility: f, copy }: Props) {
               {f.extra}
             </div>
           )}
-          <button className="mt-1 w-full rounded-lg bg-[#FF3A5C]/20 py-2 text-xs font-semibold text-[#FF3A5C] transition-colors hover:bg-[#FF3A5C]/30">
+          <button
+            type="button"
+            onClick={() => onViewMap(f)}
+            className="mt-1 w-full rounded-lg bg-[#FF3A5C]/20 py-2 text-xs font-semibold text-[#FF3A5C] transition-colors hover:bg-[#FF3A5C]/30"
+          >
             {copy.viewOnMap}
           </button>
         </div>

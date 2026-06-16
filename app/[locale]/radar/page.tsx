@@ -5,8 +5,9 @@ import { AlertCircle, Radar, RefreshCw } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import { FacilityCard } from '@/components/radar/FacilityCard';
+import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
-import type { Facility, FacilityFilter } from '@/lib/facilities';
+import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
@@ -114,6 +115,10 @@ export default function RadarPage() {
     return () => controller.abort();
   }, [coords.lat, coords.lng, filter, radius, reloadKey]);
 
+  function openFacilityMap(facility: Facility) {
+    window.open(buildGoogleMapsFacilityUrl(facility), '_blank', 'noopener,noreferrer');
+  }
+
   return (
     <AppLayout activeTab="radar">
       <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-20">
@@ -195,11 +200,25 @@ export default function RadarPage() {
             <p className="text-xs text-white/30">{copy.emptyHint}</p>
           </div>
         ) : (
-          <div className="space-y-2 px-4">
-            {facilities.map((facility) => (
-              <FacilityCard key={facility.id} facility={facility} copy={copy} />
-            ))}
-          </div>
+          <>
+            <RadarMapPreview
+              center={coords}
+              facilities={facilities}
+              radius={radius}
+              copy={copy}
+              onSelectFacility={openFacilityMap}
+            />
+            <div className="space-y-2 px-4">
+              {facilities.map((facility) => (
+                <FacilityCard
+                  key={facility.id}
+                  facility={facility}
+                  copy={copy}
+                  onViewMap={openFacilityMap}
+                />
+              ))}
+            </div>
+          </>
         )}
 
         <p className="mb-2 mt-6 px-4 text-center text-xs text-white/20">

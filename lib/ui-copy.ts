@@ -159,6 +159,10 @@ const UI_COPY = {
       refresh: 'Refresh facilities',
       radius: 'Radius',
       sourceMock: 'Mock',
+      mapTitle: 'Radar map',
+      mapSubtitle: '{radius}m radius preview',
+      currentPosition: 'Current position',
+      openFacilityMap: 'Open {name} in Google Maps',
       filters: {
         all: 'All',
         restroom: 'Restroom',
@@ -510,6 +514,10 @@ const UI_COPY = {
       refresh: '편의시설 새로고침',
       radius: '반경',
       sourceMock: 'Mock',
+      mapTitle: '레이더 지도',
+      mapSubtitle: '{radius}m 반경 미리보기',
+      currentPosition: '현재 위치',
+      openFacilityMap: 'Google Maps에서 {name} 열기',
       filters: {
         all: '전체',
         restroom: '화장실',
@@ -861,6 +869,10 @@ const UI_COPY = {
       refresh: '便利施設を更新',
       radius: '半径',
       sourceMock: 'Mock',
+      mapTitle: 'レーダーマップ',
+      mapSubtitle: '{radius}m圏内プレビュー',
+      currentPosition: '現在地',
+      openFacilityMap: 'Google Mapsで{name}を開く',
       filters: {
         all: 'すべて',
         restroom: 'トイレ',
@@ -1212,6 +1224,10 @@ const UI_COPY = {
       refresh: '刷新便利设施',
       radius: '半径',
       sourceMock: 'Mock',
+      mapTitle: '雷达地图',
+      mapSubtitle: '{radius}m范围预览',
+      currentPosition: '当前位置',
+      openFacilityMap: '在Google Maps中打开{name}',
       filters: {
         all: '全部',
         restroom: '洗手间',

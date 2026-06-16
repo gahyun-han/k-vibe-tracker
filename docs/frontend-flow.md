@@ -1,6 +1,6 @@
 # Frontend Flow Notes
 
-Last updated: 2026-06-16
+Last updated: 2026-06-17
 
 This project is in local-first development mode. Pages should remain usable without paid API keys or production credentials.
 
@@ -73,6 +73,8 @@ This project is in local-first development mode. Pages should remain usable with
 - API: `app/api/facilities/route.ts`
 - Helpers: `lib/facilities.ts`
 - Development fallback: deterministic mock facilities until live facility sources are approved.
+- Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.
+- Radar pins and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
 
 ### Routes
 
@@ -103,6 +105,7 @@ Every data-backed page should expose:
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close labels are also routed through `lib/ui-copy.ts`.
 - Route mini map labels, Google Maps handoff labels, and route crowd badge labels are localized through the same shared copy source.
+- Radar map labels and Google Maps handoff labels are localized through `lib/ui-copy.ts`.
 
 ## Approval-Gated Work
 

@@ -34,6 +34,8 @@ describe('ui copy', () => {
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.savedRouteTitle.length).toBeGreaterThan(0);
       expect(copy.map.crowd.low.length).toBeGreaterThan(0);
+      expect(copy.radar.mapTitle.length).toBeGreaterThan(0);
+      expect(copy.radar.openFacilityMap).toContain('{name}');
 
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
       expect(copy.placeDetail.crowd.high.length).toBeGreaterThan(0);

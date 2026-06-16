@@ -1,8 +1,14 @@
 # Improvement Log
 
-Last updated: 2026-06-16
+Last updated: 2026-06-17
 
 This log tracks concrete product and implementation improvements made while aligning the MVP with the root HTML specifications and the Korea Tourism Organization OpenAPI manuals.
+
+## 2026-06-17
+
+- Added a no-cost Radar map preview with radius rings, current-position marker, and typed facility pins, using the existing local/mock facility coordinates.
+- Connected Radar map pins and expanded facility cards to user-clicked Google Maps search URLs. No Google Maps API key, Directions API, or Kakao Mobility call is used.
+- Added facility helper tests for cache keys, radius filtering/sorting, and no-key Google Maps facility handoff URLs.
 
 ## 2026-06-16
 
