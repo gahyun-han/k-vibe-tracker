@@ -20,7 +20,12 @@ describe('ui copy', () => {
       expect(LANGUAGE_NAMES[locale].length).toBeGreaterThan(1);
 
       expect(copy.analyze.title.length).toBeGreaterThan(0);
-      expect(copy.analyze.loadingSteps).toHaveLength(3);
+      expect(copy.analyze.loadingTitle.length).toBeGreaterThan(0);
+      expect(copy.analyze.loadingEstimate.length).toBeGreaterThan(0);
+      expect(copy.analyze.loadingColdStart.length).toBeGreaterThan(0);
+      expect(copy.analyze.loadingSteps).toHaveLength(4);
+      expect(copy.analyze.emptyTitle.length).toBeGreaterThan(0);
+      expect(copy.analyze.emptyBody.length).toBeGreaterThan(0);
       expect(copy.analyze.viewOnMap.length).toBeGreaterThan(0);
       expect(copy.analyze.buildRoute.length).toBeGreaterThan(0);
 

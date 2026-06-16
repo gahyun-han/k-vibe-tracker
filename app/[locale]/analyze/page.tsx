@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertCircle,
+  CheckCircle2,
   Compass,
+  Clock3,
   ExternalLink,
   MapPin,
   RotateCcw,
@@ -38,15 +40,27 @@ export default function AnalyzePage() {
   const [status, setStatus] = useState<AnalysisStatus>('idle');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
 
   const urlValid = isValidYoutubeUrl(url);
   const videoId = url ? extractVideoId(url) : null;
+
+  useEffect(() => {
+    if (status !== 'loading') return;
+
+    const timer = window.setInterval(() => {
+      setLoadingStepIndex((index) => Math.min(index + 1, copy.loadingSteps.length - 1));
+    }, 900);
+
+    return () => window.clearInterval(timer);
+  }, [copy.loadingSteps.length, status]);
 
   async function analyze() {
     if (!urlValid) return;
     setStatus('loading');
     setResult(null);
     setErrorMsg('');
+    setLoadingStepIndex(0);
 
     try {
       const res = await fetch('/api/analyze', {
@@ -73,6 +87,7 @@ export default function AnalyzePage() {
     setStatus('idle');
     setResult(null);
     setErrorMsg('');
+    setLoadingStepIndex(0);
   }
 
   function placesWithCoordinates(places: AnalysisPlace[]) {
@@ -154,6 +169,7 @@ export default function AnalyzePage() {
                   setStatus('idle');
                   setResult(null);
                   setErrorMsg('');
+                  setLoadingStepIndex(0);
                 }}
                 placeholder={copy.inputPlaceholder}
                 className="w-full rounded-xl border border-white/10 bg-white/8 py-3 pl-9 pr-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#FF3A5C]/50"
@@ -221,18 +237,45 @@ export default function AnalyzePage() {
           </div>
 
           {status === 'loading' && (
-            <div className="space-y-2 rounded-xl bg-white/5 p-4">
-              {copy.loadingSteps.map((step, i) => (
-                <div key={step} className="flex items-center gap-2">
-                  <div
-                    className={`h-4 w-4 animate-spin rounded-full border-2 border-t-transparent ${
-                      i === 0 ? 'border-[#FF3A5C]' : 'border-white/20'
-                    }`}
-                    style={{ animationDelay: `${i * 0.3}s` }}
-                  />
-                  <span className="text-xs text-white/50">{step}</span>
+            <div role="status" aria-live="polite" className="space-y-3 rounded-xl border border-white/10 bg-white/5 p-4">
+              <div className="flex items-start gap-2.5">
+                <Clock3 size={16} className="mt-0.5 shrink-0 text-[#FF3A5C]" />
+                <div>
+                  <p className="text-sm font-semibold text-white">{copy.loadingTitle}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-white/45">{copy.loadingEstimate}</p>
                 </div>
-              ))}
+              </div>
+
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-[#FF3A5C] transition-all duration-500"
+                  style={{ width: `${((loadingStepIndex + 1) / copy.loadingSteps.length) * 100}%` }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                {copy.loadingSteps.map((step, i) => {
+                  const complete = i < loadingStepIndex;
+                  const active = i === loadingStepIndex;
+
+                  return (
+                    <div key={step} className="flex items-center gap-2">
+                      {complete ? (
+                        <CheckCircle2 size={16} className="shrink-0 text-emerald-400" />
+                      ) : active ? (
+                        <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-[#FF3A5C] border-t-transparent" />
+                      ) : (
+                        <div className="h-4 w-4 shrink-0 rounded-full border border-white/15 bg-white/5" />
+                      )}
+                      <span className={`text-xs ${active ? 'font-semibold text-white' : complete ? 'text-white/65' : 'text-white/35'}`}>
+                        {step}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="text-xs leading-5 text-white/40">{copy.loadingColdStart}</p>
             </div>
           )}
 
@@ -269,40 +312,47 @@ export default function AnalyzePage() {
                 </span>
               </div>
 
-              {result.places.map((place, idx) => (
-                <div
-                  key={`${place.name}-${idx}`}
-                  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3"
-                >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FF3A5C] text-xs font-bold text-white">
-                    {idx + 1}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white">{place.name}</p>
-                    {place.lat !== null && place.lng !== null && (
-                      <p className="text-xs text-white/40">
-                        {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
-                      </p>
-                    )}
-                    {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-xs font-semibold text-[#FF3A5C]">
-                      {Math.round(place.confidence * 100)}%
-                    </p>
-                    <p className="text-[10px] text-white/30">{copy.confidence}</p>
-                    {place.lat !== null && place.lng !== null && (
-                      <button
-                        type="button"
-                        onClick={() => viewPlaceOnMap(place)}
-                        className="mt-2 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70 transition-colors hover:bg-white/20 hover:text-white"
-                      >
-                        {copy.map}
-                      </button>
-                    )}
-                  </div>
+              {result.places.length === 0 ? (
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-semibold text-white">{copy.emptyTitle}</p>
+                  <p className="mt-1 text-xs leading-5 text-white/45">{copy.emptyBody}</p>
                 </div>
-              ))}
+              ) : (
+                result.places.map((place, idx) => (
+                  <div
+                    key={`${place.name}-${idx}`}
+                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FF3A5C] text-xs font-bold text-white">
+                      {idx + 1}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-white">{place.name}</p>
+                      {place.lat !== null && place.lng !== null && (
+                        <p className="text-xs text-white/40">
+                          {place.lat.toFixed(4)}, {place.lng.toFixed(4)}
+                        </p>
+                      )}
+                      {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-xs font-semibold text-[#FF3A5C]">
+                        {Math.round(place.confidence * 100)}%
+                      </p>
+                      <p className="text-[10px] text-white/30">{copy.confidence}</p>
+                      {place.lat !== null && place.lng !== null && (
+                        <button
+                          type="button"
+                          onClick={() => viewPlaceOnMap(place)}
+                          className="mt-2 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-semibold text-white/70 transition-colors hover:bg-white/20 hover:text-white"
+                        >
+                          {copy.map}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
 
               <div className="grid grid-cols-2 gap-2">
                 <button
