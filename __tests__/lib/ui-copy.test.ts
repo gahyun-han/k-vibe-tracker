@@ -37,6 +37,7 @@ describe('ui copy', () => {
       expect(copy.analyze.emptyBody.length).toBeGreaterThan(0);
       expect(copy.analyze.tryExample.length).toBeGreaterThan(0);
       expect(copy.analyze.sourceCache.length).toBeGreaterThan(0);
+      expect(copy.analyze.cachedResultLoaded.length).toBeGreaterThan(0);
       expect(copy.analyze.unsupportedUrl.length).toBeGreaterThan(0);
       expect(copy.analyze.youtubeSupported.length).toBeGreaterThan(0);
       expect(copy.analyze.instagramPendingTitle.length).toBeGreaterThan(0);

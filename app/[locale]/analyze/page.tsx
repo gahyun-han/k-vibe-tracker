@@ -81,6 +81,7 @@ export default function AnalyzePage() {
       setResult({ ...cachedResult, cached: true });
       setStatus('success');
       setLoadingStepIndex(copy.loadingSteps.length - 1);
+      toast(copy.cachedResultLoaded, 'info');
       return;
     }
 
@@ -107,6 +108,7 @@ export default function AnalyzePage() {
     } catch (e) {
       setErrorMsg(e instanceof Error ? e.message : 'ANALYSIS_REQUEST_FAILED');
       setStatus('error');
+      toast(copy.errorTitle, 'error');
     }
   }
 

@@ -6,6 +6,8 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S6/S7 Analyze cache/error toast feedback. Cache hits now announce the loaded previous result and failed analysis requests raise the localized error toast, while keeping the existing local cache, inline retry state, and no-provider fallback.
+- Re-verified the user's Kakao domain setup in Chrome. The direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no domain/auth patterns, and `/ko/map` rendered in live mode with 26 Kakao tiles, 16 visible app pins, and no console warnings/errors.
 - Added root PWA/offline status coverage to the Home entry. The landing/home screen now mounts the shared localized offline banner and install prompt, matching the app screens without adding provider calls.
 - Added root UI-style localized route error recovery. The `/[locale]` segment now has a localized error screen with retry action, covering Home and app screens even outside page-specific error boundaries.
 - Added root S11 Radar refresh-failure toast feedback. When `/api/facilities` refresh fails, Radar now warns that cached facilities are being shown or raises a localized error toast if no cache is available.
