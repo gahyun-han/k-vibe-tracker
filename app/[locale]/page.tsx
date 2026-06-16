@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { TutorialButton } from '@/components/common/TutorialButton';
+import { useToast } from '@/components/common/Toast';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
 import { persistPreferredLocale } from '@/lib/locale-preference';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
@@ -114,6 +115,7 @@ export default function LandingPage() {
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const { toast } = useToast();
   const [showLogin, setShowLogin] = useState(false);
   const [feedPlaces, setFeedPlaces] = useState<FeedPlace[]>([]);
   const [feedSource, setFeedSource] = useState<ApiSource>('mock');
@@ -261,12 +263,12 @@ export default function LandingPage() {
   }, [locale, router]);
 
   const toggleSavedPlace = useCallback((place: SaveablePlace) => {
+    const isSaved = hasSavedPlace(savedPlaces, place);
     setSavedPlaces((current) =>
-      hasSavedPlace(current, place)
-        ? removeSavedPlace(current, place)
-        : upsertSavedPlace(current, place),
+      isSaved ? removeSavedPlace(current, place) : upsertSavedPlace(current, place),
     );
-  }, []);
+    toast(isSaved ? copy.placeDetail.removed : copy.placeDetail.saved, isSaved ? 'info' : 'success');
+  }, [copy.placeDetail.removed, copy.placeDetail.saved, savedPlaces, toast]);
 
   return (
     <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] px-5 pb-28 pt-6">

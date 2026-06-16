@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Home save-toast pass because it may consume paid quota and the local UI/storage-only change could be verified with type-check, build, and static home-page checks.
 - Claude CLI was not used for the 2026-06-17 Route invalid-share recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Map empty-result recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static map-route checks.
 - Claude CLI was not used for the 2026-06-17 Map/Radar location-fallback toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route checks.
@@ -80,6 +81,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
 - No-cost Home feed empty-state recovery that resets local filters or opens the app map only after a user click, without adding external providers, AI, GPS, backend writes, or automatic API calls beyond the existing feed request.
+- No-cost Home feed save toast feedback that reuses localStorage saved-place state and the shared in-browser toast provider, without Supabase sync, backend writes, maps providers, AI, or additional API calls.
 - No-cost Route summary/accessibility pass that renders the existing generated plan summary and localizes icon move-control labels/tooltips without adding external providers, API calls, maps, AI, GPS, or backend writes.
 - No-cost Analyze/Persona toast feedback that reuses existing local analysis route drafting, deterministic route generation, localStorage route save, Web Share/clipboard, and persona preference actions through the shared toast provider, with localized labels and no new external providers, maps, AI, GPS, or backend writes beyond existing localStorage state.
 - No-cost Place detail toast feedback that reuses existing local save/share/route actions in the shared in-browser toast provider, with localized labels and no new external providers, API calls, maps, AI, GPS, or backend writes beyond existing localStorage route/saved-place state.

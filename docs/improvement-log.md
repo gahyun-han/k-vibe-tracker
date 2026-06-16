@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S2/S4-style Home feed save feedback. Tapping a feed card heart now raises the same localized saved/removed toast used by place details while keeping the existing localStorage-only saved-place contract.
 - Added root S9 Route shared-link recovery. Invalid or stale `route=` payloads now show a localized warning toast and fall back to the local/starter route instead of silently replacing the user's context.
 - Added root S3-style Map empty-result recovery. When search or category filters remove all nearby places, the bottom sheet now shows localized guidance plus Reset filters and Refresh location actions.
 - Added root S3/S11-style location fallback feedback. Map and Radar now show localized warning toasts when browser geolocation is unavailable, while continuing to use the last-known or Seoul fallback position without adding external providers.
