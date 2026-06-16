@@ -21,21 +21,11 @@ type KakaoLatLng = new (lat: number, lng: number) => unknown;
 type KakaoMap = {
   setCenter: (latLng: unknown) => void;
 };
-type KakaoCustomOverlay = {
-  setMap: (map: KakaoMap | null) => void;
-};
 
 interface KakaoMapsApi {
   load: (callback: () => void) => void;
   LatLng: KakaoLatLng;
   Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap;
-  CustomOverlay: new (options: {
-    position: unknown;
-    content: HTMLElement;
-    xAnchor?: number;
-    yAnchor?: number;
-    zIndex?: number;
-  }) => KakaoCustomOverlay;
 }
 
 declare global {
@@ -91,35 +81,6 @@ function loadKakaoMaps(appKey: string): Promise<KakaoMapsApi> {
   });
 }
 
-function makeOverlayButton({
-  place,
-  selected,
-  label,
-  onClick,
-}: {
-  place: Place & { distanceM?: number };
-  selected: boolean;
-  label: string;
-  onClick: () => void;
-}) {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = label;
-  button.setAttribute('aria-label', place.name);
-  button.style.border = selected ? '1px solid #FF3A5C' : '1px solid rgba(255,255,255,0.24)';
-  button.style.borderRadius = '999px';
-  button.style.background = selected ? '#FF3A5C' : 'rgba(26,26,46,0.94)';
-  button.style.color = '#ffffff';
-  button.style.fontSize = '11px';
-  button.style.fontWeight = '700';
-  button.style.padding = '5px 9px';
-  button.style.boxShadow = '0 12px 28px rgba(0,0,0,0.35)';
-  button.style.cursor = 'pointer';
-  button.style.whiteSpace = 'nowrap';
-  button.onclick = onClick;
-  return button;
-}
-
 export function KakaoMapView({
   center,
   places,
@@ -131,12 +92,11 @@ export function KakaoMapView({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoMap | null>(null);
   const mapsRef = useRef<KakaoMapsApi | null>(null);
-  const overlaysRef = useRef<KakaoCustomOverlay[]>([]);
   const [mode, setMode] = useState<'fallback' | 'loading' | 'ready'>(
     KAKAO_MAP_KEY ? 'loading' : 'fallback',
   );
 
-  const fallbackPins = useMemo(() => places.slice(0, 16), [places]);
+  const visiblePins = useMemo(() => places.slice(0, 16), [places]);
 
   useEffect(() => {
     if (!KAKAO_MAP_KEY || !containerRef.current) {
@@ -175,38 +135,6 @@ export function KakaoMapView({
     map.setCenter(new maps.LatLng(center.lat, center.lng));
   }, [center.lat, center.lng]);
 
-  useEffect(() => {
-    const maps = mapsRef.current;
-    const map = mapRef.current;
-    if (!maps || !map || mode !== 'ready') return;
-
-    overlaysRef.current.forEach((overlay) => overlay.setMap(null));
-    overlaysRef.current = places.slice(0, 30).map((place) => {
-      const selected = selectedPlaceId === place.id;
-      const label = `${categoryLabelFor(place.category, categoryLabels)} ${formatDistance(place.distanceM)}`.trim();
-      const content = makeOverlayButton({
-        place,
-        selected,
-        label,
-        onClick: () => onSelectPlace(place),
-      });
-      const overlay = new maps.CustomOverlay({
-        position: new maps.LatLng(place.lat, place.lng),
-        content,
-        xAnchor: 0.5,
-        yAnchor: 1,
-        zIndex: selected ? 20 : 10,
-      });
-      overlay.setMap(map);
-      return overlay;
-    });
-
-    return () => {
-      overlaysRef.current.forEach((overlay) => overlay.setMap(null));
-      overlaysRef.current = [];
-    };
-  }, [categoryLabels, formatDistance, mode, onSelectPlace, places, selectedPlaceId]);
-
   return (
     <div className="absolute inset-0" data-map-mode={mode}>
       <div
@@ -218,27 +146,30 @@ export function KakaoMapView({
         <>
           <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:42px_42px]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(255,58,92,0.20),transparent_32%),radial-gradient(circle_at_30%_70%,rgba(16,185,129,0.14),transparent_24%)]" />
-          {fallbackPins.map((place) => {
-            const selected = selectedPlaceId === place.id;
-            const categoryLabel = categoryLabelFor(place.category, categoryLabels);
-            return (
-              <button
-                key={place.id}
-                onClick={() => onSelectPlace(place)}
-                className={`absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all ${
-                  selected
-                    ? 'border-[#FF3A5C] bg-[#FF3A5C] text-white'
-                    : 'border-white/20 bg-[#1A1A2E]/90 text-white/85 hover:border-[#FF3A5C]/70'
-                }`}
-                style={pinPosition(place, center)}
-              >
-                <span className="mr-1">{categoryLabel}</span>
-                {formatDistance(place.distanceM)}
-              </button>
-            );
-          })}
         </>
       )}
+
+      <div className="pointer-events-none absolute inset-0 z-10">
+        {visiblePins.map((place) => {
+          const selected = selectedPlaceId === place.id;
+          const categoryLabel = categoryLabelFor(place.category, categoryLabels);
+          return (
+            <button
+              key={place.id}
+              onClick={() => onSelectPlace(place)}
+              className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all ${
+                selected
+                  ? 'border-[#FF3A5C] bg-[#FF3A5C] text-white'
+                  : 'border-white/20 bg-[#1A1A2E]/90 text-white/85 hover:border-[#FF3A5C]/70'
+              }`}
+              style={pinPosition(place, center)}
+            >
+              <span className="mr-1">{categoryLabel}</span>
+              {formatDistance(place.distanceM)}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
