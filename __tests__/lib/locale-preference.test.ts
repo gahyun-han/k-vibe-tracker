@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildLocalizedPath,
   buildPreferredLocaleCookie,
   LOCALE_COOKIE_MAX_AGE_SECONDS,
   PREFERRED_LOCALE_STORAGE_KEY,
@@ -7,6 +8,23 @@ import {
 } from '@/lib/locale-preference';
 
 describe('locale preference', () => {
+  it('builds locale-switched paths without dropping query state', () => {
+    const searchParams = new URLSearchParams({
+      detail: '1',
+      lat: '37.5447',
+      lng: '127.0564',
+      q: 'Seongsu Cafe Street',
+    });
+
+    expect(buildLocalizedPath('/ko/map', 'ja', searchParams)).toBe(
+      '/ja/map?detail=1&lat=37.5447&lng=127.0564&q=Seongsu+Cafe+Street',
+    );
+    expect(buildLocalizedPath('/en/route', 'zh', '?route=encoded-local-plan')).toBe(
+      '/zh/route?route=encoded-local-plan',
+    );
+    expect(buildLocalizedPath('/map', 'ko')).toBe('/ko/map');
+  });
+
   it('builds the next-intl locale cookie value', () => {
     expect(buildPreferredLocaleCookie('ja')).toBe(
       `NEXT_LOCALE=ja; path=/; max-age=${LOCALE_COOKIE_MAX_AGE_SECONDS}; SameSite=Lax`,

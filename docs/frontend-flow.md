@@ -15,7 +15,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Responsive app navigation lives in `components/layout/BottomNav.tsx`: it renders the bottom tab bar on mobile with Analyze emphasized as the central SNS spot CTA, and a left navigation rail on desktop-width screens.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
-- `components/common/LanguageSwitcher.tsx` and the home language buttons persist the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity. Language controls expose localized labels plus selected/open state to assistive tech.
+- `components/common/LanguageSwitcher.tsx` and the home language buttons persist the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity. The shared language switcher preserves the current query string when it swaps the locale prefix, so focused map details, analysis handoffs, and local route share URLs keep their context across languages. Language controls expose localized labels plus selected/open state to assistive tech.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by the home page plus `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow, the trigger exposes open state, focus moves to the close action while open and returns to the trigger on close, and the sheet uses a viewport-bounded scroll area so longer localized copy remains reachable on mobile.
 - PWA runtime lives in `components/common/PwaRuntime.tsx`; it updates `document.documentElement.lang` from the active route locale and registers `/sw.js` only in production builds.
 - Offline network status UI lives in `components/common/NetworkStatusBanner.tsx` and is mounted by the home page plus `components/layout/AppLayout.tsx` above each screen's main content.
@@ -158,7 +158,7 @@ Every data-backed page should expose:
 - Mock/source hint while the app is running without external integrations.
 - Clear copy that tells developers whether a local mock or external source produced the result.
 - Shared navigation, landing, tutorial, visible home language selection, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
-- Language switcher names are covered by tests so supported locale names do not regress to placeholders or mojibake.
+- Language switcher names and query-preserving locale path building are covered by tests so supported locale names do not regress to placeholders or mojibake, and language changes do not drop local route/map context.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close/Seen in/save/share toast labels are also routed through `lib/ui-copy.ts`.

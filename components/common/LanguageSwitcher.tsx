@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Check, Globe2 } from 'lucide-react';
-import { persistPreferredLocale } from '@/lib/locale-preference';
+import { buildLocalizedPath, persistPreferredLocale } from '@/lib/locale-preference';
 import { getUiCopy, LANGUAGE_NAMES, SUPPORTED_LOCALES, type UiLocale } from '@/lib/ui-copy';
 
 export function LanguageSwitcher() {
@@ -38,10 +38,9 @@ export function LanguageSwitcher() {
   }
 
   function switchLocale(code: UiLocale) {
-    const segments = pathname.split('/');
     saveLocalePreference(code);
-    segments[1] = code;
-    router.push(segments.join('/'));
+    const currentSearch = typeof window === 'undefined' ? '' : window.location.search;
+    router.push(buildLocalizedPath(pathname, code, currentSearch));
     setOpen(false);
   }
 
