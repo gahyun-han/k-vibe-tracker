@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, GripVertical, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
@@ -13,10 +13,13 @@ import {
   buildLocalRouteShareUrl,
   calculateWalkingMinutes,
   createLocalRoutePlan,
+  createRouteProgressState,
   CURRENT_ROUTE_STORAGE_KEY,
   decodeRoutePlanFromShare,
   formatDuration,
   generateMockRoutePlan,
+  parseRouteProgressState,
+  ROUTE_PROGRESS_STORAGE_KEY,
   type RoutePlan,
   type RouteStop,
   type RouteTheme,
@@ -50,6 +53,7 @@ export default function RoutePage() {
   const [hydrated, setHydrated] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [completedStopIds, setCompletedStopIds] = useState<string[]>([]);
   const [status, setStatus] = useState('');
   const extraStop = useMemo<RouteStop>(() => ({
     id: copy.extraStop.id,
@@ -69,7 +73,7 @@ export default function RoutePage() {
     const sharedRoute = new URLSearchParams(window.location.search).get('route');
     const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
 
-    function applyPlan(plan: RoutePlan) {
+    function applyPlan(plan: RoutePlan, resetProgress = false) {
       setPlanTitle(plan.title);
       setPlanMeta({
         id: plan.id,
@@ -78,13 +82,22 @@ export default function RoutePage() {
         summary: plan.summary,
       });
       setSpots(plan.stops);
+      setCompletedStopIds(
+        resetProgress
+          ? []
+          : parseRouteProgressState(
+              window.localStorage.getItem(ROUTE_PROGRESS_STORAGE_KEY),
+              plan.id,
+              plan.stops.map((spot) => spot.id),
+            ).completedStopIds,
+      );
       setHydrated(true);
     }
 
     if (sharedRoute) {
       const decoded = decodeRoutePlanFromShare(sharedRoute);
       if (decoded) {
-        applyPlan(decoded);
+        applyPlan(decoded, true);
         setStatus(copy.sharedRouteLoaded);
         return;
       }
@@ -131,6 +144,22 @@ export default function RoutePage() {
     window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
   }, [hydrated, planMeta, planTitle, spots]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+
+    const progress = createRouteProgressState(
+      planMeta.id,
+      completedStopIds,
+      spots.map((spot) => spot.id),
+    );
+    if (progress.completedStopIds.length !== completedStopIds.length) {
+      setCompletedStopIds(progress.completedStopIds);
+      return;
+    }
+
+    window.localStorage.setItem(ROUTE_PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+  }, [completedStopIds, hydrated, planMeta.id, spots]);
+
   const stats = useMemo(() => {
     const walking = calculateWalkingMinutes(spots);
     const stay = spots.reduce((total, spot) => total + spot.stayMinutes, 0);
@@ -139,8 +168,9 @@ export default function RoutePage() {
       walking,
       stay,
       total: walking + stay,
+      done: completedStopIds.length,
     };
-  }, [spots]);
+  }, [completedStopIds.length, spots]);
   const directionsUrl = useMemo(() => buildGoogleMapsDirectionsUrl(spots), [spots]);
 
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
@@ -193,6 +223,12 @@ export default function RoutePage() {
       return [...prev, extraStop];
     });
     setStatus(copy.sampleStopAdded);
+  }
+
+  function toggleStopCompleted(id: string) {
+    const isCompleted = completedStopIds.includes(id);
+    setCompletedStopIds((prev) => (isCompleted ? prev.filter((stopId) => stopId !== id) : [...prev, id]));
+    setStatus(isCompleted ? copy.stopReopened : copy.stopCompleted);
   }
 
   async function shareRoute() {
@@ -255,7 +291,13 @@ export default function RoutePage() {
       return;
     }
 
-    openDocent(spots[0]);
+    const nextSpot = spots.find((spot) => !completedStopIds.includes(spot.id));
+    if (!nextSpot) {
+      setStatus(copy.routeCompleted);
+      return;
+    }
+
+    openDocent(nextSpot);
   }
 
   return (
@@ -267,9 +309,10 @@ export default function RoutePage() {
           <p className="mt-1 text-xs text-white/40">{copy.helper}</p>
         </div>
 
-        <div className="mx-4 mb-4 grid grid-cols-3 gap-2">
+        <div className="mx-4 mb-4 grid grid-cols-4 gap-2">
           {[
             { label: copy.stops, value: String(spots.length), icon: MapPin },
+            { label: copy.done, value: `${stats.done}/${spots.length}`, icon: CheckCircle2 },
             { label: copy.walking, value: formatDuration(stats.walking), icon: Navigation },
             { label: copy.total, value: formatDuration(stats.total), icon: Clock },
           ].map(({ label, value, icon: Icon }) => (
@@ -319,7 +362,9 @@ export default function RoutePage() {
         )}
 
         <div className="space-y-2 px-4">
-          {spots.map((spot, idx) => (
+          {spots.map((spot, idx) => {
+            const isCompleted = completedStopIds.includes(spot.id);
+            return (
             <div
               key={spot.id}
               draggable
@@ -328,17 +373,32 @@ export default function RoutePage() {
               onDrop={() => onDrop(spot.id)}
               onDragEnd={onDragEnd}
               className={`relative flex cursor-grab items-center gap-3 rounded-xl border bg-white/5 p-3 transition-all active:cursor-grabbing ${
-                dragOverId === spot.id ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5' : 'border-white/10'
+                dragOverId === spot.id
+                  ? 'border-[#FF3A5C]/60 bg-[#FF3A5C]/5'
+                  : isCompleted
+                    ? 'border-emerald-400/30 bg-emerald-400/5'
+                    : 'border-white/10'
               } ${draggingId === spot.id ? 'opacity-40' : 'opacity-100'}`}
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FF3A5C] text-xs font-bold text-white">
-                {idx + 1}
+              <div
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${
+                  isCompleted ? 'bg-emerald-500' : 'bg-[#FF3A5C]'
+                }`}
+              >
+                {isCompleted ? <CheckCircle2 size={15} /> : idx + 1}
               </div>
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <p className="text-sm font-semibold text-white">{spot.name}</p>
+                  <p className={`text-sm font-semibold ${isCompleted ? 'text-white/55 line-through' : 'text-white'}`}>
+                    {spot.name}
+                  </p>
                   <CrowdBadge level={spot.crowdLevel} size="sm" labels={uiCopy.map.crowd} />
+                  {isCompleted && (
+                    <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                      {copy.completed}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   <span className="text-xs text-white/40">{spot.category}</span>
@@ -350,6 +410,18 @@ export default function RoutePage() {
               </div>
 
               <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => toggleStopCompleted(spot.id)}
+                  aria-pressed={isCompleted}
+                  aria-label={(isCompleted ? copy.markIncomplete : copy.markComplete).replace('{name}', spot.name)}
+                  title={isCompleted ? copy.markIncompleteTitle : copy.markCompleteTitle}
+                  className={`rounded-lg p-1 transition-colors hover:bg-white/10 ${
+                    isCompleted ? 'text-emerald-300 hover:text-emerald-200' : 'text-white/30 hover:text-emerald-300'
+                  }`}
+                >
+                  <CheckCircle2 size={14} />
+                </button>
                 <button
                   type="button"
                   onClick={() => moveSpot(spot.id, -1)}
@@ -399,7 +471,8 @@ export default function RoutePage() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           <button
             onClick={addSampleStop}

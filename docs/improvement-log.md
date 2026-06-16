@@ -28,6 +28,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Connected the Radar popup facility path to TourAPI `searchFestival2` when `TOUR_API_KEY` is configured. Nearby event/festival results are normalized as `popup` facilities, locale-aware cache keys now separate Radar responses, and the endpoint still falls back to local mock facilities when TourAPI is unavailable or returns no nearby events.
 - Improved the Route editor for the responsive app shell by replacing the viewport-fixed CTA bar with an in-content sticky action bar and adding icon move controls so stops can be reordered without drag-and-drop.
 - Added no-cost local Route sharing. The editor now copies or shares a same-origin URL with an encoded `route` payload, and opening that URL restores the route into the local editor without Supabase, Kakao Mobility, a backend public-link table, or any paid API.
+- Added no-cost Route progress tracking. Travelers can mark stops complete in the local editor, completed stops get a clear check state, progress is stored locally per route, and Start Guidance opens the next incomplete stop instead of always restarting at stop one.
 
 ## 2026-06-16
 

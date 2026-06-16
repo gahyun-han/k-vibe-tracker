@@ -2,6 +2,7 @@ import { haversineKm, walkingMinutes } from '@/lib/haversine';
 
 export const ROUTE_THEMES = ['kpop', 'drama', 'mood'] as const;
 export const CURRENT_ROUTE_STORAGE_KEY = 'k-vibe-current-route';
+export const ROUTE_PROGRESS_STORAGE_KEY = 'k-vibe-route-progress';
 export type RouteTheme = (typeof ROUTE_THEMES)[number];
 export type CrowdLevel = 'low' | 'mid' | 'high';
 const MAX_SHARED_ROUTE_STOPS = 10;
@@ -46,6 +47,12 @@ export interface RoutePlan {
   totalMinutes: number;
   generatedAt: string;
   shareText: string;
+}
+
+export interface RouteProgressState {
+  planId: string;
+  completedStopIds: string[];
+  updatedAt: string;
 }
 
 interface GenerateRoutePlanInput {
@@ -442,6 +449,47 @@ export function buildLocalRouteShareUrl(plan: RoutePlan, baseUrl: string) {
   return url.toString();
 }
 
+export function createRouteProgressState(
+  planId: string,
+  completedStopIds: string[],
+  validStopIds: string[],
+): RouteProgressState {
+  const validIds = new Set(validStopIds);
+  const seen = new Set<string>();
+  const completed = completedStopIds.filter((id) => {
+    if (!validIds.has(id) || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  return {
+    planId,
+    completedStopIds: completed,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+export function parseRouteProgressState(
+  value: string | null,
+  planId: string,
+  validStopIds: string[],
+): RouteProgressState {
+  if (!value) {
+    return createRouteProgressState(planId, [], validStopIds);
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!isRecord(parsed) || parsed.planId !== planId || !Array.isArray(parsed.completedStopIds)) {
+      return createRouteProgressState(planId, [], validStopIds);
+    }
+
+    return createRouteProgressState(planId, parsed.completedStopIds.filter(isString), validStopIds);
+  } catch {
+    return createRouteProgressState(planId, [], validStopIds);
+  }
+}
+
 export function buildGoogleMapsDirectionsUrl(stops: Pick<RouteStop, 'lat' | 'lng'>[]) {
   if (stops.length === 0) return null;
 
@@ -526,6 +574,10 @@ function coerceNonEmptyString(value: unknown) {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 function coerceNumberInRange(value: unknown, min: number, max: number) {

@@ -26,4 +26,5 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
 - No-cost local Route share URLs that encode route state in the same-origin `route=` query parameter and restore it into `localStorage`.
+- No-cost local Route progress tracking that stores completed stop IDs in `localStorage` and does not use GPS polling, Kakao Mobility, or a backend route session.
 - Commits and pushes to the already writable `hslee-origin/hslee` branch.

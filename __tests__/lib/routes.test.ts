@@ -4,10 +4,13 @@ import {
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
   createLocalRoutePlan,
+  createRouteProgressState,
   CURRENT_ROUTE_STORAGE_KEY,
   decodeRoutePlanFromShare,
   encodeRoutePlanForShare,
   generateMockRoutePlan,
+  parseRouteProgressState,
+  ROUTE_PROGRESS_STORAGE_KEY,
   type RouteStop,
 } from '@/lib/routes';
 
@@ -43,6 +46,7 @@ const STOPS: RouteStop[] = [
 describe('route helpers', () => {
   it('exports the shared local route storage key', () => {
     expect(CURRENT_ROUTE_STORAGE_KEY).toBe('k-vibe-current-route');
+    expect(ROUTE_PROGRESS_STORAGE_KEY).toBe('k-vibe-route-progress');
   });
 
   it('builds a local route plan with derived duration and share text', () => {
@@ -147,5 +151,21 @@ describe('route helpers', () => {
 
     expect(decoded?.stops).toHaveLength(10);
     expect(decoded?.stops.at(-1)?.name).toBe('Stop 9');
+  });
+
+  it('keeps route progress scoped to the current plan and valid stops', () => {
+    const progress = createRouteProgressState('route-a', ['one', 'missing', 'one', 'two'], ['one', 'two']);
+
+    expect(progress.planId).toBe('route-a');
+    expect(progress.completedStopIds).toEqual(['one', 'two']);
+    expect(progress.updatedAt).toBeTruthy();
+
+    const restored = parseRouteProgressState(JSON.stringify(progress), 'route-a', ['two']);
+    const otherRoute = parseRouteProgressState(JSON.stringify(progress), 'route-b', ['one', 'two']);
+    const malformed = parseRouteProgressState('not-json', 'route-a', ['one', 'two']);
+
+    expect(restored.completedStopIds).toEqual(['two']);
+    expect(otherRoute.completedStopIds).toEqual([]);
+    expect(malformed.completedStopIds).toEqual([]);
   });
 });

@@ -114,7 +114,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/map`: nearby K-vibe places. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/places`, caches same-query place responses locally for 1 hour, lazy-loads `/api/places/[contentId]` details for selected pins, renders Kakao Maps when `NEXT_PUBLIC_KAKAO_MAP_KEY` exists, otherwise uses the no-cost local map preview, and can add a selected place into the local route editor.
 - `/[locale]/analyze`: YouTube URL analyzer. It calls `/api/analyze`, which returns local mock spot extraction by default, can open detected spots on the map, can draft a local route from detected places, and only calls an AI worker when explicitly enabled.
 - `/[locale]/persona`: K-content route generator. It calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
-- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
+- `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions, browser `speechSynthesis` voice playback, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places, the current local route, and localized app settings state when Supabase is not configured.
@@ -269,7 +269,7 @@ lib/
   facilities.ts # facility types, cache-key, and local mock source
   local-api-cache.ts # 1-hour local API response cache
   location-cache.ts # 30-minute last known GPS cache
-  routes.ts     # route themes, mock plans, duration helpers, local share URLs
+  routes.ts     # route themes, mock plans, duration helpers, local share URLs/progress
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
   saved-places.ts # local saved place storage helpers
   youtube.ts
@@ -306,6 +306,7 @@ ai-worker/      # FastAPI prototype
   - Persona, map, and route pages now share the route plan contract, local preview flow, `localStorage` handoff, and locale-aware UI.
   - Route page now includes a no-cost mini map preview, per-stop Google Maps open actions, and a walking directions CTA without calling Kakao Mobility or a paid Directions API.
   - Route page now creates no-cost same-origin share links with encoded route state and restores those links without Supabase or a paid routing/link service.
+  - Route page now tracks completed stops locally and starts guidance at the next incomplete stop without GPS polling or a paid navigation API.
   - `/api/analyze` is now local-first and gated behind `ENABLE_AI_WORKER_ANALYSIS` for worker calls.
   - Analyze page now has English local-first copy, mock/source indicators, and cleaner result cards.
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
