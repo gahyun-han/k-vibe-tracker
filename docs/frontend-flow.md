@@ -123,7 +123,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Radar page includes a no-cost visual map preview with radius rings and facility pins from the same local/mock API response.
 - Radar empty results include a localized Expand radius action that advances to the next predefined radius step before refetching facilities, matching the root UI empty-state guidance.
 - Radar filter chips, preview pins, and facility cards use shared lucide facility icons so labels stay localized and iconography stays consistent.
-- Radar pins and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
+- Radar pins, card-header quick actions, and expanded card actions open Google Maps search URLs only after the user clicks; no Maps API, Directions API, or Kakao Mobility request is made.
 
 ### Routes
 

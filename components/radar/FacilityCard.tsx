@@ -12,6 +12,7 @@ interface FacilityCardCopy {
   closed: string;
   twentyFourHours: string;
   accessibleRestroom: string;
+  openFacilityMap: string;
   viewOnMap: string;
 }
 
@@ -31,47 +32,61 @@ export function FacilityCard({ facility: f, copy, onViewMap }: Props) {
 
   return (
     <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
-      <button
-        className="flex w-full items-center gap-3 p-3.5 text-left"
-        onClick={() => setExpanded((v) => !v)}
-      >
-        <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${cfg.bg} ${cfg.color}`}
-          aria-label={copy.facilityTypes[f.type]}
-          title={copy.facilityTypes[f.type]}
+      <div className="flex items-stretch">
+        <button
+          type="button"
+          className="flex min-w-0 flex-1 items-center gap-3 p-3.5 text-left"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
         >
-          <Icon size={18} />
-        </div>
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${cfg.bg} ${cfg.color}`}
+            aria-label={copy.facilityTypes[f.type]}
+            title={copy.facilityTypes[f.type]}
+          >
+            <Icon size={18} />
+          </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className={`rounded-full px-1.5 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}>
-              {copy.facilityTypes[f.type]}
-            </span>
-            {f.is24h && (
-              <span className="rounded-full bg-emerald-400/10 px-1.5 py-0.5 text-xs font-semibold text-emerald-400">
-                {copy.twentyFourHours}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className={`rounded-full px-1.5 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}>
+                {copy.facilityTypes[f.type]}
               </span>
-            )}
-            {f.isOpen === false && (
-              <span className="rounded-full bg-red-400/10 px-1.5 py-0.5 text-xs font-semibold text-red-400">
-                {copy.closed}
-              </span>
+              {f.is24h && (
+                <span className="rounded-full bg-emerald-400/10 px-1.5 py-0.5 text-xs font-semibold text-emerald-400">
+                  {copy.twentyFourHours}
+                </span>
+              )}
+              {f.isOpen === false && (
+                <span className="rounded-full bg-red-400/10 px-1.5 py-0.5 text-xs font-semibold text-red-400">
+                  {copy.closed}
+                </span>
+              )}
+            </div>
+            <p className="mt-0.5 truncate text-sm font-semibold text-white">{f.name}</p>
+            <p className="truncate text-xs text-white/40">{f.address}</p>
+          </div>
+
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            <span className="text-sm font-bold text-[#FF3A5C]">{distLabel}</span>
+            {expanded ? (
+              <ChevronUp size={14} className="text-white/40" />
+            ) : (
+              <ChevronDown size={14} className="text-white/40" />
             )}
           </div>
-          <p className="mt-0.5 truncate text-sm font-semibold text-white">{f.name}</p>
-          <p className="truncate text-xs text-white/40">{f.address}</p>
-        </div>
+        </button>
 
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          <span className="text-sm font-bold text-[#FF3A5C]">{distLabel}</span>
-          {expanded ? (
-            <ChevronUp size={14} className="text-white/40" />
-          ) : (
-            <ChevronDown size={14} className="text-white/40" />
-          )}
-        </div>
-      </button>
+        <button
+          type="button"
+          onClick={() => onViewMap(f)}
+          aria-label={copy.openFacilityMap.replace('{name}', f.name)}
+          title={copy.openFacilityMap.replace('{name}', f.name)}
+          className="my-3 mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#FF3A5C]/25 bg-[#FF3A5C]/10 text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/55 hover:bg-[#FF3A5C]/20 hover:text-white"
+        >
+          <MapPin size={16} />
+        </button>
+      </div>
 
       {expanded && (
         <div className="space-y-2 border-t border-white/5 px-3.5 pb-3.5 pt-2.5">

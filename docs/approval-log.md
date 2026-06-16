@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Radar card quick-map pass because it may consume paid quota and the local UI-only change could be verified with type-check, tests, build, and static radar-page checks.
 - Claude CLI was not used for the 2026-06-17 Profile saved-place empty CTA pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static profile-page checks.
 - Claude CLI was not used for the 2026-06-17 Home feed empty-state recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static home-page checks.
 - Claude CLI was not used for the 2026-06-17 Route summary/accessibility pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route-page checks.
@@ -105,6 +106,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - No-cost Home feed crowd badges that render the existing `/api/places` `crowd_level` field locally and preserve that value through same-origin map/detail and saved-place flows.
 - No-cost Analyze confidence bars that render existing local/mock confidence scores in the browser and do not call AI workers or external providers.
 - No-cost Analyze and Radar empty-state recovery actions that reuse existing local/mock flows: a sample YouTube analysis button and a user-clicked radius expansion.
+- No-cost Radar facility-card quick map action that reuses the existing user-clicked no-key Google Maps search handoff and does not call facility providers, Maps APIs, Directions APIs, Kakao Mobility, AI, or backend writes by itself.
 - No-cost Radar ATM support that adds a local/mock facility type, localized labels, and no-key Google Maps handoff only after a user click; it does not call a banking API, facility provider, Kakao Mobility, or Directions API.
 - No-cost Radar medical and transit support that adds local/mock facility types, localized labels, and no-key Google Maps handoff only after a user click; it does not call hospital, emergency, live transit, banking, facility, Kakao Mobility, or Directions APIs.
 - No-cost Profile My Routes card that reads local route/progress state and does not use Supabase, GPS, Kakao Mobility, or backend route sessions.
