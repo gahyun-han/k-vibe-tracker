@@ -7,6 +7,7 @@ import {
   Compass,
   Clock3,
   ExternalLink,
+  Instagram,
   MapPin,
   RotateCcw,
   Search,
@@ -15,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
-import { extractVideoId, getThumbnailUrl, isValidYoutubeUrl } from '@/lib/youtube';
+import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/youtube';
 import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/analysis';
 import { readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
@@ -30,6 +31,7 @@ type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 const EXAMPLE_URLS = [
   'https://youtu.be/dQw4w9WgXcQ',
   'https://www.youtube.com/watch?v=BKorP55Aqvg',
+  'https://www.instagram.com/reel/CxExampleSpot/',
 ];
 
 export default function AnalyzePage() {
@@ -43,8 +45,12 @@ export default function AnalyzePage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [loadingStepIndex, setLoadingStepIndex] = useState(0);
 
-  const urlValid = isValidYoutubeUrl(url);
+  const urlPlatform = detectSnsPlatform(url);
+  const isYoutubeInput = urlPlatform === 'youtube';
+  const isInstagramInput = urlPlatform === 'instagram';
   const videoId = url ? extractVideoId(url) : null;
+  const urlValid = isYoutubeInput && Boolean(videoId);
+  const InputIcon = isInstagramInput ? Instagram : Youtube;
 
   useEffect(() => {
     if (status !== 'loading') return;
@@ -173,11 +179,24 @@ export default function AnalyzePage() {
             <p className="mt-0.5 text-xs leading-5 text-white/40">
               {copy.subtitle}
             </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-red-400/10 px-2.5 py-1 text-xs font-semibold text-red-200">
+                <Youtube size={12} />
+                {copy.youtubeSupported}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-pink-400/10 px-2.5 py-1 text-xs font-semibold text-pink-200">
+                <Instagram size={12} />
+                {copy.instagramPending}
+              </span>
+            </div>
           </div>
 
           <div className="space-y-2">
             <div className="relative">
-              <Youtube size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-red-400" />
+              <InputIcon
+                size={16}
+                className={`absolute left-3 top-1/2 -translate-y-1/2 ${isInstagramInput ? 'text-pink-300' : 'text-red-400'}`}
+              />
               <input
                 value={url}
                 onChange={(e) => {
@@ -192,11 +211,21 @@ export default function AnalyzePage() {
               />
             </div>
 
-            {url && !urlValid && (
+            {url && !urlValid && !isInstagramInput && (
               <p className="flex items-center gap-1 text-xs text-red-400">
                 <AlertCircle size={12} />
-                {copy.invalidUrl}
+                {isYoutubeInput ? copy.invalidUrl : copy.unsupportedUrl}
               </p>
+            )}
+
+            {isInstagramInput && (
+              <div className="flex items-start gap-2 rounded-xl border border-pink-300/20 bg-pink-300/10 p-3">
+                <Instagram size={15} className="mt-0.5 shrink-0 text-pink-200" />
+                <div>
+                  <p className="text-xs font-semibold text-pink-100">{copy.instagramPendingTitle}</p>
+                  <p className="mt-1 text-xs leading-5 text-pink-50/65">{copy.instagramPendingBody}</p>
+                </div>
+              </div>
             )}
 
             {videoId && (
@@ -414,6 +443,18 @@ export default function AnalyzePage() {
             >
               <ExternalLink size={12} />
               {copy.openVideo}
+            </a>
+          )}
+
+          {isInstagramInput && (
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 py-2 text-xs font-semibold text-white/45 transition-colors hover:border-white/20 hover:text-white/70"
+            >
+              <ExternalLink size={12} />
+              {copy.openPost}
             </a>
           )}
         </div>

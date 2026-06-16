@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { extractVideoId, isValidYoutubeUrl, getThumbnailUrl } from '@/lib/youtube';
+import {
+  detectSnsPlatform,
+  extractVideoId,
+  getThumbnailUrl,
+  isInstagramUrl,
+  isValidYoutubeUrl,
+} from '@/lib/youtube';
 
 describe('extractVideoId', () => {
   it('표준 watch URL에서 추출', () => {
@@ -40,6 +46,7 @@ describe('extractVideoId', () => {
 
   it('youtube.com이지만 v 파라미터 없고 경로도 없음 → null', () => {
     expect(extractVideoId('https://www.youtube.com/')).toBeNull();
+    expect(extractVideoId('https://notyoutube.com/watch?v=abc123')).toBeNull();
   });
 });
 
@@ -73,5 +80,24 @@ describe('getThumbnailUrl', () => {
     expect(url).toContain('testId');
     expect(url).toContain('img.youtube.com');
     expect(url).toContain('hqdefault.jpg');
+  });
+});
+
+describe('SNS platform detection', () => {
+  it('detects supported YouTube hosts', () => {
+    expect(detectSnsPlatform('https://www.youtube.com/watch?v=abc123')).toBe('youtube');
+    expect(detectSnsPlatform('https://m.youtube.com/shorts/abc123')).toBe('youtube');
+    expect(detectSnsPlatform('https://youtu.be/abc123')).toBe('youtube');
+  });
+
+  it('detects Instagram links without treating them as analyzable YouTube URLs', () => {
+    expect(detectSnsPlatform('https://www.instagram.com/reel/CxExampleSpot/')).toBe('instagram');
+    expect(isInstagramUrl('https://instagram.com/p/CxExampleSpot/')).toBe(true);
+    expect(isValidYoutubeUrl('https://www.instagram.com/reel/CxExampleSpot/')).toBe(false);
+  });
+
+  it('marks unrelated or malformed URLs as unsupported', () => {
+    expect(detectSnsPlatform('https://vimeo.com/123456')).toBe('unsupported');
+    expect(detectSnsPlatform('not-a-url')).toBe('unsupported');
   });
 });

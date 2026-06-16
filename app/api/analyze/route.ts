@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { buildMockAnalysis, isAnalysisLocale, shouldCallAiWorker, type AnalysisResult } from '@/lib/analysis';
-import { extractVideoId } from '@/lib/youtube';
+import { detectSnsPlatform, extractVideoId } from '@/lib/youtube';
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -15,9 +15,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'INVALID_BODY' }, { status: 400 });
   }
 
-  const youtubeUrl = typeof body.youtube_url === 'string' ? body.youtube_url : '';
+  const snsUrl = typeof body.youtube_url === 'string'
+    ? body.youtube_url
+    : typeof body.sns_url === 'string'
+      ? body.sns_url
+      : '';
   const localeParam = typeof body.locale === 'string' ? body.locale : 'en';
-  const videoId = extractVideoId(youtubeUrl);
+  const platform = detectSnsPlatform(snsUrl);
+  const videoId = extractVideoId(snsUrl);
+
+  if (platform === 'instagram') {
+    return NextResponse.json({ error: 'INSTAGRAM_ANALYSIS_DEFERRED' }, { status: 400 });
+  }
 
   if (!videoId) {
     return NextResponse.json({ error: 'INVALID_YOUTUBE_URL' }, { status: 400 });
@@ -35,7 +44,7 @@ export async function POST(req: NextRequest) {
     const res = await fetch(`${process.env.AI_WORKER_URL}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ youtube_url: youtubeUrl, locale: localeParam }),
+      body: JSON.stringify({ youtube_url: snsUrl, locale: localeParam }),
       signal: AbortSignal.timeout(15_000),
     });
 

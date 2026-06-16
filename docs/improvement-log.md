@@ -34,6 +34,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Localized the no-cost Analyze mock results. `/[locale]/analyze` now sends the active locale to `/api/analyze`, and the deterministic fallback returns translated titles, place names, and reasons for Korean, English, Japanese, and Chinese.
 - Upgraded the Analyze loading and empty states for the root S6/S7 flow. Loading now shows a localized 4-step progress panel with an expected wait and cold-start hint, and zero-place worker responses now get a localized empty-results state.
 - Added no-cost local caching for Analyze results. Same-video, same-locale analysis responses are stored in the shared 1-hour local API cache, cache hits skip the network call, and the result source label changes to a localized previous-result state.
+- Added no-cost SNS platform detection to Analyze. YouTube links continue through the local/mock analysis flow, while Instagram links are detected, labeled, and held behind an approval-gated notice instead of being treated as invalid URLs or calling a provider.
 - Upgraded Persona route generation to a localized 3-step S8 flow: choose route theme, choose mood/detail, then confirm selected inputs before generating the no-cost local preview route.
 - Expanded Persona route generation to cover the root S8 Foodie Explorer, Content Creator, and History Buff directions with new no-cost local route templates and localized detail copy for Korean, English, Japanese, and Chinese.
 

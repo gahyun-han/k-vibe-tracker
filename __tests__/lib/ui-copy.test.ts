@@ -28,6 +28,11 @@ describe('ui copy', () => {
       expect(copy.analyze.emptyTitle.length).toBeGreaterThan(0);
       expect(copy.analyze.emptyBody.length).toBeGreaterThan(0);
       expect(copy.analyze.sourceCache.length).toBeGreaterThan(0);
+      expect(copy.analyze.unsupportedUrl.length).toBeGreaterThan(0);
+      expect(copy.analyze.youtubeSupported.length).toBeGreaterThan(0);
+      expect(copy.analyze.instagramPendingTitle.length).toBeGreaterThan(0);
+      expect(copy.analyze.instagramPendingBody.length).toBeGreaterThan(0);
+      expect(copy.analyze.openPost.length).toBeGreaterThan(0);
       expect(copy.analyze.viewOnMap.length).toBeGreaterThan(0);
       expect(copy.analyze.buildRoute.length).toBeGreaterThan(0);
 

@@ -65,6 +65,15 @@ describe('POST /api/analyze', () => {
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
+  it('detects Instagram URLs but keeps live analysis deferred', async () => {
+    const res = await POST(makeRequest({ sns_url: 'https://www.instagram.com/reel/CxExampleSpot/' }));
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toBe('INSTAGRAM_ANALYSIS_DEFERRED');
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
   it('rejects missing YouTube URLs', async () => {
     const res = await POST(makeRequest({}));
     const data = await res.json();

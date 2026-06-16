@@ -179,9 +179,15 @@ const UI_COPY = {
     analyze: {
       title: 'SNS Spot Analyzer',
       subtitle:
-        'Paste a YouTube URL to extract likely Seoul travel spots. Local mock analysis is used until AI is approved.',
-      inputPlaceholder: 'Paste a YouTube URL',
+        'Paste a YouTube or Instagram URL. YouTube uses local mock analysis until AI is approved; Instagram is detected but not analyzed yet.',
+      inputPlaceholder: 'Paste a YouTube or Instagram URL',
       invalidUrl: 'This does not look like a supported YouTube URL.',
+      unsupportedUrl: 'Paste a supported YouTube or Instagram URL.',
+      youtubeSupported: 'YouTube ready',
+      instagramPending: 'Instagram queued',
+      instagramPendingTitle: 'Instagram analysis is approval-gated',
+      instagramPendingBody:
+        'The app can now detect Instagram links, but live Instagram extraction is held until a no-cost or approved provider path is available.',
       thumbnailAlt: 'YouTube thumbnail',
       analyzeButton: 'Analyze Spots',
       loadingButton: 'Analyzing spots...',
@@ -206,6 +212,7 @@ const UI_COPY = {
       localModeBody:
         'The API returns deterministic mock spot extraction unless an approved AI worker URL is explicitly configured.',
       openVideo: 'Open video',
+      openPost: 'Open post',
       detectedAddress: 'Detected from YouTube analysis',
       routeTitle: 'SNS Analysis Route',
       routeSummary: 'Route drafted from {title}.',
@@ -456,7 +463,7 @@ const UI_COPY = {
         },
         {
           title: 'Analyze',
-          body: 'Paste a YouTube URL to test the SNS extraction flow. Local mock analysis keeps the page usable without AI costs.',
+          body: 'Paste a YouTube or Instagram URL to test platform detection. YouTube mock analysis stays usable without AI costs.',
           action: 'Try Analyze',
         },
         {
@@ -598,9 +605,15 @@ const UI_COPY = {
     analyze: {
       title: 'SNS 스팟 분석',
       subtitle:
-        'YouTube URL을 붙여 넣으면 서울 여행 후보 장소를 추출합니다. AI 승인 전까지는 로컬 mock 분석을 사용합니다.',
-      inputPlaceholder: 'YouTube URL 붙여넣기',
+        'YouTube 또는 Instagram URL을 붙여 넣으세요. YouTube는 AI 승인 전까지 로컬 mock 분석을 사용하고, Instagram은 감지만 지원합니다.',
+      inputPlaceholder: 'YouTube 또는 Instagram URL 붙여넣기',
       invalidUrl: '지원되는 YouTube URL 형식이 아니에요.',
+      unsupportedUrl: '지원되는 YouTube 또는 Instagram URL을 붙여 넣어주세요.',
+      youtubeSupported: 'YouTube 준비됨',
+      instagramPending: 'Instagram 대기 중',
+      instagramPendingTitle: 'Instagram 분석은 승인 대기 중입니다',
+      instagramPendingBody:
+        '앱이 Instagram 링크를 감지할 수는 있지만, 실제 Instagram 장소 추출은 무료 또는 승인된 provider 경로가 준비될 때까지 보류합니다.',
       thumbnailAlt: 'YouTube 썸네일',
       analyzeButton: '스팟 분석',
       loadingButton: '스팟 분석 중...',
@@ -625,6 +638,7 @@ const UI_COPY = {
       localModeBody:
         '승인된 AI worker URL을 명시적으로 설정하기 전까지 API는 결정적인 mock 스팟 추출 결과를 반환합니다.',
       openVideo: '영상 열기',
+      openPost: '게시물 열기',
       detectedAddress: 'YouTube 분석에서 감지됨',
       routeTitle: 'SNS 분석 루트',
       routeSummary: '{title}에서 만든 초안 루트입니다.',
@@ -875,7 +889,7 @@ const UI_COPY = {
         },
         {
           title: '분석',
-          body: 'YouTube URL을 붙여 SNS 장소 추출 흐름을 테스트합니다. AI 비용 없이 로컬 mock 분석으로 화면이 동작합니다.',
+          body: 'YouTube 또는 Instagram URL로 플랫폼 감지를 확인합니다. YouTube mock 분석은 AI 비용 없이 동작합니다.',
           action: '분석해보기',
         },
         {
@@ -1017,9 +1031,15 @@ const UI_COPY = {
     analyze: {
       title: 'SNSスポット分析',
       subtitle:
-        'YouTube URLを貼り付けると、ソウル旅行の候補スポットを抽出します。AI承認前はローカルmock分析を使います。',
-      inputPlaceholder: 'YouTube URLを貼り付け',
+        'YouTubeまたはInstagramのURLを貼り付けてください。YouTubeはAI承認前にローカルmock分析を使い、Instagramは検出のみ対応します。',
+      inputPlaceholder: 'YouTubeまたはInstagram URLを貼り付け',
       invalidUrl: '対応しているYouTube URLではないようです。',
+      unsupportedUrl: '対応しているYouTubeまたはInstagram URLを貼り付けてください。',
+      youtubeSupported: 'YouTube対応',
+      instagramPending: 'Instagram待機中',
+      instagramPendingTitle: 'Instagram分析は承認待ちです',
+      instagramPendingBody:
+        'Instagramリンクは検出できますが、実際のスポット抽出は無料または承認済みprovider経路が用意されるまで保留します。',
       thumbnailAlt: 'YouTubeサムネイル',
       analyzeButton: 'スポットを分析',
       loadingButton: 'スポット分析中...',
@@ -1044,6 +1064,7 @@ const UI_COPY = {
       localModeBody:
         '承認済みAI worker URLを明示的に設定するまでは、APIは決定的なmockスポット抽出を返します。',
       openVideo: '動画を開く',
+      openPost: '投稿を開く',
       detectedAddress: 'YouTube分析から検出',
       routeTitle: 'SNS分析ルート',
       routeSummary: '{title}から作成したルート案です。',
@@ -1294,7 +1315,7 @@ const UI_COPY = {
         },
         {
           title: '分析',
-          body: 'YouTube URLでSNSスポット抽出フローを試せます。AI費用なしでローカルmock分析が動作します。',
+          body: 'YouTubeまたはInstagram URLでプラットフォーム検出を試せます。YouTube mock分析はAI費用なしで動作します。',
           action: '分析を試す',
         },
         {
@@ -1436,9 +1457,15 @@ const UI_COPY = {
     analyze: {
       title: 'SNS地点分析',
       subtitle:
-        '粘贴YouTube URL，即可提取可能的首尔旅行地点。AI获批前会使用本地mock分析。',
-      inputPlaceholder: '粘贴YouTube URL',
+        '粘贴YouTube或Instagram URL。AI获批前YouTube会使用本地mock分析；Instagram目前只做链接识别。',
+      inputPlaceholder: '粘贴YouTube或Instagram URL',
       invalidUrl: '这看起来不是支持的YouTube URL。',
+      unsupportedUrl: '请粘贴支持的YouTube或Instagram URL。',
+      youtubeSupported: 'YouTube可用',
+      instagramPending: 'Instagram待接入',
+      instagramPendingTitle: 'Instagram分析仍在审批后接入',
+      instagramPendingBody:
+        '应用现在可以识别Instagram链接，但实际地点提取会等到有免费或已批准的provider路径后再启用。',
       thumbnailAlt: 'YouTube缩略图',
       analyzeButton: '分析地点',
       loadingButton: '正在分析地点...',
@@ -1463,6 +1490,7 @@ const UI_COPY = {
       localModeBody:
         '在明确配置已批准的AI worker URL之前，API会返回确定性的mock地点提取结果。',
       openVideo: '打开视频',
+      openPost: '打开帖子',
       detectedAddress: '从YouTube分析中检测',
       routeTitle: 'SNS分析路线',
       routeSummary: '根据{title}生成的路线草稿。',
@@ -1713,7 +1741,7 @@ const UI_COPY = {
         },
         {
           title: '分析',
-          body: '粘贴YouTube URL测试SNS地点提取流程。本地mock分析让页面无需AI费用也能运行。',
+          body: '粘贴YouTube或Instagram URL测试平台识别。YouTube mock分析无需AI费用也能运行。',
           action: '尝试分析',
         },
         {
