@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Analyze/Persona toast-feedback pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy/route/persona tests, and build.
 - Claude CLI was not used for the 2026-06-17 Place detail toast-feedback pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
 - Claude CLI was not used for the 2026-06-17 Route toast-feedback pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
 - Claude CLI was not used for the 2026-06-17 Home language-grid pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, and build.
@@ -70,6 +71,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost Analyze/Persona toast feedback that reuses existing local analysis route drafting, deterministic route generation, localStorage route save, Web Share/clipboard, and persona preference actions through the shared toast provider, with localized labels and no new external providers, maps, AI, GPS, or backend writes beyond existing localStorage state.
 - No-cost Place detail toast feedback that reuses existing local save/share/route actions in the shared in-browser toast provider, with localized labels and no new external providers, API calls, maps, AI, GPS, or backend writes beyond existing localStorage route/saved-place state.
 - No-cost Route toast feedback that reuses existing local route action messages in the shared in-browser toast provider, with localized dismiss labels and no external providers, API calls, maps, AI, GPS, or backend writes beyond the existing localStorage route state.
 - No-cost Home language grid that displays existing supported locale names and only persists the selected locale in localStorage/cookie, without external providers, APIs, maps, AI, or backend writes.

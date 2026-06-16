@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
+import { useToast } from '@/components/common/Toast';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import {
   ROUTE_THEME_OPTIONS,
@@ -43,6 +44,7 @@ export default function PersonaPage() {
   const locale = normalizeUiLocale(params.locale);
   const uiCopy = getUiCopy(locale);
   const copy = uiCopy.persona;
+  const { toast } = useToast();
   const [step, setStep] = useState<Step>(1);
   const [theme, setTheme] = useState<RouteTheme | ''>('');
   const [detail, setDetail] = useState('');
@@ -84,7 +86,8 @@ export default function PersonaPage() {
       }
 
       setPlan(data.plan);
-      setShareStatus(copy.personaSaved);
+      setShareStatus(copy.routeGenerated);
+      toast(copy.routeGenerated, 'success');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'ROUTE_GENERATION_FAILED');
     } finally {
@@ -103,19 +106,34 @@ export default function PersonaPage() {
 
   function saveAndEditRoute() {
     if (!plan) return;
-    window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
-    router.push(`/${locale}/route`);
+    try {
+      window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
+      toast(copy.routeSaved, 'success');
+      router.push(`/${locale}/route`);
+    } catch {
+      setShareStatus(copy.routeSaveUnavailable);
+      toast(copy.routeSaveUnavailable, 'error');
+    }
   }
 
   function savePersonaPreference(openHome: boolean) {
     if (!theme || !detail) return;
 
-    window.localStorage.setItem(
-      PERSONA_PREFERENCE_STORAGE_KEY,
-      serializePersonaPreference(createPersonaPreference(theme, detail)),
-    );
+    try {
+      window.localStorage.setItem(
+        PERSONA_PREFERENCE_STORAGE_KEY,
+        serializePersonaPreference(createPersonaPreference(theme, detail)),
+      );
+    } catch {
+      if (openHome) {
+        setShareStatus(copy.personaSaveUnavailable);
+        toast(copy.personaSaveUnavailable, 'error');
+      }
+      return;
+    }
 
     if (openHome) {
+      toast(copy.personaSaved, 'success');
       router.push(`/${locale}`);
     }
   }
@@ -127,13 +145,16 @@ export default function PersonaPage() {
       if (navigator.share) {
         await navigator.share({ title: plan.title, text: plan.shareText, url: window.location.href });
         setShareStatus(copy.shared);
+        toast(copy.shared, 'success');
         return;
       }
 
       await navigator.clipboard.writeText(plan.shareText);
       setShareStatus(copy.copied);
+      toast(copy.copied, 'success');
     } catch {
       setShareStatus(copy.shareUnavailable);
+      toast(copy.shareUnavailable, 'error');
     }
   }
 

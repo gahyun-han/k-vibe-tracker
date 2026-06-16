@@ -104,6 +104,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Analyze example cards now match the root S5 flow: selecting a YouTube example fills the input and starts the local/mock analysis immediately, while selecting the Instagram example fills the input and shows the approval-gated pending state without calling a provider.
 - The Analyze page sends the active URL locale to `/api/analyze`; local mock titles, place names, and reasons follow the same locale, and enabled AI worker requests receive the locale value for future provider-side localization.
 - Analyze result cards follow the root S7 flow: each candidate shows a localized confidence label plus an accessible progress bar, and selecting a coordinate-backed spot opens `/[locale]/map` with `detail=1`, focuses the analysis location, and opens the local place detail sheet with the analysis reason as context.
+- Analyze route drafting writes detected coordinate-backed spots to the shared route key, opens `/[locale]/route`, and raises localized success/failure toast feedback through the shared toast root.
 - Analyze stores successful same-video, same-locale results in the shared 1-hour local API cache. Cache hits skip the network call and show a localized previous-result source label.
 - Analyze loading uses a localized 4-step progress panel with an expected wait hint and cold-start note, matching the root S6 loading-state direction without calling any paid provider.
 - Analyze success includes a localized empty-results state when a worker returns no places, with a sample YouTube retry action from the root UI empty-state guidance, while local mock fallback still returns deterministic candidates.
@@ -134,6 +135,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Route generation accepts the active locale and uses `lib/ui-copy.ts` to localize mock plan titles, summaries, persona themes, and detail options.
 - Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview. The local generator now covers K-pop, drama, mood travel, Foodie Explorer, Content Creator, and History Buff persona themes.
+- Persona route generation, route-save-for-editing, share/copy, and feed-personalize actions raise localized shared toast feedback while keeping the existing inline status text for the route preview.
 - The same S8 selection can also personalize the Home feed locally through `k-vibe-persona-preference`, so persona choice affects discovery without a provider recommendation call.
 - Local persistence key: `k-vibe-current-route`
 - Local progress key: `k-vibe-route-progress`

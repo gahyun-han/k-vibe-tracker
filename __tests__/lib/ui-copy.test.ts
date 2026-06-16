@@ -44,6 +44,8 @@ describe('ui copy', () => {
       expect(copy.analyze.openPost.length).toBeGreaterThan(0);
       expect(copy.analyze.viewOnMap.length).toBeGreaterThan(0);
       expect(copy.analyze.buildRoute.length).toBeGreaterThan(0);
+      expect(copy.analyze.routeSaved.length).toBeGreaterThan(0);
+      expect(copy.analyze.routeSaveFailed.length).toBeGreaterThan(0);
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);
@@ -127,6 +129,10 @@ describe('ui copy', () => {
       expect(copy.persona.selectedTheme.length).toBeGreaterThan(0);
       expect(copy.persona.personalizeFeed.length).toBeGreaterThan(0);
       expect(copy.persona.personaSaved.length).toBeGreaterThan(0);
+      expect(copy.persona.personaSaveUnavailable.length).toBeGreaterThan(0);
+      expect(copy.persona.routeGenerated.length).toBeGreaterThan(0);
+      expect(copy.persona.routeSaved.length).toBeGreaterThan(0);
+      expect(copy.persona.routeSaveUnavailable.length).toBeGreaterThan(0);
       expect(copy.persona.routeTitle).toContain('{detail}');
       for (const theme of ROUTE_THEME_OPTIONS) {
         const themeCopy = copy.persona.themes[theme.id];

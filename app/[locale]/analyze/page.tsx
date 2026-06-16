@@ -15,6 +15,7 @@ import {
   Youtube,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
+import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
 import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/youtube';
 import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/analysis';
@@ -39,6 +40,7 @@ export default function AnalyzePage() {
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale).analyze;
+  const { toast } = useToast();
   const [url, setUrl] = useState('');
   const [status, setStatus] = useState<AnalysisStatus>('idle');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -167,8 +169,13 @@ export default function AnalyzePage() {
       stops,
     });
 
-    window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
-    router.push(`/${locale}/route`);
+    try {
+      window.localStorage.setItem(CURRENT_ROUTE_STORAGE_KEY, JSON.stringify(plan));
+      toast(copy.routeSaved, 'success');
+      router.push(`/${locale}/route`);
+    } catch {
+      toast(copy.routeSaveFailed, 'error');
+    }
   }
 
   function viewFirstResultOnMap() {
