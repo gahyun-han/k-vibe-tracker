@@ -324,7 +324,7 @@ ai-worker/      # FastAPI prototype
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Analyze and Radar screen copy now comes from shared locale resources for Korean, English, Japanese, and Chinese.
   - Persona and Route screen copy now comes from shared locale resources, and route generation localizes mock plan titles/summaries when a locale is provided.
-  - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions.
+  - The in-app feature guide now includes per-feature shortcut actions instead of only static descriptions, and its sheet scrolls safely on small mobile screens with longer localized copy.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Home entry now includes a TourAPI-backed horizontal K-spot feed with category filters, heart save controls, and map handoff links.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.

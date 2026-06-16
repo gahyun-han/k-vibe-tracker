@@ -55,7 +55,7 @@ export function TutorialButton() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="tutorial-title"
-            className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md rounded-t-2xl border border-white/10 bg-[#1A1A2E] pb-[env(safe-area-inset-bottom)] shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[calc(100dvh-1rem)] max-w-md overflow-y-auto rounded-t-2xl border border-white/10 bg-[#1A1A2E] pb-[env(safe-area-inset-bottom)] shadow-2xl"
           >
             <div className="flex justify-center pb-1 pt-3">
               <div className="h-1 w-10 rounded-full bg-white/20" />
