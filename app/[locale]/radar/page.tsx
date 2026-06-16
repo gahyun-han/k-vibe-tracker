@@ -9,7 +9,8 @@ import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
-import { getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
+import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 
@@ -30,7 +31,7 @@ interface Coordinates {
 interface FacilitiesApiResponse {
   facilities: Facility[];
   cached: boolean;
-  source: 'mock';
+  source: 'mock' | 'cache';
   cache_key: string;
 }
 
@@ -39,12 +40,13 @@ export default function RadarPage() {
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale).radar;
   const locationCopy = getLocationStatusCopy(locale);
+  const sourceCopy = getDataSourceCopy(locale);
   const [radius, setRadius] = useState(500);
   const [filter, setFilter] = useState<FacilityFilter>('all');
   const [coords, setCoords] = useState<Coordinates>(SEOUL_CENTER);
   const [locationMode, setLocationMode] = useState<'seoul' | 'current' | 'cached'>('seoul');
   const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [source, setSource] = useState<'mock'>('mock');
+  const [source, setSource] = useState<'mock' | 'cache'>('mock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
@@ -104,12 +106,20 @@ export default function RadarPage() {
       setLoading(true);
       setError('');
 
-      const params = new URLSearchParams({
+      const query = {
         lat: String(coords.lat),
         lng: String(coords.lng),
         radius: String(radius),
         type: filter,
-      });
+      };
+      const params = new URLSearchParams(query);
+      const localCacheKey = buildLocalApiCacheKey('facilities', query);
+
+      const cachedData = readLocalApiCache<FacilitiesApiResponse>(window.localStorage, localCacheKey);
+      if (cachedData?.facilities?.length) {
+        setFacilities(cachedData.facilities);
+        setSource('cache');
+      }
 
       try {
         const res = await fetch(`/api/facilities?${params.toString()}`, {
@@ -121,10 +131,22 @@ export default function RadarPage() {
           throw new Error(data.error ?? 'FACILITIES_REQUEST_FAILED');
         }
 
-        setFacilities(data.facilities ?? []);
-        setSource(data.source ?? 'mock');
+        const nextData: FacilitiesApiResponse = {
+          facilities: data.facilities ?? [],
+          cached: Boolean(data.cached),
+          source: data.source ?? 'mock',
+          cache_key: data.cache_key ?? localCacheKey,
+        };
+        setFacilities(nextData.facilities);
+        setSource(nextData.source);
+        writeLocalApiCache(window.localStorage, localCacheKey, nextData);
       } catch (e) {
         if ((e as Error).name === 'AbortError') return;
+        if (cachedData?.facilities?.length) {
+          setFacilities(cachedData.facilities);
+          setSource('cache');
+          return;
+        }
         setError(e instanceof Error ? e.message : 'FACILITIES_REQUEST_FAILED');
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -161,7 +183,7 @@ export default function RadarPage() {
                 {' · '}
                 {copy.found.replace('{count}', String(facilities.length))}
                 {' · '}
-                {source === 'mock' ? copy.sourceMock : source}
+                {source === 'mock' ? sourceCopy.mock : sourceCopy.cache}
               </p>
             </div>
             <button

@@ -8,6 +8,7 @@ import { CategoryFilter, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -24,7 +25,7 @@ import {
   type SavedPlace,
 } from '@/lib/saved-places';
 import type { NormalizedPlace, PlaceCategory } from '@/lib/tourapi';
-import { getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const SEARCH_RADIUS_M = 2_000;
@@ -125,6 +126,7 @@ export default function MapPage() {
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
   const locationCopy = getLocationStatusCopy(locale);
+  const sourceCopy = getDataSourceCopy(locale);
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
@@ -311,13 +313,21 @@ export default function MapPage() {
       setLoading(true);
       setError('');
 
-      const params = new URLSearchParams({
+      const query = {
         lat: String(coords.lat),
         lng: String(coords.lng),
         radius: String(SEARCH_RADIUS_M),
         category: 'all',
         locale,
-      });
+      };
+      const params = new URLSearchParams(query);
+      const localCacheKey = buildLocalApiCacheKey('places', query);
+
+      const cachedData = readLocalApiCache<PlacesApiResponse>(window.localStorage, localCacheKey);
+      if (cachedData?.places?.length) {
+        setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending)));
+        setSource('cache');
+      }
 
       try {
         const res = await fetch(`/api/places?${params.toString()}`, {
@@ -329,10 +339,22 @@ export default function MapPage() {
           throw new Error(data.error ?? 'PLACES_REQUEST_FAILED');
         }
 
-        setPlaces((data.places ?? []).map((place) => toPlace(place, copy.map.addressPending)));
-        setSource(data.source ?? 'mock');
+        const nextData: PlacesApiResponse = {
+          places: data.places ?? [],
+          cached: Boolean(data.cached),
+          source: data.source ?? 'mock',
+          cache_key: data.cache_key ?? localCacheKey,
+        };
+        setPlaces(nextData.places.map((place) => toPlace(place, copy.map.addressPending)));
+        setSource(nextData.source);
+        writeLocalApiCache(window.localStorage, localCacheKey, nextData);
       } catch (e) {
         if ((e as Error).name === 'AbortError') return;
+        if (cachedData?.places?.length) {
+          setPlaces(cachedData.places.map((place) => toPlace(place, copy.map.addressPending)));
+          setSource('cache');
+          return;
+        }
         setError(e instanceof Error ? e.message : 'PLACES_REQUEST_FAILED');
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -383,7 +405,7 @@ export default function MapPage() {
 
           <div className="absolute right-4 top-4 rounded-xl border border-white/10 bg-black/35 px-3 py-2 text-right backdrop-blur">
             <p className="text-xs font-semibold text-white">
-              {source === 'tourapi' ? 'TourAPI' : source === 'cache' ? 'Cache' : 'Mock'}
+              {source === 'tourapi' ? sourceCopy.tourApi : source === 'cache' ? sourceCopy.cache : sourceCopy.mock}
             </p>
             <p className="text-[10px] text-white/45">{SEARCH_RADIUS_M / 1000}{copy.map.radiusLabel}</p>
           </div>

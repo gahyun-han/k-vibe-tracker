@@ -13,6 +13,8 @@ This log tracks concrete product and implementation improvements made while alig
 - Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows hardcoded in English.
 - Added a production-only PWA runtime that updates the document `lang` attribute from the active locale and registers a static service worker for app icons, manifest, static chunks, and a basic navigation fallback.
 - Added a shared 30-minute last-known-location cache in `localStorage`, then connected Map and Radar so they can show the previous GPS position immediately while fresh geolocation is being requested or when GPS fails.
+- Added a shared 1-hour local API response cache for Map places and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.
+- Localized Map and Radar data-source labels for TourAPI, mock, and cache states.
 
 ## 2026-06-16
 
@@ -51,5 +53,5 @@ This log tracks concrete product and implementation improvements made while alig
 - Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
 - AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.
 - Automatic background GPS polling, push notifications, and paid/provider TTS for the Docent flow remain gated. The current arrival check is user-clicked and uses only browser geolocation plus local distance calculation.
-- IndexedDB POI data packs, offline map tiles, and offline synced route/place history remain larger-scope work beyond the current static PWA shell cache and 30-minute last-known-location cache.
+- IndexedDB POI data packs, offline map tiles, and offline synced route/place history remain larger-scope work beyond the current static PWA shell cache, 30-minute last-known-location cache, and 1-hour API response cache.
 - A richer Home Feed, Supabase sync for saved places/routes, and production-grade TourAPI/Redis caching are still larger-scope follow-ups from the root wireframes.

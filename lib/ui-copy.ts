@@ -36,6 +36,12 @@ interface LocationStatusCopy {
   lastKnownLocation: string;
 }
 
+interface DataSourceCopy {
+  tourApi: string;
+  cache: string;
+  mock: string;
+}
+
 export const LANGUAGE_NAMES: Record<UiLocale, string> = {
   en: 'English',
   ko: '한국어',
@@ -1579,6 +1585,29 @@ const LOCATION_STATUS_COPY: Record<UiLocale, LocationStatusCopy> = {
   },
 };
 
+const DATA_SOURCE_COPY: Record<UiLocale, DataSourceCopy> = {
+  en: {
+    tourApi: 'TourAPI',
+    cache: 'Cache',
+    mock: 'Mock',
+  },
+  ko: {
+    tourApi: 'TourAPI',
+    cache: '캐시',
+    mock: 'Mock',
+  },
+  ja: {
+    tourApi: 'TourAPI',
+    cache: 'キャッシュ',
+    mock: 'Mock',
+  },
+  zh: {
+    tourApi: 'TourAPI',
+    cache: '缓存',
+    mock: 'Mock',
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
@@ -1598,4 +1627,8 @@ export function getDocentProximityCopy(locale: string | string[] | undefined) {
 
 export function getLocationStatusCopy(locale: string | string[] | undefined) {
   return LOCATION_STATUS_COPY[normalizeUiLocale(locale)];
+}
+
+export function getDataSourceCopy(locale: string | string[] | undefined) {
+  return DATA_SOURCE_COPY[normalizeUiLocale(locale)];
 }

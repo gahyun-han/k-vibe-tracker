@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getDocentProximityCopy, getLocationStatusCopy, getProfileSettingsCopy, getUiCopy, SUPPORTED_LOCALES } from '@/lib/ui-copy';
+import { getDataSourceCopy, getDocentProximityCopy, getLocationStatusCopy, getProfileSettingsCopy, getUiCopy, SUPPORTED_LOCALES } from '@/lib/ui-copy';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
@@ -65,6 +65,11 @@ describe('ui copy', () => {
 
       const locationStatus = getLocationStatusCopy(locale);
       expect(locationStatus.lastKnownLocation.length).toBeGreaterThan(0);
+
+      const dataSource = getDataSourceCopy(locale);
+      expect(dataSource.cache.length).toBeGreaterThan(0);
+      expect(dataSource.mock.length).toBeGreaterThan(0);
+      expect(dataSource.tourApi).toBe('TourAPI');
     }
   });
 });
