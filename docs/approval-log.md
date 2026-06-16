@@ -27,4 +27,5 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Localhost browser verification.
 - No-cost local Route share URLs that encode route state in the same-origin `route=` query parameter and restore it into `localStorage`.
 - No-cost local Route progress tracking that stores completed stop IDs in `localStorage` and does not use GPS polling, Kakao Mobility, or a backend route session.
+- No-cost Profile My Routes card that reads local route/progress state and does not use Supabase, GPS, Kakao Mobility, or backend route sessions.
 - Commits and pushes to the already writable `hslee-origin/hslee` branch.

@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Bell, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, Route, Settings2 } from 'lucide-react';
+import { Bell, CheckCircle2, Clock, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, PlayCircle, Route, Settings2 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import LoginModal from '@/components/auth/LoginModal';
-import { CURRENT_ROUTE_STORAGE_KEY, type RoutePlan } from '@/lib/routes';
+import {
+  CURRENT_ROUTE_STORAGE_KEY,
+  formatDuration,
+  parseRouteProgressState,
+  ROUTE_PROGRESS_STORAGE_KEY,
+  type RoutePlan,
+} from '@/lib/routes';
 import {
   parseSavedPlaces,
   SAVED_PLACES_STORAGE_KEY,
@@ -26,6 +32,7 @@ export default function ProfilePage() {
   const [showLogin, setShowLogin] = useState(false);
   const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
   const [currentRoute, setCurrentRoute] = useState<RoutePlan | null>(null);
+  const [routeCompletedStopIds, setRouteCompletedStopIds] = useState<string[]>([]);
   const supabaseConfigured = hasSupabaseEnv();
 
   useEffect(() => {
@@ -34,10 +41,19 @@ export default function ProfilePage() {
     try {
       const route = JSON.parse(window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY) ?? 'null') as Partial<RoutePlan> | null;
       if (route?.title && Array.isArray(route.stops)) {
-        setCurrentRoute(route as RoutePlan);
+        const plan = route as RoutePlan;
+        setCurrentRoute(plan);
+        setRouteCompletedStopIds(
+          parseRouteProgressState(
+            window.localStorage.getItem(ROUTE_PROGRESS_STORAGE_KEY),
+            plan.id,
+            plan.stops.map((stop) => stop.id),
+          ).completedStopIds,
+        );
       }
     } catch {
       setCurrentRoute(null);
+      setRouteCompletedStopIds([]);
     }
   }, []);
 
@@ -95,6 +111,10 @@ export default function ProfilePage() {
   const displayEmail = user?.email ?? copy.profile.guestSubtitle;
   const avatarInitial = (user?.user_metadata?.full_name?.[0] ?? user?.email?.[0] ?? 'G').toUpperCase();
   const routeCount = currentRoute ? 1 : 0;
+  const routeTotalStops = currentRoute?.stops.length ?? 0;
+  const routeCompletedCount = currentRoute ? routeCompletedStopIds.length : 0;
+  const routeProgressPercent = routeTotalStops > 0 ? Math.round((routeCompletedCount / routeTotalStops) * 100) : 0;
+  const nextRouteStop = currentRoute?.stops.find((stop) => !routeCompletedStopIds.includes(stop.id));
   const settingItems = [
     { icon: Languages, ...settingsCopy.items.language },
     { icon: Bell, ...settingsCopy.items.notifications },
@@ -192,23 +212,78 @@ export default function ProfilePage() {
             </p>
           </div>
           {currentRoute ? (
-            <div className="p-4">
-              <p className="text-sm font-bold text-white">{currentRoute.title}</p>
-              <p className="mt-1 text-xs leading-5 text-[#8B8BA8]">
-                {copy.profile.routeStops.replace('{count}', String(currentRoute.stops.length))}
-              </p>
-              <button
-                type="button"
-                onClick={() => router.push(`/${locale}/route`)}
-                className="mt-3 w-full rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white"
-              >
-                {copy.profile.editRoute}
-              </button>
+            <div className="space-y-3 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-white">{currentRoute.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-[#8B8BA8]">
+                    {copy.profile.routeStops.replace('{count}', String(currentRoute.stops.length))}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full bg-[#FF3A5C]/10 px-2.5 py-1 text-[11px] font-semibold text-[#FF3A5C]">
+                  {routeProgressPercent}%
+                </span>
+              </div>
+
+              <div>
+                <div className="mb-1 flex items-center justify-between text-[11px] text-white/45">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 size={12} />
+                    {copy.profile.routeProgress
+                      .replace('{done}', String(routeCompletedCount))
+                      .replace('{total}', String(routeTotalStops))}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={12} />
+                    {formatDuration(currentRoute.totalMinutes)}
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full bg-emerald-400 transition-all"
+                    style={{ width: `${routeProgressPercent}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/35">
+                  {nextRouteStop ? copy.profile.nextStop : copy.profile.routeComplete}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-white">
+                  {nextRouteStop?.name ?? currentRoute.stops[currentRoute.stops.length - 1]?.name}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => router.push(`/${locale}/route`)}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white"
+                >
+                  <PlayCircle size={15} />
+                  {copy.profile.continueRoute}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push(`/${locale}/route`)}
+                  className="rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-semibold text-white/75"
+                >
+                  {copy.profile.editRoute}
+                </button>
+              </div>
             </div>
           ) : (
             <div className="p-6 text-center">
               <p className="text-sm text-[#8B8BA8]">{copy.profile.noSavedRoutes}</p>
               <p className="mt-1 text-xs text-[#8B8BA8]">{copy.profile.noSavedRoutesHint}</p>
+              <button
+                type="button"
+                onClick={() => router.push(`/${locale}/persona`)}
+                className="mt-4 rounded-xl bg-[#FF3A5C] px-4 py-2.5 text-sm font-semibold text-white"
+              >
+                {copy.profile.createFirstRoute}
+              </button>
             </div>
           )}
         </section>
