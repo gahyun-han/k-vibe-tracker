@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Place } from '@/components/map/PlaceDetailModal';
+import { buildMapPinAccessibleLabel } from '@/lib/map-pin-accessibility';
 
 interface Coordinates {
   lat: number;
@@ -153,10 +154,15 @@ export function KakaoMapView({
         {visiblePins.map((place) => {
           const selected = selectedPlaceId === place.id;
           const categoryLabel = categoryLabelFor(place.category, categoryLabels);
+          const distanceLabel = formatDistance(place.distanceM);
+          const pinLabel = buildMapPinAccessibleLabel(place.name, categoryLabel, distanceLabel);
           return (
             <button
               key={place.id}
+              type="button"
               onClick={() => onSelectPlace(place)}
+              aria-label={pinLabel}
+              title={pinLabel}
               className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all ${
                 selected
                   ? 'border-[#FF3A5C] bg-[#FF3A5C] text-white'
@@ -165,7 +171,7 @@ export function KakaoMapView({
               style={pinPosition(place, center)}
             >
               <span className="mr-1">{categoryLabel}</span>
-              {formatDistance(place.distanceM)}
+              {distanceLabel}
             </button>
           );
         })}

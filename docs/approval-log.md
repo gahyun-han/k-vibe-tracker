@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 main map pin accessibility pass because it may consume paid quota and the local UI/helper change could be verified with focused component tests, type-check, and build.
 - Claude CLI was not used for the 2026-06-17 Tutorial focus-trap pass because it may consume paid quota and the local accessibility-only change could be verified with type-check and build.
 - Claude CLI was not used for the 2026-06-17 language-switcher query-preservation pass because it may consume paid quota and the local routing helper change could be verified with focused locale-preference tests and type-check.
 - Claude CLI was not used for the 2026-06-17 Analyze localized mock/estimated-location pass because it may consume paid quota and the local copy/UI/API fallback change could be verified with type-check and focused analyze/copy/API tests.
@@ -92,6 +93,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost main map pin accessibility labels that change only local button labels/title text for already-rendered pins, without external providers, API calls, maps SDK changes, AI, GPS, backend writes, storage, or paid services.
 - No-cost Tutorial focus-trap accessibility pass that changes only local dialog keyboard behavior and ARIA attributes, without external providers, API calls, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost language-switcher query preservation that changes only in-app route construction and keeps existing query parameters during locale switches, without external providers, API calls, maps, AI, GPS, backend writes, or storage changes beyond existing locale persistence.
 - No-cost Home feed empty-state recovery that resets local filters or opens the app map only after a user click, without adding external providers, AI, GPS, backend writes, or automatic API calls beyond the existing feed request.
