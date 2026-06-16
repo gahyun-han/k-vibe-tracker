@@ -67,6 +67,7 @@ export default function BottomNav({ active }: { active: TabId }) {
       >
         {TABS.map((tab) => {
           const isActive = active === tab.id;
+          const isPrimary = tab.id === 'analyze';
           const Icon = tab.icon;
           const label = copy.nav[tab.id];
           return (
@@ -75,16 +76,32 @@ export default function BottomNav({ active }: { active: TabId }) {
               type="button"
               onClick={() => router.push(`/${locale}${tab.path}`)}
               className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 transition-colors ${
-                isActive ? 'text-[#FF3A5C]' : 'text-[#8B8BA8] hover:text-white'
-              }`}
+                isPrimary ? '-mt-5' : ''
+              } ${isActive ? 'text-[#FF3A5C]' : 'text-[#8B8BA8] hover:text-white'}`}
               aria-label={label}
               aria-current={isActive ? 'page' : undefined}
             >
-              <Icon size={20} />
-              <span className={`text-[9px] font-semibold tracking-wide ${isActive ? 'text-[#FF3A5C]' : ''}`}>
+              <span
+                className={`flex shrink-0 items-center justify-center transition-colors ${
+                  isPrimary
+                    ? `h-12 w-12 rounded-full border shadow-lg shadow-[#FF3A5C]/25 ${
+                        isActive
+                          ? 'border-[#FF8BA0] bg-[#FF3A5C] text-white'
+                          : 'border-[#FF3A5C]/40 bg-[#FF3A5C] text-white hover:bg-[#e02e4e]'
+                      }`
+                    : 'h-5 w-5'
+                }`}
+              >
+                <Icon size={isPrimary ? 22 : 20} />
+              </span>
+              <span
+                className={`text-[9px] font-semibold tracking-wide ${
+                  isPrimary ? 'mt-0.5 text-white' : isActive ? 'text-[#FF3A5C]' : ''
+                }`}
+              >
                 {label}
               </span>
-              {isActive && (
+              {isActive && !isPrimary && (
                 <span className="absolute left-1/2 top-0 h-0.5 w-8 -translate-x-1/2 rounded-b-full bg-[#FF3A5C]" />
               )}
             </button>

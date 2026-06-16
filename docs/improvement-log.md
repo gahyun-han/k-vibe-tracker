@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added root S2/S3-style central Analyze CTA treatment to the mobile bottom navigation. The Analyze tab now stands out as the primary SNS spot action while the desktop left rail keeps the existing work-focused navigation.
 - Added root S6/S7 Analyze cache/error toast feedback. Cache hits now announce the loaded previous result and failed analysis requests raise the localized error toast, while keeping the existing local cache, inline retry state, and no-provider fallback.
 - Re-verified the user's Kakao domain setup in Chrome. The direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no domain/auth patterns, and `/ko/map` rendered in live mode with 26 Kakao tiles, 16 visible app pins, and no console warnings/errors.
 - Added root PWA/offline status coverage to the Home entry. The landing/home screen now mounts the shared localized offline banner and install prompt, matching the app screens without adding provider calls.

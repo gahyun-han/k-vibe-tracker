@@ -124,7 +124,7 @@ Supported locales are `ko`, `en`, `ja`, and `zh`.
 The language switcher and home language buttons persist the active locale in `localStorage` and the `NEXT_LOCALE` cookie so reloads and future server-side locale reads can keep the same language choice.
 Map categories, live Kakao pin labels, fallback map pins, and place detail category badges use the active locale's copy instead of hardcoded English category text.
 
-On mobile, the shared app shell keeps the bottom tab bar from the root wireframes. On desktop-width screens, the same navigation switches to a left rail so map and route workflows get more usable horizontal space.
+On mobile, the shared app shell keeps the bottom tab bar from the root wireframes and emphasizes Analyze as the central SNS spot CTA. On desktop-width screens, the same navigation switches to a left rail so map and route workflows get more usable horizontal space.
 
 The app includes a production-only PWA runtime: `components/common/PwaRuntime.tsx` updates the document language from the active locale, and `public/sw.js` provides a static app-shell cache for manifest/icons/static chunks plus basic same-origin navigation fallback. `app/[locale]/error.tsx` provides a localized segment-level error recovery screen, while `components/common/NetworkStatusBanner.tsx` shows a localized offline-mode banner when the browser reports a network disconnect. `components/common/PwaInstallPrompt.tsx` shows a localized home-screen install prompt only when the browser reports install eligibility.
 
@@ -299,7 +299,7 @@ ai-worker/      # FastAPI prototype
   - App screens now show a localized offline-mode banner when the browser reports a network disconnect, matching the root network-state wireframe.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
   - Landing, bottom navigation, map filters, language switching, and the new in-app feature guide use readable locale-aware copy. The home entry now shows language names directly in a root S1-style selector instead of relying on locale codes alone.
-  - Shared app navigation now keeps the mobile bottom tabs and switches to a desktop left rail at wider breakpoints, matching the root UI design document.
+  - Shared app navigation now keeps the mobile bottom tabs, highlights the Analyze tab as a central CTA, and switches to a desktop left rail at wider breakpoints, matching the root UI design document.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - PWA runtime now updates the document `lang` attribute per locale and registers a production-only static service worker without affecting local development caches.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.

@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 central Analyze CTA navigation pass because it may consume paid quota and the local UI-only change could be verified with type-check, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Analyze cache/error toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static analyze-page checks.
 - Claude CLI was not used for the 2026-06-17 Home PWA/offline prompt coverage pass because it may consume paid quota and the local UI-only change could be verified with type-check, build, and static home-page checks.
 - Claude CLI was not used for the 2026-06-17 localized route error recovery pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static route checks.
@@ -82,6 +83,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Push access to `gahyun-han/k-vibe-tracker`: needs repository permission from the owner if that upstream should receive changes.
 - Chrome automation using the user's logged-in browser state: requires explicit approval because it can access private session context.
 - In-app browser verification for the 2026-06-17 Persona feed-personalization pass was attempted, but the Browser tab crashed at `about:blank` before reaching localhost and Browser Use blocked further interaction with the crash data URL. In-app browser verification for the 2026-06-17 Route map CTA pass also failed at `about:blank`; Chrome localhost verification was used instead. No paid provider or map-detail click was triggered by the Route map CTA browser check.
+- In-app browser verification for the 2026-06-17 central Analyze CTA navigation pass also failed at `about:blank`; Chrome localhost verification was used instead. Chrome loaded `/ko/analyze` with mobile emulation, confirmed the central Analyze CTA rendering and no console warnings/errors, and did not trigger `/api/analyze`, Kakao Maps, TourAPI, AI workers, or paid providers.
 
 ## Safe Without Additional Approval
 
@@ -89,6 +91,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Localhost browser verification.
 - No-cost Home feed empty-state recovery that resets local filters or opens the app map only after a user click, without adding external providers, AI, GPS, backend writes, or automatic API calls beyond the existing feed request.
 - No-cost Home feed save toast feedback that reuses localStorage saved-place state and the shared in-browser toast provider, without Supabase sync, backend writes, maps providers, AI, or additional API calls.
+- No-cost central Analyze navigation CTA that changes only the mobile bottom-nav presentation for the existing `/[locale]/analyze` route, without external providers, API calls, maps, AI, GPS, backend writes, or storage changes.
 - No-cost Analyze cache/error toast feedback that reports existing local cache hits and existing analysis failures through the shared in-browser toast provider without AI workers, provider calls, backend writes, maps, GPS, or additional API calls.
 - No-cost Route summary/accessibility pass that renders the existing generated plan summary and localizes icon move-control labels/tooltips without adding external providers, API calls, maps, AI, GPS, or backend writes.
 - No-cost Analyze/Persona toast feedback that reuses existing local analysis route drafting, deterministic route generation, localStorage route save, Web Share/clipboard, and persona preference actions through the shared toast provider, with localized labels and no new external providers, maps, AI, GPS, or backend writes beyond existing localStorage state.

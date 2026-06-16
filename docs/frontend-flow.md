@@ -13,7 +13,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 ## Navigation
 
-- Responsive app navigation lives in `components/layout/BottomNav.tsx`: it renders the bottom tab bar on mobile and a left navigation rail on desktop-width screens.
+- Responsive app navigation lives in `components/layout/BottomNav.tsx`: it renders the bottom tab bar on mobile with Analyze emphasized as the central SNS spot CTA, and a left navigation rail on desktop-width screens.
 - Top navigation lives in `components/layout/TopBar.tsx` and exposes the language switcher plus account entry.
 - `components/common/LanguageSwitcher.tsx` and the home language buttons persist the active locale to `localStorage` under `k-vibe-preferred-locale` and to the `NEXT_LOCALE` cookie for reload and future server-side locale continuity. Language controls expose localized labels plus selected/open state to assistive tech.
 - The feature guide button lives in `components/common/TutorialButton.tsx` and is mounted by the home page plus `components/layout/AppLayout.tsx` on the main app screens. Each guide step includes a localized shortcut into the related workflow, the trigger exposes open state, focus moves to the close action while open and returns to the trigger on close, and the sheet uses a viewport-bounded scroll area so longer localized copy remains reachable on mobile.
