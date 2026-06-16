@@ -2,10 +2,11 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, LocateFixed, Map, MapPin, Mic2, Navigation, Plus, Share2, X } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
+import { haversineKm } from '@/lib/haversine';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import {
   buildGoogleMapsDirectionsUrl,
@@ -35,6 +36,12 @@ interface RoutePlanMeta {
   summary: string;
 }
 
+interface RouteLocationCheck {
+  loading: boolean;
+  message: string;
+  tone: 'neutral' | 'success' | 'warning' | 'error';
+}
+
 export default function RoutePage() {
   const router = useRouter();
   const params = useParams();
@@ -57,6 +64,11 @@ export default function RoutePage() {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [completedStopIds, setCompletedStopIds] = useState<string[]>([]);
+  const [locationCheck, setLocationCheck] = useState<RouteLocationCheck>({
+    loading: false,
+    message: '',
+    tone: 'neutral',
+  });
   const [status, setStatus] = useState('');
   const extraStop = useMemo<RouteStop>(() => ({
     id: copy.extraStop.id,
@@ -177,6 +189,14 @@ export default function RoutePage() {
   const directionsUrl = useMemo(() => buildGoogleMapsDirectionsUrl(spots), [spots]);
   const routeMapUrl = useMemo(() => buildRouteMapUrl(spots, planTitle, locale), [locale, planTitle, spots]);
   const routeLegs = useMemo(() => calculateRouteLegs(spots), [spots]);
+  const nextGuidanceStop = useMemo(
+    () => spots.find((spot) => !completedStopIds.includes(spot.id)),
+    [completedStopIds, spots],
+  );
+
+  useEffect(() => {
+    setLocationCheck({ loading: false, message: '', tone: 'neutral' });
+  }, [nextGuidanceStop?.id]);
 
   const onDragStart = useCallback((id: string) => setDraggingId(id), []);
   const onDragOver = useCallback((e: React.DragEvent, id: string) => {
@@ -303,19 +323,61 @@ export default function RoutePage() {
     setStatus(copy.directionsOpened);
   }
 
+  function checkNextStopDistance() {
+    if (!nextGuidanceStop) {
+      setLocationCheck({ loading: false, message: copy.routeCompleted, tone: 'success' });
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      setLocationCheck({ loading: false, message: copy.locationUnsupported, tone: 'error' });
+      return;
+    }
+
+    setLocationCheck({ loading: true, message: copy.checkingLocation, tone: 'neutral' });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const distanceM = Math.round(
+          haversineKm(
+            position.coords.latitude,
+            position.coords.longitude,
+            nextGuidanceStop.lat,
+            nextGuidanceStop.lng,
+          ) * 1000,
+        );
+        const distance = formatLegDistance(distanceM);
+        const template = distanceM <= 100 ? copy.nextStopNear : copy.nextStopFar;
+        setLocationCheck({
+          loading: false,
+          message: template
+            .replace('{distance}', distance)
+            .replace('{name}', nextGuidanceStop.name),
+          tone: distanceM <= 100 ? 'success' : 'neutral',
+        });
+      },
+      (error) => {
+        setLocationCheck({
+          loading: false,
+          message: error.code === error.PERMISSION_DENIED ? copy.locationPermissionDenied : copy.locationCheckError,
+          tone: 'error',
+        });
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 300000 },
+    );
+  }
+
   function startGuidance() {
     if (spots.length === 0) {
       setStatus(copy.addStopBeforeGuidance);
       return;
     }
 
-    const nextSpot = spots.find((spot) => !completedStopIds.includes(spot.id));
-    if (!nextSpot) {
+    if (!nextGuidanceStop) {
       setStatus(copy.routeCompleted);
       return;
     }
 
-    openDocent(nextSpot);
+    openDocent(nextGuidanceStop);
   }
 
   function formatLegDistance(meters: number) {
@@ -353,6 +415,47 @@ export default function RoutePage() {
           openStopMapLabel={copy.openStopMap}
           onOpenStopMap={openStopMap}
         />
+
+        {spots.length > 0 && (
+          <section className="mx-4 mb-4 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-[#FF8BA0]">
+                <LocateFixed size={18} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-white">{copy.locationCardTitle}</p>
+                <p className="mt-1 text-xs leading-5 text-white/45">
+                  {nextGuidanceStop
+                    ? copy.locationCardBody.replace('{name}', nextGuidanceStop.name)
+                    : copy.routeCompleted}
+                </p>
+                {locationCheck.message && (
+                  <p
+                    className={`mt-2 text-xs font-semibold ${
+                      locationCheck.tone === 'success'
+                        ? 'text-emerald-300'
+                        : locationCheck.tone === 'error'
+                          ? 'text-red-300'
+                          : locationCheck.tone === 'warning'
+                            ? 'text-amber-200'
+                            : 'text-white/60'
+                    }`}
+                  >
+                    {locationCheck.message}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={checkNextStopDistance}
+                disabled={locationCheck.loading}
+                className="shrink-0 rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white/75 transition-colors hover:bg-white/20 disabled:cursor-wait disabled:opacity-50"
+              >
+                {locationCheck.loading ? copy.checkingLocation : copy.checkCurrentLocation}
+              </button>
+            </div>
+          </section>
+        )}
 
         {spots.length > 0 && (
           <div className="sticky bottom-20 z-20 mb-4 px-4 lg:bottom-4">

@@ -129,6 +129,10 @@ describe('ui copy', () => {
 
       expect(copy.profile.openRouteDetail).toContain('{name}');
       expect(copy.profile.openRouteDetailCta.length).toBeGreaterThan(0);
+      expect(copy.route.locationCardBody).toContain('{name}');
+      expect(copy.route.nextStopNear).toContain('{distance}');
+      expect(copy.route.nextStopFar).toContain('{name}');
+      expect(copy.route.locationPermissionDenied.length).toBeGreaterThan(0);
 
       const profileSettings = getProfileSettingsCopy(locale);
       expect(profileSettings.title.length).toBeGreaterThan(0);

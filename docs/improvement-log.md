@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added a no-cost S9 Route current-distance panel. It checks distance to the next incomplete stop only after a user taps the button, using browser geolocation and local Haversine math without automatic GPS polling, Kakao Mobility, or Directions API calls.
 - Made the S12 Profile My Routes card itself tappable so saved local routes open `/[locale]/route` from the card body as well as the Continue/Edit buttons, without Supabase or a backend route lookup.
 - Added a no-cost S10 Docent script progress bar and current-section status. It uses local script sections and browser speech state without OpenAI TTS or provider audio.
 - Added a no-cost Radar map preview with radius rings, current-position marker, and typed facility pins, using the existing local/mock facility coordinates.
