@@ -159,6 +159,7 @@ Every data-backed page should expose:
 - Clear copy that tells developers whether a local mock or external source produced the result.
 - Shared navigation, landing, tutorial, visible home language selection, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
 - Language switcher names and query-preserving locale path building are covered by tests so supported locale names do not regress to placeholders or mojibake, and language changes do not drop local route/map context.
+- Language names plus the Tutorial guide title and six step titles are covered by exact multilingual assertions for `ko`, `en`, `ja`, and `zh` to prevent high-visibility onboarding copy from regressing into mojibake.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.
 - Persona and Route screen copy is routed through `lib/ui-copy.ts`, including editor status messages, route stats, CTA labels, persona theme labels, and tutorial shortcut actions.
 - Shared app chrome, account modal, common error fallback, profile avatar labels, map refresh labels, route handoff labels, and place detail crowd/close/Seen in/save/share toast labels are also routed through `lib/ui-copy.ts`.

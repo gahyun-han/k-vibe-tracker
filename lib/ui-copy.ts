@@ -2303,13 +2303,155 @@ const PWA_INSTALL_COPY: Record<UiLocale, PwaInstallCopy> = {
   },
 };
 
+Object.assign(LANGUAGE_NAMES, {
+  ko: '한국어',
+  ja: '日本語',
+  zh: '简体中文',
+});
+
+type TutorialCopy = {
+  buttonLabel: string;
+  title: string;
+  subtitle: string;
+  footer: string;
+  steps: ReadonlyArray<{
+    title: string;
+    body: string;
+    action: string;
+  }>;
+};
+
+const TUTORIAL_COPY_OVERRIDES: Record<Exclude<UiLocale, 'en'>, TutorialCopy> = {
+  ko: {
+    buttonLabel: '기능 안내',
+    title: '기능 안내',
+    subtitle: '현재 MVP에서 바로 사용할 수 있는 기능을 빠르게 확인하세요.',
+    footer: '비용이나 권한이 필요한 연동은 자격 정보가 승인될 때까지 비활성 상태로 유지됩니다.',
+    steps: [
+      {
+        title: '지도',
+        body: 'TourAPI 또는 로컬 대체 데이터로 주변 장소를 찾고, 카테고리를 필터링하고, 상세 정보를 확인한 뒤 루트에 추가할 수 있습니다.',
+        action: '지도 열기',
+      },
+      {
+        title: '분석',
+        body: 'YouTube 또는 Instagram URL을 붙여 플랫폼 감지를 확인하세요. YouTube mock 분석은 AI 비용 없이 사용할 수 있습니다.',
+        action: '분석해보기',
+      },
+      {
+        title: '루트',
+        body: '페르소나 기반 루트를 만들고, 방문지를 편집하고, 순서를 바꾸고, 계획 텍스트를 공유할 수 있습니다.',
+        action: '루트 만들기',
+      },
+      {
+        title: '도슨트',
+        body: '루트 방문지를 자막이 있는 로컬 음성 가이드로 열 수 있습니다. 유료 TTS API를 호출하지 않습니다.',
+        action: '루트 열기',
+      },
+      {
+        title: '레이더',
+        body: '반경과 시설 유형 필터로 주변 편의시설을 찾고, 데이터 출처 상태를 확인할 수 있습니다.',
+        action: '레이더 열기',
+      },
+      {
+        title: '프로필',
+        body: '지금은 게스트 모드로 사용할 수 있고, Supabase 정보가 설정되면 계정 동기화와 저장 기록이 활성화됩니다.',
+        action: '프로필 열기',
+      },
+    ],
+  },
+  ja: {
+    buttonLabel: '機能ガイド',
+    title: '機能ガイド',
+    subtitle: 'このMVPで今すぐ使える機能をすばやく確認できます。',
+    footer: '費用や権限が必要な連携は、認証情報が承認されるまで無効のままです。',
+    steps: [
+      {
+        title: 'マップ',
+        body: 'TourAPIまたはローカル代替データで周辺スポットを探し、カテゴリで絞り込み、詳細を確認してルートに追加できます。',
+        action: 'マップを開く',
+      },
+      {
+        title: '分析',
+        body: 'YouTubeまたはInstagramのURLを貼り付けてプラットフォーム検出を試せます。YouTubeのモック分析はAI費用なしで使えます。',
+        action: '分析を試す',
+      },
+      {
+        title: 'ルート',
+        body: 'ペルソナに合わせたルートを作成し、訪問地を編集し、順番を入れ替え、計画テキストを共有できます。',
+        action: 'ルートを作る',
+      },
+      {
+        title: 'ドーセント',
+        body: 'ルートの訪問地を字幕付きのローカル音声ガイドとして開けます。有料TTS APIは呼び出しません。',
+        action: 'ルートを開く',
+      },
+      {
+        title: 'レーダー',
+        body: '半径と施設タイプのフィルタで近くの便利施設を探し、データソースの状態を確認できます。',
+        action: 'レーダーを開く',
+      },
+      {
+        title: 'プロフィール',
+        body: '今はゲストモードで利用でき、Supabase情報が設定されるとアカウント同期と保存履歴が有効になります。',
+        action: 'プロフィールを開く',
+      },
+    ],
+  },
+  zh: {
+    buttonLabel: '功能指南',
+    title: '功能指南',
+    subtitle: '快速了解这个 MVP 现在可以使用的功能。',
+    footer: '需要费用或权限的集成会保持停用，直到相关凭据获得批准。',
+    steps: [
+      {
+        title: '地图',
+        body: '使用 TourAPI 或本地备用数据查找附近地点，按类别筛选，查看详情，并把地点加入路线。',
+        action: '打开地图',
+      },
+      {
+        title: '分析',
+        body: '粘贴 YouTube 或 Instagram URL 来测试平台识别。YouTube 模拟分析无需 AI 成本也可使用。',
+        action: '试用分析',
+      },
+      {
+        title: '路线',
+        body: '生成基于角色偏好的路线，编辑站点，调整顺序，并分享计划文本。',
+        action: '创建路线',
+      },
+      {
+        title: '导览',
+        body: '把路线站点打开为带字幕的本地语音导览。它使用浏览器语音合成，不调用付费 TTS API。',
+        action: '打开路线',
+      },
+      {
+        title: '雷达',
+        body: '通过半径和设施类型筛选附近便利设施，并查看清晰的数据来源提示。',
+        action: '打开雷达',
+      },
+      {
+        title: '个人资料',
+        body: '现在可以使用访客模式；配置 Supabase 凭据后会启用账号同步和已保存历史。',
+        action: '打开个人资料',
+      },
+    ],
+  },
+};
+
 export function normalizeUiLocale(value: string | string[] | undefined): UiLocale {
   const locale = Array.isArray(value) ? value[0] : value;
   return SUPPORTED_LOCALES.includes(locale as UiLocale) ? (locale as UiLocale) : 'en';
 }
 
 export function getUiCopy(locale: string | string[] | undefined) {
-  return UI_COPY[normalizeUiLocale(locale)];
+  const normalizedLocale = normalizeUiLocale(locale);
+  const copy = UI_COPY[normalizedLocale];
+  if (normalizedLocale === 'en') return copy;
+
+  return {
+    ...copy,
+    tutorial: TUTORIAL_COPY_OVERRIDES[normalizedLocale],
+  };
 }
 
 export function getProfileSettingsCopy(locale: string | string[] | undefined) {

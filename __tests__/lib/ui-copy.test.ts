@@ -22,9 +22,29 @@ describe('ui copy', () => {
       zh: '出现于',
     };
 
+    const expectedLanguageNames = {
+      en: 'English',
+      ko: '한국어',
+      ja: '日本語',
+      zh: '简体中文',
+    };
+    const expectedTutorialTitles = {
+      en: 'Feature Guide',
+      ko: '기능 안내',
+      ja: '機能ガイド',
+      zh: '功能指南',
+    };
+    const expectedTutorialStepTitles = {
+      en: ['Map', 'Analyze', 'Route', 'Docent', 'Radar', 'Profile'],
+      ko: ['지도', '분석', '루트', '도슨트', '레이더', '프로필'],
+      ja: ['マップ', '分析', 'ルート', 'ドーセント', 'レーダー', 'プロフィール'],
+      zh: ['地图', '分析', '路线', '导览', '雷达', '个人资料'],
+    };
+
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
 
+      expect(LANGUAGE_NAMES[locale]).toBe(expectedLanguageNames[locale]);
       expect(LANGUAGE_NAMES[locale]).not.toMatch(/[?]/);
       expect(LANGUAGE_NAMES[locale].length).toBeGreaterThan(1);
 
@@ -168,6 +188,9 @@ describe('ui copy', () => {
       }
 
       expect(copy.tutorial.steps).toHaveLength(6);
+      expect(copy.tutorial.title).toBe(expectedTutorialTitles[locale]);
+      expect(copy.tutorial.steps.map((step) => step.title)).toEqual(expectedTutorialStepTitles[locale]);
+      expect(JSON.stringify(copy.tutorial)).not.toContain('?');
       for (const step of copy.tutorial.steps) {
         expect(step.action.length).toBeGreaterThan(0);
       }

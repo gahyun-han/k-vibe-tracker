@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 localized language-name and tutorial-copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Tutorial structured-guide accessibility pass because it may consume paid quota and the local semantic markup change could be verified with type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Profile sign-in prompt pass because it may consume paid quota and the local UI/copy change could be verified with copy tests, type-check, and build.
 - Claude CLI was not used for the 2026-06-17 filter-chip selected-state accessibility pass because it may consume paid quota and the local UI semantics change could be verified with type-check, tests, build, and static route checks.
@@ -97,6 +98,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost localized language-name and tutorial-copy repair that changes only bundled UI copy and tests for the existing supported locales, without external translation providers, APIs, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost Tutorial structured-guide accessibility pass that changes only local dialog/list/button semantics for existing localized guide content and shortcut actions, without external providers, API calls, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost Profile sign-in prompt coverage that displays existing localized account-sync copy and opens the existing local login modal after a user click, without adding providers, API calls, maps, AI, GPS, backend writes, storage, or paid services.
 - No-cost filter-chip selected-state accessibility pass that changes only local button semantics for Home story/feed filters and Map category filters, without external providers, API calls, maps SDK changes, AI, GPS, backend writes, storage, or paid services.
