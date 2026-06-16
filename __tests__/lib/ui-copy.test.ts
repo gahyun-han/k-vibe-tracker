@@ -88,6 +88,30 @@ describe('ui copy', () => {
       ja: { title: 'K-Vibeにログイン', continueGuest: 'ゲストとして続行', availableWithoutLogin: 'ログインなしで利用可能' },
       zh: { title: '登录 K-Vibe', continueGuest: '以访客身份继续', availableWithoutLogin: '无需登录也可使用' },
     };
+    const expectedLandingCopy = {
+      en: { languageTitle: 'Choose your language', start: 'Explore K-Vibe', trendingLabel: 'Trending prompts' },
+      ko: { languageTitle: '언어 선택', start: 'K-Vibe 둘러보기', trendingLabel: '인기 프롬프트' },
+      ja: { languageTitle: '言語を選択', start: 'K-Vibeを探す', trendingLabel: '人気プロンプト' },
+      zh: { languageTitle: '选择语言', start: '探索 K-Vibe', trendingLabel: '热门提示' },
+    };
+    const expectedHomeFeedStories = {
+      en: ['K-Pop', 'Street Food', 'Photo Spots', 'Nature', 'Shopping'],
+      ko: ['K-Pop', '길거리 음식', '포토 스팟', '자연', '쇼핑'],
+      ja: ['K-Pop', '屋台グルメ', 'フォトスポット', '自然', 'ショッピング'],
+      zh: ['K-Pop', '街头美食', '拍照地点', '自然', '购物'],
+    };
+    const expectedNavCopy = {
+      en: { map: 'Map', analyze: 'Analyze', route: 'Route' },
+      ko: { map: '지도', analyze: '분석', route: '루트' },
+      ja: { map: 'マップ', analyze: '分析', route: 'ルート' },
+      zh: { map: '地图', analyze: '分析', route: '路线' },
+    };
+    const expectedCategoryCopy = {
+      en: { all: 'All', culture: 'Culture', food: 'Food' },
+      ko: { all: '전체', culture: '문화', food: '음식' },
+      ja: { all: 'すべて', culture: '文化', food: 'グルメ' },
+      zh: { all: '全部', culture: '文化', food: '美食' },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -179,6 +203,10 @@ describe('ui copy', () => {
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
       expect(copy.map.locationUnavailable.length).toBeGreaterThan(0);
       expect(copy.map.cachedFallback.length).toBeGreaterThan(0);
+      expect(copy.landing.languageTitle).toBe(expectedLandingCopy[locale].languageTitle);
+      expect(copy.landing.start).toBe(expectedLandingCopy[locale].start);
+      expect(copy.landing.trendingLabel).toBe(expectedLandingCopy[locale].trendingLabel);
+      expect(JSON.stringify(copy.landing)).not.toContain('?');
       expect(copy.landing.languageTitle.length).toBeGreaterThan(0);
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
       expect(copy.map.resultCount).toContain('{count}');
@@ -190,8 +218,16 @@ describe('ui copy', () => {
       }
       expect(copy.map.resetFilters.length).toBeGreaterThan(0);
       expect(Object.values(copy.homeFeed.stories)).toHaveLength(5);
+      expect(Object.values(copy.homeFeed.stories)).toEqual(expectedHomeFeedStories[locale]);
       expect(copy.homeFeed.openPlaceDetail).toContain('{name}');
       expect(copy.homeFeed.personalizedFor).toContain('{persona}');
+      expect(copy.nav.map).toBe(expectedNavCopy[locale].map);
+      expect(copy.nav.analyze).toBe(expectedNavCopy[locale].analyze);
+      expect(copy.nav.route).toBe(expectedNavCopy[locale].route);
+      expect(copy.categories.all).toBe(expectedCategoryCopy[locale].all);
+      expect(copy.categories.culture).toBe(expectedCategoryCopy[locale].culture);
+      expect(copy.categories.food).toBe(expectedCategoryCopy[locale].food);
+      expect(JSON.stringify({ homeFeed: copy.homeFeed, nav: copy.nav, categories: copy.categories })).not.toContain('?');
       expect(copy.homeFeed.retry.length).toBeGreaterThan(0);
       expect(copy.homeFeed.cachedFallback.length).toBeGreaterThan(0);
       expect(copy.homeFeed.emptyHint.length).toBeGreaterThan(0);

@@ -157,7 +157,7 @@ Every data-backed page should expose:
 - Error state with a retry path.
 - Mock/source hint while the app is running without external integrations.
 - Clear copy that tells developers whether a local mock or external source produced the result.
-- Shared navigation, landing, tutorial, visible home language selection, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`.
+- Shared navigation, landing, tutorial, visible home language selection, and key map states should use locale-aware copy for `ko`, `en`, `ja`, and `zh`; the Home/Landing entry has exact assertions for language/start/trending labels, story filters, nav labels, and key category labels.
 - Language switcher names and query-preserving locale path building are covered by tests so supported locale names do not regress to placeholders or mojibake, and language changes do not drop local route/map context.
 - Language names plus the Tutorial guide title and six step titles are covered by exact multilingual assertions for `ko`, `en`, `ja`, and `zh` to prevent high-visibility onboarding copy from regressing into mojibake.
 - Analyze and Radar screen copy is also routed through `lib/ui-copy.ts` so the local-first SNS and facility workflows stay available in all supported locales.

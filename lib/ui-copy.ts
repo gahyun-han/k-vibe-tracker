@@ -2337,6 +2337,43 @@ type LoginCopy = {
   failed: string;
 };
 
+type LandingCopy = {
+  eyebrow: string;
+  languageTitle: string;
+  description: string;
+  start: string;
+  guestNotice: string;
+  developmentMode: string;
+  developmentDescription: string;
+  trendingLabel: string;
+  trendingTags: readonly string[];
+  features: Record<'map' | 'analyze' | 'route' | 'radar', string>;
+};
+
+type HomeFeedCopy = {
+  eyebrow: string;
+  title: string;
+  stories: Record<'kpop' | 'streetFood' | 'photoSpots' | 'nature' | 'shopping', string>;
+  refresh: string;
+  openMap: string;
+  openPlaceDetail: string;
+  empty: string;
+  emptyHint: string;
+  showAll: string;
+  exploreMap: string;
+  error: string;
+  retry: string;
+  cachedFallback: string;
+  sourceTourapi: string;
+  sourceCache: string;
+  sourceMock: string;
+  personalizedFor: string;
+};
+
+type NavCopy = Record<'map' | 'analyze' | 'route' | 'radar' | 'profile', string>;
+
+type CategoriesCopy = Record<'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay' | 'spot', string>;
+
 type TutorialCopy = {
   buttonLabel: string;
   title: string;
@@ -2457,6 +2494,202 @@ const LOGIN_COPY_OVERRIDES: Record<UiLocale, LoginCopy> = {
     supabaseMissing: '未配置 Supabase 环境变量。本地开发可继续使用访客模式。',
     failed: '登录失败。请重试。',
   },
+};
+
+const LANDING_COPY_OVERRIDES: Record<UiLocale, LandingCopy> = {
+  en: {
+    eyebrow: 'Local-first travel lab',
+    languageTitle: 'Choose your language',
+    description:
+      'Discover Korea through K-content inspired places, routes, and nearby travel helpers. TourAPI place data is used when a key is configured, with safe local fallbacks for development.',
+    start: 'Explore K-Vibe',
+    guestNotice: 'Map, Analyze, Route, and Radar work without login.',
+    developmentMode: 'Development mode',
+    developmentDescription:
+      'External services stay behind explicit keys or approval gates, while core workflows remain testable locally.',
+    trendingLabel: 'Trending prompts',
+    trendingTags: ['Seongsu cafes', 'Gwangjang food', 'Palace drama', 'Hongdae photo', 'Han River night'],
+    features: {
+      map: 'TourAPI nearby spots',
+      analyze: 'Local-first SNS extraction',
+      route: 'Persona route planner',
+      radar: 'Facility finder',
+    },
+  },
+  ko: {
+    eyebrow: '로컬 우선 여행 실험실',
+    languageTitle: '언어 선택',
+    description:
+      'K-콘텐츠에서 영감을 받은 장소, 루트, 주변 여행 도우미로 한국을 발견하세요. 키가 설정되면 TourAPI 장소 데이터를 사용하고, 개발 중에는 안전한 로컬 대체 데이터를 사용합니다.',
+    start: 'K-Vibe 둘러보기',
+    guestNotice: '지도, 분석, 루트, 레이더는 로그인 없이 사용할 수 있습니다.',
+    developmentMode: '개발 모드',
+    developmentDescription:
+      '외부 서비스는 명시적인 키나 승인 게이트 뒤에 두고, 핵심 흐름은 로컬에서 계속 테스트할 수 있습니다.',
+    trendingLabel: '인기 프롬프트',
+    trendingTags: ['성수 카페', '광장시장 음식', '궁궐 드라마', '홍대 사진', '한강 야경'],
+    features: {
+      map: 'TourAPI 주변 장소',
+      analyze: '로컬 우선 SNS 추출',
+      route: '페르소나 루트 플래너',
+      radar: '편의시설 찾기',
+    },
+  },
+  ja: {
+    eyebrow: 'ローカル優先の旅行ラボ',
+    languageTitle: '言語を選択',
+    description:
+      'Kコンテンツに着想を得た場所、ルート、周辺ヘルプで韓国旅行を見つけましょう。キーが設定されている場合はTourAPIを使い、開発中は安全なローカルデータに戻ります。',
+    start: 'K-Vibeを探す',
+    guestNotice: 'マップ、分析、ルート、レーダーはログインなしで使えます。',
+    developmentMode: '開発モード',
+    developmentDescription:
+      '外部サービスは明示的なキーまたは承認ゲートの後ろに置き、主要フローはローカルでテストできます。',
+    trendingLabel: '人気プロンプト',
+    trendingTags: ['聖水カフェ', '広蔵市場グルメ', '宮殿ドラマ', '弘大フォト', '漢江ナイト'],
+    features: {
+      map: 'TourAPI周辺スポット',
+      analyze: 'ローカル優先SNS抽出',
+      route: 'ペルソナルート作成',
+      radar: '便利施設を探す',
+    },
+  },
+  zh: {
+    eyebrow: '本地优先旅行实验室',
+    languageTitle: '选择语言',
+    description:
+      '通过受 K-内容启发的地点、路线和附近旅行助手探索韩国。配置密钥后会使用 TourAPI 地点数据，开发时则使用安全的本地备用数据。',
+    start: '探索 K-Vibe',
+    guestNotice: '地图、分析、路线和雷达无需登录即可使用。',
+    developmentMode: '开发模式',
+    developmentDescription:
+      '外部服务会保留在明确密钥或审批开关之后，核心流程仍可在本地测试。',
+    trendingLabel: '热门提示',
+    trendingTags: ['圣水咖啡', '广藏市场美食', '宫殿韩剧', '弘大拍照', '汉江夜景'],
+    features: {
+      map: 'TourAPI 附近地点',
+      analyze: '本地优先 SNS 提取',
+      route: '角色路线规划',
+      radar: '便利设施查找',
+    },
+  },
+};
+
+const HOME_FEED_COPY_OVERRIDES: Record<UiLocale, HomeFeedCopy> = {
+  en: {
+    eyebrow: 'Live Seoul feed',
+    title: 'Trending K-spots nearby',
+    stories: {
+      kpop: 'K-Pop',
+      streetFood: 'Street Food',
+      photoSpots: 'Photo Spots',
+      nature: 'Nature',
+      shopping: 'Shopping',
+    },
+    refresh: 'Refresh feed',
+    openMap: 'Open in Map',
+    openPlaceDetail: 'Open {name} details',
+    empty: 'No feed places found for this filter.',
+    emptyHint: 'Reset the filter or continue discovery on the map.',
+    showAll: 'Show all',
+    exploreMap: 'Explore map',
+    error: 'Home feed could not be loaded',
+    retry: 'Retry',
+    cachedFallback: 'Showing cached feed because live refresh failed.',
+    sourceTourapi: 'TourAPI',
+    sourceCache: 'Cache',
+    sourceMock: 'Mock',
+    personalizedFor: 'For {persona}',
+  },
+  ko: {
+    eyebrow: '실시간 서울 피드',
+    title: '근처 인기 K-스팟',
+    stories: {
+      kpop: 'K-Pop',
+      streetFood: '길거리 음식',
+      photoSpots: '포토 스팟',
+      nature: '자연',
+      shopping: '쇼핑',
+    },
+    refresh: '피드 새로고침',
+    openMap: '지도에서 열기',
+    openPlaceDetail: '{name} 상세 열기',
+    empty: '이 필터에 맞는 피드 장소가 없습니다.',
+    emptyHint: '필터를 초기화하거나 지도에서 계속 탐색하세요.',
+    showAll: '전체 보기',
+    exploreMap: '지도 탐색',
+    error: '홈 피드를 불러오지 못했습니다',
+    retry: '다시 시도',
+    cachedFallback: '실시간 새로고침에 실패해 캐시된 피드를 표시합니다.',
+    sourceTourapi: 'TourAPI',
+    sourceCache: '캐시',
+    sourceMock: '모의 데이터',
+    personalizedFor: '{persona} 맞춤',
+  },
+  ja: {
+    eyebrow: 'ライブソウルフィード',
+    title: '近くの人気Kスポット',
+    stories: {
+      kpop: 'K-Pop',
+      streetFood: '屋台グルメ',
+      photoSpots: 'フォトスポット',
+      nature: '自然',
+      shopping: 'ショッピング',
+    },
+    refresh: 'フィードを更新',
+    openMap: 'マップで開く',
+    openPlaceDetail: '{name}の詳細を開く',
+    empty: 'このフィルタに合うスポットがありません。',
+    emptyHint: 'フィルタをリセットするか、マップで探索を続けてください。',
+    showAll: 'すべて表示',
+    exploreMap: 'マップを見る',
+    error: 'ホームフィードを読み込めませんでした',
+    retry: '再試行',
+    cachedFallback: 'ライブ更新に失敗したため、キャッシュ済みフィードを表示しています。',
+    sourceTourapi: 'TourAPI',
+    sourceCache: 'キャッシュ',
+    sourceMock: 'モック',
+    personalizedFor: '{persona}向け',
+  },
+  zh: {
+    eyebrow: '实时首尔动态',
+    title: '附近热门 K-地点',
+    stories: {
+      kpop: 'K-Pop',
+      streetFood: '街头美食',
+      photoSpots: '拍照地点',
+      nature: '自然',
+      shopping: '购物',
+    },
+    refresh: '刷新动态',
+    openMap: '在地图中打开',
+    openPlaceDetail: '打开 {name} 详情',
+    empty: '此筛选下没有动态地点。',
+    emptyHint: '重置筛选，或继续在地图上探索。',
+    showAll: '显示全部',
+    exploreMap: '探索地图',
+    error: '无法加载首页动态',
+    retry: '重试',
+    cachedFallback: '实时刷新失败，正在显示缓存动态。',
+    sourceTourapi: 'TourAPI',
+    sourceCache: '缓存',
+    sourceMock: '模拟数据',
+    personalizedFor: '为 {persona} 推荐',
+  },
+};
+
+const NAV_COPY_OVERRIDES: Record<UiLocale, NavCopy> = {
+  en: { map: 'Map', analyze: 'Analyze', route: 'Route', radar: 'Radar', profile: 'Profile' },
+  ko: { map: '지도', analyze: '분석', route: '루트', radar: '레이더', profile: '프로필' },
+  ja: { map: 'マップ', analyze: '分析', route: 'ルート', radar: 'レーダー', profile: 'プロフィール' },
+  zh: { map: '地图', analyze: '分析', route: '路线', radar: '雷达', profile: '个人资料' },
+};
+
+const CATEGORIES_COPY_OVERRIDES: Record<UiLocale, CategoriesCopy> = {
+  en: { all: 'All', cafe: 'Cafe', photo: 'Photo', fun: 'Fun', culture: 'Culture', food: 'Food', stay: 'Stay', spot: 'Spot' },
+  ko: { all: '전체', cafe: '카페', photo: '사진', fun: '체험', culture: '문화', food: '음식', stay: '숙소', spot: '장소' },
+  ja: { all: 'すべて', cafe: 'カフェ', photo: '写真', fun: '体験', culture: '文化', food: 'グルメ', stay: '宿泊', spot: 'スポット' },
+  zh: { all: '全部', cafe: '咖啡', photo: '拍照', fun: '体验', culture: '文化', food: '美食', stay: '住宿', spot: '地点' },
 };
 
 const TUTORIAL_COPY_OVERRIDES: Record<Exclude<UiLocale, 'en'>, TutorialCopy> = {
@@ -2775,6 +3008,10 @@ export function getUiCopy(locale: string | string[] | undefined) {
     ...copy,
     common: COMMON_COPY_OVERRIDES[normalizedLocale],
     login: LOGIN_COPY_OVERRIDES[normalizedLocale],
+    landing: LANDING_COPY_OVERRIDES[normalizedLocale],
+    homeFeed: HOME_FEED_COPY_OVERRIDES[normalizedLocale],
+    nav: NAV_COPY_OVERRIDES[normalizedLocale],
+    categories: CATEGORIES_COPY_OVERRIDES[normalizedLocale],
     tutorial: normalizedLocale === 'en' ? copy.tutorial : TUTORIAL_COPY_OVERRIDES[normalizedLocale],
   };
 }
