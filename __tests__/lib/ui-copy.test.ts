@@ -11,6 +11,7 @@ import {
   SUPPORTED_LOCALES,
 } from '@/lib/ui-copy';
 import { ROUTE_THEME_OPTIONS } from '@/lib/routes';
+import { FACILITY_TYPES } from '@/lib/facilities';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {
@@ -46,9 +47,10 @@ describe('ui copy', () => {
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);
-      expect(copy.radar.filters.atm.length).toBeGreaterThan(0);
-      expect(copy.radar.facilityTypes.restroom.length).toBeGreaterThan(0);
-      expect(copy.radar.facilityTypes.atm.length).toBeGreaterThan(0);
+      for (const facilityType of FACILITY_TYPES) {
+        expect(copy.radar.filters[facilityType].length).toBeGreaterThan(0);
+        expect(copy.radar.facilityTypes[facilityType].length).toBeGreaterThan(0);
+      }
       expect(copy.radar.viewOnMap.length).toBeGreaterThan(0);
       expect(copy.radar.expandRadius.length).toBeGreaterThan(0);
 

@@ -42,14 +42,16 @@ describe('GET /api/facilities', () => {
   });
 
   it('filters facilities by type', async () => {
-    const res = await GET(
-      makeRequest({ lat: '37.5665', lng: '126.978', radius: '1500', type: 'pharmacy' })
-    );
-    const data = await res.json();
+    for (const type of ['pharmacy', 'medical', 'transit']) {
+      const res = await GET(
+        makeRequest({ lat: '37.5665', lng: '126.978', radius: '1500', type })
+      );
+      const data = await res.json();
 
-    expect(res.status).toBe(200);
-    expect(data.facilities.length).toBeGreaterThan(0);
-    expect(data.facilities.every((facility: { type: string }) => facility.type === 'pharmacy')).toBe(true);
+      expect(res.status).toBe(200);
+      expect(data.facilities.length).toBeGreaterThan(0);
+      expect(data.facilities.every((facility: { type: string }) => facility.type === type)).toBe(true);
+    }
   });
 
   it('uses a default radius when none is provided', async () => {

@@ -20,6 +20,8 @@ const FILTER_TABS: { id: FacilityFilter }[] = [
   { id: 'all' },
   { id: 'restroom' },
   { id: 'atm' },
+  { id: 'medical' },
+  { id: 'transit' },
   { id: 'cafe_toilet' },
   { id: 'pharmacy' },
   { id: 'convenience' },

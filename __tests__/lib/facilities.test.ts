@@ -34,18 +34,22 @@ describe('facility helpers', () => {
     );
   });
 
-  it('includes ATM as a first-class local facility type', () => {
-    expect(FACILITY_TYPES).toContain('atm');
+  it('includes root immediate-need facility types as local mock filters', () => {
+    const immediateTypes = ['atm', 'medical', 'transit'] as const;
 
-    const facilities = getMockFacilities({
-      lat: 37.5665,
-      lng: 126.978,
-      radius: 500,
-      type: 'atm',
-    });
+    for (const type of immediateTypes) {
+      expect(FACILITY_TYPES).toContain(type);
 
-    expect(facilities.length).toBeGreaterThan(0);
-    expect(facilities.every((facility) => facility.type === 'atm')).toBe(true);
+      const facilities = getMockFacilities({
+        lat: 37.5665,
+        lng: 126.978,
+        radius: 500,
+        type,
+      });
+
+      expect(facilities.length).toBeGreaterThan(0);
+      expect(facilities.every((facility) => facility.type === type)).toBe(true);
+    }
   });
 
   it('builds no-key Google Maps facility handoff URLs', () => {

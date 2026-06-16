@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Expanded root S11 Radar coverage with no-cost local medical and transit facility types. The new filters, mock results, map pins, card icons, four-locale labels, and API/helper tests complete the wireframe's restroom/ATM/medical/transit immediate-need set without live provider calls.
 - Added root S9-style local transit hints to Route timeline segments. Short legs remain walking, while longer legs show localized transit timing from local distance thresholds without calling Kakao Mobility, Google Directions, or another route provider.
 - Added root S11 ATM support to Radar as a no-cost local facility type. The filter chip, map preview pin, facility card icon, 4-locale labels, and helper tests now cover ATM without calling a live banking/facility provider.
 - Added root S2-style crowd badges to Home feed cards. The existing `/api/places` `crowd_level` signal is mapped locally into localized Quiet/Normal/Busy labels, and the crowd context is preserved through map-detail and saved-place handoffs without another provider call.

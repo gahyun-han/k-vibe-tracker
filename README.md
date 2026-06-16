@@ -116,7 +116,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/persona`: K-content route generator. It guides users through a localized 3-step theme, mood, and confirmation flow with six root-aligned persona themes, can save that selection as a no-cost local feed preference, calls `/api/routes/generate` with the active locale, renders a localized local route preview, and can save the plan into `localStorage`.
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, restores no-cost `route=` share URLs, tracks completed stops locally, supports drag reorder, removal, localized sample stop insertion, a local route mini map, S9-style whole-route Open in Map handoff, user-clicked next-stop distance checks, free local walking/transit travel hints between stops, in-app stop detail handoff to the map sheet, Google Maps walking handoff links, and same-origin URL sharing without a public-link backend.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with structured captions, a localized script progress bar, browser `speechSynthesis` voice playback with active script-section highlighting when supported, and a user-clicked 100m arrival check when coordinates are available, instead of a paid TTS API.
-- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons including the root S11 ATM need, offers an empty-state radius expansion action, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
+- `/[locale]/radar`: convenience facility radar. It requests browser geolocation, restores the last known GPS position for up to 30 minutes, falls back to Seoul, calls `/api/facilities`, caches same-query facility responses locally for 1 hour, supports radius/type filtering with shared lucide facility icons including the root S11 ATM, medical, and transit needs, offers an empty-state radius expansion action, enriches popup facilities from TourAPI `searchFestival2` when `TOUR_API_KEY` is configured, shows a no-cost radar map preview, and can open selected facilities in Google Maps after a user click.
 - `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with the active local persona, an Instagram-style local saved-place grid that opens the in-app place detail sheet, current route progress/next stop, a tappable My Routes card and actions, and localized app settings state when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
@@ -203,7 +203,7 @@ Behavior:
 Facility types:
 
 ```text
-all, restroom, atm, pharmacy, cafe_toilet, convenience, popup
+all, restroom, atm, medical, transit, pharmacy, cafe_toilet, convenience, popup
 ```
 
 ### `POST /api/routes/generate`
@@ -307,7 +307,7 @@ ai-worker/      # FastAPI prototype
   - Map place details can share focused same-origin detail URLs through Web Share or clipboard without Supabase public links or paid provider calls.
   - Map place details now include no-cost S4 Seen in badges derived from local place metadata rather than live YouTube or Instagram API calls.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
-  - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters including local ATM helpers, loading/error/retry states, localized facility cards, a local radar map preview, and no-key Google Maps handoff links.
+  - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters including local ATM, medical, and transit helpers, loading/error/retry states, localized facility cards, a local radar map preview, and no-key Google Maps handoff links.
   - Route travel segments now distinguish short walk legs from longer local transit hints without calling Kakao Mobility or Directions APIs.
   - Radar popup facilities can now be enriched from TourAPI `searchFestival2` with locale-aware facility cache keys while keeping mock fallback behavior.
   - `/api/routes/generate` now supports validated mock-backed route generation.

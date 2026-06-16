@@ -2,9 +2,11 @@ import {
   Coffee,
   Landmark,
   Pill,
+  Plus,
   ShoppingBag,
   Sparkles,
   Toilet,
+  TrainFront,
   type LucideIcon,
 } from 'lucide-react';
 import type { FacilityType } from '@/lib/facilities';
@@ -28,6 +30,18 @@ export const FACILITY_TYPE_UI: Record<FacilityType, FacilityTypeUi> = {
     color: 'text-cyan-400',
     bg: 'bg-cyan-400/10',
     pin: 'bg-cyan-400 text-[#0D0D1A]',
+  },
+  medical: {
+    Icon: Plus,
+    color: 'text-rose-400',
+    bg: 'bg-rose-400/10',
+    pin: 'bg-rose-400 text-white',
+  },
+  transit: {
+    Icon: TrainFront,
+    color: 'text-sky-400',
+    bg: 'bg-sky-400/10',
+    pin: 'bg-sky-400 text-[#0D0D1A]',
   },
   pharmacy: {
     Icon: Pill,
