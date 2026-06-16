@@ -25,4 +25,5 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost local Route share URLs that encode route state in the same-origin `route=` query parameter and restore it into `localStorage`.
 - Commits and pushes to the already writable `hslee-origin/hslee` branch.

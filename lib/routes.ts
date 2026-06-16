@@ -4,6 +4,7 @@ export const ROUTE_THEMES = ['kpop', 'drama', 'mood'] as const;
 export const CURRENT_ROUTE_STORAGE_KEY = 'k-vibe-current-route';
 export type RouteTheme = (typeof ROUTE_THEMES)[number];
 export type CrowdLevel = 'low' | 'mid' | 'high';
+const MAX_SHARED_ROUTE_STOPS = 10;
 
 export interface RouteDetailOption {
   id: string;
@@ -64,6 +65,16 @@ interface CreateLocalRoutePlanInput {
 }
 
 type StopTemplate = Omit<RouteStop, 'startTime'>;
+
+interface SharedRoutePayload {
+  v: 1;
+  id: string;
+  title: string;
+  theme: RouteTheme;
+  detail: string;
+  summary: string;
+  stops: RouteStop[];
+}
 
 export interface LocalizedRouteOptionCopy {
   label: string;
@@ -371,6 +382,66 @@ export function createLocalRoutePlan({
   };
 }
 
+export function encodeRoutePlanForShare(plan: RoutePlan) {
+  const payload: SharedRoutePayload = {
+    v: 1,
+    id: plan.id,
+    title: plan.title,
+    theme: plan.theme,
+    detail: plan.detail,
+    summary: plan.summary,
+    stops: plan.stops.slice(0, MAX_SHARED_ROUTE_STOPS).map((stop) => ({
+      id: stop.id,
+      name: stop.name,
+      category: stop.category,
+      address: stop.address,
+      crowdLevel: stop.crowdLevel,
+      lat: stop.lat,
+      lng: stop.lng,
+      stayMinutes: stop.stayMinutes,
+      startTime: stop.startTime,
+      description: stop.description,
+      tags: stop.tags.slice(0, 8),
+    })),
+  };
+
+  return base64UrlEncode(JSON.stringify(payload));
+}
+
+export function decodeRoutePlanFromShare(value: string) {
+  try {
+    const payload = JSON.parse(base64UrlDecode(value)) as unknown;
+    if (!isRecord(payload)) return null;
+
+    const title = coerceNonEmptyString(payload.title);
+    const summary = coerceNonEmptyString(payload.summary);
+    const rawStops = Array.isArray(payload.stops) ? payload.stops : [];
+    const stops = rawStops
+      .slice(0, MAX_SHARED_ROUTE_STOPS)
+      .map((stop, index) => coerceSharedRouteStop(stop, index))
+      .filter((stop): stop is RouteStop => stop !== null);
+
+    if (!title || !summary || stops.length === 0) return null;
+
+    return createLocalRoutePlan({
+      id: coerceNonEmptyString(payload.id) ?? 'shared-route',
+      title,
+      theme: typeof payload.theme === 'string' && isRouteTheme(payload.theme) ? payload.theme : 'mood',
+      detail: coerceNonEmptyString(payload.detail) ?? 'shared',
+      summary,
+      stops,
+    });
+  } catch {
+    return null;
+  }
+}
+
+export function buildLocalRouteShareUrl(plan: RoutePlan, baseUrl: string) {
+  const url = new URL(baseUrl);
+  url.searchParams.set('route', encodeRoutePlanForShare(plan));
+  return url.toString();
+}
+
 export function buildGoogleMapsDirectionsUrl(stops: Pick<RouteStop, 'lat' | 'lng'>[]) {
   if (stops.length === 0) return null;
 
@@ -427,4 +498,73 @@ function formatRouteTemplate(template: string, values: Record<string, string>) {
 
 function formatCoordinates(stop: Pick<RouteStop, 'lat' | 'lng'>) {
   return `${stop.lat},${stop.lng}`;
+}
+
+function base64UrlEncode(value: string) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = '';
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlDecode(value: string) {
+  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function coerceNonEmptyString(value: unknown) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function coerceNumberInRange(value: unknown, min: number, max: number) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+  if (value < min || value > max) return null;
+  return value;
+}
+
+function coerceCrowdLevel(value: unknown): CrowdLevel {
+  return value === 'low' || value === 'mid' || value === 'high' ? value : 'mid';
+}
+
+function coerceSharedRouteStop(value: unknown, index: number): RouteStop | null {
+  if (!isRecord(value)) return null;
+
+  const name = coerceNonEmptyString(value.name);
+  const lat = coerceNumberInRange(value.lat, -90, 90);
+  const lng = coerceNumberInRange(value.lng, -180, 180);
+
+  if (!name || lat === null || lng === null) return null;
+
+  const stayMinutes = coerceNumberInRange(value.stayMinutes, 5, 360);
+
+  return {
+    id: coerceNonEmptyString(value.id) ?? `shared-stop-${index + 1}`,
+    name,
+    category: coerceNonEmptyString(value.category) ?? 'Spot',
+    address: coerceNonEmptyString(value.address) ?? 'Shared route',
+    crowdLevel: coerceCrowdLevel(value.crowdLevel),
+    lat,
+    lng,
+    stayMinutes: stayMinutes === null ? 60 : Math.round(stayMinutes),
+    startTime: coerceNonEmptyString(value.startTime) ?? 'Flexible',
+    description: coerceNonEmptyString(value.description) ?? '',
+    tags: Array.isArray(value.tags)
+      ? value.tags
+          .map((tag) => coerceNonEmptyString(tag))
+          .filter((tag): tag is string => tag !== null)
+          .slice(0, 8)
+      : [],
+  };
 }

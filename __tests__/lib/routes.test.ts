@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildLocalRouteShareUrl,
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
+  decodeRoutePlanFromShare,
+  encodeRoutePlanForShare,
   generateMockRoutePlan,
   type RouteStop,
 } from '@/lib/routes';
@@ -90,5 +93,59 @@ describe('route helpers', () => {
     expect(multiStop.searchParams.get('destination')).toBe('37.5701,126.9996');
     expect(waypointStop.searchParams.get('waypoints')).toBe('37.5665,126.978');
     expect(place.searchParams.get('query')).toBe('37.5447,127.0564');
+  });
+
+  it('builds and restores no-cost local route share URLs', () => {
+    const plan = createLocalRoutePlan({
+      id: 'custom',
+      title: '서울 테스트 루트',
+      summary: 'A local share test route.',
+      stops: STOPS,
+    });
+    const shareUrl = new URL(buildLocalRouteShareUrl(plan, 'http://localhost:3000/ko/route?from=test'));
+    const encoded = shareUrl.searchParams.get('route');
+
+    expect(shareUrl.origin).toBe('http://localhost:3000');
+    expect(shareUrl.pathname).toBe('/ko/route');
+    expect(shareUrl.searchParams.get('from')).toBe('test');
+    expect(encoded).toBeTruthy();
+
+    const decoded = decodeRoutePlanFromShare(encoded!);
+    expect(decoded?.title).toBe('서울 테스트 루트');
+    expect(decoded?.summary).toBe('A local share test route.');
+    expect(decoded?.stops.map((stop) => stop.name)).toEqual(['First stop', 'Second stop']);
+    expect(decoded?.shareText).toBe('서울 테스트 루트: First stop -> Second stop');
+  });
+
+  it('ignores malformed shared route payloads', () => {
+    expect(decodeRoutePlanFromShare('not-base64')).toBeNull();
+    expect(decodeRoutePlanFromShare(encodeRoutePlanForShare({
+      ...createLocalRoutePlan({
+        id: 'empty',
+        title: 'Empty Route',
+        summary: 'No stops',
+        stops: [],
+      }),
+      stops: [],
+    }))).toBeNull();
+  });
+
+  it('limits shared route payloads to ten stops', () => {
+    const manyStops = Array.from({ length: 12 }, (_, index) => ({
+      ...STOPS[index % STOPS.length],
+      id: `stop-${index}`,
+      name: `Stop ${index}`,
+    }));
+    const plan = createLocalRoutePlan({
+      id: 'many',
+      title: 'Many Stops',
+      summary: 'A long local route.',
+      stops: manyStops,
+    });
+
+    const decoded = decodeRoutePlanFromShare(encodeRoutePlanForShare(plan));
+
+    expect(decoded?.stops).toHaveLength(10);
+    expect(decoded?.stops.at(-1)?.name).toBe('Stop 9');
   });
 });

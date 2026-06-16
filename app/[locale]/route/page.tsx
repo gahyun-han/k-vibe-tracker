@@ -10,9 +10,11 @@ import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import {
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
+  buildLocalRouteShareUrl,
   calculateWalkingMinutes,
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
+  decodeRoutePlanFromShare,
   formatDuration,
   generateMockRoutePlan,
   type RoutePlan,
@@ -64,6 +66,7 @@ export default function RoutePage() {
   }), [copy]);
 
   useEffect(() => {
+    const sharedRoute = new URLSearchParams(window.location.search).get('route');
     const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
 
     function applyPlan(plan: RoutePlan) {
@@ -76,6 +79,15 @@ export default function RoutePage() {
       });
       setSpots(plan.stops);
       setHydrated(true);
+    }
+
+    if (sharedRoute) {
+      const decoded = decodeRoutePlanFromShare(sharedRoute);
+      if (decoded) {
+        applyPlan(decoded);
+        setStatus(copy.sharedRouteLoaded);
+        return;
+      }
     }
 
     if (!stored) {
@@ -103,7 +115,7 @@ export default function RoutePage() {
     }
 
     applyPlan(fallbackPlan);
-  }, [fallbackPlan]);
+  }, [copy.sharedRouteLoaded, fallbackPlan]);
 
   useEffect(() => {
     if (!hydrated || spots.length === 0) return;
@@ -184,16 +196,24 @@ export default function RoutePage() {
   }
 
   async function shareRoute() {
-    const shareText = `${planTitle}: ${spots.map((spot) => spot.name).join(' -> ')}`;
+    const plan = createLocalRoutePlan({
+      id: planMeta.id,
+      title: planTitle,
+      theme: planMeta.theme,
+      detail: planMeta.detail,
+      summary: planMeta.summary,
+      stops: spots,
+    });
+    const shareUrl = buildLocalRouteShareUrl(plan, window.location.href);
 
     try {
       if (navigator.share) {
-        await navigator.share({ title: planTitle, text: shareText, url: window.location.href });
+        await navigator.share({ title: plan.title, text: plan.shareText, url: shareUrl });
         setStatus(copy.shared);
         return;
       }
 
-      await navigator.clipboard.writeText(shareText);
+      await navigator.clipboard.writeText(shareUrl);
       setStatus(copy.copiedSummary);
     } catch {
       setStatus(copy.shareUnavailable);
