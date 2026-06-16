@@ -101,8 +101,8 @@ describe('POST /api/analyze', () => {
           places: [{ name: 'Seongsu', lat: 37.5447, lng: 127.0564, confidence: 0.9 }],
           cached: true,
         }),
-        { status: 200 }
-      )
+        { status: 200 },
+      ),
     );
 
     const res = await POST(makeRequest({ youtube_url: 'https://youtu.be/short1', locale: 'ja' }));
@@ -124,7 +124,7 @@ describe('POST /api/analyze', () => {
     process.env.ENABLE_AI_WORKER_ANALYSIS = 'true';
     process.env.AI_WORKER_URL = 'http://localhost:8000';
     mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({ detail: 'WORKER_CRASH' }), { status: 500 })
+      new Response(JSON.stringify({ detail: 'WORKER_CRASH' }), { status: 500 }),
     );
 
     const res = await POST(makeRequest({ youtube_url: 'https://youtu.be/abc123' }));

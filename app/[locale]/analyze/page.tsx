@@ -413,6 +413,7 @@ export default function AnalyzePage() {
                     : '';
                   const hasCoordinates = Boolean(coordinateText);
                   const confidencePercent = Math.max(0, Math.min(100, Math.round(place.confidence * 100)));
+                  const showEstimatedLocation = !hasCoordinates || confidencePercent < 80;
 
                   return (
                     <button
@@ -430,6 +431,12 @@ export default function AnalyzePage() {
                         <p className="text-sm font-semibold text-white">{place.name}</p>
                         {hasCoordinates && (
                           <p className="text-xs text-white/40">{coordinateText}</p>
+                        )}
+                        {showEstimatedLocation && (
+                          <p className="mt-1 inline-flex items-center gap-1 rounded-full bg-yellow-400/10 px-2 py-0.5 text-[10px] font-semibold text-yellow-200">
+                            <AlertCircle size={10} />
+                            {copy.estimatedLocation}
+                          </p>
                         )}
                         {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
                         <div

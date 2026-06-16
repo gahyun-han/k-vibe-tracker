@@ -47,6 +47,7 @@ describe('ui copy', () => {
       expect(copy.analyze.buildRoute.length).toBeGreaterThan(0);
       expect(copy.analyze.routeSaved.length).toBeGreaterThan(0);
       expect(copy.analyze.routeSaveFailed.length).toBeGreaterThan(0);
+      expect(copy.analyze.estimatedLocation.length).toBeGreaterThan(0);
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);

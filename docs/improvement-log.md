@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Repaired Analyze localized mock result copy and added root S7 estimated-location labels. Korean, Japanese, and Simplified Chinese mock titles, places, and reasons now render as readable locale text, and low-confidence or coordinate-missing result cards show a localized estimated-location badge.
 - Added root S2/S3-style central Analyze CTA treatment to the mobile bottom navigation. The Analyze tab now stands out as the primary SNS spot action while the desktop left rail keeps the existing work-focused navigation.
 - Added root S6/S7 Analyze cache/error toast feedback. Cache hits now announce the loaded previous result and failed analysis requests raise the localized error toast, while keeping the existing local cache, inline retry state, and no-provider fallback.
 - Re-verified the user's Kakao domain setup in Chrome. The direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no domain/auth patterns, and `/ko/map` rendered in live mode with 26 Kakao tiles, 16 visible app pins, and no console warnings/errors.

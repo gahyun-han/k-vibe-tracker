@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 Analyze localized mock/estimated-location pass because it may consume paid quota and the local copy/UI/API fallback change could be verified with type-check and focused analyze/copy/API tests.
 - Claude CLI was not used for the 2026-06-17 central Analyze CTA navigation pass because it may consume paid quota and the local UI-only change could be verified with type-check, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Analyze cache/error toast pass because it may consume paid quota and the local UI/copy-only change could be verified with type-check, copy tests, build, and static analyze-page checks.
 - Claude CLI was not used for the 2026-06-17 Home PWA/offline prompt coverage pass because it may consume paid quota and the local UI-only change could be verified with type-check, build, and static home-page checks.
@@ -91,6 +92,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 - Localhost browser verification.
 - No-cost Home feed empty-state recovery that resets local filters or opens the app map only after a user click, without adding external providers, AI, GPS, backend writes, or automatic API calls beyond the existing feed request.
 - No-cost Home feed save toast feedback that reuses localStorage saved-place state and the shared in-browser toast provider, without Supabase sync, backend writes, maps providers, AI, or additional API calls.
+- No-cost Analyze localized mock/estimated-location pass that changes deterministic local fallback copy and browser-only result labels, without AI workers, provider calls, maps, GPS, backend writes, or additional API calls.
 - No-cost central Analyze navigation CTA that changes only the mobile bottom-nav presentation for the existing `/[locale]/analyze` route, without external providers, API calls, maps, AI, GPS, backend writes, or storage changes.
 - No-cost Analyze cache/error toast feedback that reports existing local cache hits and existing analysis failures through the shared in-browser toast provider without AI workers, provider calls, backend writes, maps, GPS, or additional API calls.
 - No-cost Route summary/accessibility pass that renders the existing generated plan summary and localizes icon move-control labels/tooltips without adding external providers, API calls, maps, AI, GPS, or backend writes.

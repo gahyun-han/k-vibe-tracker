@@ -6,7 +6,7 @@ describe('analysis helpers', () => {
     const cases: Array<{ locale: AnalysisLocale; expectedTitle: string; expectedFirstPlace: string }> = [
       { locale: 'en', expectedTitle: 'Local K-content spot preview', expectedFirstPlace: 'Seongsu Cafe Street' },
       { locale: 'ko', expectedTitle: '로컬 K-콘텐츠 스팟 미리보기', expectedFirstPlace: '성수 카페거리' },
-      { locale: 'ja', expectedTitle: 'ローカルKコンテンツスポットのプレビュー', expectedFirstPlace: '聖水カフェ通り' },
+      { locale: 'ja', expectedTitle: 'ローカルKコンテンツスポットプレビュー', expectedFirstPlace: '聖水カフェ通り' },
       { locale: 'zh', expectedTitle: '本地K内容地点预览', expectedFirstPlace: '圣水咖啡街' },
     ];
 
@@ -17,6 +17,7 @@ describe('analysis helpers', () => {
       expect(result.title).toBe(expectedTitle);
       expect(result.places[0].name).toBe(expectedFirstPlace);
       expect(result.places.every((place) => place.reason.length > 0)).toBe(true);
+      expect(result.places.some((place) => place.confidence < 0.8)).toBe(true);
     }
   });
 
