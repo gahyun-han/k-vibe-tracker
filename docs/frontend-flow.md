@@ -64,7 +64,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Map uses the shared last-known-location cache before browser geolocation resolves, then refreshes coordinates and the cache when a new GPS fix succeeds.
 - Map stores successful `/api/places` responses in the shared local API cache and displays cached place lists while a fresh same-query request is pending or if it fails.
 - Map SDK fallback: Kakao Maps JavaScript SDK loads only when `NEXT_PUBLIC_KAKAO_MAP_KEY` is configured. Without it, the local preview map remains active and no Kakao request is made.
-- Current local verification shows the Kakao SDK loads on `http://localhost:3000`, `/ko/map` reaches `data-map-mode="ready"` in Chrome with a nonzero map container, and there are no Kakao console errors.
+- Current local verification shows the Kakao SDK loads on `http://localhost:3000`, `/ko/map` reaches `data-map-mode="ready"` in Chrome with a nonzero map container, rendered Kakao tile images, and no Kakao console errors.
 - Map FAB stack follows the root S3 direction: the search FAB opens `/[locale]/analyze` for SNS spot analysis, and the location FAB refreshes the current/last-known location.
 - Locale query: the map sends `locale=ko|en|ja|zh` to `/api/places`, which chooses the matching TourAPI service endpoint when live data is available.
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
@@ -102,7 +102,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Analyze input detects YouTube and Instagram URLs to match the root S5 platform direction. YouTube remains the only analyzable local/mock path; Instagram links show a localized approval-gated notice and do not call a provider.
 - Analyze example cards now match the root S5 flow: selecting a YouTube example fills the input and starts the local/mock analysis immediately, while selecting the Instagram example fills the input and shows the approval-gated pending state without calling a provider.
 - The Analyze page sends the active URL locale to `/api/analyze`; local mock titles, place names, and reasons follow the same locale, and enabled AI worker requests receive the locale value for future provider-side localization.
-- Analyze result cards follow the root S7 flow: selecting a coordinate-backed spot opens `/[locale]/map` with `detail=1`, focuses the analysis location, and opens the local place detail sheet with the analysis reason as context.
+- Analyze result cards follow the root S7 flow: each candidate shows a localized confidence label plus an accessible progress bar, and selecting a coordinate-backed spot opens `/[locale]/map` with `detail=1`, focuses the analysis location, and opens the local place detail sheet with the analysis reason as context.
 - Analyze stores successful same-video, same-locale results in the shared 1-hour local API cache. Cache hits skip the network call and show a localized previous-result source label.
 - Analyze loading uses a localized 4-step progress panel with an expected wait hint and cold-start note, matching the root S6 loading-state direction without calling any paid provider.
 - Analyze success includes a localized empty-results state when a worker returns no places, while local mock fallback still returns deterministic candidates.

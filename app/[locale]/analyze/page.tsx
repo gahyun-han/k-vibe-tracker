@@ -395,6 +395,7 @@ export default function AnalyzePage() {
                     ? `${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}`
                     : '';
                   const hasCoordinates = Boolean(coordinateText);
+                  const confidencePercent = Math.max(0, Math.min(100, Math.round(place.confidence * 100)));
 
                   return (
                     <button
@@ -414,10 +415,23 @@ export default function AnalyzePage() {
                           <p className="text-xs text-white/40">{coordinateText}</p>
                         )}
                         {place.reason && <p className="mt-1 line-clamp-2 text-xs text-white/35">{place.reason}</p>}
+                        <div
+                          className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10"
+                          role="progressbar"
+                          aria-label={`${copy.confidence} ${confidencePercent}%`}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={confidencePercent}
+                        >
+                          <div
+                            className="h-full rounded-full bg-[#FF3A5C] transition-all duration-300"
+                            style={{ width: `${confidencePercent}%` }}
+                          />
+                        </div>
                       </div>
                       <div className="shrink-0 text-right">
                         <p className="text-xs font-semibold text-[#FF3A5C]">
-                          {Math.round(place.confidence * 100)}%
+                          {confidencePercent}%
                         </p>
                         <p className="text-[10px] text-white/30">{copy.confidence}</p>
                         {hasCoordinates && (

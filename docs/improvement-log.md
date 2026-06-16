@@ -6,6 +6,8 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Re-tested Kakao Maps after the latest Kakao domain setup. Chrome loaded `/ko/map` on `http://localhost:3000` in live map mode, rendered Kakao tiles from `mts.daumcdn.net`, and reported no console warnings or errors.
+- Added S7 Analyze confidence bars to result cards. The UI now turns each local/mock confidence score into an accessible progress bar while keeping the existing map and route handoffs.
 - Added 1-hour local API caching and retry/fallback handling to the S2 Home feed. Successful `/api/places` feed responses are cached locally, cached cards can render when live refresh fails, and the error state now has a localized retry action.
 - Added a no-cost S9 Route current-distance panel. It checks distance to the next incomplete stop only after a user taps the button, using browser geolocation and local Haversine math without automatic GPS polling, Kakao Mobility, or Directions API calls.
 - Made the S12 Profile My Routes card itself tappable so saved local routes open `/[locale]/route` from the card body as well as the Continue/Edit buttons, without Supabase or a backend route lookup.
