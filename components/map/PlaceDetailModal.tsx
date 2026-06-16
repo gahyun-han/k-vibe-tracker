@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Clock, ExternalLink, MapPin, Mic2, Phone, RefreshCw, Star, Tags, X } from 'lucide-react';
+import { Clock, ExternalLink, Heart, MapPin, Mic2, Phone, RefreshCw, Star, Tags, X } from 'lucide-react';
 import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
 
 export interface Place {
@@ -30,9 +30,21 @@ export interface Place {
 interface PlaceDetailModalProps {
   place: Place | null;
   locale?: TourApiLocale;
+  labels?: {
+    addToRoute: string;
+    save: string;
+    saved: string;
+    docent: string;
+    details: string;
+    parking: string;
+    loadingDetail: string;
+    detailFallback: string;
+  };
+  isSaved?: boolean;
   onClose: () => void;
   onAddToRoute?: (place: Place) => void;
   onOpenDocent?: (place: Place) => void;
+  onToggleSave?: (place: Place) => void;
 }
 
 const CROWD_CONFIG = {
@@ -51,12 +63,26 @@ const CATEGORY_LABEL: Record<string, string> = {
   stay: 'Stay',
 };
 
+const DEFAULT_LABELS = {
+  addToRoute: 'Add to Route',
+  save: 'Save place',
+  saved: 'Saved place',
+  docent: 'Docent',
+  details: 'Details',
+  parking: 'Parking',
+  loadingDetail: 'Loading TourAPI detail',
+  detailFallback: 'Detail fallback active',
+};
+
 export function PlaceDetailModal({
   place,
   locale = 'ko',
+  labels,
+  isSaved = false,
   onClose,
   onAddToRoute,
   onOpenDocent,
+  onToggleSave,
 }: PlaceDetailModalProps) {
   const [detail, setDetail] = useState<NormalizedPlaceDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -151,6 +177,7 @@ export function PlaceDetailModal({
   const categoryLabel = CATEGORY_LABEL[mergedPlace.category] ?? mergedPlace.category;
   const imageUrl = mergedPlace.images?.[0] ?? mergedPlace.imageUrl;
   const externalUrl = mergedPlace.tourApiUrl?.startsWith('http') ? mergedPlace.tourApiUrl : null;
+  const text = { ...DEFAULT_LABELS, ...labels };
 
   return (
     <>
@@ -201,13 +228,26 @@ export function PlaceDetailModal({
                   </div>
                 )}
               </div>
-              <button
-                onClick={onClose}
-                aria-label="Close place detail"
-                className="rounded-lg p-1.5 text-white/60 hover:bg-white/10"
-              >
-                <X size={18} />
-              </button>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => onToggleSave?.(mergedPlace)}
+                  aria-label={isSaved ? text.saved : text.save}
+                  title={isSaved ? text.saved : text.save}
+                  className={`rounded-lg p-1.5 transition-colors hover:bg-white/10 ${
+                    isSaved ? 'text-[#FF3A5C]' : 'text-white/60'
+                  }`}
+                >
+                  <Heart size={18} className={isSaved ? 'fill-current' : ''} />
+                </button>
+                <button
+                  onClick={onClose}
+                  aria-label="Close place detail"
+                  className="rounded-lg p-1.5 text-white/60 hover:bg-white/10"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {mergedPlace.tags && mergedPlace.tags.length > 0 && (
@@ -248,13 +288,13 @@ export function PlaceDetailModal({
             {detailLoading && (
               <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/45">
                 <RefreshCw size={14} className="animate-spin text-[#FF3A5C]" />
-                Loading TourAPI detail
+                {text.loadingDetail}
               </div>
             )}
 
             {detailError && (
               <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/10 p-3 text-xs text-yellow-100/75">
-                Detail fallback active: {detailError}
+                {text.detailFallback}: {detailError}
               </div>
             )}
 
@@ -266,7 +306,7 @@ export function PlaceDetailModal({
 
             {mergedPlace.parking && (
               <div className="rounded-xl bg-white/5 p-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white/35">Parking</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/35">{text.parking}</p>
                 <p className="mt-1 text-sm leading-6 text-white/65">{mergedPlace.parking}</p>
               </div>
             )}
@@ -276,7 +316,7 @@ export function PlaceDetailModal({
                 onClick={() => onAddToRoute?.(mergedPlace)}
                 className="flex-1 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e]"
               >
-                Add to Route
+                {text.addToRoute}
               </button>
               <button
                 type="button"
@@ -284,7 +324,7 @@ export function PlaceDetailModal({
                 className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
               >
                 <Mic2 size={14} />
-                Docent
+                {text.docent}
               </button>
               {externalUrl && (
                 <a
@@ -294,7 +334,7 @@ export function PlaceDetailModal({
                   className="flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition-colors hover:bg-white/20"
                 >
                   <ExternalLink size={14} />
-                  Details
+                  {text.details}
                 </a>
               )}
             </div>

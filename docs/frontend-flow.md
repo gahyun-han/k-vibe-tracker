@@ -25,7 +25,7 @@ This project is in local-first development mode. Pages should remain usable with
 
 - Login UI lives in `components/auth/LoginModal.tsx`.
 - Browser and server Supabase clients return `null` when public Supabase env vars are missing.
-- Profile stays usable without Supabase credentials and explains that account sync is disabled in local development.
+- Profile stays usable without Supabase credentials, shows local saved places, shows the current local route, and explains that account sync is disabled in local development.
 - Login attempts without Supabase env show an inline local-development message instead of crashing.
 
 ## Local Data Contracts
@@ -43,8 +43,17 @@ This project is in local-first development mode. Pages should remain usable with
 - Category mapping follows the Korea Tourism Organization manuals: Korean content type IDs for `KorService2`, multilingual content type IDs for `EngService2`, `JpnService2`, and `ChsService2`.
 - Category filters and place detail sheets use lucide icons and text labels to avoid locale/font-dependent emoji rendering.
 - `Add to Route` stores the selected place in the shared local route plan and opens `/[locale]/route`.
+- Heart save stores or removes the selected place in `localStorage` under `k-vibe-saved-places`.
 - Place detail sheets lazy-load TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` through the server detail API for overview, images, phone, operating time, rest day, and parking fields.
 - Place detail sheets can open `/[locale]/docent` with the selected place overview as the local guide caption source.
+
+### Saved Places
+
+- UI: `app/[locale]/profile/page.tsx`
+- Helpers: `lib/saved-places.ts`
+- Local persistence key: `k-vibe-saved-places`
+- Saved places remain available in guest mode and open focused map views with `source=saved`.
+- Supabase cross-device sync is still approval/credential-gated; the local contract is ready to sync later.
 
 ### Analysis
 

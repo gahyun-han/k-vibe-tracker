@@ -80,7 +80,7 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-Without these Supabase values, local development still supports guest browsing flows. Login, profile persistence, and saved routes are disabled until credentials are provided.
+Without these Supabase values, local development still supports guest browsing flows, local saved places, and local route editing. Login and cross-device account sync are disabled until credentials are provided.
 
 Optional server-side integrations:
 
@@ -117,7 +117,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 - `/[locale]/route`: editable route timeline. It reads and writes the saved route plan in `localStorage`, supports drag reorder, removal, sample stop insertion, and share text.
 - `/[locale]/docent`: no-cost local docent. It opens a selected route stop with captions and browser `speechSynthesis` voice playback instead of a paid TTS API.
 - `/[locale]/radar`: convenience facility radar. It requests browser geolocation, falls back to Seoul, calls `/api/facilities`, and supports radius/type filtering.
-- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode account state when Supabase is not configured.
+- `/[locale]/profile`: Supabase auth-backed profile when credentials exist, plus a guest-mode dashboard with local saved places and the current local route when Supabase is not configured.
 
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
@@ -150,6 +150,14 @@ Categories:
 ```text
 all, cafe, photo, fun, culture, food, stay
 ```
+
+### Local saved places
+
+- Storage key: `k-vibe-saved-places`
+- Map place detail sheets can save or unsave a selected place with the heart control.
+- Saved places are visible in `/[locale]/profile` even in guest mode.
+- Saved place cards open focused map views with `lat`, `lng`, `q`, and `source=saved` URL parameters.
+- Supabase account sync for saved places is still deferred until credentials are configured.
 
 ### `GET /api/places/[contentId]`
 
@@ -250,6 +258,7 @@ lib/
   facilities.ts # facility types, cache-key, and local mock source
   routes.ts     # route themes, mock plans, duration helpers
   tourapi.ts    # TourAPI URL, category, cache-key, normalization helpers
+  saved-places.ts # local saved place storage helpers
   youtube.ts
   haversine.ts
 messages/       # next-intl locale messages
@@ -271,7 +280,7 @@ ai-worker/      # FastAPI prototype
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
   - Map category filters and place detail sheets now use stable lucide icons/text labels instead of fragile emoji glyphs.
   - Map place details lazy-load TourAPI overview, image gallery, phone, operating time, rest day, and parking fields.
-  - Map place details can add a selected place into the shared local route plan, open the route editor, or launch the local Docent flow.
+  - Map place details can save or unsave a selected place, add it into the shared local route plan, open the route editor, or launch the local Docent flow.
   - `/api/facilities` now supports validated mock-backed facility lookup with cache keys.
   - Radar page now consumes `/api/facilities`, supports geolocation fallback, radius/type filters, loading/error/retry states, and English facility cards.
   - `/api/routes/generate` now supports validated mock-backed route generation.
@@ -281,6 +290,7 @@ ai-worker/      # FastAPI prototype
   - Analyze results now link detected places into the map and can create a local editable route from candidates.
   - Home entry feature cards and trend chips now route directly into app workflows instead of acting as static labels.
   - Route stops now open a local AI Docent screen with captions and browser voice playback, keeping the guide experience available without OpenAI TTS cost.
+  - Profile now works as a guest-mode dashboard with local saved places and the current local route, matching the root saved-places grid direction without needing Supabase.
   - Landing, login modal, top bar, language switcher, and profile page now use readable English local-first UI and avoid broken placeholder glyphs.
   - Locale JSON files have been repaired for English, Korean, Japanese, and Chinese.
   - Redis caching is not wired yet, but cache key generation is implemented and tested.

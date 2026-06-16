@@ -13,6 +13,15 @@ import {
   type RoutePlan,
   type RouteStop,
 } from '@/lib/routes';
+import {
+  hasSavedPlace,
+  parseSavedPlaces,
+  removeSavedPlace,
+  SAVED_PLACES_STORAGE_KEY,
+  serializeSavedPlaces,
+  upsertSavedPlace,
+  type SavedPlace,
+} from '@/lib/saved-places';
 import type { NormalizedPlace, PlaceCategory } from '@/lib/tourapi';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
@@ -131,7 +140,19 @@ export default function MapPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reloadKey, setReloadKey] = useState(0);
+  const [savedPlaces, setSavedPlaces] = useState<SavedPlace[]>([]);
+  const [savedHydrated, setSavedHydrated] = useState(false);
   const initialLocationApplied = useRef(false);
+
+  useEffect(() => {
+    setSavedPlaces(parseSavedPlaces(window.localStorage.getItem(SAVED_PLACES_STORAGE_KEY)));
+    setSavedHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!savedHydrated) return;
+    window.localStorage.setItem(SAVED_PLACES_STORAGE_KEY, serializeSavedPlaces(savedPlaces));
+  }, [savedHydrated, savedPlaces]);
 
   const addPlaceToRoute = useCallback((place: Place) => {
     try {
@@ -183,6 +204,26 @@ export default function MapPage() {
     query.set('lng', String(place.lng));
     router.push(`/${locale}/docent?${query.toString()}`);
   }, [copy.categories, copy.map.addedFromMap, locale, router]);
+
+  const toggleSavedPlace = useCallback((place: Place) => {
+    setSavedPlaces((current) =>
+      hasSavedPlace(current, place)
+        ? removeSavedPlace(current, place)
+        : upsertSavedPlace(current, {
+            id: place.id,
+            contentId: place.contentId,
+            contentTypeId: place.contentTypeId,
+            name: place.name,
+            category: place.category,
+            address: place.address,
+            lat: place.lat,
+            lng: place.lng,
+            imageUrl: place.images?.[0] ?? place.imageUrl,
+            overview: place.overview,
+            tags: place.tags,
+          }),
+    );
+  }, []);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -436,9 +477,12 @@ export default function MapPage() {
         <PlaceDetailModal
           place={selectedPlace}
           locale={locale}
+          labels={copy.placeDetail}
+          isSaved={selectedPlace ? hasSavedPlace(savedPlaces, selectedPlace) : false}
           onClose={() => setSelectedPlace(null)}
           onAddToRoute={addPlaceToRoute}
           onOpenDocent={openPlaceDocent}
+          onToggleSave={toggleSavedPlace}
         />
       </div>
     </AppLayout>
