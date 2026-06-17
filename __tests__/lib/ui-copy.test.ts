@@ -113,6 +113,115 @@ describe('ui copy', () => {
       zh: { all: '全部', culture: '文化', food: '美食' },
     };
 
+    const expectedMapCopy = {
+      en: {
+        seoulFallback: 'Seoul fallback',
+        currentLocation: 'Current location',
+        searchPlaceholder: 'Search places',
+        nearbySpots: 'Nearby spots',
+        resultCount: '{count} shown',
+        searchSuggestions: ['Cafe', 'Palace', 'Market'],
+        refreshLocation: 'Refresh current location',
+        openAnalyzer: 'Open SNS analyzer',
+        savedRouteTitle: 'Map Saved Route',
+        crowdHigh: 'Busy',
+      },
+      ko: {
+        seoulFallback: '서울 기본 위치',
+        currentLocation: '현재 위치',
+        searchPlaceholder: '장소 검색',
+        nearbySpots: '주변 스팟',
+        resultCount: '{count}개 표시',
+        searchSuggestions: ['카페', '궁', '시장'],
+        refreshLocation: '현재 위치 새로고침',
+        openAnalyzer: 'SNS 분석 열기',
+        savedRouteTitle: '지도 저장 루트',
+        crowdHigh: '혼잡',
+      },
+      ja: {
+        seoulFallback: 'ソウルの既定位置',
+        currentLocation: '現在地',
+        searchPlaceholder: 'スポットを検索',
+        nearbySpots: '周辺スポット',
+        resultCount: '{count}件表示',
+        searchSuggestions: ['カフェ', '宮殿', '市場'],
+        refreshLocation: '現在地を更新',
+        openAnalyzer: 'SNS分析を開く',
+        savedRouteTitle: '地図で保存したルート',
+        crowdHigh: '混雑',
+      },
+      zh: {
+        seoulFallback: '首尔默认位置',
+        currentLocation: '当前位置',
+        searchPlaceholder: '搜索地点',
+        nearbySpots: '附近地点',
+        resultCount: '显示 {count} 个',
+        searchSuggestions: ['咖啡馆', '宫殿', '市场'],
+        refreshLocation: '刷新当前位置',
+        openAnalyzer: '打开SNS分析',
+        savedRouteTitle: '地图保存路线',
+        crowdHigh: '拥挤',
+      },
+    };
+    const expectedRadarCopy = {
+      en: {
+        title: 'Facility Radar',
+        found: '{count} found',
+        refresh: 'Refresh facilities',
+        radius: 'Radius',
+        mapTitle: 'Radar map',
+        all: 'All',
+        restroom: 'Restroom',
+        cafeToilet: 'Cafe restroom',
+        loading: 'Scanning nearby facilities',
+        emptyTitle: 'No facilities found in this radius',
+        expandRadius: 'Expand radius',
+        viewOnMap: 'View on Map',
+      },
+      ko: {
+        title: '시설 레이더',
+        found: '{count}개 발견',
+        refresh: '시설 새로고침',
+        radius: '반경',
+        mapTitle: '레이더 지도',
+        all: '전체',
+        restroom: '화장실',
+        cafeToilet: '카페 화장실',
+        loading: '주변 시설을 검색하는 중',
+        emptyTitle: '이 반경 안에 시설이 없습니다',
+        expandRadius: '반경 넓히기',
+        viewOnMap: '지도에서 보기',
+      },
+      ja: {
+        title: '施設レーダー',
+        found: '{count}件',
+        refresh: '施設を更新',
+        radius: '半径',
+        mapTitle: 'レーダーマップ',
+        all: 'すべて',
+        restroom: 'トイレ',
+        cafeToilet: 'カフェのトイレ',
+        loading: '周辺施設をスキャン中',
+        emptyTitle: 'この半径内に施設がありません',
+        expandRadius: '半径を広げる',
+        viewOnMap: '地図で見る',
+      },
+      zh: {
+        title: '设施雷达',
+        found: '找到 {count} 个',
+        refresh: '刷新设施',
+        radius: '半径',
+        mapTitle: '雷达地图',
+        all: '全部',
+        restroom: '洗手间',
+        cafeToilet: '咖啡店洗手间',
+        loading: '正在扫描附近设施',
+        emptyTitle: '此半径内未找到设施',
+        expandRadius: '扩大半径',
+        viewOnMap: '在地图中查看',
+      },
+    };
+
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
 
@@ -142,13 +251,26 @@ describe('ui copy', () => {
       expect(copy.analyze.estimatedLocation.length).toBeGreaterThan(0);
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
+      expect(copy.radar.title).toBe(expectedRadarCopy[locale].title);
+      expect(copy.radar.found).toBe(expectedRadarCopy[locale].found);
+      expect(copy.radar.refresh).toBe(expectedRadarCopy[locale].refresh);
+      expect(copy.radar.radius).toBe(expectedRadarCopy[locale].radius);
+      expect(copy.radar.mapTitle).toBe(expectedRadarCopy[locale].mapTitle);
+      expect(copy.radar.loading).toBe(expectedRadarCopy[locale].loading);
+      expect(copy.radar.emptyTitle).toBe(expectedRadarCopy[locale].emptyTitle);
       expect(copy.radar.filters.all.length).toBeGreaterThan(0);
+      expect(copy.radar.filters.all).toBe(expectedRadarCopy[locale].all);
+      expect(copy.radar.filters.restroom).toBe(expectedRadarCopy[locale].restroom);
+      expect(copy.radar.facilityTypes.cafe_toilet).toBe(expectedRadarCopy[locale].cafeToilet);
       for (const facilityType of FACILITY_TYPES) {
         expect(copy.radar.filters[facilityType].length).toBeGreaterThan(0);
         expect(copy.radar.facilityTypes[facilityType].length).toBeGreaterThan(0);
       }
       expect(copy.radar.viewOnMap.length).toBeGreaterThan(0);
+      expect(copy.radar.viewOnMap).toBe(expectedRadarCopy[locale].viewOnMap);
       expect(copy.radar.expandRadius.length).toBeGreaterThan(0);
+      expect(copy.radar.expandRadius).toBe(expectedRadarCopy[locale].expandRadius);
+      expect(JSON.stringify(copy.radar)).not.toContain('?');
 
       expect(copy.route.title.length).toBeGreaterThan(0);
       expect(copy.route.startGuidance.length).toBeGreaterThan(0);
@@ -200,19 +322,27 @@ describe('ui copy', () => {
       expect(copy.profile.showLess.length).toBeGreaterThan(0);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
+      expect(copy.map.refreshLocation).toBe(expectedMapCopy[locale].refreshLocation);
       expect(copy.map.openAnalyzer.length).toBeGreaterThan(0);
+      expect(copy.map.openAnalyzer).toBe(expectedMapCopy[locale].openAnalyzer);
       expect(copy.map.locationUnavailable.length).toBeGreaterThan(0);
       expect(copy.map.cachedFallback.length).toBeGreaterThan(0);
+      expect(copy.map.seoulFallback).toBe(expectedMapCopy[locale].seoulFallback);
+      expect(copy.map.currentLocation).toBe(expectedMapCopy[locale].currentLocation);
+      expect(copy.map.searchPlaceholder).toBe(expectedMapCopy[locale].searchPlaceholder);
       expect(copy.landing.languageTitle).toBe(expectedLandingCopy[locale].languageTitle);
       expect(copy.landing.start).toBe(expectedLandingCopy[locale].start);
       expect(copy.landing.trendingLabel).toBe(expectedLandingCopy[locale].trendingLabel);
       expect(JSON.stringify(copy.landing)).not.toContain('?');
       expect(copy.landing.languageTitle.length).toBeGreaterThan(0);
       expect(copy.map.nearbySpots.length).toBeGreaterThan(0);
+      expect(copy.map.nearbySpots).toBe(expectedMapCopy[locale].nearbySpots);
       expect(copy.map.resultCount).toContain('{count}');
+      expect(copy.map.resultCount).toBe(expectedMapCopy[locale].resultCount);
       expect(copy.map.noPlacesHint.length).toBeGreaterThan(0);
       expect(copy.map.searchSuggestionsLabel.length).toBeGreaterThan(0);
       expect(copy.map.searchSuggestions.length).toBeGreaterThan(0);
+      expect(copy.map.searchSuggestions).toEqual(expectedMapCopy[locale].searchSuggestions);
       for (const suggestion of copy.map.searchSuggestions) {
         expect(suggestion.length).toBeGreaterThan(0);
       }
@@ -237,7 +367,10 @@ describe('ui copy', () => {
         expect(storyLabel.length).toBeGreaterThan(0);
       }
       expect(copy.map.savedRouteTitle.length).toBeGreaterThan(0);
+      expect(copy.map.savedRouteTitle).toBe(expectedMapCopy[locale].savedRouteTitle);
       expect(copy.map.crowd.low.length).toBeGreaterThan(0);
+      expect(copy.map.crowd.high).toBe(expectedMapCopy[locale].crowdHigh);
+      expect(JSON.stringify(copy.map)).not.toContain('?');
       expect(copy.radar.mapTitle.length).toBeGreaterThan(0);
       expect(copy.radar.openFacilityMap).toContain('{name}');
       expect(copy.radar.locationUnavailable.length).toBeGreaterThan(0);

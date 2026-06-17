@@ -122,7 +122,7 @@ NEXT_PUBLIC_KAKAO_MAP_KEY=
 Supported locales are `ko`, `en`, `ja`, and `zh`.
 
 The language switcher and home language buttons persist the active locale in `localStorage` and the `NEXT_LOCALE` cookie so reloads and future server-side locale reads can keep the same language choice. The shared language switcher changes only the locale prefix and preserves the current query string, so focused map details and local route share URLs survive language changes.
-Map categories, live Kakao pin labels, fallback map pins, and place detail category badges use the active locale's copy instead of hardcoded English category text.
+Map categories, live Kakao pin labels, fallback map pins, search/result labels, recovery actions, Radar facility filters, and place detail category badges use the active locale's copy instead of hardcoded English category text.
 
 On mobile, the shared app shell keeps the bottom tab bar from the root wireframes and emphasizes Analyze as the central SNS spot CTA. On desktop-width screens, the same navigation switches to a left rail so map and route workflows get more usable horizontal space.
 
