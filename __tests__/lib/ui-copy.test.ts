@@ -221,6 +221,86 @@ describe('ui copy', () => {
         viewOnMap: '在地图中查看',
       },
     };
+    const expectedRouteCopy = {
+      en: {
+        title: 'Route',
+        travelSegment: 'Walk {duration} · {distance}',
+        transitSegment: 'Transit {duration} · {distance}',
+        locationCardTitle: 'Current distance',
+        checkCurrentLocation: 'Check location',
+        openRouteMap: 'Open in Map',
+        startGuidance: 'Start Guidance',
+        routeCompleted: 'All stops are complete',
+        extraStopName: 'Cheonggyecheon Stream',
+      },
+      ko: {
+        title: '루트',
+        travelSegment: '도보 {duration} · {distance}',
+        transitSegment: '대중교통 {duration} · {distance}',
+        locationCardTitle: '현재 거리',
+        checkCurrentLocation: '위치 확인',
+        openRouteMap: '지도에서 열기',
+        startGuidance: '가이드 시작',
+        routeCompleted: '모든 방문지를 완료했습니다',
+        extraStopName: '청계천',
+      },
+      ja: {
+        title: 'ルート',
+        travelSegment: '徒歩 {duration} · {distance}',
+        transitSegment: '公共交通 {duration} · {distance}',
+        locationCardTitle: '現在の距離',
+        checkCurrentLocation: '位置を確認',
+        openRouteMap: '地図で開く',
+        startGuidance: 'ガイド開始',
+        routeCompleted: 'すべての立ち寄り先が完了しました',
+        extraStopName: '清渓川',
+      },
+      zh: {
+        title: '路线',
+        travelSegment: '步行 {duration} · {distance}',
+        transitSegment: '公共交通 {duration} · {distance}',
+        locationCardTitle: '当前位置距离',
+        checkCurrentLocation: '检查位置',
+        openRouteMap: '在地图中打开',
+        startGuidance: '开始导览',
+        routeCompleted: '所有地点均已完成',
+        extraStopName: '清溪川',
+      },
+    };
+    const expectedDocentCopy = {
+      en: {
+        title: 'AI Docent',
+        eyebrow: 'Local voice guide',
+        progressLabel: 'Script progress',
+        play: 'Play',
+        backToRoute: 'Back to route',
+        fallbackName: 'Selected stop',
+      },
+      ko: {
+        title: 'AI 도슨트',
+        eyebrow: '로컬 음성 가이드',
+        progressLabel: '스크립트 진행',
+        play: '재생',
+        backToRoute: '루트로 돌아가기',
+        fallbackName: '선택한 방문지',
+      },
+      ja: {
+        title: 'AIドーセント',
+        eyebrow: 'ローカル音声ガイド',
+        progressLabel: 'スクリプト進行',
+        play: '再生',
+        backToRoute: 'ルートへ戻る',
+        fallbackName: '選択した立ち寄り先',
+      },
+      zh: {
+        title: 'AI导览',
+        eyebrow: '本地语音导览',
+        progressLabel: '脚本进度',
+        play: '播放',
+        backToRoute: '返回路线',
+        fallbackName: '已选地点',
+      },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -273,15 +353,22 @@ describe('ui copy', () => {
       expect(JSON.stringify(copy.radar)).not.toContain('?');
 
       expect(copy.route.title.length).toBeGreaterThan(0);
+      expect(copy.route.title).toBe(expectedRouteCopy[locale].title);
       expect(copy.route.startGuidance.length).toBeGreaterThan(0);
+      expect(copy.route.startGuidance).toBe(expectedRouteCopy[locale].startGuidance);
       expect(copy.route.miniMapTitle.length).toBeGreaterThan(0);
       expect(copy.route.travelSegment).toContain('{duration}');
       expect(copy.route.travelSegment).toContain('{distance}');
+      expect(copy.route.travelSegment).toBe(expectedRouteCopy[locale].travelSegment);
       expect(copy.route.transitSegment).toContain('{duration}');
       expect(copy.route.transitSegment).toContain('{distance}');
+      expect(copy.route.transitSegment).toBe(expectedRouteCopy[locale].transitSegment);
       expect(copy.route.travelSegmentBetween).toContain('{from}');
       expect(copy.route.travelSegmentBetween).toContain('{to}');
+      expect(copy.route.locationCardTitle).toBe(expectedRouteCopy[locale].locationCardTitle);
+      expect(copy.route.checkCurrentLocation).toBe(expectedRouteCopy[locale].checkCurrentLocation);
       expect(copy.route.openRouteMap.length).toBeGreaterThan(0);
+      expect(copy.route.openRouteMap).toBe(expectedRouteCopy[locale].openRouteMap);
       expect(copy.route.openRouteMapTitle.length).toBeGreaterThan(0);
       expect(copy.route.openDirections.length).toBeGreaterThan(0);
       expect(copy.route.sharedRouteInvalid.length).toBeGreaterThan(0);
@@ -293,6 +380,9 @@ describe('ui copy', () => {
       expect(copy.route.moveStopUpTitle.length).toBeGreaterThan(0);
       expect(copy.route.moveStopDownTitle.length).toBeGreaterThan(0);
       expect(copy.route.extraStop.name.length).toBeGreaterThan(0);
+      expect(copy.route.extraStop.name).toBe(expectedRouteCopy[locale].extraStopName);
+      expect(copy.route.routeCompleted).toBe(expectedRouteCopy[locale].routeCompleted);
+      expect(JSON.stringify(copy.route)).not.toContain('?');
 
       expect(copy.common.signIn).toBe(expectedCommonCopy[locale].signIn);
       expect(copy.common.goBack).toBe(expectedCommonCopy[locale].goBack);
@@ -421,9 +511,21 @@ describe('ui copy', () => {
       }
 
       expect(copy.docent.progressLabel.length).toBeGreaterThan(0);
+      expect(copy.docent.title).toBe(expectedDocentCopy[locale].title);
+      expect(copy.docent.eyebrow).toBe(expectedDocentCopy[locale].eyebrow);
+      expect(copy.docent.progressLabel).toBe(expectedDocentCopy[locale].progressLabel);
       expect(copy.docent.progressValue).toContain('{current}');
       expect(copy.docent.progressValue).toContain('{total}');
       expect(copy.docent.captionTitle.length).toBeGreaterThan(0);
+      expect(copy.docent.play).toBe(expectedDocentCopy[locale].play);
+      expect(copy.docent.backToRoute).toBe(expectedDocentCopy[locale].backToRoute);
+      expect(copy.docent.fallbackName).toBe(expectedDocentCopy[locale].fallbackName);
+      expect(copy.docent.scriptIntro).toContain('{name}');
+      expect(copy.docent.scriptIntro).toContain('{category}');
+      expect(copy.docent.scriptBody).toContain('{stayMinutes}');
+      expect(copy.docent.scriptBody).toContain('{address}');
+      expect(copy.docent.scriptTags).toContain('{tags}');
+      expect(JSON.stringify(copy.docent)).not.toContain('?');
 
       expect(copy.profile.openRouteDetail).toContain('{name}');
       expect(copy.profile.openRouteDetailCta.length).toBeGreaterThan(0);
