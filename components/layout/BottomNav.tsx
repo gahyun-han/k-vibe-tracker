@@ -30,10 +30,18 @@ export default function BottomNav({ active, viewMode }: { active: TabId; viewMod
           isDesktopMode ? 'flex' : 'hidden'
         }`}
       >
-        <div className="border-b border-white/10 px-5 py-5">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF3A5C]">K-Vibe</p>
+        <button
+          type="button"
+          onClick={() => router.push(`/${locale}`)}
+          aria-label={copy.common.goHome}
+          title={copy.common.goHome}
+          className="group border-b border-white/10 px-5 py-5 text-left transition-colors hover:bg-white/5"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wider text-[#FF3A5C] transition-colors group-hover:text-[#FF8BA0]">
+            K-Vibe
+          </p>
           <p className="mt-1 text-lg font-black text-white">Tracker</p>
-        </div>
+        </button>
         <div className="flex flex-1 flex-col gap-1 px-3 py-4">
           {TABS.map((tab) => {
             const isActive = active === tab.id;

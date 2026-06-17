@@ -51,7 +51,15 @@ export default function TopBar({ title, showBack, viewMode, onViewModeChange }: 
             <ArrowLeft size={18} />
           </button>
         ) : (
-          <span className="text-lg font-black text-[#FF3A5C]">K</span>
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}`)}
+            aria-label={copy.common.goHome}
+            title={copy.common.goHome}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-black text-[#FF3A5C] transition-colors hover:bg-white/10 hover:text-[#FF8BA0]"
+          >
+            K
+          </button>
         )}
 
         <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-white">

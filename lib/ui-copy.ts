@@ -69,6 +69,7 @@ const UI_COPY = {
       signIn: 'Sign in',
       close: 'Close',
       goBack: 'Go back',
+      goHome: 'Go home',
       changeLanguage: 'Change language',
       openProfile: 'Open profile',
       avatarAlt: 'User avatar',
@@ -582,6 +583,7 @@ const UI_COPY = {
       signIn: '로그인',
       close: '닫기',
       goBack: '뒤로 가기',
+      goHome: '홈으로 이동',
       changeLanguage: '언어 변경',
       openProfile: '프로필 열기',
       avatarAlt: '사용자 아바타',
@@ -1095,6 +1097,7 @@ const UI_COPY = {
       signIn: 'ログイン',
       close: '閉じる',
       goBack: '戻る',
+      goHome: 'ホームへ移動',
       changeLanguage: '言語を変更',
       openProfile: 'プロフィールを開く',
       avatarAlt: 'ユーザーアバター',
@@ -1608,6 +1611,7 @@ const UI_COPY = {
       signIn: '登录',
       close: '关闭',
       goBack: '返回',
+      goHome: '返回首页',
       changeLanguage: '更改语言',
       openProfile: '打开我的',
       avatarAlt: '用户头像',
@@ -2314,6 +2318,7 @@ type CommonCopy = {
   signIn: string;
   close: string;
   goBack: string;
+  goHome: string;
   changeViewMode: string;
   mobileView: string;
   desktopView: string;
@@ -2397,6 +2402,7 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: 'Sign in',
     close: 'Close',
     goBack: 'Go back',
+    goHome: 'Go home',
     changeViewMode: 'Change view mode',
     mobileView: 'Mobile',
     desktopView: 'PC',
@@ -2415,6 +2421,7 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: '로그인',
     close: '닫기',
     goBack: '뒤로 가기',
+    goHome: '홈으로 이동',
     changeViewMode: '보기 모드 변경',
     mobileView: '모바일',
     desktopView: 'PC',
@@ -2433,6 +2440,7 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: 'ログイン',
     close: '閉じる',
     goBack: '戻る',
+    goHome: 'ホームへ移動',
     changeViewMode: '表示モードを変更',
     mobileView: 'モバイル',
     desktopView: 'PC',
@@ -2451,6 +2459,7 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: '登录',
     close: '关闭',
     goBack: '返回',
+    goHome: '返回首页',
     changeViewMode: '切换显示模式',
     mobileView: '手机',
     desktopView: 'PC',

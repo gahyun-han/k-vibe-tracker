@@ -80,6 +80,7 @@ describe('ui copy', () => {
       en: {
         signIn: 'Sign in',
         goBack: 'Go back',
+        goHome: 'Go home',
         close: 'Close',
         changeViewMode: 'Change view mode',
         mobileView: 'Mobile',
@@ -88,6 +89,7 @@ describe('ui copy', () => {
       ko: {
         signIn: '로그인',
         goBack: '뒤로 가기',
+        goHome: '홈으로 이동',
         close: '닫기',
         changeViewMode: '보기 모드 변경',
         mobileView: '모바일',
@@ -96,6 +98,7 @@ describe('ui copy', () => {
       ja: {
         signIn: 'ログイン',
         goBack: '戻る',
+        goHome: 'ホームへ移動',
         close: '閉じる',
         changeViewMode: '表示モードを変更',
         mobileView: 'モバイル',
@@ -104,6 +107,7 @@ describe('ui copy', () => {
       zh: {
         signIn: '登录',
         goBack: '返回',
+        goHome: '返回首页',
         close: '关闭',
         changeViewMode: '切换显示模式',
         mobileView: '手机',
@@ -773,6 +777,7 @@ describe('ui copy', () => {
 
       expect(copy.common.signIn).toBe(expectedCommonCopy[locale].signIn);
       expect(copy.common.goBack).toBe(expectedCommonCopy[locale].goBack);
+      expect(copy.common.goHome).toBe(expectedCommonCopy[locale].goHome);
       expect(copy.common.close).toBe(expectedCommonCopy[locale].close);
       expect(copy.common.changeViewMode).toBe(expectedCommonCopy[locale].changeViewMode);
       expect(copy.common.mobileView).toBe(expectedCommonCopy[locale].mobileView);
@@ -781,6 +786,7 @@ describe('ui copy', () => {
       expect(copy.common.switchToDesktopView.length).toBeGreaterThan(0);
       expect(JSON.stringify(copy.common)).not.toContain('?');
       expect(copy.common.goBack.length).toBeGreaterThan(0);
+      expect(copy.common.goHome.length).toBeGreaterThan(0);
       expect(copy.common.changeLanguage.length).toBeGreaterThan(0);
       expect(copy.common.openProfile.length).toBeGreaterThan(0);
       expect(copy.common.unexpectedErrorTitle.length).toBeGreaterThan(0);
