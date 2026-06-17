@@ -524,6 +524,124 @@ describe('ui copy', () => {
         historyPalaceDayLabel: '宫殿日',
       },
     };
+    const expectedProfileCopy = {
+      en: {
+        title: 'Profile',
+        guestTitle: 'Guest traveler',
+        statsPlaces: 'Places',
+        statsRoutes: 'Routes',
+        signInTitle: 'Sign in to sync trips',
+        savedPlaces: 'Saved Places',
+        noSavedPlaces: 'No saved places yet',
+        noSavedPlacesHint: 'Open the map, choose a place, and tap the heart.',
+        openMap: 'Open in Map',
+        savedRoutes: 'Saved routes',
+        noSavedRoutes: 'No saved route yet',
+        noSavedRoutesHint: 'Generate or assemble a route to keep it in local storage.',
+        createFirstRoute: 'Create your first route',
+        openSavedDetail: 'Open {name} details',
+        openSavedDetailCta: 'View details',
+        openRouteDetail: 'Open {name} route',
+        openRouteDetailCta: 'Open route detail',
+        continueRoute: 'Continue',
+        editRoute: 'Edit route',
+        routeStops: '{count} stops',
+        routeProgress: '{done}/{total} complete',
+        routeComplete: 'Route complete',
+        nextStop: 'Next stop',
+        seeAll: 'See all',
+        showLess: 'Show less',
+        personaLabel: 'Persona',
+        personaUnset: 'Not selected',
+      },
+      ko: {
+        title: '프로필',
+        guestTitle: '게스트 여행자',
+        statsPlaces: '장소',
+        statsRoutes: '루트',
+        signInTitle: '로그인하면 여행을 동기화할 수 있어요',
+        savedPlaces: '저장 장소',
+        noSavedPlaces: '아직 저장한 장소가 없어요',
+        noSavedPlacesHint: '지도를 열고 장소를 선택한 뒤 하트를 눌러 저장하세요.',
+        openMap: '지도에서 보기',
+        savedRoutes: '저장 루트',
+        noSavedRoutes: '아직 저장된 루트가 없어요',
+        noSavedRoutesHint: '루트를 생성하거나 지도에서 장소를 추가하면 로컬에 보관됩니다.',
+        createFirstRoute: '첫 루트 만들기',
+        openSavedDetail: '{name} 상세 보기',
+        openSavedDetailCta: '상세 보기',
+        openRouteDetail: '{name} 루트 열기',
+        openRouteDetailCta: '루트 상세 열기',
+        continueRoute: '이어가기',
+        editRoute: '루트 편집',
+        routeStops: '{count}개 장소',
+        routeProgress: '{done}/{total} 완료',
+        routeComplete: '루트 완료',
+        nextStop: '다음 방문지',
+        seeAll: '전체 보기',
+        showLess: '접기',
+        personaLabel: '페르소나',
+        personaUnset: '미선택',
+      },
+      ja: {
+        title: 'プロフィール',
+        guestTitle: 'ゲスト旅行者',
+        statsPlaces: 'スポット',
+        statsRoutes: 'ルート',
+        signInTitle: 'ログインすると旅を同期できます',
+        savedPlaces: '保存スポット',
+        noSavedPlaces: '保存したスポットはまだありません',
+        noSavedPlacesHint: '地図でスポットを選び、ハートを押して保存できます。',
+        openMap: '地図で開く',
+        savedRoutes: '保存ルート',
+        noSavedRoutes: '保存済みルートはまだありません',
+        noSavedRoutesHint: 'ルート生成または地図から追加するとローカルに保存されます。',
+        createFirstRoute: '最初のルートを作成',
+        openSavedDetail: '{name}の詳細を開く',
+        openSavedDetailCta: '詳細を見る',
+        openRouteDetail: '{name}ルートを開く',
+        openRouteDetailCta: 'ルート詳細を開く',
+        continueRoute: '続ける',
+        editRoute: 'ルート編集',
+        routeStops: '{count}件',
+        routeProgress: '{done}/{total}完了',
+        routeComplete: 'ルート完了',
+        nextStop: '次のスポット',
+        seeAll: 'すべて見る',
+        showLess: '折りたたむ',
+        personaLabel: 'ペルソナ',
+        personaUnset: '未選択',
+      },
+      zh: {
+        title: '我的',
+        guestTitle: '访客旅行者',
+        statsPlaces: '地点',
+        statsRoutes: '路线',
+        signInTitle: '登录后同步旅行',
+        savedPlaces: '保存地点',
+        noSavedPlaces: '还没有保存地点',
+        noSavedPlacesHint: '打开地图，选择地点，然后点击爱心保存。',
+        openMap: '在地图中打开',
+        savedRoutes: '保存路线',
+        noSavedRoutes: '还没有保存路线',
+        noSavedRoutesHint: '生成路线或从地图添加地点后会保存在本地。',
+        createFirstRoute: '创建第一条路线',
+        openSavedDetail: '打开{name}详情',
+        openSavedDetailCta: '查看详情',
+        openRouteDetail: '打开{name}路线',
+        openRouteDetailCta: '打开路线详情',
+        continueRoute: '继续',
+        editRoute: '编辑路线',
+        routeStops: '{count}站',
+        routeProgress: '已完成{done}/{total}',
+        routeComplete: '路线已完成',
+        nextStop: '下一站',
+        seeAll: '查看全部',
+        showLess: '收起',
+        personaLabel: '画像',
+        personaUnset: '未选择',
+      },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -642,15 +760,30 @@ describe('ui copy', () => {
       expect(copy.login.title.length).toBeGreaterThan(0);
       expect(copy.login.continueGuest.length).toBeGreaterThan(0);
       expect(copy.login.guestFeatures).toHaveLength(4);
+      expect(copy.profile.title).toBe(expectedProfileCopy[locale].title);
+      expect(copy.profile.guestTitle).toBe(expectedProfileCopy[locale].guestTitle);
+      expect(copy.profile.statsPlaces).toBe(expectedProfileCopy[locale].statsPlaces);
+      expect(copy.profile.statsRoutes).toBe(expectedProfileCopy[locale].statsRoutes);
       expect(copy.profile.openSavedDetail).toContain('{name}');
+      expect(copy.profile.openSavedDetail).toBe(expectedProfileCopy[locale].openSavedDetail);
       expect(copy.profile.openSavedDetailCta.length).toBeGreaterThan(0);
+      expect(copy.profile.openSavedDetailCta).toBe(expectedProfileCopy[locale].openSavedDetailCta);
       expect(copy.profile.openMap.length).toBeGreaterThan(0);
+      expect(copy.profile.openMap).toBe(expectedProfileCopy[locale].openMap);
       expect(copy.profile.personaLabel.length).toBeGreaterThan(0);
+      expect(copy.profile.personaLabel).toBe(expectedProfileCopy[locale].personaLabel);
       expect(copy.profile.personaUnset.length).toBeGreaterThan(0);
+      expect(copy.profile.personaUnset).toBe(expectedProfileCopy[locale].personaUnset);
       expect(copy.profile.signInTitle.length).toBeGreaterThan(0);
+      expect(copy.profile.signInTitle).toBe(expectedProfileCopy[locale].signInTitle);
       expect(copy.profile.signInDescription.length).toBeGreaterThan(0);
+      expect(copy.profile.savedPlaces).toBe(expectedProfileCopy[locale].savedPlaces);
+      expect(copy.profile.noSavedPlaces).toBe(expectedProfileCopy[locale].noSavedPlaces);
+      expect(copy.profile.noSavedPlacesHint).toBe(expectedProfileCopy[locale].noSavedPlacesHint);
       expect(copy.profile.seeAll.length).toBeGreaterThan(0);
+      expect(copy.profile.seeAll).toBe(expectedProfileCopy[locale].seeAll);
       expect(copy.profile.showLess.length).toBeGreaterThan(0);
+      expect(copy.profile.showLess).toBe(expectedProfileCopy[locale].showLess);
 
       expect(copy.map.refreshLocation.length).toBeGreaterThan(0);
       expect(copy.map.refreshLocation).toBe(expectedMapCopy[locale].refreshLocation);
@@ -803,7 +936,22 @@ describe('ui copy', () => {
       expect(JSON.stringify(copy.docent)).not.toContain('?');
 
       expect(copy.profile.openRouteDetail).toContain('{name}');
+      expect(copy.profile.openRouteDetail).toBe(expectedProfileCopy[locale].openRouteDetail);
       expect(copy.profile.openRouteDetailCta.length).toBeGreaterThan(0);
+      expect(copy.profile.openRouteDetailCta).toBe(expectedProfileCopy[locale].openRouteDetailCta);
+      expect(copy.profile.savedRoutes).toBe(expectedProfileCopy[locale].savedRoutes);
+      expect(copy.profile.noSavedRoutes).toBe(expectedProfileCopy[locale].noSavedRoutes);
+      expect(copy.profile.noSavedRoutesHint).toBe(expectedProfileCopy[locale].noSavedRoutesHint);
+      expect(copy.profile.createFirstRoute).toBe(expectedProfileCopy[locale].createFirstRoute);
+      expect(copy.profile.continueRoute).toBe(expectedProfileCopy[locale].continueRoute);
+      expect(copy.profile.editRoute).toBe(expectedProfileCopy[locale].editRoute);
+      expect(copy.profile.routeStops).toContain('{count}');
+      expect(copy.profile.routeStops).toBe(expectedProfileCopy[locale].routeStops);
+      expect(copy.profile.routeProgress).toContain('{done}');
+      expect(copy.profile.routeProgress).toContain('{total}');
+      expect(copy.profile.routeProgress).toBe(expectedProfileCopy[locale].routeProgress);
+      expect(copy.profile.routeComplete).toBe(expectedProfileCopy[locale].routeComplete);
+      expect(copy.profile.nextStop).toBe(expectedProfileCopy[locale].nextStop);
       expect(copy.route.locationCardBody).toContain('{name}');
       expect(copy.route.nextStopNear).toContain('{distance}');
       expect(copy.route.nextStopFar).toContain('{name}');
