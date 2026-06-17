@@ -301,6 +301,88 @@ describe('ui copy', () => {
         fallbackName: '已选地点',
       },
     };
+    const expectedPlaceDetailCopy = {
+      en: {
+        addToRoute: 'Add to Route',
+        addedToRoute: 'Added to route',
+        save: 'Save place',
+        saved: 'Saved place',
+        removed: 'Removed from saved places',
+        docent: 'Docent',
+        details: 'Details',
+        parking: 'Parking',
+        loadingDetail: 'Loading TourAPI detail',
+        detailFallback: 'Detail fallback active',
+        closeDetail: 'Close place detail',
+        imagePreview: 'Preview image {index}',
+        seenInTitle: 'Seen in',
+        share: 'Share',
+        shared: 'Shared',
+        copied: 'Copied link',
+        shareUnavailable: 'Share unavailable',
+        crowdHigh: 'Busy',
+      },
+      ko: {
+        addToRoute: '루트에 추가',
+        addedToRoute: '루트에 추가했어요',
+        save: '장소 저장',
+        saved: '저장된 장소',
+        removed: '저장 장소에서 제거했어요',
+        docent: '도슨트',
+        details: '상세',
+        parking: '주차',
+        loadingDetail: 'TourAPI 상세 불러오는 중',
+        detailFallback: '상세 대체 모드',
+        closeDetail: '장소 상세 닫기',
+        imagePreview: '{index}번째 이미지 보기',
+        seenInTitle: '콘텐츠 노출',
+        share: '공유',
+        shared: '공유했어요',
+        copied: '링크를 복사했어요',
+        shareUnavailable: '공유할 수 없어요',
+        crowdHigh: '혼잡',
+      },
+      ja: {
+        addToRoute: 'ルートに追加',
+        addedToRoute: 'ルートに追加しました',
+        save: '保存する',
+        saved: '保存済み',
+        removed: '保存スポットから削除しました',
+        docent: 'ドーセント',
+        details: '詳細',
+        parking: '駐車',
+        loadingDetail: 'TourAPI詳細を読み込み中',
+        detailFallback: '詳細フォールバック',
+        closeDetail: 'スポット詳細を閉じる',
+        imagePreview: '{index}枚目の画像を表示',
+        seenInTitle: '登場コンテンツ',
+        share: '共有',
+        shared: '共有しました',
+        copied: 'リンクをコピーしました',
+        shareUnavailable: '共有できません',
+        crowdHigh: '混雑',
+      },
+      zh: {
+        addToRoute: '加入路线',
+        addedToRoute: '已加入路线',
+        save: '保存地点',
+        saved: '已保存',
+        removed: '已从保存地点移除',
+        docent: '导览',
+        details: '详情',
+        parking: '停车',
+        loadingDetail: '正在加载TourAPI详情',
+        detailFallback: '详情兜底模式',
+        closeDetail: '关闭地点详情',
+        imagePreview: '查看第{index}张图片',
+        seenInTitle: '出现于',
+        share: '分享',
+        shared: '已分享',
+        copied: '已复制链接',
+        shareUnavailable: '无法分享',
+        crowdHigh: '拥挤',
+      },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -467,19 +549,38 @@ describe('ui copy', () => {
       expect(copy.radar.cachedFallback.length).toBeGreaterThan(0);
       expect(copy.analyze.confidence.length).toBeGreaterThan(0);
 
+      expect(copy.placeDetail.addToRoute).toBe(expectedPlaceDetailCopy[locale].addToRoute);
+      expect(copy.placeDetail.addedToRoute).toBe(expectedPlaceDetailCopy[locale].addedToRoute);
+      expect(copy.placeDetail.save).toBe(expectedPlaceDetailCopy[locale].save);
+      expect(copy.placeDetail.saved).toBe(expectedPlaceDetailCopy[locale].saved);
+      expect(copy.placeDetail.removed).toBe(expectedPlaceDetailCopy[locale].removed);
+      expect(copy.placeDetail.docent).toBe(expectedPlaceDetailCopy[locale].docent);
+      expect(copy.placeDetail.details).toBe(expectedPlaceDetailCopy[locale].details);
+      expect(copy.placeDetail.parking).toBe(expectedPlaceDetailCopy[locale].parking);
+      expect(copy.placeDetail.loadingDetail).toBe(expectedPlaceDetailCopy[locale].loadingDetail);
+      expect(copy.placeDetail.detailFallback).toBe(expectedPlaceDetailCopy[locale].detailFallback);
+      expect(copy.placeDetail.closeDetail).toBe(expectedPlaceDetailCopy[locale].closeDetail);
       expect(copy.placeDetail.closeDetail.length).toBeGreaterThan(0);
       expect(copy.placeDetail.addedToRoute.length).toBeGreaterThan(0);
       expect(copy.placeDetail.removed.length).toBeGreaterThan(0);
       expect(copy.placeDetail.imagePreview).toContain('{index}');
+      expect(copy.placeDetail.imagePreview).toBe(expectedPlaceDetailCopy[locale].imagePreview);
       expect(copy.placeDetail.seenInTitle).toBe(expectedSeenInTitle[locale]);
+      expect(copy.placeDetail.seenInTitle).toBe(expectedPlaceDetailCopy[locale].seenInTitle);
       expect(copy.placeDetail.seenInTitle.length).toBeGreaterThan(0);
       expect(copy.placeDetail.seenInYoutube).toContain('{count}');
       expect(copy.placeDetail.seenInInstagram).toContain('{count}');
       expect(copy.placeDetail.share.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.share).toBe(expectedPlaceDetailCopy[locale].share);
       expect(copy.placeDetail.shared.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.shared).toBe(expectedPlaceDetailCopy[locale].shared);
       expect(copy.placeDetail.copied.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.copied).toBe(expectedPlaceDetailCopy[locale].copied);
       expect(copy.placeDetail.shareUnavailable.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.shareUnavailable).toBe(expectedPlaceDetailCopy[locale].shareUnavailable);
       expect(copy.placeDetail.crowd.high.length).toBeGreaterThan(0);
+      expect(copy.placeDetail.crowd.high).toBe(expectedPlaceDetailCopy[locale].crowdHigh);
+      expect(JSON.stringify(copy.placeDetail)).not.toContain('?');
 
       expect(copy.persona.title.length).toBeGreaterThan(0);
       expect(copy.persona.themes.kpop.details.bts.label.length).toBeGreaterThan(0);

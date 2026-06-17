@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Hardened localized Place Detail copy coverage for Korean, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts route/save/share/docent/detail/image/social-proof/crowd labels so the map detail sheet cannot regress into placeholder or mojibake copy unnoticed.
 - Repaired localized Route and Docent core copy in Korean, Japanese, and Simplified Chinese, including route action buttons, travel segment labels, current-distance status, sample stops, local voice controls, captions, and docent fallback/script text, with exact UI-copy assertions.
 - Repaired localized Map and Radar core copy in Korean, Japanese, and Simplified Chinese, including search/location/result labels, map recovery actions, facility filters, facility type names, and empty-state actions, with exact UI-copy assertions.
 - Re-tested the Kakao domain setup in Chrome after the user's latest confirmation. The direct SDK referer probe returned `200 text/javascript` with no auth/domain patterns, and `/ko/map` reached live Kakao mode with 26 rendered tile images, 16 visible app pin buttons, and no console warnings/errors.
