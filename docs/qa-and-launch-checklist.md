@@ -4,6 +4,10 @@ Last updated: 2026-06-17
 
 ## Latest Chrome QA
 
+Current live-API QA policy:
+- As of 2026-06-17, free daily API allowance may be used for local development and Chrome QA.
+- Pause and record before any paid overage, billing enablement, paid model call, private browser-state access, or external permission step.
+
 Environment:
 - Chrome against `http://localhost:3100`
 - Kakao, TourAPI, OpenAI, YouTube, Supabase, and AI worker keys disabled
@@ -38,7 +42,7 @@ Deferred because they can consume quota, require permission, or create external 
 
 Immediate no-cost checks:
 - Open `http://localhost:3000/en/map` in Chrome.
-- Switch to PC mode and drag the map once. If you approve live quota use, confirm whether pins now stay attached while dragging.
+- Switch to PC mode and drag the map once. Live Kakao/TourAPI free daily quota is now approved for local QA, so Codex can also run this check directly when useful.
 - Check Kakao Developers quota dashboard after testing: My Applications > Statistics > Quota.
 - Keep `http://localhost:3000` registered in Kakao Developers Web platform domains. Add `http://127.0.0.1:3000` only if you plan to test with that host too.
 

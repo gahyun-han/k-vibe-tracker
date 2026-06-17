@@ -2,7 +2,7 @@
 
 Last updated: 2026-06-17
 
-Do not enable or run anything in this list without explicit user approval if it can incur cost, consume paid quota, use private browser state, or require external permissions.
+Current approval boundary: the user approved using provider APIs freely up to their free daily allowance for local development and QA. Do not enable paid billing, exceed known free/daily quotas, consume paid model quota, use private browser state, or require external permissions without explicit approval.
 
 ## Deferred Items
 
