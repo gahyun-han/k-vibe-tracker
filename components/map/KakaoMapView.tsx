@@ -21,12 +21,24 @@ interface KakaoMapViewProps {
 type KakaoLatLng = new (lat: number, lng: number) => unknown;
 type KakaoMap = {
   setCenter: (latLng: unknown) => void;
+  relayout?: () => void;
+};
+type KakaoCustomOverlay = {
+  setMap: (map: KakaoMap | null) => void;
 };
 
 interface KakaoMapsApi {
   load: (callback: () => void) => void;
   LatLng: KakaoLatLng;
   Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap;
+  CustomOverlay?: new (options: {
+    position: unknown;
+    content: HTMLElement;
+    xAnchor?: number;
+    yAnchor?: number;
+    zIndex?: number;
+    clickable?: boolean;
+  }) => KakaoCustomOverlay;
 }
 
 declare global {
@@ -39,6 +51,10 @@ declare global {
 
 const KAKAO_SCRIPT_ID = 'kakao-map-sdk';
 const KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+const PIN_BASE_CLASS =
+  'whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/70';
+const PIN_SELECTED_CLASS = 'border-[#FF3A5C] bg-[#FF3A5C] text-white';
+const PIN_DEFAULT_CLASS = 'border-white/20 bg-[#1A1A2E]/90 text-white/85 hover:border-[#FF3A5C]/70';
 
 function pinPosition(place: Place, center: Coordinates) {
   const lngOffset = (place.lng - center.lng) * 2600;
@@ -50,6 +66,43 @@ function pinPosition(place: Place, center: Coordinates) {
 
 function categoryLabelFor(category: string, labels: Readonly<Partial<Record<string, string>>>) {
   return labels[category] ?? labels.spot ?? category;
+}
+
+function pinClassName(selected: boolean) {
+  return `${PIN_BASE_CLASS} ${selected ? PIN_SELECTED_CLASS : PIN_DEFAULT_CLASS}`;
+}
+
+function createKakaoPinContent({
+  categoryLabel,
+  distanceLabel,
+  pinLabel,
+  selected,
+  onClick,
+}: {
+  categoryLabel: string;
+  distanceLabel: string;
+  pinLabel: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = pinClassName(selected);
+  button.setAttribute('aria-label', pinLabel);
+  button.title = pinLabel;
+
+  const category = document.createElement('span');
+  category.className = 'mr-1';
+  category.textContent = categoryLabel;
+  button.append(category);
+  button.append(document.createTextNode(distanceLabel));
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onClick();
+  });
+
+  return button;
 }
 
 function loadKakaoMaps(appKey: string): Promise<KakaoMapsApi> {
@@ -93,9 +146,11 @@ export function KakaoMapView({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoMap | null>(null);
   const mapsRef = useRef<KakaoMapsApi | null>(null);
+  const overlaysRef = useRef<KakaoCustomOverlay[]>([]);
   const [mode, setMode] = useState<'fallback' | 'loading' | 'ready'>(
     KAKAO_MAP_KEY ? 'loading' : 'fallback',
   );
+  const [nativePinLayer, setNativePinLayer] = useState(false);
 
   const visiblePins = useMemo(() => places.slice(0, 16), [places]);
 
@@ -136,6 +191,77 @@ export function KakaoMapView({
     map.setCenter(new maps.LatLng(center.lat, center.lng));
   }, [center.lat, center.lng]);
 
+  useEffect(() => {
+    if (mode !== 'ready' || !containerRef.current) return;
+
+    let frame = 0;
+    const relayout = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const maps = mapsRef.current;
+        const map = mapRef.current;
+        if (!maps || !map) return;
+        map.relayout?.();
+        map.setCenter(new maps.LatLng(center.lat, center.lng));
+      });
+    };
+
+    relayout();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(relayout);
+    observer?.observe(containerRef.current);
+    window.addEventListener('resize', relayout);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener('resize', relayout);
+    };
+  }, [center.lat, center.lng, mode]);
+
+  useEffect(() => {
+    overlaysRef.current.forEach((overlay) => overlay.setMap(null));
+    overlaysRef.current = [];
+
+    const maps = mapsRef.current;
+    const map = mapRef.current;
+    if (mode !== 'ready' || !maps?.CustomOverlay || !map) {
+      setNativePinLayer(false);
+      return;
+    }
+
+    const overlays = visiblePins.map((place) => {
+      const selected = selectedPlaceId === place.id;
+      const categoryLabel = categoryLabelFor(place.category, categoryLabels);
+      const distanceLabel = formatDistance(place.distanceM);
+      const pinLabel = buildMapPinAccessibleLabel(place.name, categoryLabel, distanceLabel);
+      const content = createKakaoPinContent({
+        categoryLabel,
+        distanceLabel,
+        pinLabel,
+        selected,
+        onClick: () => onSelectPlace(place),
+      });
+      const overlay = new maps.CustomOverlay!({
+        position: new maps.LatLng(place.lat, place.lng),
+        content,
+        xAnchor: 0.5,
+        yAnchor: 0.5,
+        zIndex: selected ? 20 : 10,
+        clickable: true,
+      });
+      overlay.setMap(map);
+      return overlay;
+    });
+
+    overlaysRef.current = overlays;
+    setNativePinLayer(true);
+
+    return () => {
+      overlays.forEach((overlay) => overlay.setMap(null));
+      if (overlaysRef.current === overlays) overlaysRef.current = [];
+    };
+  }, [categoryLabels, formatDistance, mode, onSelectPlace, selectedPlaceId, visiblePins]);
+
   return (
     <div className="absolute inset-0" data-map-mode={mode}>
       <div
@@ -150,7 +276,7 @@ export function KakaoMapView({
         </>
       )}
 
-      <div className="pointer-events-none absolute inset-0 z-10">
+      {(!nativePinLayer || mode !== 'ready') && <div className="pointer-events-none absolute inset-0 z-10">
         {visiblePins.map((place) => {
           const selected = selectedPlaceId === place.id;
           const categoryLabel = categoryLabelFor(place.category, categoryLabels);
@@ -163,11 +289,7 @@ export function KakaoMapView({
               onClick={() => onSelectPlace(place)}
               aria-label={pinLabel}
               title={pinLabel}
-              className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all ${
-                selected
-                  ? 'border-[#FF3A5C] bg-[#FF3A5C] text-white'
-                  : 'border-white/20 bg-[#1A1A2E]/90 text-white/85 hover:border-[#FF3A5C]/70'
-              }`}
+              className={`pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 ${pinClassName(selected)}`}
               style={pinPosition(place, center)}
             >
               <span className="mr-1">{categoryLabel}</span>
@@ -175,7 +297,7 @@ export function KakaoMapView({
             </button>
           );
         })}
-      </div>
+      </div>}
     </div>
   );
 }

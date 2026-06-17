@@ -1,7 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { getInitialViewMode, normalizeViewMode, VIEW_MODE_STORAGE_KEY, type ViewMode } from '@/lib/view-mode';
+import {
+  getInitialViewMode,
+  normalizeViewMode,
+  VIEW_MODE_CHANGE_EVENT,
+  VIEW_MODE_STORAGE_KEY,
+  type ViewMode,
+} from '@/lib/view-mode';
 
 export function useViewMode() {
   const [viewMode, setViewModeState] = useState<ViewMode>('mobile');
@@ -17,8 +23,16 @@ export function useViewMode() {
       }
     }
 
+    function handleSameTabChange(event: Event) {
+      setViewModeState(normalizeViewMode((event as CustomEvent<ViewMode>).detail));
+    }
+
     window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    window.addEventListener(VIEW_MODE_CHANGE_EVENT, handleSameTabChange);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener(VIEW_MODE_CHANGE_EVENT, handleSameTabChange);
+    };
   }, []);
 
   const setViewMode = useCallback((nextMode: ViewMode) => {
@@ -28,6 +42,7 @@ export function useViewMode() {
     } catch {
       // View mode is a preference only; storage failures should not block rendering.
     }
+    window.dispatchEvent(new CustomEvent(VIEW_MODE_CHANGE_EVENT, { detail: nextMode }));
   }, []);
 
   return { viewMode, setViewMode };

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { getInitialViewMode, normalizeViewMode, VIEW_MODE_STORAGE_KEY } from '@/lib/view-mode';
+import {
+  getInitialViewMode,
+  normalizeViewMode,
+  VIEW_MODE_CHANGE_EVENT,
+  VIEW_MODE_STORAGE_KEY,
+} from '@/lib/view-mode';
 
 describe('view mode helpers', () => {
   it('normalizes unknown values to mobile', () => {
@@ -19,5 +24,6 @@ describe('view mode helpers', () => {
     expect(getInitialViewMode(1024)).toBe('desktop');
     expect(getInitialViewMode(1440)).toBe('desktop');
     expect(VIEW_MODE_STORAGE_KEY).toBe('k-vibe-view-mode');
+    expect(VIEW_MODE_CHANGE_EVENT).toBe('k-vibe-view-mode-change');
   });
 });

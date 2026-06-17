@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
+import { useViewMode } from '@/components/common/useViewMode';
 import AppLayout from '@/components/layout/AppLayout';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
@@ -119,6 +120,8 @@ export default function MapPage() {
   const locationCopy = getLocationStatusCopy(locale);
   const sourceCopy = getDataSourceCopy(locale);
   const { toast } = useToast();
+  const { viewMode } = useViewMode();
+  const isDesktopMode = viewMode === 'desktop';
   const [categories, setCategories] = useState<Category[]>(['all']);
   const [selectedPlace, setSelectedPlace] = useState<(Place & { distanceM?: number }) | null>(null);
   const [search, setSearch] = useState('');
@@ -427,8 +430,11 @@ export default function MapPage() {
 
   return (
     <AppLayout activeTab="map">
-      <div className="flex h-[calc(100dvh-3.5rem)] flex-col bg-[#0D0D1A]">
-        <div className="relative min-h-0 flex-1 overflow-hidden bg-[#101827]">
+      <div className={isDesktopMode
+        ? 'grid h-[calc(100vh-3.5rem)] min-h-[640px] grid-cols-[minmax(0,1fr)_380px] bg-[#0D0D1A]'
+        : 'flex h-[calc(100dvh-3.5rem)] flex-col bg-[#0D0D1A]'}
+      >
+        <div className={`relative min-h-0 overflow-hidden bg-[#101827] ${isDesktopMode ? 'h-full' : 'flex-1'}`}>
           <KakaoMapView
             center={coords}
             places={filtered}
@@ -481,7 +487,10 @@ export default function MapPage() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 bg-[#0D0D1A]">
+        <div className={isDesktopMode
+          ? 'flex min-h-0 flex-col border-l border-white/10 bg-[#0D0D1A]'
+          : 'border-t border-white/10 bg-[#0D0D1A]'}
+        >
           <div className="space-y-2 px-4 pb-2 pt-3">
             <div className="relative">
               <Search
@@ -521,7 +530,7 @@ export default function MapPage() {
             </div>
           )}
 
-          <div className="max-h-60 overflow-y-auto pb-20">
+          <div className={isDesktopMode ? 'min-h-0 flex-1 overflow-y-auto pb-4' : 'max-h-60 overflow-y-auto pb-20'}>
             {!loading && filtered.length === 0 ? (
               <div className="space-y-3 px-4 py-8 text-center">
                 <div>

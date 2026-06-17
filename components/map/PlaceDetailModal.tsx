@@ -276,7 +276,12 @@ export function PlaceDetailModal({
     <>
       <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="place-detail-title"
+        className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md"
+      >
         <div className="max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-t-2xl border border-white/10 bg-[#1A1A2E] pb-[env(safe-area-inset-bottom)] shadow-2xl">
           <div className="flex justify-center pb-1 pt-3">
             <div className="h-1 w-10 rounded-full bg-white/20" />
@@ -336,7 +341,7 @@ export function PlaceDetailModal({
                     </span>
                   )}
                 </div>
-                <h2 className="text-lg font-bold text-white">{mergedPlace.name}</h2>
+                <h2 id="place-detail-title" className="text-lg font-bold text-white">{mergedPlace.name}</h2>
                 {mergedPlace.rating && (
                   <div className="mt-0.5 flex items-center gap-1">
                     <Star size={12} className="fill-yellow-400 text-yellow-400" />

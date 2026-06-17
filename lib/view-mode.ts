@@ -1,4 +1,5 @@
 export const VIEW_MODE_STORAGE_KEY = 'k-vibe-view-mode';
+export const VIEW_MODE_CHANGE_EVENT = 'k-vibe-view-mode-change';
 
 export const VIEW_MODES = ['mobile', 'desktop'] as const;
 
