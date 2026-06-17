@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 localized Analyze screen copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Place Detail localized-copy coverage pass because it may consume paid quota and the scoped regression guard could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 localized Route/Docent copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 localized Map/Radar copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
@@ -107,6 +108,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost localized Analyze screen copy repair that changes only bundled UI copy and tests for existing supported locales, without calling `/api/analyze`, external translation providers, SNS providers, maps, TourAPI, AI, GPS, browser APIs, backend writes, storage, or paid services.
 - No-cost localized Place Detail copy coverage that changes only bundled UI-copy tests and documentation for existing supported locales, without external translation providers, maps, TourAPI, AI, GPS, browser APIs, backend writes, storage, or paid services.
 - No-cost localized Route/Docent copy repair that changes only bundled UI copy and tests for existing supported locales, without external translation providers, maps, TourAPI, AI, GPS, browser speech playback, backend writes, storage, or paid services.
 - No-cost localized Map/Radar copy repair that changes only bundled UI copy and tests for existing supported locales, without external translation providers, maps, TourAPI, AI, GPS, backend writes, storage, or paid services.

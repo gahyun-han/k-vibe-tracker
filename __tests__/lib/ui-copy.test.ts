@@ -383,6 +383,84 @@ describe('ui copy', () => {
         crowdHigh: '拥挤',
       },
     };
+    const expectedAnalyzeCopy = {
+      en: {
+        title: 'SNS Spot Analyzer',
+        inputPlaceholder: 'Paste a YouTube or Instagram URL',
+        youtubeSupported: 'YouTube ready',
+        instagramPending: 'Instagram queued',
+        analyzeButton: 'Analyze Spots',
+        loadingTitle: 'Analysis in progress',
+        loadingSteps: ['Validating URL', 'Reading video context', 'Matching candidate places', 'Preparing map-ready results'],
+        foundSpots: 'Found {count} candidate spots',
+        sourceCache: 'Previous result',
+        confidence: 'confidence',
+        estimatedLocation: 'Estimated location',
+        viewOnMap: 'View on Map',
+        buildRoute: 'Build Route',
+        localModeTitle: 'Local-first analysis',
+        openVideo: 'Open video',
+        routeTitle: 'SNS Analysis Route',
+        routeSaved: 'Route saved',
+      },
+      ko: {
+        title: 'SNS 스팟 분석기',
+        inputPlaceholder: 'YouTube 또는 Instagram URL 붙여넣기',
+        youtubeSupported: 'YouTube 준비됨',
+        instagramPending: 'Instagram 대기 중',
+        analyzeButton: '스팟 분석',
+        loadingTitle: '분석 진행 중',
+        loadingSteps: ['URL 확인', '영상 맥락 읽기', '후보 장소 매칭', '지도 결과 준비'],
+        foundSpots: '후보 스팟 {count}개 발견',
+        sourceCache: '이전 결과',
+        confidence: '신뢰도',
+        estimatedLocation: '추정 위치',
+        viewOnMap: '지도에서 보기',
+        buildRoute: '루트 만들기',
+        localModeTitle: '로컬 우선 분석',
+        openVideo: '영상 열기',
+        routeTitle: 'SNS 분석 루트',
+        routeSaved: '루트를 저장했습니다',
+      },
+      ja: {
+        title: 'SNSスポット分析',
+        inputPlaceholder: 'YouTubeまたはInstagramのURLを貼り付け',
+        youtubeSupported: 'YouTube対応',
+        instagramPending: 'Instagram待機中',
+        analyzeButton: 'スポットを分析',
+        loadingTitle: '分析中',
+        loadingSteps: ['URLを確認', '動画の文脈を読む', '候補スポットを照合', '地図用の結果を準備'],
+        foundSpots: '候補スポット {count}件',
+        sourceCache: '前回の結果',
+        confidence: '信頼度',
+        estimatedLocation: '推定位置',
+        viewOnMap: '地図で見る',
+        buildRoute: 'ルート作成',
+        localModeTitle: 'ローカル優先分析',
+        openVideo: '動画を開く',
+        routeTitle: 'SNS分析ルート',
+        routeSaved: 'ルートを保存しました',
+      },
+      zh: {
+        title: 'SNS地点分析',
+        inputPlaceholder: '粘贴 YouTube 或 Instagram URL',
+        youtubeSupported: 'YouTube 可用',
+        instagramPending: 'Instagram 待处理',
+        analyzeButton: '分析地点',
+        loadingTitle: '分析进行中',
+        loadingSteps: ['验证 URL', '读取视频语境', '匹配候选地点', '准备地图结果'],
+        foundSpots: '找到 {count} 个候选地点',
+        sourceCache: '上次结果',
+        confidence: '可信度',
+        estimatedLocation: '推测位置',
+        viewOnMap: '在地图中查看',
+        buildRoute: '生成路线',
+        localModeTitle: '本地优先分析',
+        openVideo: '打开视频',
+        routeTitle: 'SNS分析路线',
+        routeSaved: '路线已保存',
+      },
+    };
 
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
@@ -392,14 +470,22 @@ describe('ui copy', () => {
       expect(LANGUAGE_NAMES[locale].length).toBeGreaterThan(1);
 
       expect(copy.analyze.title.length).toBeGreaterThan(0);
+      expect(copy.analyze.title).toBe(expectedAnalyzeCopy[locale].title);
+      expect(copy.analyze.inputPlaceholder).toBe(expectedAnalyzeCopy[locale].inputPlaceholder);
+      expect(copy.analyze.youtubeSupported).toBe(expectedAnalyzeCopy[locale].youtubeSupported);
+      expect(copy.analyze.instagramPending).toBe(expectedAnalyzeCopy[locale].instagramPending);
+      expect(copy.analyze.analyzeButton).toBe(expectedAnalyzeCopy[locale].analyzeButton);
       expect(copy.analyze.loadingTitle.length).toBeGreaterThan(0);
+      expect(copy.analyze.loadingTitle).toBe(expectedAnalyzeCopy[locale].loadingTitle);
       expect(copy.analyze.loadingEstimate.length).toBeGreaterThan(0);
       expect(copy.analyze.loadingColdStart.length).toBeGreaterThan(0);
       expect(copy.analyze.loadingSteps).toHaveLength(4);
+      expect(copy.analyze.loadingSteps).toEqual(expectedAnalyzeCopy[locale].loadingSteps);
       expect(copy.analyze.emptyTitle.length).toBeGreaterThan(0);
       expect(copy.analyze.emptyBody.length).toBeGreaterThan(0);
       expect(copy.analyze.tryExample.length).toBeGreaterThan(0);
       expect(copy.analyze.sourceCache.length).toBeGreaterThan(0);
+      expect(copy.analyze.sourceCache).toBe(expectedAnalyzeCopy[locale].sourceCache);
       expect(copy.analyze.cachedResultLoaded.length).toBeGreaterThan(0);
       expect(copy.analyze.unsupportedUrl.length).toBeGreaterThan(0);
       expect(copy.analyze.youtubeSupported.length).toBeGreaterThan(0);
@@ -407,10 +493,20 @@ describe('ui copy', () => {
       expect(copy.analyze.instagramPendingBody.length).toBeGreaterThan(0);
       expect(copy.analyze.openPost.length).toBeGreaterThan(0);
       expect(copy.analyze.viewOnMap.length).toBeGreaterThan(0);
+      expect(copy.analyze.viewOnMap).toBe(expectedAnalyzeCopy[locale].viewOnMap);
       expect(copy.analyze.buildRoute.length).toBeGreaterThan(0);
+      expect(copy.analyze.buildRoute).toBe(expectedAnalyzeCopy[locale].buildRoute);
       expect(copy.analyze.routeSaved.length).toBeGreaterThan(0);
+      expect(copy.analyze.routeSaved).toBe(expectedAnalyzeCopy[locale].routeSaved);
       expect(copy.analyze.routeSaveFailed.length).toBeGreaterThan(0);
       expect(copy.analyze.estimatedLocation.length).toBeGreaterThan(0);
+      expect(copy.analyze.estimatedLocation).toBe(expectedAnalyzeCopy[locale].estimatedLocation);
+      expect(copy.analyze.foundSpots).toBe(expectedAnalyzeCopy[locale].foundSpots);
+      expect(copy.analyze.confidence).toBe(expectedAnalyzeCopy[locale].confidence);
+      expect(copy.analyze.localModeTitle).toBe(expectedAnalyzeCopy[locale].localModeTitle);
+      expect(copy.analyze.openVideo).toBe(expectedAnalyzeCopy[locale].openVideo);
+      expect(copy.analyze.routeTitle).toBe(expectedAnalyzeCopy[locale].routeTitle);
+      expect(JSON.stringify(copy.analyze)).not.toContain('?');
 
       expect(copy.radar.title.length).toBeGreaterThan(0);
       expect(copy.radar.title).toBe(expectedRadarCopy[locale].title);
