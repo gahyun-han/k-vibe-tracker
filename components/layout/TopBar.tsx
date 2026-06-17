@@ -5,16 +5,20 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
+import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { createClient } from '@/lib/supabase/client';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import type { ViewMode } from '@/lib/view-mode';
 import type { User } from '@supabase/supabase-js';
 
 interface TopBarProps {
   title?: string;
   showBack?: boolean;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
 }
 
-export default function TopBar({ title, showBack }: TopBarProps) {
+export default function TopBar({ title, showBack, viewMode, onViewModeChange }: TopBarProps) {
   const router = useRouter();
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
@@ -55,6 +59,8 @@ export default function TopBar({ title, showBack }: TopBarProps) {
         </h1>
 
         <LanguageSwitcher />
+
+        <ViewModeToggle locale={locale} mode={viewMode} onChange={onViewModeChange} compact />
 
         {user ? (
           <button

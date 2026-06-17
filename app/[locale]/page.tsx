@@ -24,6 +24,8 @@ import LoginModal from '@/components/auth/LoginModal';
 import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
 import { TutorialButton } from '@/components/common/TutorialButton';
+import { useViewMode } from '@/components/common/useViewMode';
+import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { useToast } from '@/components/common/Toast';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
 import { persistPreferredLocale } from '@/lib/locale-preference';
@@ -118,6 +120,8 @@ export default function LandingPage() {
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
   const { toast } = useToast();
+  const { viewMode, setViewMode } = useViewMode();
+  const isDesktopMode = viewMode === 'desktop';
   const [showLogin, setShowLogin] = useState(false);
   const [feedPlaces, setFeedPlaces] = useState<FeedPlace[]>([]);
   const [feedSource, setFeedSource] = useState<ApiSource>('mock');
@@ -273,18 +277,26 @@ export default function LandingPage() {
   }, [copy.placeDetail.removed, copy.placeDetail.saved, savedPlaces, toast]);
 
   return (
-    <main className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] px-5 pb-28 pt-6">
-      <div className="-mx-5">
+    <main
+      data-view-mode={viewMode}
+      className={`relative mx-auto flex min-h-screen w-full flex-col bg-[#0D0D1A] ${
+        isDesktopMode ? 'max-w-7xl px-6 pb-10 pt-6' : 'max-w-md px-5 pb-28 pt-6'
+      }`}
+    >
+      <div className={isDesktopMode ? '-mx-6' : '-mx-5'}>
         <NetworkStatusBanner locale={locale} />
         <PwaInstallPrompt locale={locale} />
       </div>
 
       <div className="w-full space-y-2" role="group" aria-label={copy.landing.languageTitle}>
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#8B8BA8]">
-          <Languages size={14} className="text-[#FF3A5C]" />
-          {copy.landing.languageTitle}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2 pt-2 text-xs font-semibold uppercase tracking-wider text-[#8B8BA8]">
+            <Languages size={14} className="text-[#FF3A5C]" />
+            {copy.landing.languageTitle}
+          </div>
+          <ViewModeToggle locale={locale} mode={viewMode} onChange={setViewMode} compact={!isDesktopMode} />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className={`grid gap-2 ${isDesktopMode ? 'grid-cols-4' : 'grid-cols-2'}`}>
           {SUPPORTED_LOCALES.map((code) => (
             <button
               key={code}
@@ -359,8 +371,8 @@ export default function LandingPage() {
             </button>
           )}
 
-          <div className="-mx-5 overflow-x-auto px-5">
-            <div className="flex gap-3">
+          <div className={isDesktopMode ? 'overflow-visible' : '-mx-5 overflow-x-auto px-5'}>
+            <div className={isDesktopMode ? 'grid grid-cols-5 gap-3' : 'flex gap-3'}>
               {STORY_TOPICS.map(({ id, icon: Icon, category }) => {
                 const active = selectedStory === id;
 
@@ -372,7 +384,9 @@ export default function LandingPage() {
                       setSelectedStory(id);
                       setFeedCategory(category);
                     }}
-                    className="flex w-[72px] shrink-0 flex-col items-center gap-1.5 text-center"
+                    className={`flex flex-col items-center gap-1.5 text-center ${
+                      isDesktopMode ? 'min-w-0 rounded-xl bg-white/[0.03] px-2 py-3' : 'w-[72px] shrink-0'
+                    }`}
                     aria-label={copy.homeFeed.stories[id]}
                     aria-pressed={active}
                   >
@@ -396,8 +410,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="-mx-5 overflow-x-auto px-5">
-            <div className="flex gap-2">
+          <div className={isDesktopMode ? 'overflow-visible' : '-mx-5 overflow-x-auto px-5'}>
+            <div className={isDesktopMode ? 'flex flex-wrap gap-2' : 'flex gap-2'}>
               {FEED_CATEGORIES.map((category) => (
                 <button
                   key={category}
@@ -435,11 +449,14 @@ export default function LandingPage() {
             </div>
           )}
 
-          <div className="-mx-5 overflow-x-auto px-5">
-            <div className="flex gap-3">
+          <div className={isDesktopMode ? 'overflow-visible' : '-mx-5 overflow-x-auto px-5'}>
+            <div className={isDesktopMode ? 'grid grid-cols-4 gap-3' : 'flex gap-3'}>
               {feedLoading ? (
-                [1, 2].map((item) => (
-                  <div key={item} className="h-64 w-64 shrink-0 rounded-2xl bg-white/5 skeleton" />
+                (isDesktopMode ? [1, 2, 3, 4] : [1, 2]).map((item) => (
+                  <div
+                    key={item}
+                    className={`h-64 rounded-2xl bg-white/5 skeleton ${isDesktopMode ? 'w-full' : 'w-64 shrink-0'}`}
+                  />
                 ))
               ) : filteredFeed.length > 0 ? (
                 filteredFeed.slice(0, 8).map((place) => {
@@ -449,7 +466,9 @@ export default function LandingPage() {
                   return (
                     <article
                       key={place.id}
-                      className="w-64 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#1E1E30]"
+                      className={`overflow-hidden rounded-2xl border border-white/10 bg-[#1E1E30] ${
+                        isDesktopMode ? 'min-w-0' : 'w-64 shrink-0'
+                      }`}
                     >
                       <div className="relative h-32 bg-white/5">
                         <button
@@ -515,7 +534,11 @@ export default function LandingPage() {
                   );
                 })
               ) : (
-                <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-5 text-center">
+                <div
+                  className={`rounded-2xl border border-white/10 bg-white/5 p-5 text-center ${
+                    isDesktopMode ? 'col-span-full' : 'w-full'
+                  }`}
+                >
                   <p className="text-sm font-semibold text-white/65">{copy.homeFeed.empty}</p>
                   <p className="mt-1 text-xs leading-5 text-white/35">{copy.homeFeed.emptyHint}</p>
                   <div className="mt-4 grid grid-cols-2 gap-2">
@@ -545,7 +568,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className={`grid gap-2 ${isDesktopMode ? 'grid-cols-4' : 'grid-cols-2'}`}>
           {FEATURES.map(({ id, icon: Icon, path }) => (
             <button
               key={id}
@@ -590,7 +613,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      <div className="flex w-full flex-col gap-3 pt-5">
+      <div className={`flex w-full flex-col gap-3 pt-5 ${isDesktopMode ? 'mx-auto max-w-md' : ''}`}>
         <button
           onClick={handleStart}
           className="w-full rounded-2xl bg-[#FF3A5C] py-4 text-base font-bold text-white shadow-lg shadow-[#FF3A5C]/25 transition-colors hover:bg-[#CC2847]"

@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Added an explicit Mobile/PC view switcher for the home entry and shared app shell. Desktop-width users default to PC mode, the choice is saved locally, app screens switch between bottom-tab mobile chrome and left-rail PC chrome, and the home feed uses a wider PC grid while mobile mode keeps the compact phone layout.
 - Improved the production PWA service worker's offline app-shell cache. It now precaches the main app screens for Korean, English, Japanese, and Simplified Chinese, uses a locale-aware navigation fallback instead of always falling back to `/ko`, and has focused service-worker tests for the cache manifest and offline fallback path.
 - Hardened localized Profile dashboard copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts guest identity labels, saved-place empty states, map/detail CTAs, saved-route empty states, route progress labels, persona labels, and saved-place toggles used by the local guest dashboard.
 - Hardened localized Persona route-generator copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts high-visibility generator labels, route-save feedback, route title templates, and representative theme/detail labels used by the no-cost local route preview.

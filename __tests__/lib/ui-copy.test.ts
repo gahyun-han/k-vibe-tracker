@@ -77,10 +77,38 @@ describe('ui copy', () => {
       zh: { title: '到达检查', checkButton: '检查位置', ready: '你已在100m范围内，可以开始本地导览。' },
     };
     const expectedCommonCopy = {
-      en: { signIn: 'Sign in', goBack: 'Go back', close: 'Close' },
-      ko: { signIn: '로그인', goBack: '뒤로 가기', close: '닫기' },
-      ja: { signIn: 'ログイン', goBack: '戻る', close: '閉じる' },
-      zh: { signIn: '登录', goBack: '返回', close: '关闭' },
+      en: {
+        signIn: 'Sign in',
+        goBack: 'Go back',
+        close: 'Close',
+        changeViewMode: 'Change view mode',
+        mobileView: 'Mobile',
+        desktopView: 'PC',
+      },
+      ko: {
+        signIn: '로그인',
+        goBack: '뒤로 가기',
+        close: '닫기',
+        changeViewMode: '보기 모드 변경',
+        mobileView: '모바일',
+        desktopView: 'PC',
+      },
+      ja: {
+        signIn: 'ログイン',
+        goBack: '戻る',
+        close: '閉じる',
+        changeViewMode: '表示モードを変更',
+        mobileView: 'モバイル',
+        desktopView: 'PC',
+      },
+      zh: {
+        signIn: '登录',
+        goBack: '返回',
+        close: '关闭',
+        changeViewMode: '切换显示模式',
+        mobileView: '手机',
+        desktopView: 'PC',
+      },
     };
     const expectedLoginCopy = {
       en: { title: 'Sign in to K-Vibe', continueGuest: 'Continue as Guest', availableWithoutLogin: 'Available without login' },
@@ -746,6 +774,11 @@ describe('ui copy', () => {
       expect(copy.common.signIn).toBe(expectedCommonCopy[locale].signIn);
       expect(copy.common.goBack).toBe(expectedCommonCopy[locale].goBack);
       expect(copy.common.close).toBe(expectedCommonCopy[locale].close);
+      expect(copy.common.changeViewMode).toBe(expectedCommonCopy[locale].changeViewMode);
+      expect(copy.common.mobileView).toBe(expectedCommonCopy[locale].mobileView);
+      expect(copy.common.desktopView).toBe(expectedCommonCopy[locale].desktopView);
+      expect(copy.common.switchToMobileView.length).toBeGreaterThan(0);
+      expect(copy.common.switchToDesktopView.length).toBeGreaterThan(0);
       expect(JSON.stringify(copy.common)).not.toContain('?');
       expect(copy.common.goBack.length).toBeGreaterThan(0);
       expect(copy.common.changeLanguage.length).toBeGreaterThan(0);

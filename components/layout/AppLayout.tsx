@@ -7,6 +7,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
 import { TutorialButton } from '@/components/common/TutorialButton';
+import { useViewMode } from '@/components/common/useViewMode';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 interface AppLayoutProps {
@@ -20,6 +21,8 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const { viewMode, setViewMode } = useViewMode();
+  const isDesktopMode = viewMode === 'desktop';
 
   return (
     <ErrorBoundary
@@ -39,12 +42,19 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
         </div>
       }
     >
-      <div className="min-h-screen bg-[#080812] lg:px-4">
-        <div className="relative mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#0D0D1A] shadow-2xl shadow-black/30 lg:h-screen lg:max-w-6xl lg:flex-row lg:overflow-hidden lg:border-x lg:border-white/10">
-          <BottomNav active={activeTab} />
-          <div className="flex min-h-screen min-w-0 flex-1 flex-col lg:min-h-0">
-            <TopBar title={title} showBack={showBack} />
-            <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
+      <div className={`min-h-screen bg-[#080812] ${isDesktopMode ? 'overflow-x-auto px-4' : ''}`}>
+        <div
+          data-view-mode={viewMode}
+          className={`relative mx-auto flex min-h-screen w-full bg-[#0D0D1A] shadow-2xl shadow-black/30 ${
+            isDesktopMode
+              ? 'h-screen min-w-[1024px] max-w-7xl flex-row overflow-hidden border-x border-white/10'
+              : 'max-w-md flex-col'
+          }`}
+        >
+          <BottomNav active={activeTab} viewMode={viewMode} />
+          <div className={`flex min-w-0 flex-1 flex-col ${isDesktopMode ? 'min-h-0' : 'min-h-screen'}`}>
+            <TopBar title={title} showBack={showBack} viewMode={viewMode} onViewModeChange={setViewMode} />
+            <main className={`flex-1 overflow-y-auto ${isDesktopMode ? 'pb-0' : 'pb-20'}`}>
               <NetworkStatusBanner locale={locale} />
               <PwaInstallPrompt locale={locale} />
               {children}

@@ -2314,6 +2314,11 @@ type CommonCopy = {
   signIn: string;
   close: string;
   goBack: string;
+  changeViewMode: string;
+  mobileView: string;
+  desktopView: string;
+  switchToMobileView: string;
+  switchToDesktopView: string;
   changeLanguage: string;
   openProfile: string;
   avatarAlt: string;
@@ -2392,6 +2397,11 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: 'Sign in',
     close: 'Close',
     goBack: 'Go back',
+    changeViewMode: 'Change view mode',
+    mobileView: 'Mobile',
+    desktopView: 'PC',
+    switchToMobileView: 'Switch to mobile view',
+    switchToDesktopView: 'Switch to PC view',
     changeLanguage: 'Change language',
     openProfile: 'Open profile',
     avatarAlt: 'User avatar',
@@ -2405,6 +2415,11 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: '로그인',
     close: '닫기',
     goBack: '뒤로 가기',
+    changeViewMode: '보기 모드 변경',
+    mobileView: '모바일',
+    desktopView: 'PC',
+    switchToMobileView: '모바일 보기로 전환',
+    switchToDesktopView: 'PC 보기로 전환',
     changeLanguage: '언어 변경',
     openProfile: '프로필 열기',
     avatarAlt: '사용자 아바타',
@@ -2418,6 +2433,11 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: 'ログイン',
     close: '閉じる',
     goBack: '戻る',
+    changeViewMode: '表示モードを変更',
+    mobileView: 'モバイル',
+    desktopView: 'PC',
+    switchToMobileView: 'モバイル表示に切り替え',
+    switchToDesktopView: 'PC表示に切り替え',
     changeLanguage: '言語を変更',
     openProfile: 'プロフィールを開く',
     avatarAlt: 'ユーザーアバター',
@@ -2431,6 +2451,11 @@ const COMMON_COPY_OVERRIDES: Record<UiLocale, CommonCopy> = {
     signIn: '登录',
     close: '关闭',
     goBack: '返回',
+    changeViewMode: '切换显示模式',
+    mobileView: '手机',
+    desktopView: 'PC',
+    switchToMobileView: '切换到手机视图',
+    switchToDesktopView: '切换到PC视图',
     changeLanguage: '更改语言',
     openProfile: '打开个人资料',
     avatarAlt: '用户头像',

@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { Compass, Map, Radar, Search, User } from 'lucide-react';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import type { ViewMode } from '@/lib/view-mode';
 
 const TABS = [
   { id: 'map', icon: Map, path: '/map' },
@@ -14,17 +15,20 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id'];
 
-export default function BottomNav({ active }: { active: TabId }) {
+export default function BottomNav({ active, viewMode }: { active: TabId; viewMode: ViewMode }) {
   const router = useRouter();
   const params = useParams();
   const locale = normalizeUiLocale(params.locale);
   const copy = getUiCopy(locale);
+  const isDesktopMode = viewMode === 'desktop';
 
   return (
     <>
       <nav
         aria-label={copy.common.appName}
-        className="hidden h-screen w-60 shrink-0 flex-col border-r border-[#2E2E4A] bg-[#10101F]/95 lg:flex"
+        className={`h-screen w-60 shrink-0 flex-col border-r border-[#2E2E4A] bg-[#10101F]/95 ${
+          isDesktopMode ? 'flex' : 'hidden'
+        }`}
       >
         <div className="border-b border-white/10 px-5 py-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-[#FF3A5C]">K-Vibe</p>
@@ -63,7 +67,9 @@ export default function BottomNav({ active }: { active: TabId }) {
 
       <nav
         aria-label={copy.common.appName}
-        className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex h-16 max-w-md items-center border-t border-[#2E2E4A] bg-[#1A1A2E]/95 backdrop-blur-sm lg:hidden"
+        className={`fixed bottom-0 left-0 right-0 z-30 mx-auto h-16 max-w-md items-center border-t border-[#2E2E4A] bg-[#1A1A2E]/95 backdrop-blur-sm ${
+          isDesktopMode ? 'hidden' : 'flex'
+        }`}
       >
         {TABS.map((tab) => {
           const isActive = active === tab.id;
