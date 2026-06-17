@@ -1,5 +1,7 @@
-const CACHE_NAME = 'k-vibe-static-v1';
-const PRECACHE_URLS = [
+const CACHE_NAME = 'k-vibe-static-v2';
+const SUPPORTED_LOCALES = ['ko', 'en', 'ja', 'zh'];
+const APP_SHELL_ROUTES = ['', '/map', '/analyze', '/persona', '/route', '/docent', '/radar', '/profile'];
+const STATIC_ASSET_URLS = [
   '/manifest.json',
   '/favicon.ico',
   '/icons/icon-192.png',
@@ -7,8 +9,16 @@ const PRECACHE_URLS = [
   '/icons/shortcut-map.png',
   '/icons/shortcut-analyze.png',
   '/og-image.png',
-  '/ko',
 ];
+const PRECACHE_URLS = [
+  ...STATIC_ASSET_URLS,
+  ...SUPPORTED_LOCALES.flatMap((locale) => APP_SHELL_ROUTES.map((route) => `/${locale}${route}`)),
+];
+
+function getLocaleFallbackPath(pathname) {
+  const [, locale] = pathname.match(/^\/(ko|en|ja|zh)(?:\/|$)/) || [];
+  return locale ? `/${locale}` : '/ko';
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -45,7 +55,14 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/ko'))),
+        .catch(() =>
+          caches.match(request).then((cached) => {
+            if (cached) return cached;
+
+            const localeFallbackPath = getLocaleFallbackPath(url.pathname);
+            return caches.match(localeFallbackPath).then((fallback) => fallback || caches.match('/ko'));
+          }),
+        ),
     );
     return;
   }
@@ -53,7 +70,7 @@ self.addEventListener('fetch', (event) => {
   const shouldCache =
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.startsWith('/icons/') ||
-    PRECACHE_URLS.includes(url.pathname);
+    STATIC_ASSET_URLS.includes(url.pathname);
 
   if (!shouldCache) return;
 

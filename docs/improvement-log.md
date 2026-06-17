@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Improved the production PWA service worker's offline app-shell cache. It now precaches the main app screens for Korean, English, Japanese, and Simplified Chinese, uses a locale-aware navigation fallback instead of always falling back to `/ko`, and has focused service-worker tests for the cache manifest and offline fallback path.
 - Hardened localized Profile dashboard copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts guest identity labels, saved-place empty states, map/detail CTAs, saved-route empty states, route progress labels, persona labels, and saved-place toggles used by the local guest dashboard.
 - Hardened localized Persona route-generator copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts high-visibility generator labels, route-save feedback, route title templates, and representative theme/detail labels used by the no-cost local route preview.
 - Repaired localized Analyze screen copy in Korean, Japanese, and Simplified Chinese, including SNS platform badges, input/validation labels, loading steps, result actions, source badges, estimated-location/confidence labels, local-mode copy, and route-save feedback, with exact UI-copy assertions.

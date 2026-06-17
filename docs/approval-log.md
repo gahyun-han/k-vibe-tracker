@@ -8,6 +8,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
+- Claude CLI was not used for the 2026-06-17 PWA service-worker offline shell pass because it may consume paid quota and the local cache/fallback change could be verified with focused service-worker tests, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Profile dashboard copy coverage pass because it may consume paid quota and the scoped regression guard could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 Persona route-generator copy coverage pass because it may consume paid quota and the scoped regression guard could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
 - Claude CLI was not used for the 2026-06-17 localized Analyze screen copy repair because it may consume paid quota and the scoped copy restoration could be verified with exact UI-copy assertions, type-check, tests, build, and static route checks.
@@ -110,6 +111,7 @@ Do not enable or run anything in this list without explicit user approval if it 
 
 - Local type-check, unit tests, and production build.
 - Localhost browser verification.
+- No-cost PWA service-worker offline shell improvement that changes only same-origin static app-shell caching and locale-aware offline navigation fallback, without external providers, APIs, maps, AI, GPS, backend writes, storage services, or paid tools.
 - No-cost Profile dashboard copy coverage that changes only bundled UI-copy tests and documentation for existing supported locales, without calling Supabase, maps, TourAPI, AI, GPS, browser APIs, backend writes, storage, or paid services.
 - No-cost Persona route-generator copy coverage that changes only bundled UI-copy tests and documentation for existing supported locales, without calling `/api/routes/generate`, maps, TourAPI, AI, GPS, browser APIs, backend writes, storage, or paid services.
 - No-cost localized Analyze screen copy repair that changes only bundled UI copy and tests for existing supported locales, without calling `/api/analyze`, external translation providers, SNS providers, maps, TourAPI, AI, GPS, browser APIs, backend writes, storage, or paid services.
