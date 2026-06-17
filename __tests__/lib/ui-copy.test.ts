@@ -462,6 +462,69 @@ describe('ui copy', () => {
       },
     };
 
+    const expectedPersonaCopy = {
+      en: {
+        title: 'Build a K-content day plan',
+        generatorEyebrow: 'Route generator',
+        chooseMood: 'Choose the route mood',
+        reviewSelection: 'Review Selection',
+        personalizeFeed: 'Personalize Feed',
+        routeGenerated: 'Route preview ready',
+        routeSaved: 'Route saved for editing',
+        generate: 'Generate Route',
+        routeTitle: '{detail} Seoul Route',
+        kpopLabel: 'K-pop Pilgrimage',
+        btsLabel: 'BTS',
+        moodCafeLabel: 'Cafe day',
+        historyPalaceDayLabel: 'Palace day',
+      },
+      ko: {
+        title: 'K-콘텐츠 하루 루트 만들기',
+        generatorEyebrow: '루트 생성기',
+        chooseMood: '루트 무드 선택',
+        reviewSelection: '선택 확인',
+        personalizeFeed: '피드 개인화',
+        routeGenerated: '루트 미리보기가 준비됐어요',
+        routeSaved: '편집할 루트를 저장했어요',
+        generate: '루트 생성',
+        routeTitle: '{detail} 서울 루트',
+        kpopLabel: 'K-pop 성지순례',
+        btsLabel: 'BTS',
+        moodCafeLabel: '카페 데이',
+        historyPalaceDayLabel: '궁궐 데이',
+      },
+      ja: {
+        title: 'Kコンテンツの1日プランを作る',
+        generatorEyebrow: 'ルート生成',
+        chooseMood: 'ルートのムードを選択',
+        reviewSelection: '選択を確認',
+        personalizeFeed: 'フィードを個人化',
+        routeGenerated: 'ルートプレビューができました',
+        routeSaved: '編集用ルートを保存しました',
+        generate: 'ルート生成',
+        routeTitle: '{detail} ソウルルート',
+        kpopLabel: 'K-pop聖地巡り',
+        btsLabel: 'BTS',
+        moodCafeLabel: 'カフェデー',
+        historyPalaceDayLabel: '宮殿デー',
+      },
+      zh: {
+        title: '创建K-content一日路线',
+        generatorEyebrow: '路线生成器',
+        chooseMood: '选择路线氛围',
+        reviewSelection: '确认选择',
+        personalizeFeed: '个性化首页',
+        routeGenerated: '路线预览已准备好',
+        routeSaved: '已保存可编辑路线',
+        generate: '生成路线',
+        routeTitle: '{detail}首尔路线',
+        kpopLabel: 'K-pop朝圣',
+        btsLabel: 'BTS',
+        moodCafeLabel: '咖啡馆日',
+        historyPalaceDayLabel: '宫殿日',
+      },
+    };
+
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getUiCopy(locale);
 
@@ -679,17 +742,32 @@ describe('ui copy', () => {
       expect(JSON.stringify(copy.placeDetail)).not.toContain('?');
 
       expect(copy.persona.title.length).toBeGreaterThan(0);
+      expect(copy.persona.title).toBe(expectedPersonaCopy[locale].title);
+      expect(copy.persona.generatorEyebrow).toBe(expectedPersonaCopy[locale].generatorEyebrow);
+      expect(copy.persona.chooseMood).toBe(expectedPersonaCopy[locale].chooseMood);
       expect(copy.persona.themes.kpop.details.bts.label.length).toBeGreaterThan(0);
+      expect(copy.persona.themes.kpop.label).toBe(expectedPersonaCopy[locale].kpopLabel);
+      expect(copy.persona.themes.kpop.details.bts.label).toBe(expectedPersonaCopy[locale].btsLabel);
+      expect(copy.persona.themes.mood.details.cafe.label).toBe(expectedPersonaCopy[locale].moodCafeLabel);
+      expect(copy.persona.themes.history.details.palace_day.label).toBe(
+        expectedPersonaCopy[locale].historyPalaceDayLabel,
+      );
       expect(copy.persona.reviewSelection.length).toBeGreaterThan(0);
+      expect(copy.persona.reviewSelection).toBe(expectedPersonaCopy[locale].reviewSelection);
       expect(copy.persona.confirmTitle.length).toBeGreaterThan(0);
       expect(copy.persona.selectedTheme.length).toBeGreaterThan(0);
       expect(copy.persona.personalizeFeed.length).toBeGreaterThan(0);
+      expect(copy.persona.personalizeFeed).toBe(expectedPersonaCopy[locale].personalizeFeed);
       expect(copy.persona.personaSaved.length).toBeGreaterThan(0);
       expect(copy.persona.personaSaveUnavailable.length).toBeGreaterThan(0);
       expect(copy.persona.routeGenerated.length).toBeGreaterThan(0);
+      expect(copy.persona.routeGenerated).toBe(expectedPersonaCopy[locale].routeGenerated);
       expect(copy.persona.routeSaved.length).toBeGreaterThan(0);
+      expect(copy.persona.routeSaved).toBe(expectedPersonaCopy[locale].routeSaved);
       expect(copy.persona.routeSaveUnavailable.length).toBeGreaterThan(0);
+      expect(copy.persona.generate).toBe(expectedPersonaCopy[locale].generate);
       expect(copy.persona.routeTitle).toContain('{detail}');
+      expect(copy.persona.routeTitle).toBe(expectedPersonaCopy[locale].routeTitle);
       for (const theme of ROUTE_THEME_OPTIONS) {
         const themeCopy = copy.persona.themes[theme.id];
         const detailCopy = themeCopy.details as Record<string, { label: string }>;

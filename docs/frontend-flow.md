@@ -83,6 +83,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helper: `lib/persona-preference.ts`
 - Local persistence key: `k-vibe-persona-preference`
 - The persona route generator now saves the selected theme/detail locally when generating a route, and the confirmation step also exposes a no-cost Personalize Feed action that saves the preference and returns to Home.
+- High-visibility persona generator labels, route-save feedback, route title templates, and representative theme/detail labels are covered by exact localized UI-copy tests for `ko`, `en`, `ja`, and `zh`.
 - Home maps the saved persona/detail to an existing local feed category, highlights the matching story filter, and keeps using the existing `/api/places` response rather than calling an AI or recommendation provider.
 - Profile shows the active local persona/mood in the hero card. Supabase account sync for persona history remains gated.
 
@@ -135,7 +136,7 @@ This project is in local-first development mode. Pages should remain usable with
 - Helpers: `lib/routes.ts`
 - Development fallback: deterministic mock route plans until AI generation is approved.
 - Route generation accepts the active locale and uses `lib/ui-copy.ts` to localize mock plan titles, summaries, persona themes, and detail options.
-- Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview. The local generator now covers K-pop, drama, mood travel, Foodie Explorer, Content Creator, and History Buff persona themes.
+- Persona selection follows the root S8 direction as a no-cost 3-step flow: choose theme, choose route mood, then confirm the selected inputs before generating the local route preview. The local generator now covers K-pop, drama, mood travel, Foodie Explorer, Content Creator, and History Buff persona themes, and its key generator/action/theme labels have exact localized UI-copy coverage.
 - Persona route generation, route-save-for-editing, share/copy, and feed-personalize actions raise localized shared toast feedback while keeping the existing inline status text for the route preview.
 - The same S8 selection can also personalize the Home feed locally through `k-vibe-persona-preference`, so persona choice affects discovery without a provider recommendation call.
 - Local persistence key: `k-vibe-current-route`

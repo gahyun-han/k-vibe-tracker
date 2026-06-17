@@ -6,6 +6,7 @@ This log tracks concrete product and implementation improvements made while alig
 
 ## 2026-06-17
 
+- Hardened localized Persona route-generator copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts high-visibility generator labels, route-save feedback, route title templates, and representative theme/detail labels used by the no-cost local route preview.
 - Repaired localized Analyze screen copy in Korean, Japanese, and Simplified Chinese, including SNS platform badges, input/validation labels, loading steps, result actions, source badges, estimated-location/confidence labels, local-mode copy, and route-save feedback, with exact UI-copy assertions.
 - Hardened localized Place Detail copy coverage for Korean, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts route/save/share/docent/detail/image/social-proof/crowd labels so the map detail sheet cannot regress into placeholder or mojibake copy unnoticed.
 - Repaired localized Route and Docent core copy in Korean, Japanese, and Simplified Chinese, including route action buttons, travel segment labels, current-distance status, sample stops, local voice controls, captions, and docent fallback/script text, with exact UI-copy assertions.
