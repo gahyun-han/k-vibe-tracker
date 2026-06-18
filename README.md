@@ -262,36 +262,46 @@ https://k-vibe-tracker-lemon.vercel.app
 ## 프로젝트 구조
 
 ```text
-app/
-  [locale]/           # ko/en/ja/zh 라우팅
-    page.tsx          # 홈
-    map/              # 지도
-    analyze/          # SNS 분석
-    persona/          # 취향 기반 루트 생성
-    route/            # 루트 편집
-    docent/           # 로컬 도슨트
-    radar/            # 편의시설 레이더
-    profile/          # 프로필/게스트 대시보드
-  api/                # places, facilities, routes, analyze
-components/
-  common/
-  layout/
-  map/
-  radar/
-  route/
-lib/
-  tourapi.ts
-  routes.ts
-  facilities.ts
-  local-api-cache.ts
-  location-cache.ts
-  ui-copy.ts
-docs/
-  approval-log.md
-  docker-development.md
-  frontend-flow.md
-  improvement-log.md
-  qa-and-launch-checklist.md
+k-vibe-tracker/
+├── app/
+│   ├── [locale]/                  # i18n 라우팅 (ko/en/ja/zh)
+│   │   ├── page.tsx               # 홈 / K-콘텐츠 장소 피드
+│   │   ├── map/                   # 메인 지도 / 장소 탐색
+│   │   ├── analyze/               # SNS URL 분석
+│   │   ├── persona/               # 취향 기반 루트 생성
+│   │   ├── route/                 # 루트 편집 / 이동 힌트
+│   │   ├── docent/                # 로컬 음성 도슨트
+│   │   ├── radar/                 # 편의시설 레이더
+│   │   └── profile/               # 프로필 / 게스트 대시보드
+│   └── api/
+│       ├── auth/callback/         # Supabase OAuth 콜백
+│       ├── places/                # TourAPI 장소 목록
+│       ├── places/[contentId]/    # TourAPI 장소 상세
+│       ├── facilities/            # 편의시설 / 행사 팝업 API
+│       ├── routes/generate/       # 로컬 루트 생성 API
+│       └── analyze/               # SNS 분석 API
+├── components/
+│   ├── layout/                    # TopBar, BottomNav, AppLayout
+│   ├── auth/                      # LoginModal
+│   ├── common/                    # Toast, ErrorBoundary, PWA, Tutorial
+│   ├── map/                       # KakaoMapView, CategoryFilter, PlaceDetailModal
+│   ├── radar/                     # FacilityCard, RadarMapPreview, RadiusSlider
+│   └── route/                     # CrowdBadge, RouteMiniMap
+├── lib/
+│   ├── supabase/                  # Supabase client/server helpers
+│   ├── tourapi.ts                 # 한국관광공사 TourAPI 연동
+│   ├── routes.ts                  # 로컬 루트 템플릿/공유/진행 상태
+│   ├── facilities.ts              # 편의시설 타입과 mock 데이터
+│   ├── local-api-cache.ts         # 1시간 로컬 API 캐시
+│   ├── location-cache.ts          # 30분 마지막 위치 캐시
+│   └── ui-copy.ts                 # 다국어 UI copy
+├── messages/                      # next-intl 메시지 (ko/en/ja/zh)
+├── public/                        # PWA manifest, icons, service worker
+├── supabase/migrations/           # SQL 마이그레이션
+├── ai-worker/                     # FastAPI AI worker prototype
+├── docs/                          # 개발/QA/승인/개선 문서
+├── compose.yaml                   # Docker 개발 환경
+└── README.md
 ```
 
 ## 참고 문서
