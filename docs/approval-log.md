@@ -1,11 +1,12 @@
 # Approval and Cost Hold Log
 
-Last updated: 2026-06-17
+Last updated: 2026-06-18
 
 Current approval boundary: the user approved using provider APIs freely up to their free daily allowance for local development and QA. Do not enable paid billing, exceed known free/daily quotas, consume paid model quota, use private browser state, or require external permissions without explicit approval.
 
 ## Deferred Items
 
+- Vercel HTTPS deployment on 2026-06-18 is ready from a local build standpoint, but actual project creation/deployment is blocked until the user authenticates a Vercel account through `vercel login` or provides a short-lived `VERCEL_TOKEN`. Do not create or connect a hosting project with paid billing, custom paid features, private browser state, or external account permissions beyond the user's explicit deployment request.
 - Claude CLI focused review: allowed by the user for targeted use, but keep prompts narrow and avoid repeated calls when local verification is sufficient.
 - Claude CLI diff review attempt on 2026-06-16 stopped at the `$0.01` budget cap with no review result applied; do not raise the cap unless the user explicitly approves a higher spend.
 - Claude CLI was not used for the 2026-06-17 Mobile/PC view switcher and PC frontend pass even though the user requested Claude consultation, because any model consultation may consume paid quota under the existing cost-hold rule. Local implementation, focused helper/copy tests, type-check, full tests, build, and browser inspection were used instead.
