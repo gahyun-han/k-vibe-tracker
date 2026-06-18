@@ -13,8 +13,9 @@ Verified on 2026-06-18:
 - `https://k-vibe-tracker-lemon.vercel.app/ko/map` returns `200`.
 - `https://k-vibe-tracker-lemon.vercel.app/api/places?locale=ko&lat=37.5665&lng=126.9780` returns `200`.
 
-Required user action:
-- Add `https://k-vibe-tracker-lemon.vercel.app` to Kakao Developers > App > Platform > Web > Site domain. Kakao Maps SDK returns `401 Unauthorized` for this Vercel origin until it is registered.
+Verified after user action:
+- `https://k-vibe-tracker-lemon.vercel.app` was added to Kakao Developers > App > Platform > Web > Site domain.
+- The Kakao Maps SDK referer probe for `https://k-vibe-tracker-lemon.vercel.app/ko/map` now returns `200` and includes `kakao.maps`.
 
 ## Latest Chrome QA
 

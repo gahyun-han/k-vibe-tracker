@@ -330,10 +330,22 @@ supabase/
 ai-worker/      # FastAPI prototype
 ```
 
-## Current Sprint Progress
+## Implementation Status
 
-- Sprint 0 foundation is in place: Next.js, i18n, Supabase clients, layouts, API skeletons, tests.
-- Sprint 1 is in progress:
+The original `main` README defined Sprint 0 through Sprint 5. Current status:
+
+| Sprint | Original target | Current status |
+|--------|-----------------|----------------|
+| Sprint 0 | Project setup, auth, UI shell | Complete. Next.js, i18n, Supabase clients, layouts, API skeletons, tests, Docker development, and Vercel deployment are in place. |
+| Sprint 1 | Kakao Maps + TourAPI integration | Complete for the current MVP. Kakao Maps JavaScript, TourAPI places/details, TourAPI festival popup enrichment, map fallback, and HTTPS production deployment are configured. |
+| Sprint 2 | Stronger auth + Apple login | Partial/deferred. Supabase clients, login modal, guest mode, and account-sync UI states exist, but real Supabase OAuth credentials and Apple login are not configured or implemented yet. |
+| Sprint 3 | Redis caching + performance optimization | Partial/deferred. Local 1-hour API caching and stable cache keys are implemented, but Upstash/Redis L2 caching is not wired yet. |
+| Sprint 4 | SNS AI analysis, YouTube to places | Partial/local-first. YouTube URL detection, local/mock analysis, AI worker gating, and map/route handoffs exist. Live AI/SNS extraction remains approval- and cost-gated. |
+| Sprint 5 | AI docent TTS | Partial/local-first. The Docent flow has structured captions, browser `speechSynthesis`, progress state, and user-clicked arrival checks. Provider AI TTS is not enabled. |
+
+Separately, the root HTML/wireframe screen directions labelled S1 through S12 are broadly covered in local-first MVP form. The remaining gaps are production-grade external services: Supabase account sync/OAuth, Apple login, Redis caching, live SNS/AI extraction, provider TTS, offline map tiles, and any paid routing/mobility APIs.
+
+- Detailed implemented local-first work so far:
   - `/api/places` now supports validated TourAPI calls with safe mock fallback.
   - `/api/places` now supports locale-aware TourAPI service routing for Korean, English, Japanese, and Chinese.
   - `/api/places/[contentId]` now supports TourAPI `detailCommon2`, `detailIntro2`, and `detailImage2` with safe mock fallback.
