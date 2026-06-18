@@ -2,6 +2,20 @@
 
 Last updated: 2026-06-17
 
+## HTTPS Deployment
+
+Current production URL:
+- `https://k-vibe-tracker-lemon.vercel.app`
+
+Verified on 2026-06-18:
+- Vercel production deployment completed with the default/free project flow.
+- `https://k-vibe-tracker-lemon.vercel.app/ko` returns `200`.
+- `https://k-vibe-tracker-lemon.vercel.app/ko/map` returns `200`.
+- `https://k-vibe-tracker-lemon.vercel.app/api/places?locale=ko&lat=37.5665&lng=126.9780` returns `200`.
+
+Required user action:
+- Add `https://k-vibe-tracker-lemon.vercel.app` to Kakao Developers > App > Platform > Web > Site domain. Kakao Maps SDK returns `401 Unauthorized` for this Vercel origin until it is registered.
+
 ## Latest Chrome QA
 
 Current live-API QA policy:
