@@ -2,6 +2,14 @@
 
 K-Vibe Tracker is a mobile-first travel curation service for foreign visitors in Korea. It connects K-content inspired discovery, nearby place search, route planning, and convenience facility radar features.
 
+Production:
+
+```text
+https://k-vibe-tracker-lemon.vercel.app
+```
+
+The production deployment runs on Vercel with HTTPS enabled by default. HTTPS is required for browser geolocation on external devices; `localhost` is the only HTTP origin that browsers commonly treat as secure enough for local geolocation testing.
+
 ## Current Development Branch
 
 Use the `hslee` branch for active development.
@@ -71,6 +79,42 @@ npm test
 npm run build
 ```
 
+## Production Deployment
+
+Current production host:
+
+```text
+https://k-vibe-tracker-lemon.vercel.app
+```
+
+Vercel project:
+
+```text
+k-vibe-tracker/k-vibe-tracker
+```
+
+Production environment variables currently required for the deployed map and TourAPI flows:
+
+```env
+TOUR_API_KEY=
+NEXT_PUBLIC_KAKAO_MAP_KEY=
+NEXT_PUBLIC_APP_URL=https://k-vibe-tracker-lemon.vercel.app
+```
+
+The Vercel deployment was created with the default/free project flow. Do not enable paid Vercel billing, paid add-ons, paid model calls, or provider overage settings without explicit user approval.
+
+Deploy from the Docker development environment:
+
+```bash
+docker compose exec app npx vercel deploy --prod --yes
+```
+
+After any production URL change, update:
+
+- Vercel `NEXT_PUBLIC_APP_URL`.
+- Kakao Developers > Platform > Web > Site domain.
+- Any OAuth callback/redirect URLs if Supabase auth is enabled later.
+
 ## Environment Variables
 
 Required for Supabase auth/session features:
@@ -90,7 +134,7 @@ ENABLE_AI_WORKER_ANALYSIS=false
 AI_WORKER_URL=
 YOUTUBE_API_KEY=
 OPENAI_API_KEY=
-KAKAO_MAP_KEY=
+KAKAO_MAP_REST_KEY=
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
 ```
@@ -104,7 +148,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_KAKAO_MAP_KEY=
 ```
 
-`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK. The current local Kakao domain verification is for `http://localhost:3000`; `/ko/map` reaches the live Kakao renderer in Chrome with rendered Kakao tile images, visible app pins, and no console errors. `127.0.0.1` must be registered separately in Kakao Developers if you want to use that host.
+`NEXT_PUBLIC_KAKAO_MAP_KEY` is only needed for the Kakao Maps JavaScript SDK. If it is empty, the map page keeps using the no-cost local preview map and does not load the Kakao SDK. The currently verified Kakao Web platform domains are `http://localhost:3000` and `https://k-vibe-tracker-lemon.vercel.app`; `/ko/map` reaches the live Kakao renderer with rendered Kakao tile images and visible app pins when the origin is registered. `127.0.0.1` must be registered separately in Kakao Developers if you want to use that host.
+
+Browser geolocation works only in secure contexts. Use `http://localhost:3000` for local testing or the HTTPS Vercel URL for external device testing. Plain `http://<LAN IP>:3000` or `http://<public IP>:3000` can render the app but browsers may hide `navigator.geolocation`, causing the map/radar/docent location flows to show the localized location-unavailable fallback.
 
 `TOUR_API_KEY` is optional during development. When it is present, `/api/places` uses Korea Tourism Organization TourAPI through the server route only. If it is missing or TourAPI fails, `/api/places` returns deterministic mock data so the map UI remains usable. `/api/analyze`, `/api/facilities`, and `/api/routes/generate` also use deterministic local mock data until AI analysis, live facility sources, or AI route generation are approved.
 
@@ -298,6 +344,7 @@ ai-worker/      # FastAPI prototype
   - Home feed empty states now offer localized Show all and Explore map recovery actions.
   - App screens now show a localized offline-mode banner when the browser reports a network disconnect, matching the root network-state wireframe.
   - Map rendering is now ready for Kakao Maps JavaScript SDK and safely falls back to the local preview map when no client key is configured.
+  - Vercel production deployment is live at `https://k-vibe-tracker-lemon.vercel.app` with HTTPS geolocation eligibility, TourAPI, Kakao Maps JavaScript SDK, and `NEXT_PUBLIC_APP_URL` configured for production.
   - Landing, bottom navigation, map filters, language switching, and the new in-app feature guide use readable locale-aware copy. The home entry now shows language names directly in a root S1-style selector instead of relying on locale codes alone.
   - Shared app navigation now keeps the mobile bottom tabs, highlights the Analyze tab as a central CTA, and switches to a desktop left rail at wider breakpoints, matching the root UI design document.
   - PWA manifest metadata, app icons, shortcut icons, and Open Graph image assets are present and no longer point to missing files.
