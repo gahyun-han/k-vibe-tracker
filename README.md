@@ -88,6 +88,56 @@ npm test
 npm run build
 ```
 
+## 🧪 테스트
+
+### 테스트 개요
+
+전체 **75개 테스트**로 코드 품질을 보장합니다:
+
+- **42개 Unit Tests** (API 클라이언트, Domain 유틸리티, UI 상태)
+- **10개 Integration Tests** (API 흐름, Mock fallback, 에러 복구)
+- **23개 E2E Tests** (홈, 지도, 분석, 루트, 레이더, 프로필, 성능, 접근성)
+
+### 테스트 실행
+
+```bash
+# 전체 유닛/통합 테스트 (빠름, ~30초)
+npm run test
+
+# Watch 모드 (개발 중 자동 재실행)
+npm run test:watch
+
+# UI 대시보드로 보기
+npm run test:ui
+
+# 커버리지 리포트 생성
+npm run test:coverage
+
+# E2E 테스트 (앱이 localhost:3000에서 실행 중이어야 함)
+npm run dev          # Terminal 1
+npm run test:e2e     # Terminal 2 (다른 터미널)
+
+# E2E 상호작용형 UI
+npm run test:e2e:ui
+
+# E2E 화면에서 보면서 실행 (디버깅)
+npm run test:e2e:headed
+```
+
+### 테스트 가이드
+
+자세한 테스트 실행 방법과 디버깅은 **[TESTING.md](./TESTING.md)**를 참고하세요:
+
+- 테스트 환경 설정
+- Mock 데이터 사용법
+- 테스트 작성 패턴
+- 일반적인 문제 해결
+- CI/CD 통합 예시
+
+**테스트 검증 체크리스트:** [TEST-CHECKLIST.md](./TEST-CHECKLIST.md)
+
+**완료 보고서:** [TESTING-COMPLETION-REPORT.md](./TESTING-COMPLETION-REPORT.md)
+
 ## 환경 변수
 
 로컬 개발용 `.env.local`은 git에 포함하지 않습니다.
@@ -265,6 +315,7 @@ https://k-vibe-tracker-lemon.vercel.app
 k-vibe-tracker/
 ├── frontend/
 │   └── api/                       # 프론트 API 호출 계층 (analyze/places/facilities/routes)
+│       └── mock-data.ts               # Mock API 데이터 (오프라인 개발용)
 ├── backend/
 │   ├── config/                    # Next API 백엔드 공통 설정
 │   ├── dependency.ts              # Next API 의존성 접근
@@ -295,13 +346,47 @@ k-vibe-tracker/
 │   ├── radar/                     # FacilityCard, RadarMapPreview, RadiusSlider
 │   └── route/                     # CrowdBadge, RouteMiniMap
 ├── lib/
-│   ├── supabase/                  # Supabase client/server helpers
-│   ├── tourapi.ts                 # 한국관광공사 TourAPI 연동
-│   ├── routes.ts                  # 로컬 루트 템플릿/공유/진행 상태
-│   ├── facilities.ts              # 편의시설 타입과 mock 데이터
-│   ├── local-api-cache.ts         # 1시간 로컬 API 캐시
-│   ├── location-cache.ts          # 30분 마지막 위치 캐시
-│   └── ui-copy.ts                 # 다국어 UI copy
+│   ├── cache/                         # API 캐싱 유틸리티
+│   │   ├── index.ts                   # 캐시 내보내기
+│   │   ├── local-api-cache.ts         # 1시간 로컬 API 캐시
+│   │   └── location-cache.ts          # 30분 마지막 위치 캐시
+│   ├── domain/                        # 비즈니스 로직
+│   │   ├── index.ts                   # 도메인 유틸 내보내기
+│   │   ├── analysis.ts                # SNS 분석 로직
+│   │   ├── crowd.ts                   # 혼잡도 계산
+│   │   ├── facilities.ts              # 편의시설 타입/mock
+│   │   ├── routes.ts                  # 루트 템플릿/공유/상태
+│   │   ├── tourapi.ts                 # 한국관광공사 TourAPI
+│   │   └── youtube.ts                 # YouTube 로직
+│   ├── ui-state/                      # UI 상태 관리
+│   │   ├── index.ts                   # UI 상태 내보내기
+│   │   ├── locale-preference.ts       # 언어 설정
+│   │   ├── persona-preference.ts      # 사용자 선호도
+│   │   ├── radar-radius.ts            # 레이더 반경
+│   │   └── view-mode.ts               # 모바일/PC 보기
+│   ├── features/                      # 기능별 유틸리티
+│   │   ├── index.ts                   # 기능 내보내기
+│   │   ├── haversine.ts               # 거리 계산
+│   │   ├── map-pin-accessibility.ts   # 접근성
+│   │   ├── place-detail-share.ts      # 장소 공유
+│   │   ├── place-images.ts            # 이미지 처리
+│   │   ├── place-social-proof.ts      # SNS 증거
+│   │   └── saved-places.ts            # 저장된 장소
+│   ├── i18n/                          # 다국어 지원
+│   │   ├── index.ts                   # i18n 내보내기
+│   │   └── ui-copy.ts                 # 다국어 UI copy
+│   └── supabase/                      # Supabase 클라이언트
+├── types/                             # TypeScript 타입 정의
+│   ├── index.ts                       # 중앙 타입 내보내기
+│   ├── domain.ts                      # 비즈니스 도메인 타입
+│   ├── api.ts                         # API 요청/응답 타입
+│   └── database.ts                    # Supabase 데이터베이스 타입
+├── __tests__/                         # 테스트 스위트 (75개 테스트)
+│   ├── frontend/
+│   │   ├── api/                       # API 클라이언트 테스트 (19개)
+│   │   └── lib/                       # 라이브러리 유틸 테스트 (23개)
+│   ├── integration/                   # API 통합 테스트 (10개)
+│   └── e2e/                           # 사용자 여정 테스트 (23개)
 ├── messages/                      # next-intl 메시지 (ko/en/ja/zh)
 ├── public/                        # PWA manifest, icons, service worker
 ├── supabase/migrations/           # SQL 마이그레이션
@@ -359,6 +444,9 @@ k-vibe-tracker/
 - 개선 이력: `docs/improvement-log.md`
 - QA/런칭 체크리스트: `docs/qa-and-launch-checklist.md`
 - 비용/승인 보류 로그: `docs/approval-log.md`
+- **테스트 가이드**: `TESTING.md` 📖
+- **테스트 체크리스트**: `TEST-CHECKLIST.md` ✅
+- **테스트 완료 보고서**: `TESTING-COMPLETION-REPORT.md` 📊
 
 ## 협업 규칙
 
