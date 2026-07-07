@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Clock, ExternalLink, Heart, Instagram, MapPin, Mic2, Phone, RefreshCw, Share2, Star, Tags, X, Youtube } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
+import { fetchPlaceDetail } from '@/frontend/api/places';
 import { buildPlaceImageGallery } from '@/lib/place-images';
 import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
 import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/place-social-proof';
@@ -163,18 +164,8 @@ export function PlaceDetailModal({
       setDetailLoading(true);
 
       try {
-        const res = await fetch(`/api/places/${encodeURIComponent(contentId)}?${params.toString()}`, {
-          signal: controller.signal,
-        });
-        const data = (await res.json()) as {
-          detail?: NormalizedPlaceDetail;
-          error?: string;
-        };
-
-        if (!res.ok || !data.detail) {
-          throw new Error(data.error ?? 'PLACE_DETAIL_FAILED');
-        }
-
+        const data = await fetchPlaceDetail(contentId, params, controller.signal);
+        if (!data.detail) throw new Error('PLACE_DETAIL_FAILED');
         setDetail(data.detail);
       } catch (error) {
         if ((error as Error).name === 'AbortError') return;

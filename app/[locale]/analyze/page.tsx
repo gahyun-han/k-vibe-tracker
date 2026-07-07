@@ -17,6 +17,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
+import { postAnalyze } from '@/frontend/api/analyze';
 import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/youtube';
 import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/analysis';
 import { readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
@@ -86,17 +87,7 @@ export default function AnalyzePage() {
     }
 
     try {
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ youtube_url: nextUrl, locale }),
-      });
-      const data = (await res.json()) as AnalysisResult & { error?: string };
-
-      if (!res.ok) {
-        throw new Error(data.error ?? 'ANALYSIS_REQUEST_FAILED');
-      }
-
+      const data = await postAnalyze({ youtube_url: nextUrl, locale });
       const nextResult = {
         ...data,
         cached: Boolean(data.cached),

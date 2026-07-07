@@ -263,6 +263,13 @@ https://k-vibe-tracker-lemon.vercel.app
 
 ```text
 k-vibe-tracker/
+├── frontend/
+│   └── api/                       # 프론트 API 호출 계층 (analyze/places/facilities/routes)
+├── backend/
+│   ├── config/                    # Next API 백엔드 공통 설정
+│   ├── dependency.ts              # Next API 의존성 접근
+│   ├── business_services/         # 공통 검증/비즈니스 유틸
+│   └── presentation_api/          # Next API 엔드포인트 핸들러
 ├── app/
 │   ├── [locale]/                  # i18n 라우팅 (ko/en/ja/zh)
 │   │   ├── page.tsx               # 홈 / K-콘텐츠 장소 피드
@@ -274,12 +281,12 @@ k-vibe-tracker/
 │   │   ├── radar/                 # 편의시설 레이더
 │   │   └── profile/               # 프로필 / 게스트 대시보드
 │   └── api/
-│       ├── auth/callback/         # Supabase OAuth 콜백
-│       ├── places/                # TourAPI 장소 목록
-│       ├── places/[contentId]/    # TourAPI 장소 상세
-│       ├── facilities/            # 편의시설 / 행사 팝업 API
-│       ├── routes/generate/       # 로컬 루트 생성 API
-│       └── analyze/               # SNS 분석 API
+│       ├── auth/callback/         # backend/presentation_api 위임
+│       ├── places/                # backend/presentation_api 위임
+│       ├── places/[contentId]/    # backend/presentation_api 위임
+│       ├── facilities/            # backend/presentation_api 위임
+│       ├── routes/generate/       # backend/presentation_api 위임
+│       └── analyze/               # backend/presentation_api 위임
 ├── components/
 │   ├── layout/                    # TopBar, BottomNav, AppLayout
 │   ├── auth/                      # LoginModal
@@ -298,7 +305,16 @@ k-vibe-tracker/
 ├── messages/                      # next-intl 메시지 (ko/en/ja/zh)
 ├── public/                        # PWA manifest, icons, service worker
 ├── supabase/migrations/           # SQL 마이그레이션
-├── ai-worker/                     # FastAPI AI worker prototype
+├── ai-worker/
+│   ├── main.py                    # FastAPI 엔트리포인트
+│   ├── render.yaml                # Render web/cron(7일) 설정
+│   ├── config/                    # configure.py, 로컬 키 오버라이드
+│   ├── dependency.py              # 외부 API/저장소 의존성 정의
+│   ├── presentation_api/route.py  # API 라우터
+│   ├── business_services/         # route/findAmenities/location/queue 등
+│   ├── ai_services/               # prompt/openai/gemini 전략 확장 포인트
+│   ├── externelAPI_services/      # TourAPI/Kakao/Google/Naver/TTS/YouTube 인터페이스
+│   └── data_repositories/         # user/route/persona/location/docent 저장소
 ├── docs/                          # 개발/QA/승인/개선 문서
 ├── compose.yaml                   # Docker 개발 환경
 └── README.md

@@ -16,6 +16,7 @@ import {
 import AppLayout from '@/components/layout/AppLayout';
 import { useToast } from '@/components/common/Toast';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
+import { generateRoutePlan, type GenerateRouteResponse } from '@/frontend/api/routes';
 import {
   ROUTE_THEME_OPTIONS,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -31,12 +32,6 @@ import {
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 type Step = 1 | 2 | 3;
-
-interface GenerateRouteResponse {
-  plan: RoutePlan;
-  cached: boolean;
-  source: 'mock';
-}
 
 export default function PersonaPage() {
   const router = useRouter();
@@ -74,17 +69,7 @@ export default function PersonaPage() {
     savePersonaPreference(false);
 
     try {
-      const res = await fetch('/api/routes/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ theme, detail, start_time: startTime, locale }),
-      });
-      const data = (await res.json()) as Partial<GenerateRouteResponse> & { error?: string };
-
-      if (!res.ok || !data.plan) {
-        throw new Error(data.error ?? 'ROUTE_GENERATION_FAILED');
-      }
-
+      const data = await generateRoutePlan({ theme, detail, start_time: startTime, locale });
       setPlan(data.plan);
       setShareStatus(copy.routeGenerated);
       toast(copy.routeGenerated, 'success');

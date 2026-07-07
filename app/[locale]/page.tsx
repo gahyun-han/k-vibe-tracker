@@ -27,6 +27,7 @@ import { TutorialButton } from '@/components/common/TutorialButton';
 import { useViewMode } from '@/components/common/useViewMode';
 import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { useToast } from '@/components/common/Toast';
+import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
 import { persistPreferredLocale } from '@/lib/locale-preference';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
@@ -67,17 +68,11 @@ const TRENDING_DESTINATIONS = [
   { lat: 37.51, lng: 126.9955 },
 ] as const;
 
-type ApiSource = 'mock' | 'tourapi' | 'cache';
+type ApiSource = PlacesApiResponse['source'];
+
 type FeedCategory = 'all' | 'culture' | 'food' | 'fun' | 'photo';
 type StoryTopic = 'kpop' | 'streetFood' | 'photoSpots' | 'nature' | 'shopping';
 type FeedPlace = SaveablePlace & { distanceM?: number; crowdLevel?: CrowdLevel };
-
-interface PlacesApiResponse {
-  places: NormalizedPlace[];
-  cached: boolean;
-  source: ApiSource;
-  cache_key: string;
-}
 
 const FEED_CATEGORIES: FeedCategory[] = ['all', 'culture', 'food', 'fun', 'photo'];
 const STORY_TOPICS: Array<{ id: StoryTopic; icon: typeof Music2; category: FeedCategory }> = [
@@ -179,15 +174,7 @@ export default function LandingPage() {
       }
 
       try {
-        const res = await fetch(`/api/places?${searchParams.toString()}`, {
-          signal: controller.signal,
-        });
-        const data = (await res.json()) as Partial<PlacesApiResponse> & { error?: string };
-
-        if (!res.ok) {
-          throw new Error(data.error ?? 'HOME_FEED_FAILED');
-        }
-
+        const data = await fetchPlaces(searchParams, controller.signal);
         const nextData: PlacesApiResponse = {
           places: data.places ?? [],
           cached: Boolean(data.cached),

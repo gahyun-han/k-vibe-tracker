@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: k-vibe-ai-worker
+    env: python
+    rootDir: ai-worker
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://k-vibe-tracker-lemon.vercel.app,http://localhost:3000
+      - key: API_LIMIT_PER_MINUTE
+        value: "60"
+
+  - type: cron
+    name: k-vibe-location-refresh
+    env: python
+    rootDir: ai-worker
+    schedule: "0 0 */7 * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m business_services.locationService

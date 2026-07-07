@@ -5,6 +5,7 @@ import { AlertCircle, Radar, RefreshCw } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
+import { fetchFacilities, type FacilitiesApiResponse } from '@/frontend/api/facilities';
 import { FacilityCard } from '@/components/radar/FacilityCard';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
@@ -32,13 +33,6 @@ const FILTER_TABS: { id: FacilityFilter }[] = [
 interface Coordinates {
   lat: number;
   lng: number;
-}
-
-interface FacilitiesApiResponse {
-  facilities: Facility[];
-  cached: boolean;
-  source: 'mock' | 'tourapi' | 'cache';
-  cache_key: string;
 }
 
 export default function RadarPage() {
@@ -134,15 +128,7 @@ export default function RadarPage() {
       }
 
       try {
-        const res = await fetch(`/api/facilities?${params.toString()}`, {
-          signal: controller.signal,
-        });
-        const data = (await res.json()) as Partial<FacilitiesApiResponse> & { error?: string };
-
-        if (!res.ok) {
-          throw new Error(data.error ?? 'FACILITIES_REQUEST_FAILED');
-        }
-
+        const data = await fetchFacilities(params, controller.signal);
         const nextData: FacilitiesApiResponse = {
           facilities: data.facilities ?? [],
           cached: Boolean(data.cached),

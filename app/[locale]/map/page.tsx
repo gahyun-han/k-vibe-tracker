@@ -6,6 +6,7 @@ import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
 import { useToast } from '@/components/common/Toast';
 import { useViewMode } from '@/components/common/useViewMode';
 import AppLayout from '@/components/layout/AppLayout';
+import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
@@ -33,14 +34,7 @@ import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const SEARCH_RADIUS_M = 2_000;
 
-type ApiSource = 'mock' | 'tourapi' | 'cache';
-
-interface PlacesApiResponse {
-  places: NormalizedPlace[];
-  cached: boolean;
-  source: ApiSource;
-  cache_key: string;
-}
+type ApiSource = PlacesApiResponse['source'];
 
 interface Coordinates {
   lat: number;
@@ -345,15 +339,7 @@ export default function MapPage() {
       }
 
       try {
-        const res = await fetch(`/api/places?${params.toString()}`, {
-          signal: controller.signal,
-        });
-        const data = (await res.json()) as Partial<PlacesApiResponse> & { error?: string };
-
-        if (!res.ok) {
-          throw new Error(data.error ?? 'PLACES_REQUEST_FAILED');
-        }
-
+        const data = await fetchPlaces(params, controller.signal);
         const nextData: PlacesApiResponse = {
           places: data.places ?? [],
           cached: Boolean(data.cached),
