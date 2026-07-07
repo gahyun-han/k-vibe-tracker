@@ -306,15 +306,47 @@ k-vibe-tracker/
 ├── public/                        # PWA manifest, icons, service worker
 ├── supabase/migrations/           # SQL 마이그레이션
 ├── ai-worker/
-│   ├── main.py                    # FastAPI 엔트리포인트
-│   ├── render.yaml                # Render web/cron(7일) 설정
-│   ├── config/                    # configure.py, 로컬 키 오버라이드
-│   ├── dependency.py              # 외부 API/저장소 의존성 정의
-│   ├── presentation_api/route.py  # API 라우터
-│   ├── business_services/         # route/findAmenities/location/queue 등
-│   ├── ai_services/               # prompt/openai/gemini 전략 확장 포인트
-│   ├── externelAPI_services/      # TourAPI/Kakao/Google/Naver/TTS/YouTube 인터페이스
-│   └── data_repositories/         # user/route/persona/location/docent 저장소
+│   ├── main.py                    # FastAPI 엔트리포인트, CORS, 스케줄러 초기화
+│   ├── render.yaml                # Render web/cron(7일) 배포 설정
+│   ├── requirements.txt            # Python 의존성 (fastapi, openai, apscheduler, 등)
+│   ├── dependency.py              # 외부 API/저장소 의존성 인스턴스 정의
+│   ├── config/
+│   │   ├── configure.py           # 환경변수 기반 설정 (Settings dataclass)
+│   │   ├── logger.py              # 중앙 로깅 설정 (JSON + 파일 + 콘솔)
+│   │   └── exceptions.py          # 사용자 정의 예외 클래스 (K_VibeException, etc)
+│   ├── presentation_api/
+│   │   └── route.py               # FastAPI 라우터 (health, analyze, route, amenities, persona, docent, queue)
+│   ├── business_services/         
+│   │   ├── findAmenities.py       # 편의시설 검색
+│   │   ├── showPersona.py         # 사용자 성향 기반 경로/추천
+│   │   ├── playDocentVoice.py     # 도슨트 음성 재생
+│   │   ├── createDocentVoice.py   # 도슨트 음성 생성
+│   │   ├── locationService.py     # 7일마다 위치 정보 갱신 (Google/Naver 검색)
+│   │   ├── queueScheduler.py      # APScheduler 기반 작업 스케줄러
+│   │   ├── routingService.py      # 경로 소요시간 계산
+│   │   ├── personaAnalyseService.py # 페르소나 분석 (미사용 확장 포인트)
+│   │   └── youtube_helpers.py     # YouTube 비디오 ID 추출, 캐시 키 생성
+│   ├── ai_services/               # LLM/AI 전략 패턴 (확장 포인트)
+│   │   ├── openai_client.py       # OpenAI API 클라이언트
+│   │   ├── gemini_client.py       # Google Gemini API 클라이언트
+│   │   └── prompttemplate.py      # 프롬프트 템플릿 관리
+│   ├── externelAPI_services/      # 외부 API 클라이언트
+│   │   ├── tourAPI.py             # 한국관광공사 TourAPI
+│   │   ├── kakaomap.py            # Kakao Maps 경로 계산 API
+│   │   ├── searchGoogle.py        # Google Search API (장소 요약)
+│   │   ├── searchNaver.py         # Naver Search API (장소 요약)
+│   │   ├── tts.py                 # Text-to-Speech API
+│   │   ├── youtube.py             # YouTube API (비디오 메타 추출)
+│   │   └── __init__.py            # 클라이언트 모음 export
+│   ├── data_repositories/         # 데이터 액세스 계층
+│   │   ├── userinfo.py            # 사용자 정보 저장소 (insert, select)
+│   │   ├── routeinfo.py           # 경로 정보 저장소 (insert, select, update)
+│   │   ├── personainfo.py         # 페르소나 저장소 (insert, select)
+│   │   ├── locationinfo.py        # 위치 정보 저장소 (insert, select, update)
+│   │   ├── docentinfo.py          # 도슨트 정보 저장소 (insert, select, update)
+│   │   └── __init__.py            # 저장소 모음 export
+│   ├── tests/                     # 단위/통합 테스트 (pytest)
+│   └── logs/                      # 런타임 로그 (JSON 형식, .gitignore에 제외)
 ├── docs/                          # 개발/QA/승인/개선 문서
 ├── compose.yaml                   # Docker 개발 환경
 └── README.md

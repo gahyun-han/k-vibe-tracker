@@ -27,6 +27,7 @@ yarn-error.log*
 .env
 ai-worker/config/configure_local.py
 ai-worker/config/*.secrets.json
+ai-worker/logs/
 
 # vercel
 .vercel
@@ -38,3 +39,7 @@ next-env.d.ts
 # python cache
 __pycache__/
 *.pyc
+.pytest_cache/
+*.egg-info/
+dist/
+build/
