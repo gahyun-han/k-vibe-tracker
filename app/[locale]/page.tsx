@@ -112,7 +112,7 @@ function formatDistance(meters?: number) {
 export default function LandingPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const { toast } = useToast();
   const { viewMode, setViewMode } = useViewMode();
