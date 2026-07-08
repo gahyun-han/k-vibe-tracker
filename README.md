@@ -16,6 +16,30 @@ K-콘텐츠 속 장소 탐색, 주변 관광지 검색, SNS 장소 분석, 로�
 
 프로덕션은 Vercel에 배포되어 있으며 HTTPS가 기본 적용됩니다. 외부 기기에서 브라우저 위치 권한을 사용하려면 HTTPS가 필요합니다.
 
+### 🚀 배포 구조
+
+현재 Vercel은 **`hslee1026/k-vibe-tracker`의 `hslee` 브랜치**를 프로덕션으로 배포합니다.
+
+```
+hslee1026/k-vibe-tracker (hslee 브랜치)
+    ↓ push 시 자동 배포
+Vercel (k-vibe-tracker-lemon.vercel.app)
+```
+
+> ⚠️ **향후 정리 사항**: 개발이 안정화되면 `gahyun-han/k-vibe-tracker`의 `main` 브랜치로 연결을 이전하는 것을 권장합니다.
+> Vercel Dashboard → Settings → Git → Connected Repository 에서 변경 가능합니다.
+> 이전 시 `gahyun-han/k-vibe-tracker` repo에 Write 권한이 있는 계정으로 처리하세요.
+
+#### Vercel 필수 환경변수
+
+| 변수명 | 용도 |
+|--------|------|
+| `GOOGLE_AI_API_KEY` | Gemini 1.5 Flash AI 스팟 분석 (없으면 목 데이터) |
+| `KAKAO_MAP_REST_KEY` | Kakao 지도 REST API (장소 검색, 좌표 변환) |
+| `NEXT_PUBLIC_KAKAO_MAP_KEY` | Kakao 지도 JS SDK (클라이언트 지도 표시) |
+
+Vercel Dashboard → Settings → Environment Variables 에서 설정합니다.
+
 ## 🤖 에이전트를 활용한 협업
 
 팀원들이 GitHub Copilot 에이전트를 통해 효율적으로 작업을 이어받을 수 있습니다.
