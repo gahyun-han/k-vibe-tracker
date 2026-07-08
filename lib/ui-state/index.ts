@@ -29,3 +29,9 @@ export {
   type PersonaFeedCategory,
 } from './persona-preference';
 export { RADAR_RADIUS_STEPS, getNextRadarRadius } from './radar-radius';
+export {
+  ANALYZE_QUOTA_STORAGE_KEY,
+  DAILY_SOFT_LIMIT,
+  readQuota,
+  incrementQuota,
+} from './analyze-quota';

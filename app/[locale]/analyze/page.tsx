@@ -31,6 +31,7 @@ import {
   type RouteStop,
 } from '@/lib/domain';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import { DAILY_SOFT_LIMIT, incrementQuota, readQuota } from '@/lib/ui-state';
 
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -51,6 +52,12 @@ export default function AnalyzePage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
   const [loadingStepIndex, setLoadingStepIndex] = useState(0);
+  const [quota, setQuota] = useState({ used: 0, remaining: DAILY_SOFT_LIMIT, isLimitReached: false });
+
+  // Hydrate quota from localStorage on mount
+  useEffect(() => {
+    setQuota(readQuota(window.localStorage));
+  }, []);
 
   const urlPlatform = detectSnsPlatform(url);
   const isYoutubeInput = urlPlatform === 'youtube';
@@ -90,6 +97,15 @@ export default function AnalyzePage() {
       return;
     }
 
+    // Enforce soft daily limit (non-cached requests only)
+    const currentQuota = readQuota(window.localStorage);
+    if (currentQuota.isLimitReached) {
+      setErrorMsg(copy.quotaLimitBody.replace('{limit}', String(DAILY_SOFT_LIMIT)));
+      setStatus('error');
+      toast(copy.quotaLimitReached, 'error');
+      return;
+    }
+
     try {
       const data = await postAnalyze({ youtube_url: nextUrl, locale });
       const nextResult = {
@@ -100,6 +116,8 @@ export default function AnalyzePage() {
       writeLocalApiCache(window.localStorage, localCacheKey, nextResult);
       setResult(nextResult);
       setStatus('success');
+      // Increment after successful (non-cached) analysis
+      setQuota(incrementQuota(window.localStorage));
     } catch (e) {
       setErrorMsg(e instanceof Error ? e.message : 'ANALYSIS_REQUEST_FAILED');
       setStatus('error');
@@ -186,10 +204,29 @@ export default function AnalyzePage() {
       <div className="flex h-full flex-col overflow-y-auto bg-[#0D0D1A] pb-24">
         <div className="space-y-4 px-4 pb-6 pt-4">
           <div>
-            <h2 className="flex items-center gap-2 text-base font-bold text-white">
-              <Sparkles size={18} className="text-[#FF3A5C]" />
-              {copy.title}
-            </h2>
+            <div className="flex items-start justify-between gap-2">
+              <h2 className="flex items-center gap-2 text-base font-bold text-white">
+                <Sparkles size={18} className="text-[#FF3A5C]" />
+                {copy.title}
+              </h2>
+              {/* Daily quota badge */}
+              <div
+                data-testid="quota-badge"
+                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                  quota.isLimitReached
+                    ? 'bg-red-500/20 text-red-300'
+                    : quota.remaining <= 5
+                      ? 'bg-orange-400/15 text-orange-300'
+                      : 'bg-white/8 text-white/45'
+                }`}
+              >
+                {quota.isLimitReached
+                  ? copy.quotaLimitReached
+                  : copy.quotaUsed
+                      .replace('{used}', String(quota.used))
+                      .replace('{limit}', String(DAILY_SOFT_LIMIT))}
+              </div>
+            </div>
             <p className="mt-0.5 text-xs leading-5 text-white/40">
               {copy.subtitle}
             </p>
@@ -206,6 +243,18 @@ export default function AnalyzePage() {
           </div>
 
           <div className="space-y-2">
+            {/* Quota limit warning banner */}
+            {quota.isLimitReached && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-400/10 p-3">
+                <AlertCircle size={15} className="mt-0.5 shrink-0 text-red-400" />
+                <div>
+                  <p className="text-xs font-semibold text-red-300">{copy.quotaLimitReached}</p>
+                  <p className="mt-0.5 text-xs leading-5 text-red-400/70">
+                    {copy.quotaLimitBody.replace('{limit}', String(DAILY_SOFT_LIMIT))}
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="relative">
               <InputIcon
                 size={16}
@@ -265,7 +314,7 @@ export default function AnalyzePage() {
             <button
               data-testid="analyze-btn"
               onClick={() => void analyze()}
-              disabled={!urlValid || status === 'loading'}
+              disabled={!urlValid || status === 'loading' || quota.isLimitReached}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {status === 'loading' ? (
