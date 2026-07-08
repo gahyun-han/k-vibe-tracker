@@ -68,7 +68,7 @@ function DocentContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const proximityCopy = getDocentProximityCopy(locale);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);

@@ -13,7 +13,7 @@ export default function LocaleError({
   reset: () => void;
 }) {
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
 
   useEffect(() => {
