@@ -164,9 +164,9 @@ export default function ProfilePage() {
       <div className="space-y-4 px-4 pb-24 pt-4">
         <section className="rounded-2xl border border-[#2E2E4A] bg-[#1E1E30] p-4">
           <div className="flex items-center gap-4">
-            {user?.user_metadata?.avatar_url ? (
+            {user?.user_metadata?.['avatar_url'] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.user_metadata.avatar_url} alt={copy.common.avatarAlt} className="h-14 w-14 rounded-full border-2 border-[#FF3A5C] object-cover" />
+              <img src={user.user_metadata['avatar_url']} alt={copy.common.avatarAlt} className="h-14 w-14 rounded-full border-2 border-[#FF3A5C] object-cover" />
             ) : (
               <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#FF3A5C] bg-[#FF3A5C]/20 text-2xl font-bold text-white">
                 {avatarInitial}
