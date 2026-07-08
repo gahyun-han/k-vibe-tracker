@@ -157,18 +157,20 @@ export default function AnalyzePage() {
   }
 
   function saveAnalysisRoute() {
-    if (!result) return;
-    const candidates = placesWithCoordinates(result.places);
-    if (candidates.length === 0) return;
+    if (!result || result.places.length === 0) return;
 
-    const stops: RouteStop[] = candidates.map((place, index) => ({
+    // Seoul city center — fallback for spots the geocoder couldn't resolve
+    const FALLBACK_LAT = 37.5665;
+    const FALLBACK_LNG = 126.9784;
+
+    const stops: RouteStop[] = result.places.map((place, index) => ({
       id: `analysis-${result.video_id}-${index}`,
       name: place.name,
       category: 'SNS',
       address: copy.detectedAddress,
       crowdLevel: place.confidence >= 0.9 ? 'mid' : 'low',
-      lat: place.lat,
-      lng: place.lng,
+      lat: place.lat ?? FALLBACK_LAT,
+      lng: place.lng ?? FALLBACK_LNG,
       stayMinutes: 45,
       startTime: 'Flexible',
       description: place.reason,
