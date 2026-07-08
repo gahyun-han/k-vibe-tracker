@@ -9,7 +9,18 @@ export { analyzeVideoContent, buildAnalysisLocalCacheKey, buildMockAnalysis, sho
 export { toCrowdLevel, isCrowdLevel, CROWD_DOT_CLASS, CROWD_TEXT_CLASS, type CrowdLevel } from './crowd';
 
 // Docent
-export { generateDocentCaption } from './docent';
+export { 
+  generateDocentCaption,
+  buildDocentScriptSections,
+  joinDocentScript,
+  getDocentSectionIndexForChar,
+  shouldAutoPlayDocentAfterProximityCheck,
+  type DocentScriptSectionId,
+  type DocentScriptPlace,
+  type DocentScriptCopy,
+  type DocentScriptSection,
+  type DocentAutoPlayState
+} from './docent';
 
 // Facilities
 export { FACILITY_ICONS, FACILITY_NAMES, type FacilityCategory } from './facilities';
