@@ -39,7 +39,7 @@ const SAVED_PLACES_PREVIEW_LIMIT = 4;
 export default function ProfilePage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const settingsCopy = getProfileSettingsCopy(locale);
   const [user, setUser] = useState<User | null>(null);

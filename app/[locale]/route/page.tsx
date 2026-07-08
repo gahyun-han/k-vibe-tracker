@@ -46,7 +46,7 @@ interface RouteLocationCheck {
 export default function RoutePage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const uiCopy = getUiCopy(locale);
   const copy = uiCopy.route;
   const { toast } = useToast();
