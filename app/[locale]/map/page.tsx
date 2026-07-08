@@ -424,7 +424,7 @@ export default function MapPage() {
           <KakaoMapView
             center={coords}
             places={filtered}
-            selectedPlaceId={selectedPlace?.id}
+            {...(selectedPlace?.id && { selectedPlaceId: selectedPlace.id })}
             onSelectPlace={setSelectedPlace}
             formatDistance={formatDistance}
             categoryLabels={copy.categories}
