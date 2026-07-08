@@ -36,7 +36,7 @@ type Step = 1 | 2 | 3;
 export default function PersonaPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const uiCopy = getUiCopy(locale);
   const copy = uiCopy.persona;
   const { toast } = useToast();
