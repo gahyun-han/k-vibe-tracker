@@ -23,7 +23,7 @@ export {
 } from './docent';
 
 // Facilities
-export { FACILITY_ICONS, FACILITY_NAMES, type FacilityCategory } from './facilities';
+export { FACILITY_TYPES, FACILITY_ICONS, buildFacilitiesCacheKey, getMockFacilities, isFacilityType, isFacilityFilter, normalizeTourApiFestivalFacilities, buildGoogleMapsFacilityUrl, type FacilityType, type FacilityFilter, type Facility } from './facilities';
 
 // Routes
 export { 
@@ -57,8 +57,7 @@ export {
   buildRouteMapUrl,
   buildRouteStopDetailUrl,
   formatDuration,
-  parseStartTime,
-  generateRouteDirections
+  parseStartTime
 } from './routes';
 
 // YouTube
@@ -66,7 +65,6 @@ export { extractVideoId, detectSnsPlatform, getThumbnailUrl, isValidYoutubeUrl, 
 
 // Tour API
 export { 
-  fetchTourApiData,
   type PlaceCategory,
   type TourApiLocale,
   type NormalizedPlace,
