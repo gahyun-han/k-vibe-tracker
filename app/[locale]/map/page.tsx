@@ -198,16 +198,16 @@ export default function MapPage() {
         ? removeSavedPlace(current, place)
         : upsertSavedPlace(current, {
             id: place.id,
-            contentId: place.contentId,
-            contentTypeId: place.contentTypeId,
+            ...(place.contentId && { contentId: place.contentId }),
+            ...(place.contentTypeId && { contentTypeId: place.contentTypeId }),
             name: place.name,
             category: place.category,
             address: place.address,
             lat: place.lat,
             lng: place.lng,
-            imageUrl: place.images?.[0] ?? place.imageUrl,
-            overview: place.overview,
-            tags: place.tags,
+            ...((place.images?.[0] ?? place.imageUrl) && { imageUrl: place.images?.[0] ?? place.imageUrl }),
+            ...(place.overview && { overview: place.overview }),
+            ...(place.tags && place.tags.length > 0 && { tags: place.tags }),
           }),
     );
   }, []);
