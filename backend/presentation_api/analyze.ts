@@ -87,11 +87,20 @@ export async function postAnalyze(req: NextRequest) {
         const places = await Promise.all(
           rawSpots.map(async (spot) => {
             const name = typeof spot.name === 'string' ? spot.name : '';
-            const coords = name ? await geocodePlace(name) : null;
+            // Prefer coordinates from the LLM; fall back to Kakao geocoding.
+            const llmLat = typeof spot.lat === 'number' && Number.isFinite(spot.lat) ? spot.lat : null;
+            const llmLng = typeof spot.lng === 'number' && Number.isFinite(spot.lng) ? spot.lng : null;
+            let lat = llmLat;
+            let lng = llmLng;
+            if ((lat === null || lng === null) && name) {
+              const coords = await geocodePlace(name);
+              lat = coords?.lat ?? null;
+              lng = coords?.lng ?? null;
+            }
             return {
               name,
-              lat: coords?.lat ?? null,
-              lng: coords?.lng ?? null,
+              lat,
+              lng,
               confidence: typeof spot.confidence === 'number' ? spot.confidence : 0.7,
               category: typeof spot.category === 'string' ? spot.category : 'other',
               reason: typeof spot.reason === 'string' ? spot.reason : '',

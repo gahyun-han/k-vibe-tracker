@@ -32,6 +32,8 @@ interface RawSpot {
   category?: unknown;
   confidence?: unknown;
   reason?: unknown;
+  lat?: unknown;
+  lng?: unknown;
 }
 
 export function getGroqApiKey(): string {
@@ -134,16 +136,17 @@ const SPOT_EXTRACTION_PROMPT = `당신은 한국 여행 장소 추천 전문가�
 - 추상적인 광역 지명(서울, 부산 등)은 제외하고 구체적인 장소명을 추출하세요
 - 각 장소의 카테고리: cafe, restaurant, landmark, park, shopping, culture, nature, other
 - confidence는 0.0~1.0 (제목에서 얼마나 명확히 유추 가능한지)
+- lat, lng는 해당 장소의 실제 위도/경도 좌표입니다 (한국 내 실제 좌표, 소수점 4자리)
 - 반드시 아래 JSON 배열만 반환하세요 (추가 텍스트 없이)
 
 \`\`\`json
 [
-  {"name": "장소명 (한국어)", "category": "cafe", "confidence": 0.9, "reason": "제목 언급"}
+  {"name": "장소명 (한국어)", "category": "cafe", "confidence": 0.9, "reason": "제목 언급", "lat": 37.5447, "lng": 127.0564}
 ]
 \`\`\``;
 
 /**
- * Extract Korean tourist spots from a YouTube video title using Gemini.
+ * Extract Korean tourist spots (with coordinates) from a YouTube video title.
  */
 export async function extractSpotsFromTitle(title: string): Promise<RawSpot[]> {
   if (!title) return [];
@@ -153,12 +156,12 @@ export async function extractSpotsFromTitle(title: string): Promise<RawSpot[]> {
   if (!text) return [];
 
   try {
-    const match = /```(?:json)?\s*(\[.*?\])\s*```/s.exec(text);
+    const match = /```(?:json)?\s*(\[[\s\S]*?\])\s*```/.exec(text);
     const jsonStr = match ? match[1] : text.trim();
     const parsed = JSON.parse(jsonStr ?? '') as unknown;
     if (Array.isArray(parsed)) return parsed as RawSpot[];
   } catch {
-    console.error('[gemini] JSON parse error:', text.slice(0, 200));
+    console.error('[ai] JSON parse error:', text.slice(0, 200));
   }
 
   return [];
