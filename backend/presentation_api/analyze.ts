@@ -77,7 +77,7 @@ export async function postAnalyze(req: NextRequest) {
     }
   }
 
-  // Path B: Direct Gemini call (no separate ai-worker needed — works on Vercel)
+  // Path B: Direct AI call via Groq (primary) or Gemini (fallback)
   if (isGeminiEnabled()) {
     try {
       const title = await getYoutubeTitleFromUrl(snsUrl);
@@ -104,11 +104,11 @@ export async function postAnalyze(req: NextRequest) {
           title,
           places,
           cached: false,
-          source: 'gemini',
+          source: 'groq',
         });
       }
     } catch (error) {
-      console.error('[analyze] Gemini direct fallback:', error);
+      console.error('[analyze] AI direct fallback:', error);
     }
   }
 

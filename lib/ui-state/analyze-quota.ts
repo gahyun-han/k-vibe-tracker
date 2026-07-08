@@ -5,16 +5,16 @@
  * they've run today. Resets automatically at midnight (local time).
  *
  * Note: This is a client-side counter only — it cannot query the actual
- * remaining quota from Google/YouTube (those APIs don't expose it).
+ * remaining quota from the AI provider.
  * The free limits are:
- *   Gemini 1.5 Flash:  1,500 requests/day (15 req/min)
- *   YouTube Data API:  10,000 units/day  (each /videos list call = 1 unit)
+ *   Groq (llama-3.3-70b):  14,400 requests/day
+ *   Gemini 2.0 Flash:  1,500 requests/day
  */
 
 export const ANALYZE_QUOTA_STORAGE_KEY = 'kvibe:analyze:quota';
 
 /** Soft cap shown as "daily limit" in the UI.  Keep well below the real API limit. */
-export const DAILY_SOFT_LIMIT = 50;
+export const DAILY_SOFT_LIMIT = 200;
 
 interface QuotaRecord {
   date: string; // "YYYY-MM-DD" local time

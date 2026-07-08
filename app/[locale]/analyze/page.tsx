@@ -439,9 +439,11 @@ export default function AnalyzePage() {
                     ? copy.sourceCache
                     : result.source === 'worker'
                       ? copy.sourceWorker
-                      : result.source === 'gemini'
-                        ? copy.sourceGemini
-                        : copy.sourceMock}
+                      : result.source === 'groq'
+                        ? copy.sourceGroq
+                        : result.source === 'gemini'
+                          ? copy.sourceGemini
+                          : copy.sourceMock}
                 </span>
               </div>
 
@@ -534,7 +536,7 @@ export default function AnalyzePage() {
                 <button
                   type="button"
                   onClick={saveAnalysisRoute}
-                  disabled={placesWithCoordinates(result.places).length === 0}
+                  disabled={result.places.length === 0}
                   className="flex items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Compass size={14} />

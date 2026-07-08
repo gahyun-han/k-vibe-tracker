@@ -13,7 +13,7 @@ export interface AnalysisResult {
   title: string;
   places: AnalysisPlace[];
   cached: boolean;
-  source: 'mock' | 'worker' | 'gemini';
+  source: 'mock' | 'worker' | 'gemini' | 'groq';
 }
 
 export type AnalysisLocale = 'en' | 'ko' | 'ja' | 'zh';
