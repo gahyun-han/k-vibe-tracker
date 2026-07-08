@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isGeminiEnabled, extractSpotsFromTitle, getGroqApiKey } from '@/backend/ai_services/gemini';
-import { isAiWorkerAnalysisEnabled, getAiWorkerUrl } from '@/backend/dependency';
 import { getYoutubeTitleFromUrl } from '@/backend/ai_services/youtube-meta';
+import { isAiWorkerAnalysisEnabled, getAiWorkerUrl } from '@/backend/dependency';
 
 /**
  * GET /api/debug/ai-status?url=<youtube-url>
