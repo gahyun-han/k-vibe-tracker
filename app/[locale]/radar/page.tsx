@@ -37,7 +37,7 @@ interface Coordinates {
 
 export default function RadarPage() {
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale).radar;
   const locationCopy = getLocationStatusCopy(locale);
   const sourceCopy = getDataSourceCopy(locale);
@@ -226,6 +226,7 @@ export default function RadarPage() {
                 <button
                   key={id}
                   type="button"
+                  data-testid={id === 'cafe_toilet' ? 'facility-filter-cafe' : `facility-filter-${id}`}
                   onClick={() => setFilter(id)}
                   aria-pressed={active}
                   className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${

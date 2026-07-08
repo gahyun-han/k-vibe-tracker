@@ -21,7 +21,7 @@ interface TopBarProps {
 export default function TopBar({ title, showBack, viewMode, onViewModeChange }: TopBarProps) {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);

@@ -31,7 +31,7 @@ export function FacilityCard({ facility: f, copy, onViewMap }: Props) {
     : `${f.distance}m`;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
+    <div data-testid="facility-card" data-category={f.type} className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
       <div className="flex items-stretch">
         <button
           type="button"

@@ -420,7 +420,7 @@ export default function MapPage() {
         ? 'grid h-[calc(100vh-3.5rem)] min-h-[640px] grid-cols-[minmax(0,1fr)_380px] bg-[#0D0D1A]'
         : 'flex h-[calc(100dvh-3.5rem)] flex-col bg-[#0D0D1A]'}
       >
-        <div className={`relative min-h-0 overflow-hidden bg-[#101827] ${isDesktopMode ? 'h-full' : 'flex-1'}`}>
+        <div data-testid="map-container" className={`relative min-h-0 overflow-hidden bg-[#101827] ${isDesktopMode ? 'h-full' : 'flex-1'}`}>
           <KakaoMapView
             center={coords}
             places={filtered}
@@ -484,6 +484,7 @@ export default function MapPage() {
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
               />
               <input
+                data-testid="place-search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={copy.map.searchPlaceholder}
@@ -516,7 +517,7 @@ export default function MapPage() {
             </div>
           )}
 
-          <div className={isDesktopMode ? 'min-h-0 flex-1 overflow-y-auto pb-4' : 'max-h-60 overflow-y-auto pb-20'}>
+          <div data-testid="places-list" className={isDesktopMode ? 'min-h-0 flex-1 overflow-y-auto pb-4' : 'max-h-60 overflow-y-auto pb-20'}>
             {!loading && filtered.length === 0 ? (
               <div className="space-y-3 px-4 py-8 text-center">
                 <div>
@@ -567,6 +568,7 @@ export default function MapPage() {
                 return (
                   <button
                     key={place.id}
+                    data-testid="place-card"
                     onClick={() => setSelectedPlace(place)}
                     className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/5"
                   >

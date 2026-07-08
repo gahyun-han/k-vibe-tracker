@@ -57,6 +57,19 @@ K-콘텐츠 속 장소 탐색, 주변 관광지 검색, SNS 장소 분석, 로�
 
 현재 앱은 **로컬 우선(local-first) MVP**입니다.
 
+### Phase 2 진행 현황 (2026-07-08)
+
+- E2E 안정화를 위한 `data-testid` 기본 셀렉터를 주요 화면/컴포넌트에 추가했습니다.
+  - 홈: `language-switcher`, `locale-*`
+  - 지도: `map-container`, `place-search`, `places-list`, `place-card`, `category-filter-*`
+  - 분석: `url-input`, `analyze-btn`, `error-message`
+  - 루트: `add-stop-btn`, `route-stop`, `complete-stop-checkbox`
+  - 레이더: `radius-slider`, `facility-card`, `facility-filter-*`
+  - 프로필: `saved-places-section`
+  - 장소 상세: `place-detail-modal`, `place-name`, `save-place-btn`
+- 프론트 단위/통합 테스트는 현재 **196/196 통과** 상태입니다.
+- 다음 단계(Phase 3~8): 타입/린트 잔여 이슈 정리 + CI/구조 고도화
+
 완료된 핵심 범위:
 
 - Kakao Maps JavaScript SDK 연동

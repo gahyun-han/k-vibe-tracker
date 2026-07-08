@@ -212,6 +212,7 @@ export default function AnalyzePage() {
                 className={`absolute left-3 top-1/2 -translate-y-1/2 ${isInstagramInput ? 'text-pink-300' : 'text-red-400'}`}
               />
               <input
+                data-testid="url-input"
                 value={url}
                 onChange={(e) => {
                   setUrl(e.target.value);
@@ -226,7 +227,7 @@ export default function AnalyzePage() {
             </div>
 
             {url && !urlValid && !isInstagramInput && (
-              <p className="flex items-center gap-1 text-xs text-red-400">
+              <p data-testid="error-message" className="flex items-center gap-1 text-xs text-red-400">
                 <AlertCircle size={12} />
                 {isYoutubeInput ? copy.invalidUrl : copy.unsupportedUrl}
               </p>
@@ -262,6 +263,7 @@ export default function AnalyzePage() {
             )}
 
             <button
+              data-testid="analyze-btn"
               onClick={() => void analyze()}
               disabled={!urlValid || status === 'loading'}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#FF3A5C] py-3 text-sm font-semibold text-white transition-colors hover:bg-[#e02e4e] disabled:cursor-not-allowed disabled:opacity-40"

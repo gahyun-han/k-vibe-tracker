@@ -18,7 +18,7 @@ type TabId = typeof TABS[number]['id'];
 export default function BottomNav({ active, viewMode }: { active: TabId; viewMode: ViewMode }) {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const isDesktopMode = viewMode === 'desktop';
 

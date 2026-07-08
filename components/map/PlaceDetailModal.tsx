@@ -269,6 +269,7 @@ export function PlaceDetailModal({
 
       <div
         role="dialog"
+        data-testid="place-detail-modal"
         aria-modal="true"
         aria-labelledby="place-detail-title"
         className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-md"
@@ -332,7 +333,7 @@ export function PlaceDetailModal({
                     </span>
                   )}
                 </div>
-                <h2 id="place-detail-title" className="text-lg font-bold text-white">{mergedPlace.name}</h2>
+                <h2 id="place-detail-title" data-testid="place-name" className="text-lg font-bold text-white">{mergedPlace.name}</h2>
                 {mergedPlace.rating && (
                   <div className="mt-0.5 flex items-center gap-1">
                     <Star size={12} className="fill-yellow-400 text-yellow-400" />
@@ -347,6 +348,7 @@ export function PlaceDetailModal({
                 <button
                   type="button"
                   onClick={toggleSavePlace}
+                  data-testid="save-place-btn"
                   aria-label={isSaved ? text.saved : text.save}
                   title={isSaved ? text.saved : text.save}
                   className={`rounded-lg p-1.5 transition-colors hover:bg-white/10 ${

@@ -22,7 +22,7 @@ describe('Frontend API Client', () => {
 
       const result = await requestJson('/api/test');
       expect(result).toEqual({ data: 'test' });
-      expect(fetch).toHaveBeenCalledWith('/api/test', {});
+      expect(fetch).toHaveBeenCalledWith('/api/test', undefined);
     });
 
     it('should throw FrontendApiError on 4xx response', async () => {

@@ -19,7 +19,7 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children, activeTab, title, showBack }: AppLayoutProps) {
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const { viewMode, setViewMode } = useViewMode();
   const isDesktopMode = viewMode === 'desktop';

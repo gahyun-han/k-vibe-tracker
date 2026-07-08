@@ -48,6 +48,7 @@ export function LanguageSwitcher() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((value) => !value)}
+        data-testid="language-switcher"
         aria-label={copy.common.changeLanguage}
         aria-controls="language-switcher-menu"
         aria-expanded={open}
@@ -70,6 +71,7 @@ export function LanguageSwitcher() {
               <button
                 key={code}
                 onClick={() => switchLocale(code)}
+                data-testid={`locale-${code}`}
                 role="menuitemradio"
                 aria-checked={active}
                 aria-label={`${LANGUAGE_NAMES[code]} (${code.toUpperCase()})`}

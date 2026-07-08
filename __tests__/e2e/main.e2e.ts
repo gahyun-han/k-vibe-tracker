@@ -229,8 +229,8 @@ test.describe('K-Vibe Tracker - End-to-End Tests', () => {
       await firstStop.dragTo(secondStop);
 
       // Verify order changed (check data-order attribute or text content)
-      const firstStopOrder = await firstStop.getAttribute('data-order');
-      expect(firstStopOrder).toBeGreaterThan('1');
+      const firstStopOrder = Number(await firstStop.getAttribute('data-order'));
+      expect(firstStopOrder).toBeGreaterThan(1);
     });
 
     test('should mark stop as completed', async () => {

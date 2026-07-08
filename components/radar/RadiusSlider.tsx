@@ -24,6 +24,7 @@ export function RadiusSlider({ value, onChange, label = 'Radius' }: RadiusSlider
         </span>
       </div>
       <input
+        data-testid="radius-slider"
         type="range"
         min={0}
         max={RADAR_RADIUS_STEPS.length - 1}

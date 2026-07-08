@@ -11,7 +11,7 @@ const STEP_PATHS = ['/map', '/analyze', '/persona', '/route', '/radar', '/profil
 export function TutorialButton() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);

@@ -13,7 +13,7 @@ interface LoginModalProps {
 
 export default function LoginModal({ onClose, redirectTo }: LoginModalProps) {
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale).login;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

@@ -219,6 +219,7 @@ export default function RoutePage() {
       const toIdx = next.findIndex((spot) => spot.id === targetId);
       if (fromIdx === -1 || toIdx === -1) return prev;
       const [item] = next.splice(fromIdx, 1);
+      if (!item) return prev;
       next.splice(toIdx, 0, item);
       return next;
     });
@@ -239,6 +240,7 @@ export default function RoutePage() {
 
       const next = [...prev];
       const [item] = next.splice(fromIdx, 1);
+      if (!item) return prev;
       next.splice(toIdx, 0, item);
       return next;
     });
@@ -252,8 +254,12 @@ export default function RoutePage() {
 
   function addSampleStop() {
     setSpots((prev) => {
-      if (prev.some((spot) => spot.id === extraStop.id)) return prev;
-      return [...prev, extraStop];
+      const duplicateCount = prev.filter((spot) => spot.id.startsWith(extraStop.id)).length;
+      const nextStop = {
+        ...extraStop,
+        ...(duplicateCount > 0 && { id: `${extraStop.id}-${duplicateCount + 1}` }),
+      };
+      return [...prev, nextStop];
     });
     announceStatus(copy.sampleStopAdded, 'success');
   }
@@ -526,6 +532,9 @@ export default function RoutePage() {
               <Fragment key={spot.id}>
                 <div
                   draggable
+                  data-testid="route-stop"
+                  data-order={idx + 1}
+                  data-completed={isCompleted ? 'true' : 'false'}
                   onDragStart={() => onDragStart(spot.id)}
                   onDragOver={(e) => onDragOver(e, spot.id)}
                   onDrop={() => onDrop(spot.id)}
@@ -578,8 +587,11 @@ export default function RoutePage() {
                   <div className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
+                      data-testid="complete-stop-checkbox"
+                      role="checkbox"
                       onClick={() => toggleStopCompleted(spot.id)}
                       aria-pressed={isCompleted}
+                      aria-checked={isCompleted}
                       aria-label={(isCompleted ? copy.markIncomplete : copy.markComplete).replace('{name}', spot.name)}
                       title={isCompleted ? copy.markIncompleteTitle : copy.markCompleteTitle}
                       className={`rounded-lg p-1 transition-colors hover:bg-white/10 ${
@@ -665,6 +677,7 @@ export default function RoutePage() {
           })}
 
           <button
+            data-testid="add-stop-btn"
             onClick={addSampleStop}
             className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 py-3 text-sm text-white/40 transition-colors hover:border-[#FF3A5C]/50 hover:text-[#FF3A5C]/70"
           >

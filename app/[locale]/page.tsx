@@ -275,7 +275,7 @@ export default function LandingPage() {
         <PwaInstallPrompt locale={locale} />
       </div>
 
-      <div className="w-full space-y-2" role="group" aria-label={copy.landing.languageTitle}>
+      <div data-testid="language-switcher" className="w-full space-y-2" role="group" aria-label={copy.landing.languageTitle}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 pt-2 text-xs font-semibold uppercase tracking-wider text-[#8B8BA8]">
             <Languages size={14} className="text-[#FF3A5C]" />
@@ -287,6 +287,7 @@ export default function LandingPage() {
           {SUPPORTED_LOCALES.map((code) => (
             <button
               key={code}
+              data-testid={`locale-${code}`}
               onClick={() => handleLangChange(code)}
               title={LANGUAGE_NAMES[code]}
               aria-label={`${LANGUAGE_NAMES[code]} (${code.toUpperCase()})`}

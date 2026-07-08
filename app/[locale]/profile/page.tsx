@@ -226,7 +226,7 @@ export default function ProfilePage() {
           </section>
         )}
 
-        <section className="space-y-3">
+        <section data-testid="saved-places-section" className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-bold text-white">
               <Heart size={16} className="text-[#FF3A5C]" />

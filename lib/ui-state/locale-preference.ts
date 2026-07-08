@@ -4,7 +4,7 @@ export const PREFERRED_LOCALE_STORAGE_KEY = 'k-vibe-preferred-locale';
 export const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';
 export const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
-type LocaleStorage = Pick<Storage, 'setItem'>;
+type LocaleStorage = Pick<Storage, 'getItem' | 'setItem'>;
 type SearchParamsLike = Pick<URLSearchParams, 'toString'> | string | null | undefined;
 
 export function buildPreferredLocaleCookie(locale: UiLocale) {
@@ -47,4 +47,10 @@ export function persistPreferredLocale(
   }
 
   return persisted;
+}
+
+export function readPreferredLocale(storage?: LocaleStorage): UiLocale | null {
+  const rawLocale = storage?.getItem(PREFERRED_LOCALE_STORAGE_KEY);
+  if (!rawLocale) return null;
+  return SUPPORTED_LOCALES.includes(rawLocale as UiLocale) ? (rawLocale as UiLocale) : null;
 }

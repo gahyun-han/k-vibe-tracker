@@ -17,6 +17,7 @@ export {
   buildPreferredLocaleCookie,
   buildLocalizedPath,
   persistPreferredLocale,
+  readPreferredLocale,
 } from './locale-preference';
 export {
   PERSONA_PREFERENCE_STORAGE_KEY,

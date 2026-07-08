@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 function getMetadataBase() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+  const appUrl = process.env['NEXT_PUBLIC_APP_URL'];
   try {
     return new URL(appUrl ?? 'http://localhost:3000');
   } catch {

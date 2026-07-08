@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   persistPreferredLocale,
   readPreferredLocale,
@@ -7,6 +7,7 @@ import {
   readLocalApiCache,
   writeLocalApiCache,
   buildLocalApiCacheKey,
+  LOCAL_API_CACHE_TTL_MS,
 } from '@/lib/cache';
 
 // Mock localStorage
@@ -42,38 +43,38 @@ describe('UI State Utilities', () => {
 
   describe('Locale Preference', () => {
     it('should persist and read locale preference', () => {
-      persistPreferredLocale('ko');
-      const locale = readPreferredLocale();
+      persistPreferredLocale('ko', window.localStorage);
+      const locale = readPreferredLocale(window.localStorage);
 
       expect(locale).toBe('ko');
     });
 
     it('should update locale preference', () => {
-      persistPreferredLocale('ko');
-      expect(readPreferredLocale()).toBe('ko');
+      persistPreferredLocale('ko', window.localStorage);
+      expect(readPreferredLocale(window.localStorage)).toBe('ko');
 
-      persistPreferredLocale('en');
-      expect(readPreferredLocale()).toBe('en');
+      persistPreferredLocale('en', window.localStorage);
+      expect(readPreferredLocale(window.localStorage)).toBe('en');
     });
 
     it('should handle all supported locales', () => {
       const locales = ['ko', 'en', 'ja', 'zh'];
 
       locales.forEach((locale) => {
-        persistPreferredLocale(locale as any);
-        expect(readPreferredLocale()).toBe(locale);
+        persistPreferredLocale(locale as any, window.localStorage);
+        expect(readPreferredLocale(window.localStorage)).toBe(locale);
       });
     });
 
     it('should return null when not set', () => {
-      const locale = readPreferredLocale();
+      const locale = readPreferredLocale(window.localStorage);
       expect(locale).toBeNull();
     });
   });
 
   describe('API Cache', () => {
     it('should build correct cache keys', () => {
-      const key = buildLocalApiCacheKey({
+      const key = buildLocalApiCacheKey('places', {
         lat: 37.5665,
         lng: 126.978,
         radius: 1000,
@@ -84,7 +85,7 @@ describe('UI State Utilities', () => {
     });
 
     it('should cache and retrieve data', () => {
-      const cacheKey = buildLocalApiCacheKey({
+      const cacheKey = buildLocalApiCacheKey('places', {
         lat: 37.5665,
         lng: 126.978,
       });
@@ -96,47 +97,42 @@ describe('UI State Utilities', () => {
         cached: true,
       };
 
-      writeLocalApiCache(cacheKey, mockData, 60);
-      const retrieved = readLocalApiCache(cacheKey);
+      writeLocalApiCache(window.localStorage, cacheKey, mockData);
+      const retrieved = readLocalApiCache(window.localStorage, cacheKey);
 
       expect(retrieved).toEqual(mockData);
     });
 
-    it('should return null for expired cache', async () => {
-      const cacheKey = buildLocalApiCacheKey({
+    it('should return null for expired cache', () => {
+      const cacheKey = buildLocalApiCacheKey('places', {
         lat: 37.5665,
         lng: 126.978,
       });
 
       const mockData = { places: [] };
 
-      // Cache with 0 second TTL (expires immediately)
-      writeLocalApiCache(cacheKey, mockData, 0);
-
-      // Wait a bit to ensure expiration
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const retrieved = readLocalApiCache(cacheKey);
+      writeLocalApiCache(window.localStorage, cacheKey, mockData, 0);
+      const retrieved = readLocalApiCache(window.localStorage, cacheKey, LOCAL_API_CACHE_TTL_MS + 1);
       expect(retrieved).toBeNull();
     });
 
     it('should return null for non-existent cache keys', () => {
-      const retrieved = readLocalApiCache('non-existent-key');
+      const retrieved = readLocalApiCache(window.localStorage, 'non-existent-key');
       expect(retrieved).toBeNull();
     });
 
     it('should handle different cache keys separately', () => {
-      const key1 = buildLocalApiCacheKey({ lat: 37.5665, lng: 126.978 });
-      const key2 = buildLocalApiCacheKey({ lat: 37.57, lng: 126.98 });
+      const key1 = buildLocalApiCacheKey('places', { lat: 37.5665, lng: 126.978 });
+      const key2 = buildLocalApiCacheKey('places', { lat: 37.57, lng: 126.98 });
 
       const data1 = { places: ['A'] };
       const data2 = { places: ['B'] };
 
-      writeLocalApiCache(key1, data1, 60);
-      writeLocalApiCache(key2, data2, 60);
+      writeLocalApiCache(window.localStorage, key1, data1);
+      writeLocalApiCache(window.localStorage, key2, data2);
 
-      expect(readLocalApiCache(key1)).toEqual(data1);
-      expect(readLocalApiCache(key2)).toEqual(data2);
+      expect(readLocalApiCache(window.localStorage, key1)).toEqual(data1);
+      expect(readLocalApiCache(window.localStorage, key2)).toEqual(data2);
     });
   });
 });

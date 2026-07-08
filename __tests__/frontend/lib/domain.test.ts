@@ -38,46 +38,44 @@ describe('Lib Domain Utilities', () => {
   });
 
   describe('toCrowdLevel', () => {
-    it('should return empty for 0-10%', () => {
+    it('should return low for lower crowd values', () => {
       const level = toCrowdLevel(5);
-      expect(level).toBe('empty');
+      expect(level).toBe('low');
     });
 
-    it('should return quiet for 11-30%', () => {
+    it('should return low for 11-30%', () => {
       const level = toCrowdLevel(20);
-      expect(level).toBe('quiet');
+      expect(level).toBe('low');
     });
 
-    it('should return moderate for 31-60%', () => {
+    it('should return mid for 31-60%', () => {
       const level = toCrowdLevel(45);
-      expect(level).toBe('moderate');
+      expect(level).toBe('mid');
     });
 
-    it('should return busy for 61-85%', () => {
+    it('should return high for 61-85%', () => {
       const level = toCrowdLevel(75);
-      expect(level).toBe('busy');
+      expect(level).toBe('high');
     });
 
-    it('should return very_busy for 86-100%', () => {
+    it('should return high for 86-100%', () => {
       const level = toCrowdLevel(95);
-      expect(level).toBe('very_busy');
+      expect(level).toBe('high');
     });
 
     it('should handle boundary values', () => {
-      expect(toCrowdLevel(0)).toBe('empty');
-      expect(toCrowdLevel(100)).toBe('very_busy');
-      expect(toCrowdLevel(30)).toBe('quiet');
-      expect(toCrowdLevel(60)).toBe('moderate');
+      expect(toCrowdLevel(0)).toBe('low');
+      expect(toCrowdLevel(100)).toBe('high');
+      expect(toCrowdLevel(30)).toBe('low');
+      expect(toCrowdLevel(60)).toBe('mid');
     });
   });
 
   describe('CROWD_DOT_CLASS', () => {
     it('should return correct CSS classes for each crowd level', () => {
-      expect(CROWD_DOT_CLASS.empty).toContain('bg-');
-      expect(CROWD_DOT_CLASS.quiet).toContain('bg-');
-      expect(CROWD_DOT_CLASS.moderate).toContain('bg-');
-      expect(CROWD_DOT_CLASS.busy).toContain('bg-');
-      expect(CROWD_DOT_CLASS.very_busy).toContain('bg-');
+      expect(CROWD_DOT_CLASS.low).toContain('bg-');
+      expect(CROWD_DOT_CLASS.mid).toContain('bg-');
+      expect(CROWD_DOT_CLASS.high).toContain('bg-');
     });
 
     it('should have unique classes for each level', () => {
