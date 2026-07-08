@@ -20,7 +20,6 @@
     "import"
   ],
   "rules": {
-    // ✅ TypeScript 엄격한 규칙
     "@typescript-eslint/explicit-function-return-types": [
       "error",
       {
@@ -75,8 +74,6 @@
     "react/display-name": "warn",
     "react/no-unescaped-entities": "warn",
     "react/no-children-prop": "error",
-
-    // ✅ Import 규칙
     "import/order": [
       "error",
       {
@@ -107,8 +104,6 @@
     "import/no-unresolved": "error",
     "import/no-absolute-path": "error",
     "import/no-cycle": "error",
-
-    // ✅ 일반 규칙
     "no-var": "error",
     "prefer-const": "error",
     "prefer-arrow-callback": "error",
