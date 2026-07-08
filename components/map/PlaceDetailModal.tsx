@@ -188,19 +188,19 @@ export function PlaceDetailModal({
     return {
       ...place,
       contentId: detail.content_id,
-      contentTypeId: detail.content_type ?? place.contentTypeId,
       name: detail.name ?? place.name,
       address: detail.address ?? place.address,
       lat: detail.lat ?? place.lat,
       lng: detail.lng ?? place.lng,
-      imageUrl: detail.image_url ?? place.imageUrl,
-      images,
-      overview: detail.overview ?? place.overview,
-      phone: detail.tel ?? place.phone,
-      openHours: detail.open_hours ?? detail.use_time ?? place.openHours,
-      restDate: detail.rest_date ?? place.restDate,
-      parking: detail.parking ?? place.parking,
-      tourApiUrl: detail.homepage ?? place.tourApiUrl,
+      ...((detail.content_type ?? place.contentTypeId) !== undefined && { contentTypeId: detail.content_type ?? place.contentTypeId }),
+      ...((detail.image_url ?? place.imageUrl) && { imageUrl: detail.image_url ?? place.imageUrl }),
+      ...(images && { images }),
+      ...((detail.overview ?? place.overview) && { overview: detail.overview ?? place.overview }),
+      ...((detail.tel ?? place.phone) && { phone: detail.tel ?? place.phone }),
+      ...((detail.open_hours ?? detail.use_time ?? place.openHours) && { openHours: detail.open_hours ?? detail.use_time ?? place.openHours }),
+      ...((detail.rest_date ?? place.restDate) && { restDate: detail.rest_date ?? place.restDate }),
+      ...((detail.parking ?? place.parking) && { parking: detail.parking ?? place.parking }),
+      ...((detail.homepage ?? place.tourApiUrl) && { tourApiUrl: detail.homepage ?? place.tourApiUrl }),
     };
   }, [detail, place]);
 

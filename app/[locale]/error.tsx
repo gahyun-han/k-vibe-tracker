@@ -30,7 +30,7 @@ export default function LocaleError({
           <h1 className="text-xl font-black text-white">{copy.common.unexpectedErrorTitle}</h1>
           <p className="text-sm leading-6 text-[#8B8BA8]">{copy.common.unexpectedErrorBody}</p>
         </div>
-        {process.env.NODE_ENV === 'development' && (
+        {process.env['NODE_ENV'] === 'development' && (
           <pre className="max-h-28 overflow-auto rounded-xl bg-black/25 p-3 text-left text-xs text-red-200">
             {error.message}
           </pre>

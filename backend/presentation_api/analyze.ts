@@ -19,12 +19,12 @@ export async function postAnalyze(req: NextRequest) {
   }
 
   const snsUrl =
-    typeof body.youtube_url === 'string'
-      ? body.youtube_url
-      : typeof body.sns_url === 'string'
-        ? body.sns_url
+    typeof body['youtube_url'] === 'string'
+      ? body['youtube_url']
+      : typeof body['sns_url'] === 'string'
+        ? body['sns_url']
         : '';
-  const localeParam = typeof body.locale === 'string' ? body.locale : 'en';
+  const localeParam = typeof body['locale'] === 'string' ? body['locale'] : 'en';
   const platform = detectSnsPlatform(snsUrl);
   const videoId = extractVideoId(snsUrl);
 
@@ -60,7 +60,7 @@ export async function postAnalyze(req: NextRequest) {
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       return NextResponse.json(
-        { error: isRecord(data) && typeof data.detail === 'string' ? data.detail : 'AI_WORKER_ERROR' },
+        { error: isRecord(data) && typeof data['detail'] === 'string' ? data['detail'] : 'AI_WORKER_ERROR' },
         { status: res.status },
       );
     }

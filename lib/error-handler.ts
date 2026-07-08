@@ -20,13 +20,22 @@ export interface ErrorContext {
 }
 
 export class AppError extends Error {
+  public readonly code: string;
+  public readonly severity: ErrorSeverity;
+  public readonly context?: ErrorContext;
+
   constructor(
-    public code: string,
-    public message: string,
-    public severity: ErrorSeverity = 'medium',
-    public context?: ErrorContext,
+    code: string,
+    message: string,
+    severity: ErrorSeverity = 'medium',
+    context?: ErrorContext,
   ) {
     super(message);
+    this.code = code;
+    this.severity = severity;
+    if (context !== undefined) {
+      this.context = context;
+    }
     this.name = 'AppError';
   }
 
@@ -86,10 +95,10 @@ export function handleError(
   context?: ErrorContext,
 ): AppError {
   const timestamp = new Date();
-  const fullContext = {
+  const fullContext: ErrorContext = {
     timestamp,
-    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-    ...context,
+    ...(typeof navigator !== 'undefined' && navigator.userAgent ? { userAgent: navigator.userAgent } : {}),
+    ...(context ?? {}),
   };
 
   if (error instanceof AppError) {

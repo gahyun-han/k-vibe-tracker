@@ -51,14 +51,14 @@ export function parsePersonaPreference(value: string | null): PersonaPreference 
   try {
     const parsed = JSON.parse(value) as unknown;
     if (!isRecord(parsed)) return null;
-    if (typeof parsed.theme !== 'string' || !isRouteTheme(parsed.theme)) return null;
-    if (typeof parsed.detail !== 'string' || !isRouteDetailForTheme(parsed.theme, parsed.detail)) return null;
-    if (typeof parsed.updatedAt !== 'string' || Number.isNaN(Date.parse(parsed.updatedAt))) return null;
+    if (typeof parsed['theme'] !== 'string' || !isRouteTheme(parsed['theme'])) return null;
+    if (typeof parsed['detail'] !== 'string' || !isRouteDetailForTheme(parsed['theme'], parsed['detail'])) return null;
+    if (typeof parsed['updatedAt'] !== 'string' || Number.isNaN(Date.parse(parsed['updatedAt']))) return null;
 
     return {
-      theme: parsed.theme,
-      detail: parsed.detail,
-      updatedAt: parsed.updatedAt,
+      theme: parsed['theme'],
+      detail: parsed['detail'],
+      updatedAt: parsed['updatedAt'],
     };
   } catch {
     return null;

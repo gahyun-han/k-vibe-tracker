@@ -11,5 +11,8 @@ export interface FacilitiesApiResponse {
 }
 
 export function fetchFacilities(searchParams: URLSearchParams, signal?: AbortSignal) {
-  return requestJson<FacilitiesApiResponse>(`/api/facilities?${searchParams.toString()}`, { signal });
+  return requestJson<FacilitiesApiResponse>(
+    `/api/facilities?${searchParams.toString()}`,
+    { ...(signal !== undefined && { signal }) },
+  );
 }

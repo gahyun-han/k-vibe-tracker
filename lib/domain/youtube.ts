@@ -19,7 +19,10 @@ export function extractVideoId(url: string): string | null {
       if (v) return v;
       const parts = u.pathname.split('/');
       const idx = parts.findIndex((p) => p === 'shorts' || p === 'embed');
-      if (idx !== -1 && parts[idx + 1]) return parts[idx + 1];
+      if (idx !== -1) {
+        const nextPart = parts[idx + 1];
+        if (nextPart) return nextPart;
+      }
     }
     return null;
   } catch {

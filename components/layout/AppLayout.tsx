@@ -53,7 +53,12 @@ export default function AppLayout({ children, activeTab, title, showBack }: AppL
         >
           <BottomNav active={activeTab} viewMode={viewMode} />
           <div className={`flex min-w-0 flex-1 flex-col ${isDesktopMode ? 'min-h-0' : 'min-h-screen'}`}>
-            <TopBar title={title} showBack={showBack} viewMode={viewMode} onViewModeChange={setViewMode} />
+            <TopBar
+              {...(title !== undefined && { title })}
+              {...(showBack !== undefined && { showBack })}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
             <main className={`flex-1 overflow-y-auto ${isDesktopMode ? 'pb-0' : 'pb-20'}`}>
               <NetworkStatusBanner locale={locale} />
               <PwaInstallPrompt locale={locale} />

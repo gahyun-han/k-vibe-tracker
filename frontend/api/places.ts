@@ -18,12 +18,15 @@ export interface PlaceDetailApiResponse {
 }
 
 export function fetchPlaces(searchParams: URLSearchParams, signal?: AbortSignal) {
-  return requestJson<PlacesApiResponse>(`/api/places?${searchParams.toString()}`, { signal });
+  return requestJson<PlacesApiResponse>(
+    `/api/places?${searchParams.toString()}`,
+    { ...(signal !== undefined && { signal }) },
+  );
 }
 
 export function fetchPlaceDetail(contentId: string, searchParams: URLSearchParams, signal?: AbortSignal) {
   return requestJson<PlaceDetailApiResponse>(
     `/api/places/${encodeURIComponent(contentId)}?${searchParams.toString()}`,
-    { signal },
+    { ...(signal !== undefined && { signal }) },
   );
 }

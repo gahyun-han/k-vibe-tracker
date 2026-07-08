@@ -39,22 +39,26 @@ function normalizeSavedPlace(value: unknown): SavedPlace | null {
   }
 
   const contentTypeId = Number(item.contentTypeId);
+  const contentId = cleanOptionalString(item.contentId);
+  const imageUrl = cleanOptionalString(item.imageUrl);
+  const overview = cleanOptionalString(item.overview);
+  const crowdLevel = isCrowdLevel(item.crowdLevel) ? item.crowdLevel : undefined;
 
   return {
     id,
-    contentId: cleanOptionalString(item.contentId),
-    contentTypeId: Number.isFinite(contentTypeId) ? contentTypeId : undefined,
+    ...(contentId && { contentId }),
+    ...(Number.isFinite(contentTypeId) ? { contentTypeId } : {}),
     name,
     category,
     address,
     lat,
     lng,
-    imageUrl: cleanOptionalString(item.imageUrl),
-    overview: cleanOptionalString(item.overview),
+    ...(imageUrl && { imageUrl }),
+    ...(overview && { overview }),
     tags: Array.isArray(item.tags)
       ? item.tags.map(cleanOptionalString).filter((tag): tag is string => Boolean(tag))
       : [],
-    crowdLevel: isCrowdLevel(item.crowdLevel) ? item.crowdLevel : undefined,
+    ...(crowdLevel && { crowdLevel }),
     savedAt: cleanOptionalString(item.savedAt) ?? new Date(0).toISOString(),
   };
 }
@@ -64,17 +68,17 @@ export function createSavedPlace(place: SaveablePlace, savedAt = new Date().toIS
 
   return {
     id,
-    contentId: place.contentId,
-    contentTypeId: place.contentTypeId,
+    ...(place.contentId && { contentId: place.contentId }),
+    ...(place.contentTypeId !== undefined && { contentTypeId: place.contentTypeId }),
     name: place.name,
     category: place.category,
     address: place.address,
     lat: place.lat,
     lng: place.lng,
-    imageUrl: place.imageUrl,
-    overview: place.overview,
+    ...(place.imageUrl && { imageUrl: place.imageUrl }),
+    ...(place.overview && { overview: place.overview }),
     tags: place.tags ?? [],
-    crowdLevel: place.crowdLevel,
+    ...(place.crowdLevel && { crowdLevel: place.crowdLevel }),
     savedAt,
   };
 }

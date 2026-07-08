@@ -8,6 +8,8 @@ interface CachedPayload<T> {
   value: T;
 }
 
+export type CachedApiResponse<T = unknown> = CachedPayload<T>;
+
 function normalizeParamValue(value: string | number | boolean) {
   if (typeof value === 'number') return Number.isFinite(value) ? String(value) : '';
   return String(value);

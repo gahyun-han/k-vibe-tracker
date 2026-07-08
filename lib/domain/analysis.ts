@@ -148,5 +148,5 @@ export function buildMockAnalysis(videoId: string, locale: AnalysisLocale = 'en'
 }
 
 export function shouldCallAiWorker() {
-  return process.env.ENABLE_AI_WORKER_ANALYSIS === 'true' && Boolean(process.env.AI_WORKER_URL);
+  return process.env['ENABLE_AI_WORKER_ANALYSIS'] === 'true' && Boolean(process.env['AI_WORKER_URL']);
 }

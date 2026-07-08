@@ -29,7 +29,10 @@ export function RadiusSlider({ value, onChange, label = 'Radius' }: RadiusSlider
         min={0}
         max={RADAR_RADIUS_STEPS.length - 1}
         value={currentIndex === -1 ? 1 : currentIndex}
-        onChange={(e) => onChange(RADAR_RADIUS_STEPS[Number(e.target.value)])}
+        onChange={(e) => {
+          const nextValue = RADAR_RADIUS_STEPS[Number(e.target.value)];
+          if (nextValue !== undefined) onChange(nextValue);
+        }}
         className="h-1.5 w-full cursor-pointer rounded-full accent-[#FF3A5C]"
       />
       <div className="flex justify-between text-[10px] text-white/30">

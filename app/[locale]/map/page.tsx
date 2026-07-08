@@ -53,7 +53,7 @@ const DEFAULT_STAY_MINUTES: Record<string, number> = {
 type CategoryLabels = Readonly<Record<PlaceCategory | 'spot', string>>;
 
 function categoryLabelFor(category: string, labels: CategoryLabels) {
-  return labels[category as PlaceCategory] ?? labels.spot ?? category;
+  return labels[category as PlaceCategory] ?? labels['spot'] ?? category;
 }
 
 function toPlace(

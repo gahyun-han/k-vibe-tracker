@@ -23,7 +23,7 @@ export function readLastKnownLocation(storage: LocationStorage, now = Date.now()
     const lat = Number(parsed.lat);
     const lng = Number(parsed.lng);
     const timestamp = Number(parsed.timestamp);
-    const accuracyM = parsed.accuracyM === undefined ? undefined : Number(parsed.accuracyM);
+    const parsedAccuracy = parsed.accuracyM === undefined ? undefined : Number(parsed.accuracyM);
 
     if (!isValidCoordinate(lat, lng) || !Number.isFinite(timestamp)) {
       storage.removeItem(LAST_KNOWN_LOCATION_STORAGE_KEY);
@@ -39,7 +39,7 @@ export function readLastKnownLocation(storage: LocationStorage, now = Date.now()
       lat,
       lng,
       timestamp,
-      ...(Number.isFinite(accuracyM) ? { accuracyM } : {}),
+      ...(parsedAccuracy !== undefined && Number.isFinite(parsedAccuracy) ? { accuracyM: parsedAccuracy } : {}),
     };
   } catch {
     storage.removeItem(LAST_KNOWN_LOCATION_STORAGE_KEY);

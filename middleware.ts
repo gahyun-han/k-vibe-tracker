@@ -19,8 +19,8 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
   let user = null;
   const hasSupabaseEnv = Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    process.env['NEXT_PUBLIC_SUPABASE_URL'] &&
+      process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
   );
   const setAllCookies: SetAllCookies = (cookiesToSet) => {
     cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
@@ -32,8 +32,8 @@ export async function middleware(request: NextRequest) {
 
   if (hasSupabaseEnv) {
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env['NEXT_PUBLIC_SUPABASE_URL']!,
+      process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']!,
       {
         cookies: {
           getAll() { return request.cookies.getAll(); },

@@ -519,7 +519,9 @@ export function generateMockRoutePlan({ theme, detail, startTime = '10:00', copy
   const stops = baseStops.map((stop, index) => {
     if (index > 0) {
       const prev = baseStops[index - 1];
-      cursor += walkingMinutes(haversineKm(prev.lat, prev.lng, stop.lat, stop.lng));
+      if (prev) {
+        cursor += walkingMinutes(haversineKm(prev.lat, prev.lng, stop.lat, stop.lng));
+      }
     }
 
     const scheduledStop: RouteStop = {
@@ -562,7 +564,10 @@ export function generateMockRoutePlan({ theme, detail, startTime = '10:00', copy
 export function calculateWalkingMinutes(stops: Pick<RouteStop, 'lat' | 'lng'>[]) {
   let total = 0;
   for (let i = 0; i < stops.length - 1; i += 1) {
-    total += walkingMinutes(haversineKm(stops[i].lat, stops[i].lng, stops[i + 1].lat, stops[i + 1].lng));
+    const from = stops[i];
+    const to = stops[i + 1];
+    if (!from || !to) continue;
+    total += walkingMinutes(haversineKm(from.lat, from.lng, to.lat, to.lng));
   }
   return total;
 }
@@ -573,6 +578,7 @@ export function calculateRouteLegs(stops: Pick<RouteStop, 'id' | 'name' | 'lat' 
   for (let i = 0; i < stops.length - 1; i += 1) {
     const from = stops[i];
     const to = stops[i + 1];
+    if (!from || !to) continue;
     const distanceKm = haversineKm(from.lat, from.lng, to.lat, to.lng);
     const distanceM = Math.round(distanceKm * 1000);
     const legWalkingMinutes = walkingMinutes(distanceKm);
@@ -655,9 +661,9 @@ export function decodeRoutePlanFromShare(value: string) {
     const payload = JSON.parse(base64UrlDecode(value)) as unknown;
     if (!isRecord(payload)) return null;
 
-    const title = coerceNonEmptyString(payload.title);
-    const summary = coerceNonEmptyString(payload.summary);
-    const rawStops = Array.isArray(payload.stops) ? payload.stops : [];
+    const title = coerceNonEmptyString(payload['title']);
+    const summary = coerceNonEmptyString(payload['summary']);
+    const rawStops = Array.isArray(payload['stops']) ? payload['stops'] : [];
     const stops = rawStops
       .slice(0, MAX_SHARED_ROUTE_STOPS)
       .map((stop, index) => coerceSharedRouteStop(stop, index))
@@ -666,10 +672,10 @@ export function decodeRoutePlanFromShare(value: string) {
     if (!title || !summary || stops.length === 0) return null;
 
     return createLocalRoutePlan({
-      id: coerceNonEmptyString(payload.id) ?? 'shared-route',
+      id: coerceNonEmptyString(payload['id']) ?? 'shared-route',
       title,
-      theme: typeof payload.theme === 'string' && isRouteTheme(payload.theme) ? payload.theme : 'mood',
-      detail: coerceNonEmptyString(payload.detail) ?? 'shared',
+      theme: typeof payload['theme'] === 'string' && isRouteTheme(payload['theme']) ? payload['theme'] : 'mood',
+      detail: coerceNonEmptyString(payload['detail']) ?? 'shared',
       summary,
       stops,
     });
@@ -715,11 +721,11 @@ export function parseRouteProgressState(
 
   try {
     const parsed = JSON.parse(value) as unknown;
-    if (!isRecord(parsed) || parsed.planId !== planId || !Array.isArray(parsed.completedStopIds)) {
+    if (!isRecord(parsed) || parsed['planId'] !== planId || !Array.isArray(parsed['completedStopIds'])) {
       return createRouteProgressState(planId, [], validStopIds);
     }
 
-    return createRouteProgressState(planId, parsed.completedStopIds.filter(isString), validStopIds);
+    return createRouteProgressState(planId, parsed['completedStopIds'].filter(isString), validStopIds);
   } catch {
     return createRouteProgressState(planId, [], validStopIds);
   }
@@ -731,14 +737,18 @@ export function buildGoogleMapsDirectionsUrl(stops: Pick<RouteStop, 'lat' | 'lng
   const url = new URL('https://www.google.com/maps/dir/');
   url.searchParams.set('api', '1');
   url.searchParams.set('travelmode', 'walking');
+  const firstStop = stops[0];
+  if (!firstStop) return null;
 
   if (stops.length === 1) {
-    url.searchParams.set('destination', formatCoordinates(stops[0]));
+    url.searchParams.set('destination', formatCoordinates(firstStop));
     return url.toString();
   }
 
-  url.searchParams.set('origin', formatCoordinates(stops[0]));
-  url.searchParams.set('destination', formatCoordinates(stops[stops.length - 1]));
+  const lastStop = stops[stops.length - 1];
+  if (!lastStop) return null;
+  url.searchParams.set('origin', formatCoordinates(firstStop));
+  url.searchParams.set('destination', formatCoordinates(lastStop));
 
   const waypoints = stops.slice(1, -1).map(formatCoordinates);
   if (waypoints.length > 0) {
@@ -861,27 +871,27 @@ function coerceCrowdLevel(value: unknown): CrowdLevel {
 function coerceSharedRouteStop(value: unknown, index: number): RouteStop | null {
   if (!isRecord(value)) return null;
 
-  const name = coerceNonEmptyString(value.name);
-  const lat = coerceNumberInRange(value.lat, -90, 90);
-  const lng = coerceNumberInRange(value.lng, -180, 180);
+  const name = coerceNonEmptyString(value['name']);
+  const lat = coerceNumberInRange(value['lat'], -90, 90);
+  const lng = coerceNumberInRange(value['lng'], -180, 180);
 
   if (!name || lat === null || lng === null) return null;
 
-  const stayMinutes = coerceNumberInRange(value.stayMinutes, 5, 360);
+  const stayMinutes = coerceNumberInRange(value['stayMinutes'], 5, 360);
 
   return {
-    id: coerceNonEmptyString(value.id) ?? `shared-stop-${index + 1}`,
+    id: coerceNonEmptyString(value['id']) ?? `shared-stop-${index + 1}`,
     name,
-    category: coerceNonEmptyString(value.category) ?? 'Spot',
-    address: coerceNonEmptyString(value.address) ?? 'Shared route',
-    crowdLevel: coerceCrowdLevel(value.crowdLevel),
+    category: coerceNonEmptyString(value['category']) ?? 'Spot',
+    address: coerceNonEmptyString(value['address']) ?? 'Shared route',
+    crowdLevel: coerceCrowdLevel(value['crowdLevel']),
     lat,
     lng,
     stayMinutes: stayMinutes === null ? 60 : Math.round(stayMinutes),
-    startTime: coerceNonEmptyString(value.startTime) ?? 'Flexible',
-    description: coerceNonEmptyString(value.description) ?? '',
-    tags: Array.isArray(value.tags)
-      ? value.tags
+    startTime: coerceNonEmptyString(value['startTime']) ?? 'Flexible',
+    description: coerceNonEmptyString(value['description']) ?? '',
+    tags: Array.isArray(value['tags'])
+      ? value['tags']
           .map((tag) => coerceNonEmptyString(tag))
           .filter((tag): tag is string => tag !== null)
           .slice(0, 8)

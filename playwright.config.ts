@@ -16,9 +16,9 @@ export default defineConfig({
   testDir: './__tests__/e2e',
   testMatch: '*.e2e.ts',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: !!process.env['CI'],
+  retries: process.env['CI'] ? 2 : 0,
+  ...(process.env['CI'] && { workers: 1 }),
   reporter: [
     ['html', { outputFolder: 'test-results/e2e' }],
     ['json', { outputFile: 'test-results/e2e/results.json' }],
@@ -58,6 +58,6 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env['CI'],
   },
 });

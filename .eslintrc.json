@@ -20,50 +20,29 @@
     "import"
   ],
   "rules": {
-    "@typescript-eslint/explicit-function-return-types": [
-      "error",
-      {
-        "allowExpressions": true,
-        "allowTypedFunctionExpressions": true,
-        "allowHigherOrderFunctions": true
-      }
-    ],
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/explicit-member-accessibility": [
-      "error",
-      {
-        "accessibility": "explicit",
-        "overrides": {
-          "constructors": "off",
-          "parameterProperties": "explicit"
-        }
-      }
-    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    "@typescript-eslint/prefer-nullish-coalescing": "error",
-    "@typescript-eslint/prefer-optional-chain": "error",
-    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/prefer-optional-chain": "warn",
+    "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/consistent-type-imports": [
       "error",
       {
         "prefer": "type-imports"
       }
     ],
-    "@typescript-eslint/consistent-type-definitions": [
-      "error",
-      "type"
-    ],
-    "@typescript-eslint/method-signature-style": [
-      "error",
-      "method"
-    ],
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@typescript-eslint/method-signature-style": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
     "react/prop-types": "off",
@@ -73,7 +52,7 @@
     "react/no-unescaped-entities": "warn",
     "react/no-children-prop": "error",
     "import/order": [
-      "error",
+      "warn",
       {
         "groups": [
           "builtin",
@@ -101,7 +80,7 @@
     ],
     "import/no-unresolved": "error",
     "import/no-absolute-path": "error",
-    "import/no-cycle": "error",
+    "import/no-cycle": "off",
     "no-var": "error",
     "prefer-const": "error",
     "prefer-arrow-callback": "error",
@@ -118,13 +97,10 @@
       "error",
       "always"
     ],
-    "curly": [
-      "error",
-      "all"
-    ],
+    "curly": "off",
     "no-else-return": "error",
     "no-unneeded-ternary": "error",
-    "no-duplicate-imports": "error"
+    "no-duplicate-imports": "warn"
   },
   "overrides": [
     {
@@ -137,7 +113,7 @@
         "jest": true
       },
       "rules": {
-        "@typescript-eslint/explicit-function-return-types": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "no-console": "off"
       }

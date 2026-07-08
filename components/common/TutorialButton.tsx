@@ -55,6 +55,10 @@ export function TutorialButton() {
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+      if (!first || !last) {
+        e.preventDefault();
+        return;
+      }
       const active = document.activeElement;
 
       if (e.shiftKey && (active === first || !sheetRef.current?.contains(active))) {

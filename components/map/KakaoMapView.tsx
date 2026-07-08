@@ -50,7 +50,7 @@ declare global {
 }
 
 const KAKAO_SCRIPT_ID = 'kakao-map-sdk';
-const KAKAO_MAP_KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
+const KAKAO_MAP_KEY = process.env['NEXT_PUBLIC_KAKAO_MAP_KEY'];
 const PIN_BASE_CLASS =
   'whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/70';
 const PIN_SELECTED_CLASS = 'border-[#FF3A5C] bg-[#FF3A5C] text-white';
@@ -65,7 +65,7 @@ function pinPosition(place: Place, center: Coordinates) {
 }
 
 function categoryLabelFor(category: string, labels: Readonly<Partial<Record<string, string>>>) {
-  return labels[category] ?? labels.spot ?? category;
+  return labels[category] ?? labels['spot'] ?? category;
 }
 
 function pinClassName(selected: boolean) {

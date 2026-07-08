@@ -45,9 +45,12 @@ export function totalRouteMinutes(
 ): number {
   let total = 0;
   for (let i = 0; i < waypoints.length - 1; i++) {
+    const from = waypoints[i];
+    const to = waypoints[i + 1];
+    if (!from || !to) continue;
     const dist = haversineKm(
-      waypoints[i].lat, waypoints[i].lng,
-      waypoints[i + 1].lat, waypoints[i + 1].lng,
+      from.lat, from.lng,
+      to.lat, to.lng,
     );
     total += walkingMinutes(dist);
   }

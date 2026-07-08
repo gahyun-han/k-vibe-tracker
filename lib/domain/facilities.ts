@@ -215,7 +215,7 @@ export function normalizeTourApiFestivalFacilities({
         isOpen: true,
         lat: roundCoordinate(facilityLat),
         lng: roundCoordinate(facilityLng),
-        extra: extra || undefined,
+        ...(extra ? { extra } : {}),
       };
       return facility;
     })

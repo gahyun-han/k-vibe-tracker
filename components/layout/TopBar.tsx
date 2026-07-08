@@ -25,6 +25,8 @@ export default function TopBar({ title, showBack, viewMode, onViewModeChange }: 
   const copy = getUiCopy(locale);
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const fullName = typeof user?.user_metadata?.['full_name'] === 'string' ? user.user_metadata['full_name'] : '';
+  const avatarInitial = (fullName.charAt(0) || user?.email?.charAt(0) || 'U').toUpperCase();
 
   useEffect(() => {
     const supabase = createClient();
@@ -76,12 +78,12 @@ export default function TopBar({ title, showBack, viewMode, onViewModeChange }: 
             aria-label={copy.common.openProfile}
             className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[#FF3A5C]/50"
           >
-            {user.user_metadata?.avatar_url ? (
+            {user.user_metadata?.['avatar_url'] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.user_metadata.avatar_url} alt={copy.common.avatarAlt} className="h-full w-full object-cover" />
+              <img src={user.user_metadata['avatar_url']} alt={copy.common.avatarAlt} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/20 text-xs font-bold text-white">
-                {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? 'U').toUpperCase()}
+                {avatarInitial}
               </div>
             )}
           </button>

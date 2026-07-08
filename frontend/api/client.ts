@@ -24,8 +24,8 @@ export async function requestJson<T>(
 
     if (!response.ok) {
       const message =
-        isRecord(payload) && typeof payload.error === 'string'
-          ? payload.error
+        isRecord(payload) && typeof payload['error'] === 'string'
+          ? payload['error']
           : `REQUEST_FAILED_${response.status}`;
       throw new FrontendApiError(message, response.status);
     }

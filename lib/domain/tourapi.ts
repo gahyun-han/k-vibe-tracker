@@ -433,7 +433,7 @@ export function normalizeTourApiItem(
     address: item.addr1 ? String(item.addr1) : null,
     category,
     image_url: imageUrl,
-    imageUrl: imageUrl ?? undefined,
+    ...(imageUrl ? { imageUrl } : {}),
     crowd_level: null,
     distance_m: distanceM,
   };

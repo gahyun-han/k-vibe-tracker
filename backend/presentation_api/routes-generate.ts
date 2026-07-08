@@ -21,10 +21,10 @@ export async function postGenerateRoute(request: NextRequest) {
     return NextResponse.json({ error: 'INVALID_BODY' }, { status: 400 });
   }
 
-  const theme = typeof body.theme === 'string' ? body.theme : '';
-  const detail = typeof body.detail === 'string' ? body.detail : '';
-  const startTime = typeof body.start_time === 'string' ? body.start_time : '10:00';
-  const locale = normalizeUiLocale(typeof body.locale === 'string' ? body.locale : undefined);
+  const theme = typeof body['theme'] === 'string' ? body['theme'] : '';
+  const detail = typeof body['detail'] === 'string' ? body['detail'] : '';
+  const startTime = typeof body['start_time'] === 'string' ? body['start_time'] : '10:00';
+  const locale = normalizeUiLocale(typeof body['locale'] === 'string' ? body['locale'] : undefined);
 
   if (!isRouteTheme(theme)) {
     return NextResponse.json({ error: 'INVALID_THEME' }, { status: 400 });
