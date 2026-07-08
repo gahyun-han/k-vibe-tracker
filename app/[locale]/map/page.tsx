@@ -109,7 +109,7 @@ function toRouteStop(
 export default function MapPage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale);
   const locationCopy = getLocationStatusCopy(locale);
   const sourceCopy = getDataSourceCopy(locale);
