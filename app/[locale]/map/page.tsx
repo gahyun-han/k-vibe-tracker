@@ -73,9 +73,9 @@ function toPlace(
     lat: place.lat,
     lng: place.lng,
     ...(place.image_url && { imageUrl: place.image_url }),
-    crowdLevel: toCrowdLevel(place.crowd_level),
+    ...(isCrowdLevel(place.crowd_level) && { crowdLevel: place.crowd_level }),
     tags: [categoryLabel],
-    distanceM: place.distance_m,
+    ...(place.distance_m !== undefined && { distanceM: place.distance_m }),
   };
 }
 
