@@ -1,14 +1,14 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import TopBar from './TopBar';
-import BottomNav from './BottomNav';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { useViewMode } from '@/components/common/useViewMode';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import BottomNav from './BottomNav';
+import TopBar from './TopBar';
 
 interface AppLayoutProps {
   children: React.ReactNode;

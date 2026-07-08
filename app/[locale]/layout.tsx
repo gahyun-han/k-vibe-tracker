@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
 import PwaRuntime from '@/components/common/PwaRuntime';
 import { ToastProvider } from '@/components/common/Toast';
 import { getUiCopy } from '@/lib/i18n';

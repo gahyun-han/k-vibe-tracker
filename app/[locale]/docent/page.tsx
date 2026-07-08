@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { AlertCircle, Captions, LocateFixed, MapPin, Mic2, Navigation, Pause, Play, RotateCcw, Square, VolumeX } from 'lucide-react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import AppLayout from '@/components/layout/AppLayout';
 import {
   buildDocentScriptSections,

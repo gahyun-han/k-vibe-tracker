@@ -1,14 +1,12 @@
 'use client';
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, ExternalLink, Footprints, GripVertical, LocateFixed, Map, MapPin, Mic2, Navigation, Plus, Share2, TrainFront, X } from 'lucide-react';
-import AppLayout from '@/components/layout/AppLayout';
+import { useParams, useRouter } from 'next/navigation';
 import { useToast, type ToastType } from '@/components/common/Toast';
+import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
-import { haversineKm } from '@/lib/features';
-import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 import {
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
@@ -29,6 +27,8 @@ import {
   type RouteStop,
   type RouteTheme,
 } from '@/lib/domain';
+import { haversineKm } from '@/lib/features';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 interface RoutePlanMeta {
   id: string;
@@ -590,7 +590,6 @@ export default function RoutePage() {
                       data-testid="complete-stop-checkbox"
                       role="checkbox"
                       onClick={() => toggleStopCompleted(spot.id)}
-                      aria-pressed={isCompleted}
                       aria-checked={isCompleted}
                       aria-label={(isCompleted ? copy.markIncomplete : copy.markComplete).replace('{name}', spot.name)}
                       title={isCompleted ? copy.markIncompleteTitle : copy.markCompleteTitle}

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
 import { CheckCircle2, Lock, X } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { useParams } from 'next/navigation';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import { createClient } from '@/lib/supabase/client';
 
 interface LoginModalProps {
   onClose: () => void;

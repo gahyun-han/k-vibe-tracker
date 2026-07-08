@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import { Compass, HelpCircle, Map, Mic2, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 const STEP_ICONS = [Map, Search, Compass, Mic2, Radar, User] as const;
@@ -30,6 +30,7 @@ export function TutorialButton() {
 
   useEffect(() => {
     if (!open) return;
+    const triggerElement = triggerRef.current;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.setTimeout(() => closeButtonRef.current?.focus(), 0);
@@ -77,7 +78,7 @@ export function TutorialButton() {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKey);
-      triggerRef.current?.focus();
+      triggerElement?.focus();
     };
   }, [open]);
 

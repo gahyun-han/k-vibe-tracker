@@ -155,7 +155,7 @@ function logError(error: AppError): void {
       console.warn('🟡 MEDIUM:', logData);
       break;
     case 'low':
-      console.log('🟢 LOW:', logData);
+      console.warn('🟢 LOW:', logData);
       break;
   }
 }

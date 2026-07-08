@@ -1,15 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import type { User } from '@supabase/supabase-js';
 import { ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import LoginModal from '@/components/auth/LoginModal';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { ViewModeToggle } from '@/components/common/ViewModeToggle';
-import { createClient } from '@/lib/supabase/client';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import { createClient } from '@/lib/supabase/client';
 import type { ViewMode } from '@/lib/ui-state';
-import type { User } from '@supabase/supabase-js';
 
 interface TopBarProps {
   title?: string;

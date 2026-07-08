@@ -1,15 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import type { User } from '@supabase/supabase-js';
 import { Bell, CheckCircle2, Clock, CloudOff, Heart, Languages, Lock, LogOut, Map, MapPin, PlayCircle, Route, Settings2, Sparkles } from 'lucide-react';
-import AppLayout from '@/components/layout/AppLayout';
+import { useParams, useRouter } from 'next/navigation';
 import LoginModal from '@/components/auth/LoginModal';
-import {
-  parsePersonaPreference,
-  PERSONA_PREFERENCE_STORAGE_KEY,
-  type PersonaPreference,
-} from '@/lib/ui-state';
+import AppLayout from '@/components/layout/AppLayout';
 import {
   CURRENT_ROUTE_STORAGE_KEY,
   formatDuration,
@@ -22,9 +18,13 @@ import {
   SAVED_PLACES_STORAGE_KEY,
   type SavedPlace,
 } from '@/lib/features';
-import { createClient, hasSupabaseEnv } from '@/lib/supabase/client';
 import { getProfileSettingsCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
-import type { User } from '@supabase/supabase-js';
+import { createClient, hasSupabaseEnv } from '@/lib/supabase/client';
+import {
+  parsePersonaPreference,
+  PERSONA_PREFERENCE_STORAGE_KEY,
+  type PersonaPreference,
+} from '@/lib/ui-state';
 
 const SAVED_TILE_BACKGROUNDS = [
   'from-[#FFB3C1] to-[#FF3A5C]',

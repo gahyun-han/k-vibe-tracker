@@ -1,7 +1,7 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
 import { Compass, Map, Radar, Search, User } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 import type { ViewMode } from '@/lib/ui-state';
 

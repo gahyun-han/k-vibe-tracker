@@ -1,11 +1,11 @@
 'use client';
 
-import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Check, Globe2 } from 'lucide-react';
-import { buildLocalizedPath, persistPreferredLocale } from '@/lib/ui-state';
+import { usePathname, useRouter } from 'next/navigation';
+import { useLocale } from 'next-intl';
 import { getUiCopy, LANGUAGE_NAMES, SUPPORTED_LOCALES, type UiLocale } from '@/lib/i18n';
+import { buildLocalizedPath, persistPreferredLocale } from '@/lib/ui-state';
 
 export function LanguageSwitcher() {
   const locale = useLocale();

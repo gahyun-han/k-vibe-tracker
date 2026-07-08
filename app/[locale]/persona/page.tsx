@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import {
   AlertCircle,
   ChevronLeft,
@@ -13,10 +12,11 @@ import {
   Share2,
   Sparkles,
 } from 'lucide-react';
-import AppLayout from '@/components/layout/AppLayout';
+import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
+import AppLayout from '@/components/layout/AppLayout';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
-import { generateRoutePlan, type GenerateRouteResponse } from '@/frontend/api/routes';
+import { generateRoutePlan } from '@/frontend/api/routes';
 import {
   ROUTE_THEME_OPTIONS,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -24,12 +24,12 @@ import {
   type RoutePlan,
   type RouteTheme,
 } from '@/lib/domain';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 import {
   createPersonaPreference,
   PERSONA_PREFERENCE_STORAGE_KEY,
   serializePersonaPreference,
 } from '@/lib/ui-state';
-import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 type Step = 1 | 2 | 3;
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import {
   AlertCircle,
   Bot,
@@ -20,23 +19,23 @@ import {
   Trees,
   Utensils,
 } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import LoginModal from '@/components/auth/LoginModal';
 import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
+import { useToast } from '@/components/common/Toast';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { useViewMode } from '@/components/common/useViewMode';
 import { ViewModeToggle } from '@/components/common/ViewModeToggle';
-import { useToast } from '@/components/common/Toast';
 import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
-import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, isCrowdLevel, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
-import { persistPreferredLocale } from '@/lib/ui-state';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
-  getPersonaFeedCategory,
-  parsePersonaPreference,
-  PERSONA_PREFERENCE_STORAGE_KEY,
-  type PersonaPreference,
-} from '@/lib/ui-state';
+  CROWD_DOT_CLASS,
+  CROWD_TEXT_CLASS,
+  isCrowdLevel,
+  type CrowdLevel,
+  type NormalizedPlace,
+} from '@/lib/domain';
 import {
   hasSavedPlace,
   parseSavedPlaces,
@@ -47,8 +46,14 @@ import {
   type SaveablePlace,
   type SavedPlace,
 } from '@/lib/features';
-import type { NormalizedPlace } from '@/lib/domain';
 import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/i18n';
+import {
+  getPersonaFeedCategory,
+  parsePersonaPreference,
+  PERSONA_PREFERENCE_STORAGE_KEY,
+  persistPreferredLocale,
+  type PersonaPreference,
+} from '@/lib/ui-state';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const FEED_RADIUS_M = 2_000;

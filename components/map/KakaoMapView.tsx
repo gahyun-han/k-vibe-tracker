@@ -147,6 +147,7 @@ export function KakaoMapView({
   const mapRef = useRef<KakaoMap | null>(null);
   const mapsRef = useRef<KakaoMapsApi | null>(null);
   const overlaysRef = useRef<KakaoCustomOverlay[]>([]);
+  const initialCenterRef = useRef(center);
   const [mode, setMode] = useState<'fallback' | 'loading' | 'ready'>(
     KAKAO_MAP_KEY ? 'loading' : 'fallback',
   );
@@ -167,7 +168,7 @@ export function KakaoMapView({
       .then((maps) => {
         if (!active || !containerRef.current) return;
         mapsRef.current = maps;
-        const nextCenter = new maps.LatLng(center.lat, center.lng);
+        const nextCenter = new maps.LatLng(initialCenterRef.current.lat, initialCenterRef.current.lng);
         mapRef.current = new maps.Map(containerRef.current, {
           center: nextCenter,
           level: 5,

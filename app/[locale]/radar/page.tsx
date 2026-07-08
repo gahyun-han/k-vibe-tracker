@@ -5,16 +5,21 @@ import { AlertCircle, Radar, RefreshCw } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
-import { fetchFacilities, type FacilitiesApiResponse } from '@/frontend/api/facilities';
-import { FacilityCard } from '@/components/radar/FacilityCard';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
+import { FacilityCard } from '@/components/radar/FacilityCard';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
+import { fetchFacilities, type FacilitiesApiResponse } from '@/frontend/api/facilities';
+import {
+  buildLocalApiCacheKey,
+  readLastKnownLocation,
+  readLocalApiCache,
+  writeLastKnownLocation,
+  writeLocalApiCache,
+} from '@/lib/cache';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/domain';
-import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/cache';
-import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
-import { getNextRadarRadius } from '@/lib/ui-state';
 import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import { getNextRadarRadius } from '@/lib/ui-state';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 

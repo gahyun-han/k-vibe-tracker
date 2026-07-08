@@ -1,21 +1,29 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import { AlertCircle, Navigation, RefreshCw, Search } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import { useViewMode } from '@/components/common/useViewMode';
 import AppLayout from '@/components/layout/AppLayout';
-import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
-import { CROWD_DOT_CLASS, isCrowdLevel, toCrowdLevel } from '@/lib/domain';
-import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/cache';
-import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
+import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import {
+  buildLocalApiCacheKey,
+  readLastKnownLocation,
+  readLocalApiCache,
+  writeLastKnownLocation,
+  writeLocalApiCache,
+} from '@/lib/cache';
+import {
+  CROWD_DOT_CLASS,
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
+  isCrowdLevel,
+  type NormalizedPlace,
+  type PlaceCategory,
   type RoutePlan,
   type RouteStop,
 } from '@/lib/domain';
@@ -28,7 +36,6 @@ import {
   upsertSavedPlace,
   type SavedPlace,
 } from '@/lib/features';
-import type { NormalizedPlace, PlaceCategory } from '@/lib/domain';
 import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
