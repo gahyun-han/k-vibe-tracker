@@ -54,4 +54,34 @@ export {
 export { extractVideoId, detectSnsPlatform, getThumbnailUrl, isValidYoutubeUrl, isInstagramUrl, type SnsPlatform } from './youtube';
 
 // Tour API
-export { fetchTourApiData } from './tourapi';
+export { 
+  fetchTourApiData,
+  type PlaceCategory,
+  type TourApiLocale,
+  type NormalizedPlace,
+  type NormalizedPlaceDetail,
+  type TourApiItem,
+  type TourApiFestivalItem,
+  type TourApiCommonItem,
+  type TourApiIntroItem,
+  type TourApiImageItem,
+  PLACE_CATEGORIES,
+  TOUR_API_LOCALES,
+  isPlaceCategory,
+  isTourApiLocale,
+  getTourApiServiceForLocale,
+  getContentTypeIdForCategory,
+  buildPlacesCacheKey,
+  buildPlaceDetailCacheKey,
+  buildTourApiLocationUrl,
+  buildTourApiDetailCommonUrl,
+  buildTourApiDetailIntroUrl,
+  buildTourApiDetailImageUrl,
+  buildTourApiFestivalUrl,
+  normalizeTourApiItems,
+  normalizeTourApiItem,
+  toTourApiItemArray,
+  toTourApiArray,
+  cleanTourApiText,
+  normalizeTourApiPlaceDetail
+} from './tourapi';
