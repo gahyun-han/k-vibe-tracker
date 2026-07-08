@@ -475,6 +475,34 @@ k-vibe-tracker/
 └── README.md
 ```
 
+## 🚀 Phase 1 진행 중 (Import Path 마이그레이션)
+
+**상태**: 준비 완료, 자동화 스크립트 준비됨
+
+### Phase 1 작업 항목
+- ✅ **Step 1**: data-testid 추가 가이드 → `DATA-TESTID-GUIDE.md`
+- ✅ **Step 2**: GitHub Actions CI/CD 파이프라인 → `.github/workflows/ci-cd.yml`
+- ✅ **Step 3**: TypeScript 타입 엄격성 설정 → `tsconfig.json` (수정)
+- ✅ **Step 4**: ESLint 규칙 강화 → `.eslintrc.json` (신규)
+- ✅ **Step 5**: Pre-commit Hook → `scripts/pre-commit.sh`
+- ✅ **Step 6**: Import Path 마이그레이션 가이드 → `IMPORT-MIGRATION-GUIDE.md`
+- ✅ **Step 7**: 자동 마이그레이션 스크립트 → `scripts/migrate-imports.js`
+
+### 빠른 시작
+```bash
+# Phase 1 자동 마이그레이션 실행 (5분)
+node scripts/migrate-imports.js
+
+# 최종 검증
+npm run build && npm run test
+```
+
+### Phase 1 상세 가이드
+- **종합 가이드**: `PHASE-1-IMPLEMENTATION-GUIDE.md`
+- **작업 요약**: `PHASE-1-SUMMARY.md`
+
+---
+
 ## 참고 문서
 
 - Docker 개발: `docs/docker-development.md`
@@ -485,6 +513,10 @@ k-vibe-tracker/
 - **테스트 가이드**: `TESTING.md` 📖
 - **테스트 체크리스트**: `TEST-CHECKLIST.md` ✅
 - **테스트 완료 보고서**: `TESTING-COMPLETION-REPORT.md` 📊
+- **Phase 1 종합 가이드**: `PHASE-1-IMPLEMENTATION-GUIDE.md` 🚀
+- **Phase 1 작업 요약**: `PHASE-1-SUMMARY.md` 📊
+- **data-testid 추가 가이드**: `DATA-TESTID-GUIDE.md` 🎯
+- **Import 마이그레이션 상세**: `IMPORT-MIGRATION-GUIDE.md` 📍
 
 ## 협업 규칙
 
