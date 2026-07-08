@@ -394,7 +394,7 @@ export default function AnalyzePage() {
                   <p className="mt-1 text-xs leading-5 text-white/45">{copy.emptyBody}</p>
                   <button
                     type="button"
-                    onClick={() => setExample(EXAMPLE_URLS[0])}
+                    onClick={() => setExample(EXAMPLE_URLS[0]!)}
                     className="mt-3 flex items-center gap-2 rounded-xl border border-[#FF3A5C]/30 bg-[#FF3A5C]/10 px-3 py-2 text-sm font-semibold text-[#FF8BA0] transition-colors hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/20 hover:text-white"
                   >
                     <Youtube size={15} />
