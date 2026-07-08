@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { MapPinned } from 'lucide-react';
-import type { RouteStop } from '@/lib/domain';
 import {
   KAKAO_MAP_KEY,
   loadKakaoMaps,
@@ -11,6 +10,7 @@ import {
   type KakaoMapsApi,
   type KakaoPolyline,
 } from '@/components/map/kakaoLoader';
+import type { RouteStop } from '@/lib/domain';
 
 interface RouteMiniMapProps {
   stops: RouteStop[];

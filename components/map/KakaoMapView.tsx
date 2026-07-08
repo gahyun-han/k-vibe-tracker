@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Place } from '@/components/map/PlaceDetailModal';
-import { buildMapPinAccessibleLabel } from '@/lib/features';
 import {
   KAKAO_MAP_KEY,
   loadKakaoMaps,
@@ -10,6 +8,8 @@ import {
   type KakaoMap,
   type KakaoMapsApi,
 } from '@/components/map/kakaoLoader';
+import type { Place } from '@/components/map/PlaceDetailModal';
+import { buildMapPinAccessibleLabel } from '@/lib/features';
 
 interface Coordinates {
   lat: number;
@@ -147,7 +147,7 @@ export function KakaoMapView({
     if (mode !== 'ready' || !fitToPlaces) return;
     const maps = mapsRef.current;
     const map = mapRef.current;
-    if (!maps || !map || !map.setBounds || visiblePins.length === 0) return;
+    if (!maps || !map?.setBounds || visiblePins.length === 0) return;
 
     if (visiblePins.length === 1) {
       const only = visiblePins[0]!;
