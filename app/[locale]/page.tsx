@@ -28,7 +28,7 @@ import { useViewMode } from '@/components/common/useViewMode';
 import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { useToast } from '@/components/common/Toast';
 import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
-import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
+import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, isCrowdLevel, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
 import { persistPreferredLocale } from '@/lib/ui-state';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
@@ -97,10 +97,10 @@ function toFeedPlace(place: NormalizedPlace, addressPending: string): FeedPlace 
     address: place.address ?? addressPending,
     lat: place.lat,
     lng: place.lng,
-    imageUrl: place.image_url ?? undefined,
+    ...(place.image_url && { imageUrl: place.image_url }),
     tags: [place.category],
-    distanceM: place.distance_m,
-    crowdLevel: toCrowdLevel(place.crowd_level),
+    ...(place.distance_m !== undefined && { distanceM: place.distance_m }),
+    ...(isCrowdLevel(place.crowd_level) && { crowdLevel: place.crowd_level }),
   };
 }
 
