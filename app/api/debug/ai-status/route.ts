@@ -40,7 +40,7 @@ export async function GET(req: Request) {
   const titleOrId = title || 'BKorP55Aqvg';
   try {
     const apiKey = process.env['GOOGLE_AI_API_KEY'] ?? '';
-    const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
     const res = await fetch(`${GEMINI_API_BASE}?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
