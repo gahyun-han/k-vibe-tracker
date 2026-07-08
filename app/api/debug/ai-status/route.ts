@@ -1,78 +1,73 @@
 import { NextResponse } from 'next/server';
-import { isGeminiEnabled, extractSpotsFromTitle } from '@/backend/ai_services/gemini';
+import { isGeminiEnabled, extractSpotsFromTitle, getGroqApiKey } from '@/backend/ai_services/gemini';
 import { isAiWorkerAnalysisEnabled, getAiWorkerUrl } from '@/backend/dependency';
 import { getYoutubeTitleFromUrl } from '@/backend/ai_services/youtube-meta';
 
 /**
  * GET /api/debug/ai-status?url=<youtube-url>
- * Diagnostic endpoint — traces the full Gemini pipeline step by step.
- * No secrets returned, but key existence/validity is checked.
+ * Diagnostic endpoint — traces the full AI pipeline step by step.
  */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const testUrl = searchParams.get('url') ?? 'https://youtu.be/BKorP55Aqvg';
 
-  const geminiEnabled = isGeminiEnabled();
-  const aiWorkerEnabled = isAiWorkerAnalysisEnabled();
-  const aiWorkerUrl = getAiWorkerUrl();
+  const groqKey = getGroqApiKey();
+  const aiEnabled = isGeminiEnabled();
 
   const steps: Record<string, unknown> = {
-    '1_gemini_enabled': geminiEnabled,
-    '2_ai_worker_enabled': aiWorkerEnabled,
-    '3_ai_worker_url_set': Boolean(aiWorkerUrl),
-    '4_test_url': testUrl,
+    '1_groq_key_set': Boolean(groqKey),
+    '2_ai_enabled': aiEnabled,
+    '3_ai_worker_enabled': isAiWorkerAnalysisEnabled(),
+    '4_ai_worker_url_set': Boolean(getAiWorkerUrl()),
+    '5_test_url': testUrl,
   };
 
-  if (!geminiEnabled) {
-    return NextResponse.json({ ...steps, active_path: 'mock — GOOGLE_AI_API_KEY not set' });
-  }
-
-  // Step: fetch YouTube title via oEmbed
+  // Fetch YouTube title
   let title = '';
   try {
     title = await getYoutubeTitleFromUrl(testUrl);
-    steps['5_youtube_title'] = title || '(empty — oEmbed failed)';
+    steps['6_youtube_title'] = title || '(empty — oEmbed failed)';
   } catch (e) {
-    steps['5_youtube_title_error'] = String(e);
+    steps['6_youtube_title_error'] = String(e);
   }
 
-  // Step: call Gemini directly and expose actual HTTP status/error
-  const titleOrId = title || 'BKorP55Aqvg';
-  const GEMINI_MODELS_DEBUG = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
-  const apiKey = process.env['GOOGLE_AI_API_KEY'] ?? '';
-  const GEMINI_API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
-
-  for (const model of GEMINI_MODELS_DEBUG) {
+  // Quick Groq connectivity check
+  if (groqKey) {
     try {
-      const res = await fetch(`${GEMINI_API_ROOT}/${model}:generateContent?key=${apiKey}`, {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${groqKey}` },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: `제목: ${titleOrId} — 한국 여행 장소 1개만 JSON으로 반환` }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: 'reply: ok' }],
+          max_tokens: 8,
         }),
-        signal: AbortSignal.timeout(15_000),
+        signal: AbortSignal.timeout(10_000),
       });
-      const responseText = await res.text();
-      steps[`6_${model}_http_status`] = res.status;
-      steps[`6_${model}_response`] = responseText.slice(0, 400);
-      if (res.ok) break; // stop at first success
+      steps['7_groq_http_status'] = res.status;
+      if (res.ok) {
+        const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+        steps['7_groq_response'] = data.choices?.[0]?.message?.content ?? '(empty)';
+      } else {
+        steps['7_groq_error'] = (await res.text()).slice(0, 200);
+      }
     } catch (e) {
-      steps[`6_${model}_error`] = String(e);
+      steps['7_groq_error'] = String(e);
     }
   }
 
-  // Step: extract spots using full pipeline
+  // Full spot extraction pipeline
+  const titleOrId = title || 'BKorP55Aqvg';
   let spots: unknown[] = [];
   try {
     spots = await extractSpotsFromTitle(titleOrId);
-    steps['7_extracted_spots_count'] = spots.length;
-    steps['7_extracted_spots'] = spots;
+    steps['8_extracted_spots_count'] = spots.length;
+    steps['8_extracted_spots'] = spots;
   } catch (e) {
-    steps['7_extract_error'] = String(e);
+    steps['8_extract_error'] = String(e);
   }
 
-  steps['8_final_result'] = spots.length > 0 ? 'gemini ✅' : 'mock (spots array empty — check Gemini response)';
+  steps['9_final_result'] = spots.length > 0 ? 'AI ✅' : 'mock (spots array empty)';
 
   return NextResponse.json(steps);
 }

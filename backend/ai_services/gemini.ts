@@ -1,20 +1,23 @@
 /**
- * Direct Gemini integration for the Next.js API layer.
+ * AI completion layer for the Next.js API layer.
  *
- * Used when GOOGLE_AI_API_KEY is set in the environment but an ai-worker
- * is not deployed (e.g. Vercel production).
+ * Primary: Groq (llama-3.3-70b) — free tier, fast, reliable
+ * Fallback: Google Gemini (gemini-2.0-flash) — if GOOGLE_AI_API_KEY is set
  *
- * Tries models in order: gemini-2.0-flash → gemini-2.0-flash-lite → gemini-1.5-flash-latest
- * Falls back to empty string on any error.
+ * Used when an ai-worker is not deployed (e.g. Vercel production).
  */
 
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_TIMEOUT_MS = 20_000;
+
 const GEMINI_API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
-const GEMINI_MODELS = [
-  'gemini-2.0-flash',
-  'gemini-2.0-flash-lite',
-  'gemini-1.5-flash-latest',
-];
+const GEMINI_MODELS = ['gemini-2.0-flash', 'gemini-2.0-flash-lite'];
 const GEMINI_TIMEOUT_MS = 20_000;
+
+interface GroqResponse {
+  choices?: { message?: { content?: string } }[];
+}
 
 interface GeminiCandidate {
   content: { parts: { text: string }[] };
@@ -31,54 +34,92 @@ interface RawSpot {
   reason?: unknown;
 }
 
+export function getGroqApiKey(): string {
+  return process.env['GROQ_API_KEY'] ?? '';
+}
+
 export function getGoogleAiApiKey(): string {
   return process.env['GOOGLE_AI_API_KEY'] ?? '';
 }
 
 export function isGeminiEnabled(): boolean {
-  return Boolean(getGoogleAiApiKey());
+  return Boolean(getGroqApiKey()) || Boolean(getGoogleAiApiKey());
 }
 
 /**
- * Call Gemini and return the text response.
- * Tries multiple models in order until one succeeds.
+ * Call Groq (primary) or Gemini (fallback) and return the text response.
  * Returns empty string on all failures.
  */
 export async function geminiComplete(prompt: string): Promise<string> {
-  const apiKey = getGoogleAiApiKey();
-  if (!apiKey) return '';
-
-  for (const model of GEMINI_MODELS) {
+  // Primary: Groq
+  const groqKey = getGroqApiKey();
+  if (groqKey) {
     try {
-      const url = `${GEMINI_API_ROOT}/${model}:generateContent?key=${apiKey}`;
-      const res = await fetch(url, {
+      const res = await fetch(GROQ_API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqKey}`,
+        },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+          model: GROQ_MODEL,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.2,
+          max_tokens: 1024,
         }),
-        signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+        signal: AbortSignal.timeout(GROQ_TIMEOUT_MS),
       });
 
-      if (!res.ok) {
+      if (res.ok) {
+        const data = (await res.json()) as GroqResponse;
+        const text = data.choices?.[0]?.message?.content ?? '';
+        if (text) {
+          console.log('[ai] success via Groq');
+          return text;
+        }
+      } else {
         const err = await res.text().catch(() => '');
-        console.error(`[gemini] ${model} error ${res.status}: ${err.slice(0, 200)}`);
-        // 429 = quota exhausted, 404 = model not found → try next model
-        if (res.status === 429 || res.status === 404) continue;
-        return '';
+        console.error(`[groq] error ${res.status}: ${err.slice(0, 200)}`);
       }
-
-      const data = (await res.json()) as GeminiResponse;
-      const text = data.candidates?.[0]?.content.parts[0]?.text ?? '';
-      if (text) console.log(`[gemini] success with model: ${model}`);
-      return text;
     } catch (e) {
-      console.error(`[gemini] ${model} fetch failed:`, e);
+      console.error('[groq] fetch failed:', e);
     }
   }
 
-  console.error('[gemini] all models exhausted');
+  // Fallback: Gemini
+  const geminiKey = getGoogleAiApiKey();
+  if (geminiKey) {
+    for (const model of GEMINI_MODELS) {
+      try {
+        const url = `${GEMINI_API_ROOT}/${model}:generateContent?key=${geminiKey}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+          }),
+          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+        });
+
+        if (!res.ok) {
+          const err = await res.text().catch(() => '');
+          console.error(`[gemini] ${model} error ${res.status}: ${err.slice(0, 200)}`);
+          if (res.status === 429 || res.status === 404) continue;
+          break;
+        }
+
+        const data = (await res.json()) as GeminiResponse;
+        const text = data.candidates?.[0]?.content.parts[0]?.text ?? '';
+        if (text) console.log(`[ai] success via Gemini model: ${model}`);
+        return text;
+      } catch (e) {
+        console.error(`[gemini] ${model} fetch failed:`, e);
+      }
+    }
+  }
+
+  console.error('[ai] all providers exhausted');
   return '';
 }
 
