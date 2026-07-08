@@ -13,6 +13,8 @@ K-콘텐츠 속 장소 탐색, 주변 관광지 검색, SNS 장소 분석, 로�
 | 작업 브랜치 | `hslee` |
 | GitHub 원격 | `hslee-origin: https://github.com/hslee1026/k-vibe-tracker.git` |
 | **에이전트 협업** | `AGENT-COLLABORATION-GUIDE.md` 📖 |
+| **인수인계 문서** | `HANDOFF.md` 🤝 (구조·환경변수·검증 방법 총정리) |
+| **검증 스크립트** | `scripts/verify.txt` (type-check/배포/스모크 테스트 명령) |
 
 프로덕션은 Vercel에 배포되어 있으며 HTTPS가 기본 적용됩니다. 외부 기기에서 브라우저 위치 권한을 사용하려면 HTTPS가 필요합니다.
 
@@ -422,7 +424,8 @@ k-vibe-tracker/
 │   ├── config/                    # Next API 백엔드 공통 설정
 │   ├── dependency.ts              # Next API 의존성 접근
 │   ├── business_services/         # 공통 검증/비즈니스 유틸
-│   └── presentation_api/          # Next API 엔드포인트 핸들러
+│   ├── ai_services/               # Groq 스팟 추출 / YouTube 메타
+│   └── presentation_api/          # Next API 엔드포인트 핸들러 (analyze, places, debug-ai-status ...)
 ├── app/
 │   ├── [locale]/                  # i18n 라우팅 (ko/en/ja/zh)
 │   │   ├── page.tsx               # 홈 / K-콘텐츠 장소 피드
@@ -439,6 +442,7 @@ k-vibe-tracker/
 │       ├── places/[contentId]/    # backend/presentation_api 위임
 │       ├── facilities/            # backend/presentation_api 위임
 │       ├── routes/generate/       # backend/presentation_api 위임
+│       ├── debug/ai-status/       # backend/presentation_api 위임 (AI 파이프라인 진단)
 │       └── analyze/               # backend/presentation_api 위임
 ├── components/
 │   ├── layout/                    # TopBar, BottomNav, AppLayout
