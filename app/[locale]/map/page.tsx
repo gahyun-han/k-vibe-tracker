@@ -289,16 +289,16 @@ export default function MapPage() {
       const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
       const focusedPlace = {
         id: contentId || `${sourceParam || 'focus'}-${focusLat}-${focusLng}`,
-        contentId: contentId || undefined,
-        contentTypeId: contentTypeId !== null && Number.isFinite(contentTypeId) ? contentTypeId : undefined,
+        ...(contentId && { contentId }),
+        ...(contentTypeId !== null && Number.isFinite(contentTypeId) && { contentTypeId }),
         name: focusName,
         category,
         address: address || nextLocationLabel,
         lat: focusLat,
         lng: focusLng,
-        imageUrl: imageUrl?.startsWith('http') ? imageUrl : undefined,
-        overview: description || undefined,
-        crowdLevel: isCrowdLevel(crowdLevel) ? crowdLevel : undefined,
+        ...(imageUrl?.startsWith('http') && { imageUrl }),
+        ...(description && { overview: description }),
+        ...(isCrowdLevel(crowdLevel) && { crowdLevel }),
         tags: tags.length > 0 ? tags : sourceParam === 'analyze' ? ['SNS'] : [],
         distanceM: 0,
       } satisfies Place & { distanceM?: number };
