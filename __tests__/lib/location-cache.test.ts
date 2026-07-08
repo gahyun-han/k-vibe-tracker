@@ -4,7 +4,7 @@ import {
   LAST_KNOWN_LOCATION_TTL_MS,
   readLastKnownLocation,
   writeLastKnownLocation,
-} from '@/lib/location-cache';
+} from '@/lib/cache';
 
 class MemoryStorage {
   private values = new Map<string, string>();

@@ -4,7 +4,7 @@ import {
   LOCAL_API_CACHE_TTL_MS,
   readLocalApiCache,
   writeLocalApiCache,
-} from '@/lib/local-api-cache';
+} from '@/lib/cache';
 
 class MemoryStorage {
   private values = new Map<string, string>();

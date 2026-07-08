@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/place-social-proof';
+import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/features';
 
 describe('place social proof helpers', () => {
   it('builds deterministic local seen-in stats from place metadata', () => {

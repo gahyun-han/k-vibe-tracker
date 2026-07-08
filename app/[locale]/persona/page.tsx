@@ -28,8 +28,8 @@ import {
   createPersonaPreference,
   PERSONA_PREFERENCE_STORAGE_KEY,
   serializePersonaPreference,
-} from '@/lib/persona-preference';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+} from '@/lib/ui-state';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 type Step = 1 | 2 | 3;
 

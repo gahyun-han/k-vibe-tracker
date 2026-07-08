@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPlaceImageGallery } from '@/lib/place-images';
+import { buildPlaceImageGallery } from '@/lib/features';
 
 describe('place image helpers', () => {
   it('dedupes images, keeps fallback image URLs, and limits gallery size', () => {

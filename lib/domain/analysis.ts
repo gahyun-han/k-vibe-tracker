@@ -1,4 +1,4 @@
-import { buildLocalApiCacheKey } from '@/lib/local-api-cache';
+import { buildLocalApiCacheKey } from '@/lib/cache';
 
 export interface AnalysisPlace {
   name: string;

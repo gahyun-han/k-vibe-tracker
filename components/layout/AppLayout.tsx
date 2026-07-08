@@ -8,7 +8,7 @@ import { NetworkStatusBanner } from '@/components/common/NetworkStatusBanner';
 import { PwaInstallPrompt } from '@/components/common/PwaInstallPrompt';
 import { TutorialButton } from '@/components/common/TutorialButton';
 import { useViewMode } from '@/components/common/useViewMode';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 interface AppLayoutProps {
   children: React.ReactNode;

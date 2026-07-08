@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { WifiOff } from 'lucide-react';
-import { getNetworkStatusCopy, type UiLocale } from '@/lib/ui-copy';
+import { getNetworkStatusCopy, type UiLocale } from '@/lib/i18n';
 
 export function NetworkStatusBanner({ locale }: { locale: UiLocale }) {
   const copy = getNetworkStatusCopy(locale);

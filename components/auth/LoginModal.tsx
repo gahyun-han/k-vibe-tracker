@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { CheckCircle2, Lock, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 interface LoginModalProps {
   onClose: () => void;

@@ -9,7 +9,7 @@ import {
   getUiCopy,
   LANGUAGE_NAMES,
   SUPPORTED_LOCALES,
-} from '@/lib/ui-copy';
+} from '@/lib/i18n';
 import { ROUTE_THEME_OPTIONS } from '@/lib/domain';
 import { FACILITY_TYPES } from '@/lib/domain';
 

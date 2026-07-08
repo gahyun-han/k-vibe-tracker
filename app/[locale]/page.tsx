@@ -30,13 +30,13 @@ import { useToast } from '@/components/common/Toast';
 import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
 import { persistPreferredLocale } from '@/lib/locale-preference';
-import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
   getPersonaFeedCategory,
   parsePersonaPreference,
   PERSONA_PREFERENCE_STORAGE_KEY,
   type PersonaPreference,
-} from '@/lib/persona-preference';
+} from '@/lib/ui-state';
 import {
   hasSavedPlace,
   parseSavedPlaces,
@@ -46,9 +46,9 @@ import {
   upsertSavedPlace,
   type SaveablePlace,
   type SavedPlace,
-} from '@/lib/saved-places';
+} from '@/lib/features';
 import type { NormalizedPlace } from '@/lib/domain';
-import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
+import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/i18n';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const FEED_RADIUS_M = 2_000;

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Check, Globe2 } from 'lucide-react';
 import { buildLocalizedPath, persistPreferredLocale } from '@/lib/locale-preference';
-import { getUiCopy, LANGUAGE_NAMES, SUPPORTED_LOCALES, type UiLocale } from '@/lib/ui-copy';
+import { getUiCopy, LANGUAGE_NAMES, SUPPORTED_LOCALES, type UiLocale } from '@/lib/i18n';
 
 export function LanguageSwitcher() {
   const locale = useLocale();

@@ -11,8 +11,8 @@ import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
 import { CROWD_DOT_CLASS, isCrowdLevel, toCrowdLevel } from '@/lib/domain';
-import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
-import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
+import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/cache';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
@@ -27,9 +27,9 @@ import {
   serializeSavedPlaces,
   upsertSavedPlace,
   type SavedPlace,
-} from '@/lib/saved-places';
+} from '@/lib/features';
 import type { NormalizedPlace, PlaceCategory } from '@/lib/domain';
-import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 const SEARCH_RADIUS_M = 2_000;

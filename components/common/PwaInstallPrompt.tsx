@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Download, X } from 'lucide-react';
-import { getPwaInstallCopy, type UiLocale } from '@/lib/ui-copy';
+import { getPwaInstallCopy, type UiLocale } from '@/lib/i18n';
 
 const INSTALL_DISMISSED_STORAGE_KEY = 'k-vibe-install-prompt-dismissed';
 

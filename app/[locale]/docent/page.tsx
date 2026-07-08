@@ -11,7 +11,7 @@ import {
   shouldAutoPlayDocentAfterProximityCheck,
 } from '@/lib/domain';
 import { haversineKm } from '@/lib/features';
-import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
+import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/i18n';
 
 interface DocentPlace {
   name: string;

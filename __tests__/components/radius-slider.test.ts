@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getNextRadarRadius, RADAR_RADIUS_STEPS } from '@/lib/radar-radius';
+import { getNextRadarRadius, RADAR_RADIUS_STEPS } from '@/lib/cache';
 
 describe('radar radius controls', () => {
   it('advances to the next configured radius step', () => {

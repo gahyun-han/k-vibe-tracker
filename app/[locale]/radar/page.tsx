@@ -11,10 +11,10 @@ import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
 import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/domain';
-import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
-import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
-import { getNextRadarRadius } from '@/lib/radar-radius';
-import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/cache';
+import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
+import { getNextRadarRadius } from '@/lib/cache';
+import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 

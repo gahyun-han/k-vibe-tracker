@@ -1,4 +1,4 @@
-import { SUPPORTED_LOCALES, type UiLocale } from '@/lib/ui-copy';
+import { SUPPORTED_LOCALES, type UiLocale } from '@/lib/i18n';
 
 export const PREFERRED_LOCALE_STORAGE_KEY = 'k-vibe-preferred-locale';
 export const LOCALE_COOKIE_NAME = 'NEXT_LOCALE';

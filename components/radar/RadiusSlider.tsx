@@ -1,6 +1,6 @@
 'use client';
 
-import { RADAR_RADIUS_STEPS } from '@/lib/radar-radius';
+import { RADAR_RADIUS_STEPS } from '@/lib/cache';
 
 interface RadiusSliderProps {
   value: number;

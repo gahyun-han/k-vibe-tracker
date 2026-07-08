@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
+import { buildPlaceDetailShareUrl } from '@/lib/features';
 
 describe('place detail share url', () => {
   it('builds a same-origin map detail URL with place context', () => {

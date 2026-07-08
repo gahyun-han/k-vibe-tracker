@@ -20,13 +20,13 @@ import AppLayout from '@/components/layout/AppLayout';
 import { postAnalyze } from '@/frontend/api/analyze';
 import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/domain';
 import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/domain';
-import { readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
+import { readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
   type RouteStop,
 } from '@/lib/domain';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';
 

@@ -5,7 +5,7 @@ import {
   isRouteTheme,
   parseStartTime,
 } from '@/lib/domain';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 import { isRecord } from '@/backend/business_services/guards';
 
 export async function postGenerateRoute(request: NextRequest) {

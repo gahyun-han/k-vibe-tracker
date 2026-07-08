@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Place } from '@/components/map/PlaceDetailModal';
-import { buildMapPinAccessibleLabel } from '@/lib/map-pin-accessibility';
+import { buildMapPinAccessibleLabel } from '@/lib/features';
 
 interface Coordinates {
   lat: number;

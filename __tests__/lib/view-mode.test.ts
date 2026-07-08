@@ -4,7 +4,7 @@ import {
   normalizeViewMode,
   VIEW_MODE_CHANGE_EVENT,
   VIEW_MODE_STORAGE_KEY,
-} from '@/lib/view-mode';
+} from '@/lib/ui-state';
 
 describe('view mode helpers', () => {
   it('normalizes unknown values to mobile', () => {

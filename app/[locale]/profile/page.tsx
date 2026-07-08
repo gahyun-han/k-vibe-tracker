@@ -9,7 +9,7 @@ import {
   parsePersonaPreference,
   PERSONA_PREFERENCE_STORAGE_KEY,
   type PersonaPreference,
-} from '@/lib/persona-preference';
+} from '@/lib/ui-state';
 import {
   CURRENT_ROUTE_STORAGE_KEY,
   formatDuration,
@@ -21,9 +21,9 @@ import {
   parseSavedPlaces,
   SAVED_PLACES_STORAGE_KEY,
   type SavedPlace,
-} from '@/lib/saved-places';
+} from '@/lib/features';
 import { createClient, hasSupabaseEnv } from '@/lib/supabase/client';
-import { getProfileSettingsCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getProfileSettingsCopy, getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 import type { User } from '@supabase/supabase-js';
 
 const SAVED_TILE_BACKGROUNDS = [

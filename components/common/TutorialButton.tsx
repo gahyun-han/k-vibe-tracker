@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Compass, HelpCircle, Map, Mic2, Radar, Search, ShieldCheck, User, X } from 'lucide-react';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
 
 const STEP_ICONS = [Map, Search, Compass, Mic2, Radar, User] as const;
 const STEP_PATHS = ['/map', '/analyze', '/persona', '/route', '/radar', '/profile'] as const;

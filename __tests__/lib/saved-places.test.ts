@@ -8,7 +8,7 @@ import {
   serializeSavedPlaces,
   upsertSavedPlace,
   type SaveablePlace,
-} from '@/lib/saved-places';
+} from '@/lib/features';
 
 const PLACE: SaveablePlace = {
   id: 'map-1',

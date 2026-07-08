@@ -4,7 +4,7 @@ import {
   getPersonaFeedCategory,
   parsePersonaPreference,
   serializePersonaPreference,
-} from '@/lib/persona-preference';
+} from '@/lib/ui-state';
 
 describe('persona preference', () => {
   it('round-trips a valid local persona preference', () => {

@@ -1,8 +1,8 @@
 'use client';
 
 import { Monitor, Smartphone } from 'lucide-react';
-import { getUiCopy, type UiLocale } from '@/lib/ui-copy';
-import type { ViewMode } from '@/lib/view-mode';
+import { getUiCopy, type UiLocale } from '@/lib/i18n';
+import type { ViewMode } from '@/lib/ui-state';
 
 interface ViewModeToggleProps {
   locale: UiLocale;

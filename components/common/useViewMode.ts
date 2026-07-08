@@ -7,7 +7,7 @@ import {
   VIEW_MODE_CHANGE_EVENT,
   VIEW_MODE_STORAGE_KEY,
   type ViewMode,
-} from '@/lib/view-mode';
+} from '@/lib/ui-state';
 
 export function useViewMode() {
   const [viewMode, setViewModeState] = useState<ViewMode>('mobile');

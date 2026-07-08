@@ -2,8 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { Compass, Map, Radar, Search, User } from 'lucide-react';
-import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
-import type { ViewMode } from '@/lib/view-mode';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import type { ViewMode } from '@/lib/ui-state';
 
 const TABS = [
   { id: 'map', icon: Map, path: '/map' },
