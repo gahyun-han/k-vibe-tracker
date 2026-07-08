@@ -25,4 +25,5 @@ export {
   type SaveablePlace,
   type SavedPlace,
 } from './saved-places';
-export { haversineKm, walkingMinutes, totalRouteMinutes } from './haversine';
+export { haversineKm, calculateDistance, walkingMinutes, totalRouteMinutes } from './haversine';
+export { buildMapPinAccessibleLabel } from './map-pin-accessibility';

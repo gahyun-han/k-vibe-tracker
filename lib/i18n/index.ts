@@ -4,6 +4,7 @@
 
 export { 
   SUPPORTED_LOCALES,
+  LANGUAGE_NAMES,
   getUiCopy, 
   normalizeUiLocale,
   getProfileSettingsCopy,
