@@ -271,7 +271,7 @@ export default function AnalyzePage() {
                   setLoadingStepIndex(0);
                 }}
                 placeholder={copy.inputPlaceholder}
-                className="w-full rounded-xl border border-white/10 bg-white/8 py-3 pl-9 pr-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#FF3A5C]/50"
+                className="w-full rounded-xl border border-white/10 bg-[#1a1a2e] py-3 pl-9 pr-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-[#FF3A5C]/50 autofill:bg-[#1a1a2e] [&:-webkit-autofill]:![background-color:#1a1a2e] [&:-webkit-autofill]:[color:white] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
               />
             </div>
 
@@ -435,7 +435,13 @@ export default function AnalyzePage() {
                   <p className="truncate text-xs text-white/40">{result.title}</p>
                 </div>
                 <span className="shrink-0 rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-semibold text-purple-400">
-                  {result.cached ? copy.sourceCache : result.source === 'worker' ? copy.sourceWorker : copy.sourceMock}
+                  {result.cached
+                    ? copy.sourceCache
+                    : result.source === 'worker'
+                      ? copy.sourceWorker
+                      : result.source === 'gemini'
+                        ? copy.sourceGemini
+                        : copy.sourceMock}
                 </span>
               </div>
 

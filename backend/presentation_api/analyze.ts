@@ -4,6 +4,9 @@ import { detectSnsPlatform, extractVideoId } from '@/lib/domain';
 import { getAiWorkerUrl, isAiWorkerAnalysisEnabled } from '@/backend/dependency';
 import { backendConfig } from '@/backend/config/configure';
 import { isRecord } from '@/backend/business_services/guards';
+import { isGeminiEnabled, extractSpotsFromTitle } from '@/backend/ai_services/gemini';
+import { geocodePlace } from '@/backend/ai_services/kakao-geocode';
+import { getYoutubeTitleFromUrl } from '@/backend/ai_services/youtube-meta';
 
 export async function postAnalyze(req: NextRequest) {
   let body: unknown;
@@ -40,40 +43,75 @@ export async function postAnalyze(req: NextRequest) {
     return NextResponse.json({ error: 'INVALID_LOCALE' }, { status: 400 });
   }
 
-  if (!isAiWorkerAnalysisEnabled()) {
-    return NextResponse.json(buildMockAnalysis(videoId, localeParam));
-  }
+  // Path A: Dedicated ai-worker (when explicitly enabled and URL is set)
+  if (isAiWorkerAnalysisEnabled()) {
+    const aiWorkerUrl = getAiWorkerUrl();
+    if (aiWorkerUrl) {
+      try {
+        const res = await fetch(`${aiWorkerUrl}/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ youtube_url: snsUrl, locale: localeParam }),
+          signal: AbortSignal.timeout(backendConfig.aiWorkerTimeoutMs),
+        });
 
-  const aiWorkerUrl = getAiWorkerUrl();
-  if (!aiWorkerUrl) {
-    return NextResponse.json(buildMockAnalysis(videoId, localeParam));
-  }
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          return NextResponse.json(
+            { error: isRecord(data) && typeof data['detail'] === 'string' ? data['detail'] : 'AI_WORKER_ERROR' },
+            { status: res.status },
+          );
+        }
 
-  try {
-    const res = await fetch(`${aiWorkerUrl}/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ youtube_url: snsUrl, locale: localeParam }),
-      signal: AbortSignal.timeout(backendConfig.aiWorkerTimeoutMs),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: isRecord(data) && typeof data['detail'] === 'string' ? data['detail'] : 'AI_WORKER_ERROR' },
-        { status: res.status },
-      );
+        const data = (await res.json()) as Partial<AnalysisResult>;
+        return NextResponse.json({
+          ...data,
+          video_id: data.video_id ?? videoId,
+          cached: Boolean(data.cached),
+          source: 'worker',
+        });
+      } catch (error) {
+        console.error('[analyze] AI worker fallback:', error);
+        // Fall through to Gemini or mock
+      }
     }
-
-    const data = (await res.json()) as Partial<AnalysisResult>;
-    return NextResponse.json({
-      ...data,
-      video_id: data.video_id ?? videoId,
-      cached: Boolean(data.cached),
-      source: 'worker',
-    });
-  } catch (error) {
-    console.error('[analyze] AI worker fallback:', error);
-    return NextResponse.json(buildMockAnalysis(videoId, localeParam));
   }
+
+  // Path B: Direct Gemini call (no separate ai-worker needed — works on Vercel)
+  if (isGeminiEnabled()) {
+    try {
+      const title = await getYoutubeTitleFromUrl(snsUrl);
+      const rawSpots = await extractSpotsFromTitle(title || videoId);
+
+      if (rawSpots.length > 0) {
+        const places = await Promise.all(
+          rawSpots.map(async (spot) => {
+            const name = typeof spot.name === 'string' ? spot.name : '';
+            const coords = name ? await geocodePlace(name) : null;
+            return {
+              name,
+              lat: coords?.lat ?? null,
+              lng: coords?.lng ?? null,
+              confidence: typeof spot.confidence === 'number' ? spot.confidence : 0.7,
+              category: typeof spot.category === 'string' ? spot.category : 'other',
+              reason: typeof spot.reason === 'string' ? spot.reason : '',
+            };
+          }),
+        );
+
+        return NextResponse.json({
+          video_id: videoId,
+          title,
+          places,
+          cached: false,
+          source: 'gemini',
+        });
+      }
+    } catch (error) {
+      console.error('[analyze] Gemini direct fallback:', error);
+    }
+  }
+
+  // Path C: Mock data (always available — zero cost, zero deps)
+  return NextResponse.json(buildMockAnalysis(videoId, localeParam));
 }
