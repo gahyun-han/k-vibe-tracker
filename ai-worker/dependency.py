@@ -1,3 +1,5 @@
+from ai_services.gemini_client import GeminiClient
+from ai_services.spot_extractor import SpotExtractorService
 from config.configure import get_settings
 from data_repositories.docentinfo import DocentInfoRepository
 from data_repositories.locationinfo import LocationInfoRepository
@@ -18,6 +20,7 @@ EXTERNAL_API_DEPENDENCIES = {
     "naver_search": "Naver 검색 API",
     "tts": "Text-to-Speech API",
     "youtube": "YouTube API",
+    "gemini": "Google Gemini 1.5 Flash",
 }
 
 settings = get_settings()
@@ -27,7 +30,9 @@ kakao_map_client = KakaoMapClient(settings.kakao_map_rest_key)
 google_search_client = GoogleSearchClient(settings.google_search_api_key)
 naver_search_client = NaverSearchClient(settings.naver_search_api_key)
 tts_client = TextToSpeechClient(settings.tts_api_key)
-youtube_client = YoutubeClient()
+youtube_client = YoutubeClient(settings.youtube_data_api_key)
+gemini_client = GeminiClient(settings.google_ai_api_key)
+spot_extractor = SpotExtractorService(gemini_client, youtube_client, kakao_map_client)
 
 user_repository = UserInfoRepository()
 route_repository = RouteInfoRepository()

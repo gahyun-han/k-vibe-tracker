@@ -14,7 +14,7 @@ from business_services.youtube_helpers import cache_key, extract_video_id
 from config.configure import get_settings
 from config.logger import get_logger
 from config.exceptions import K_VibeException, handle_api_exception
-from dependency import route_repository, youtube_client
+from dependency import route_repository, spot_extractor, youtube_client
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -82,8 +82,8 @@ def analyze(req: AnalyzeRequest) -> dict:
 
         result = {
             "video_id": video_id,
-            "title": "[API 키 연동 전 목 데이터]",
-            "places": youtube_client.extract_places(video_id),
+            "title": "[AI 분석 결과]",
+            "places": spot_extractor.extract(video_id),
             "cached": False,
             "cache_key": cache_key(video_id),
         }

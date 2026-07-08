@@ -16,6 +16,10 @@ class Settings:
     google_search_api_key: str
     naver_search_api_key: str
     tts_api_key: str
+    # AI / LLM
+    google_ai_api_key: str
+    # YouTube Data API v3 (optional — transcript-api works without a key)
+    youtube_data_api_key: str
 
 
 def get_settings() -> Settings:
@@ -28,4 +32,6 @@ def get_settings() -> Settings:
         google_search_api_key=LOCAL_API_KEYS.get("GOOGLE_SEARCH_API_KEY", os.getenv("GOOGLE_SEARCH_API_KEY", "")),
         naver_search_api_key=LOCAL_API_KEYS.get("NAVER_SEARCH_API_KEY", os.getenv("NAVER_SEARCH_API_KEY", "")),
         tts_api_key=LOCAL_API_KEYS.get("TTS_API_KEY", os.getenv("TTS_API_KEY", "")),
+        google_ai_api_key=LOCAL_API_KEYS.get("GOOGLE_AI_API_KEY", os.getenv("GOOGLE_AI_API_KEY", "")),
+        youtube_data_api_key=LOCAL_API_KEYS.get("YOUTUBE_DATA_API_KEY", os.getenv("YOUTUBE_DATA_API_KEY", "")),
     )

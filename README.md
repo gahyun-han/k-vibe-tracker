@@ -70,7 +70,32 @@ K-콘텐츠 속 장소 탐색, 주변 관광지 검색, SNS 장소 분석, 로�
 - 프론트 단위/통합 테스트는 현재 **196/196 통과** 상태입니다.
 - TypeScript 엄격 모드 이슈(`TS4111`/`TS2532`)를 주요 런타임 코드에서 정리해 `npm run build`를 재통과시켰습니다.
 - ESLint 잔여 경고(중복 import, import 순서, 접근성/훅 경고)를 정리해 현재 `npm run lint`도 경고 없이 통과합니다.
-- 다음 단계(Phase 5~8): CI/CD 시크릿 검증 + 배포/운영 자동화 고도화 + 구조 마무리
+- GitHub Actions CI 수정 (Node 20 업그레이드, Actions v4, E2E 안정화) — CI 통과 ✅
+
+### SNS 스팟 분석기 AI 파이프라인 (2026-07-08)
+
+ai-worker에 **Gemini 1.5 Flash 기반 실제 장소 추출 파이프라인**을 구현했습니다.
+
+**파이프라인 흐름:**
+```
+YouTube URL
+  → video_id 추출
+  → YouTube Data API v3 (제목 + 설명)
+  → youtube-transcript-api (자막, API 키 불필요)
+  → Gemini 1.5 Flash NER (장소명 추출 + 카테고리 + confidence)
+  → Kakao Local Search API (geocoding → lat/lng)
+```
+
+**API 키 없이도 동작합니다:**
+- `GOOGLE_AI_API_KEY` 미설정 → 목 데이터로 자동 fallback
+- `YOUTUBE_DATA_API_KEY` 미설정 → 자막만으로 분석 (무료)
+- `KAKAO_MAP_REST_KEY` 미설정 → 하드코딩된 좌표 fallback
+
+**연동 활성화 방법:**
+1. [Google AI Studio](https://aistudio.google.com/app/apikey)에서 무료 Gemini API 키 발급
+2. ai-worker 환경변수에 `GOOGLE_AI_API_KEY=발급받은_키` 설정
+3. Next.js 쪽: `.env.local`에 `ENABLE_AI_WORKER_ANALYSIS=true`, `AI_WORKER_URL=http://localhost:8000` 설정
+
 
 완료된 핵심 범위:
 
@@ -87,8 +112,8 @@ K-콘텐츠 속 장소 탐색, 주변 관광지 검색, SNS 장소 분석, 로�
 - Supabase 실계정 OAuth 및 계정 동기화
 - Apple 로그인
 - Upstash/Redis L2 캐싱
-- YouTube/Instagram 실시간 외부 분석
-- OpenAI/Claude 기반 AI 분석 및 루트 생성
+- Instagram 실시간 외부 분석 (YouTube는 구현됨)
+- OpenAI/Claude 기반 AI 루트 생성 (Gemini 장소 추출은 구현됨)
 - 외부 AI TTS
 - Kakao Mobility/유료 길찾기 API
 - 오프라인 지도 타일
