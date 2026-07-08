@@ -1,4 +1,4 @@
-interface PlaceImageSource {
+export interface PlaceImageSource {
   imageUrl?: string | null;
   images?: readonly (string | null | undefined)[];
 }

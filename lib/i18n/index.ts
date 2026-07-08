@@ -3,6 +3,7 @@
  */
 
 export { 
+  SUPPORTED_LOCALES,
   getUiCopy, 
   normalizeUiLocale,
   getProfileSettingsCopy,
@@ -12,5 +13,4 @@ export {
   getNetworkStatusCopy,
   getPwaInstallCopy,
   type UiLocale,
-  type UiCopyKey
 } from './ui-copy';
