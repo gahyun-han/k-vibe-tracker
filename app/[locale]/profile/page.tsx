@@ -138,9 +138,9 @@ export default function ProfilePage() {
     );
   }
 
-  const displayName = user?.user_metadata?.full_name ?? copy.profile.guestTitle;
+  const displayName = user?.user_metadata?.['full_name'] ?? copy.profile.guestTitle;
   const displayEmail = user?.email ?? copy.profile.guestSubtitle;
-  const avatarInitial = (user?.user_metadata?.full_name?.[0] ?? user?.email?.[0] ?? 'G').toUpperCase();
+  const avatarInitial = (user?.user_metadata?.['full_name']?.[0] ?? user?.email?.[0] ?? 'G').toUpperCase();
   const personaLabel = personaPreference
     ? ((copy.persona.themes[personaPreference.theme].details as Record<string, { label: string }>)[personaPreference.detail]?.label ??
       copy.persona.themes[personaPreference.theme].label)
