@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isGeminiEnabled, geminiComplete, extractSpotsFromTitle } from '@/backend/ai_services/gemini';
+import { isGeminiEnabled, extractSpotsFromTitle } from '@/backend/ai_services/gemini';
 import { isAiWorkerAnalysisEnabled, getAiWorkerUrl } from '@/backend/dependency';
 import { getYoutubeTitleFromUrl } from '@/backend/ai_services/youtube-meta';
 
@@ -36,13 +36,23 @@ export async function GET(req: Request) {
     steps['5_youtube_title_error'] = String(e);
   }
 
-  // Step: call Gemini directly
+  // Step: call Gemini directly and expose actual HTTP status/error
   const titleOrId = title || 'BKorP55Aqvg';
   try {
-    const rawText = await geminiComplete(
-      `아래 YouTube 영상 제목에서 한국 여행 장소를 JSON 배열로 추출하세요.\n제목: ${titleOrId}`,
-    );
-    steps['6_gemini_raw_response'] = rawText.slice(0, 500) || '(empty)';
+    const apiKey = process.env['GOOGLE_AI_API_KEY'] ?? '';
+    const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+    const res = await fetch(`${GEMINI_API_BASE}?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `제목: ${titleOrId} — 한국 여행 장소 1개만 JSON으로 반환` }] }],
+        generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    const responseText = await res.text();
+    steps['6_gemini_http_status'] = res.status;
+    steps['6_gemini_raw_response'] = responseText.slice(0, 800) || '(empty)';
   } catch (e) {
     steps['6_gemini_raw_error'] = String(e);
   }
