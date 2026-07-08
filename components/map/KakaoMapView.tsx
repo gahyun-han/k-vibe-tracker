@@ -3,6 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Place } from '@/components/map/PlaceDetailModal';
 import { buildMapPinAccessibleLabel } from '@/lib/features';
+import {
+  KAKAO_MAP_KEY,
+  loadKakaoMaps,
+  type KakaoCustomOverlay,
+  type KakaoMap,
+  type KakaoMapsApi,
+} from '@/components/map/kakaoLoader';
 
 interface Coordinates {
   lat: number;
@@ -16,41 +23,9 @@ interface KakaoMapViewProps {
   onSelectPlace: (place: Place & { distanceM?: number }) => void;
   formatDistance: (meters?: number) => string;
   categoryLabels: Readonly<Partial<Record<string, string>>>;
+  fitToPlaces?: boolean;
 }
 
-type KakaoLatLng = new (lat: number, lng: number) => unknown;
-type KakaoMap = {
-  setCenter: (latLng: unknown) => void;
-  relayout?: () => void;
-};
-type KakaoCustomOverlay = {
-  setMap: (map: KakaoMap | null) => void;
-};
-
-interface KakaoMapsApi {
-  load: (callback: () => void) => void;
-  LatLng: KakaoLatLng;
-  Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap;
-  CustomOverlay?: new (options: {
-    position: unknown;
-    content: HTMLElement;
-    xAnchor?: number;
-    yAnchor?: number;
-    zIndex?: number;
-    clickable?: boolean;
-  }) => KakaoCustomOverlay;
-}
-
-declare global {
-  interface Window {
-    kakao?: {
-      maps?: KakaoMapsApi;
-    };
-  }
-}
-
-const KAKAO_SCRIPT_ID = 'kakao-map-sdk';
-const KAKAO_MAP_KEY = process.env['NEXT_PUBLIC_KAKAO_MAP_KEY'];
 const PIN_BASE_CLASS =
   'whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-semibold shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-[#FF3A5C]/70';
 const PIN_SELECTED_CLASS = 'border-[#FF3A5C] bg-[#FF3A5C] text-white';
@@ -105,36 +80,6 @@ function createKakaoPinContent({
   return button;
 }
 
-function loadKakaoMaps(appKey: string): Promise<KakaoMapsApi> {
-  return new Promise((resolve, reject) => {
-    if (window.kakao?.maps) {
-      window.kakao.maps.load(() => resolve(window.kakao!.maps!));
-      return;
-    }
-
-    const existing = document.getElementById(KAKAO_SCRIPT_ID) as HTMLScriptElement | null;
-    if (existing) {
-      existing.addEventListener('load', () => {
-        if (window.kakao?.maps) window.kakao.maps.load(() => resolve(window.kakao!.maps!));
-        else reject(new Error('KAKAO_MAPS_MISSING'));
-      }, { once: true });
-      existing.addEventListener('error', () => reject(new Error('KAKAO_MAPS_LOAD_FAILED')), { once: true });
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.id = KAKAO_SCRIPT_ID;
-    script.async = true;
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(appKey)}&autoload=false`;
-    script.onload = () => {
-      if (window.kakao?.maps) window.kakao.maps.load(() => resolve(window.kakao!.maps!));
-      else reject(new Error('KAKAO_MAPS_MISSING'));
-    };
-    script.onerror = () => reject(new Error('KAKAO_MAPS_LOAD_FAILED'));
-    document.head.appendChild(script);
-  });
-}
-
 export function KakaoMapView({
   center,
   places,
@@ -142,6 +87,7 @@ export function KakaoMapView({
   onSelectPlace,
   formatDistance,
   categoryLabels,
+  fitToPlaces = false,
 }: KakaoMapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoMap | null>(null);
@@ -154,6 +100,10 @@ export function KakaoMapView({
   const [nativePinLayer, setNativePinLayer] = useState(false);
 
   const visiblePins = useMemo(() => places.slice(0, 16), [places]);
+  const boundsKey = useMemo(
+    () => visiblePins.map((place) => `${place.lat.toFixed(5)},${place.lng.toFixed(5)}`).join('|'),
+    [visiblePins],
+  );
 
   useEffect(() => {
     if (!KAKAO_MAP_KEY || !containerRef.current) {
@@ -187,10 +137,29 @@ export function KakaoMapView({
   useEffect(() => {
     const maps = mapsRef.current;
     const map = mapRef.current;
-    if (!maps || !map) return;
+    if (!maps || !map || fitToPlaces) return;
 
     map.setCenter(new maps.LatLng(center.lat, center.lng));
-  }, [center.lat, center.lng]);
+  }, [center.lat, center.lng, fitToPlaces]);
+
+  // Fit the viewport to include every visible place (used for route views).
+  useEffect(() => {
+    if (mode !== 'ready' || !fitToPlaces) return;
+    const maps = mapsRef.current;
+    const map = mapRef.current;
+    if (!maps || !map || !map.setBounds || visiblePins.length === 0) return;
+
+    if (visiblePins.length === 1) {
+      const only = visiblePins[0]!;
+      map.setCenter(new maps.LatLng(only.lat, only.lng));
+      map.setLevel?.(5);
+      return;
+    }
+
+    const bounds = new maps.LatLngBounds();
+    visiblePins.forEach((place) => bounds.extend(new maps.LatLng(place.lat, place.lng)));
+    map.setBounds(bounds);
+  }, [boundsKey, fitToPlaces, mode, visiblePins]);
 
   useEffect(() => {
     if (mode !== 'ready' || !containerRef.current) return;
@@ -203,7 +172,7 @@ export function KakaoMapView({
         const map = mapRef.current;
         if (!maps || !map) return;
         map.relayout?.();
-        map.setCenter(new maps.LatLng(center.lat, center.lng));
+        if (!fitToPlaces) map.setCenter(new maps.LatLng(center.lat, center.lng));
       });
     };
 
@@ -217,7 +186,7 @@ export function KakaoMapView({
       observer?.disconnect();
       window.removeEventListener('resize', relayout);
     };
-  }, [center.lat, center.lng, mode]);
+  }, [center.lat, center.lng, fitToPlaces, mode]);
 
   useEffect(() => {
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));

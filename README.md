@@ -444,7 +444,7 @@ k-vibe-tracker/
 │   ├── layout/                    # TopBar, BottomNav, AppLayout
 │   ├── auth/                      # LoginModal
 │   ├── common/                    # Toast, ErrorBoundary, PWA, Tutorial
-│   ├── map/                       # KakaoMapView, CategoryFilter, PlaceDetailModal
+│   ├── map/                       # KakaoMapView, kakaoLoader, CategoryFilter, PlaceDetailModal
 │   ├── radar/                     # FacilityCard, RadarMapPreview, RadiusSlider
 │   └── route/                     # CrowdBadge, RouteMiniMap
 ├── lib/

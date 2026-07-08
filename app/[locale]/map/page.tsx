@@ -91,6 +91,31 @@ function formatDistance(meters?: number) {
   return meters < 1000 ? `${meters}m` : `${(meters / 1000).toFixed(1)}km`;
 }
 
+function readRoutePlacesFromStorage(): { title: string; places: (Place & { distanceM?: number })[] } {
+  try {
+    const stored = window.localStorage.getItem(CURRENT_ROUTE_STORAGE_KEY);
+    if (!stored) return { title: '', places: [] };
+    const plan = JSON.parse(stored) as Partial<RoutePlan>;
+    const stops = Array.isArray(plan.stops) ? (plan.stops as RouteStop[]) : [];
+    const places = stops
+      .filter((stop) => Number.isFinite(stop.lat) && Number.isFinite(stop.lng))
+      .map((stop) => ({
+        id: stop.id,
+        name: stop.name,
+        category: stop.category,
+        address: stop.address,
+        lat: stop.lat,
+        lng: stop.lng,
+        crowdLevel: stop.crowdLevel,
+        overview: stop.description,
+        tags: stop.tags,
+      })) satisfies (Place & { distanceM?: number })[];
+    return { title: plan.title ?? '', places };
+  } catch {
+    return { title: '', places: [] };
+  }
+}
+
 function toRouteStop(
   place: Place,
   categoryLabels: Readonly<Record<PlaceCategory | 'spot', string>>,
@@ -130,6 +155,7 @@ export default function MapPage() {
   const [locationLabel, setLocationLabel] = useState<string>(copy.map.seoulFallback);
   const [places, setPlaces] = useState<(Place & { distanceM?: number })[]>([]);
   const [focusPlace, setFocusPlace] = useState<(Place & { distanceM?: number }) | null>(null);
+  const [routePlaces, setRoutePlaces] = useState<(Place & { distanceM?: number })[]>([]);
   const [source, setSource] = useState<ApiSource>('mock');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -224,6 +250,7 @@ export default function MapPage() {
     if (!cachedLocation) return false;
 
     setFocusPlace(null);
+    setRoutePlaces([]);
     setCoords({ lat: cachedLocation.lat, lng: cachedLocation.lng });
     setLocationLabel(locationCopy.lastKnownLocation);
     setReloadKey((key) => key + 1);
@@ -234,6 +261,7 @@ export default function MapPage() {
     if (!navigator.geolocation) {
       if (!applyLastKnownLocation()) {
         setFocusPlace(null);
+        setRoutePlaces([]);
         setCoords(SEOUL_CENTER);
         setLocationLabel(copy.map.seoulFallback);
         setReloadKey((key) => key + 1);
@@ -253,6 +281,7 @@ export default function MapPage() {
           accuracyM: position.coords.accuracy,
         });
         setFocusPlace(null);
+        setRoutePlaces([]);
         setCoords(nextCoords);
         setLocationLabel(copy.map.currentLocation);
         setReloadKey((key) => key + 1);
@@ -260,6 +289,7 @@ export default function MapPage() {
       () => {
         if (!applyLastKnownLocation()) {
           setFocusPlace(null);
+          setRoutePlaces([]);
           setCoords(SEOUL_CENTER);
           setLocationLabel(copy.map.seoulFallback);
           setReloadKey((key) => key + 1);
@@ -291,6 +321,27 @@ export default function MapPage() {
     const imageUrl = searchParams.get('imageUrl')?.trim();
     const crowdLevel = searchParams.get('crowdLevel');
 
+    if (sourceParam === 'route-map') {
+      const { title: routeTitle, places: loadedRoutePlaces } = readRoutePlacesFromStorage();
+      if (loadedRoutePlaces.length > 0) {
+        const centroid = loadedRoutePlaces.reduce(
+          (acc, place) => ({ lat: acc.lat + place.lat, lng: acc.lng + place.lng }),
+          { lat: 0, lng: 0 },
+        );
+        const center = {
+          lat: centroid.lat / loadedRoutePlaces.length,
+          lng: centroid.lng / loadedRoutePlaces.length,
+        };
+        setRoutePlaces(loadedRoutePlaces);
+        setCoords(center);
+        setLocationLabel(routeTitle || query || copy.map.savedRouteTitle);
+        setSearch('');
+        setFocusPlace(null);
+        setReloadKey((key) => key + 1);
+        return;
+      }
+    }
+
     if (hasFocusCoords && Number.isFinite(focusLat) && Number.isFinite(focusLng)) {
       const focusName = query || copy.map.analysisResult;
       const nextLocationLabel = sourceParam === 'analyze' ? copy.map.analysisResult : focusName;
@@ -320,12 +371,19 @@ export default function MapPage() {
 
     applyLastKnownLocation();
     requestLocation();
-  }, [applyLastKnownLocation, copy.map.analysisResult, requestLocation]);
+  }, [applyLastKnownLocation, copy.map.analysisResult, copy.map.savedRouteTitle, requestLocation]);
 
   useEffect(() => {
     const controller = new AbortController();
 
     async function loadPlaces() {
+      // When displaying a saved route, show its stops only — skip nearby search.
+      if (routePlaces.length > 0) {
+        setLoading(false);
+        setError('');
+        return;
+      }
+
       setLoading(true);
       setError('');
 
@@ -382,13 +440,16 @@ export default function MapPage() {
     copy.map.placesError,
     locale,
     reloadKey,
+    routePlaces.length,
     toast,
   ]);
 
   const filtered = useMemo(() => {
-    const candidates = focusPlace
-      ? [focusPlace, ...places.filter((place) => place.id !== focusPlace.id)]
-      : places;
+    const candidates = routePlaces.length > 0
+      ? routePlaces
+      : focusPlace
+        ? [focusPlace, ...places.filter((place) => place.id !== focusPlace.id)]
+        : places;
 
     return candidates.filter((place) => {
       const matchCat =
@@ -401,7 +462,7 @@ export default function MapPage() {
         place.tags?.some((tag) => tag.toLowerCase().includes(q));
       return matchCat && matchSearch;
     });
-  }, [categories, focusPlace, places, search]);
+  }, [categories, focusPlace, places, routePlaces, search]);
   const searchSuggestions = useMemo(() => {
     const currentSearch = search.trim().toLowerCase();
     return copy.map.searchSuggestions.filter((suggestion) => suggestion.toLowerCase() !== currentSearch);
@@ -411,6 +472,7 @@ export default function MapPage() {
     setSearch('');
     setCategories(['all']);
     setFocusPlace(null);
+    setRoutePlaces([]);
     setSelectedPlace(null);
   }
 
@@ -435,6 +497,7 @@ export default function MapPage() {
             onSelectPlace={setSelectedPlace}
             formatDistance={formatDistance}
             categoryLabels={copy.categories}
+            fitToPlaces={routePlaces.length > 0}
           />
 
           <div className="absolute left-4 top-4 rounded-xl border border-white/10 bg-black/35 px-3 py-2 backdrop-blur">
