@@ -29,7 +29,7 @@ import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { useToast } from '@/components/common/Toast';
 import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
-import { persistPreferredLocale } from '@/lib/locale-preference';
+import { persistPreferredLocale } from '@/lib/ui-state';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/cache';
 import {
   getPersonaFeedCategory,

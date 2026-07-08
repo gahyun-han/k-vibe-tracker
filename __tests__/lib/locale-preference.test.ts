@@ -5,7 +5,7 @@ import {
   LOCALE_COOKIE_MAX_AGE_SECONDS,
   PREFERRED_LOCALE_STORAGE_KEY,
   persistPreferredLocale,
-} from '@/lib/locale-preference';
+} from '@/lib/ui-state';
 
 describe('locale preference', () => {
   it('builds locale-switched paths without dropping query state', () => {
