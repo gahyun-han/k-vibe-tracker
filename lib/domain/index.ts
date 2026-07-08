@@ -2,15 +2,11 @@
  * Domain logic utilities - Business domain logic for features
  */
 
-// Analysis
-export { analyzeVideoContent, buildAnalysisLocalCacheKey, buildMockAnalysis, shouldCallAiWorker, isAnalysisLocale, type AnalysisLocale, type AnalysisPlace, type AnalysisResult } from './analysis';
-
 // Crowd
 export { toCrowdLevel, isCrowdLevel, CROWD_DOT_CLASS, CROWD_TEXT_CLASS, type CrowdLevel } from './crowd';
 
 // Docent
 export { 
-  generateDocentCaption,
   buildDocentScriptSections,
   joinDocentScript,
   getDocentSectionIndexForChar,
@@ -23,7 +19,7 @@ export {
 } from './docent';
 
 // Facilities
-export { FACILITY_TYPES, FACILITY_ICONS, buildFacilitiesCacheKey, getMockFacilities, isFacilityType, isFacilityFilter, normalizeTourApiFestivalFacilities, buildGoogleMapsFacilityUrl, type FacilityType, type FacilityFilter, type Facility } from './facilities';
+export { FACILITY_TYPES, buildFacilitiesCacheKey, getMockFacilities, isFacilityType, isFacilityFilter, normalizeTourApiFestivalFacilities, buildGoogleMapsFacilityUrl, type FacilityType, type FacilityFilter, type Facility } from './facilities';
 
 // Routes
 export { 

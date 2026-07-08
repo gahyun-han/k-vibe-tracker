@@ -43,7 +43,7 @@ const EXAMPLE_URLS = [
 export default function AnalyzePage() {
   const router = useRouter();
   const params = useParams();
-  const locale = normalizeUiLocale(params.locale);
+  const locale = normalizeUiLocale(params['locale'] as string);
   const copy = getUiCopy(locale).analyze;
   const { toast } = useToast();
   const [url, setUrl] = useState('');
