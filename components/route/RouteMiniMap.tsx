@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapPinned } from 'lucide-react';
 import {
   KAKAO_MAP_KEY,
@@ -68,7 +68,7 @@ export function RouteMiniMap({
   openStopMapLabel,
   onOpenStopMap,
 }: RouteMiniMapProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
   const mapRef = useRef<KakaoMap | null>(null);
   const mapsRef = useRef<KakaoMapsApi | null>(null);
   const overlaysRef = useRef<KakaoCustomOverlay[]>([]);
@@ -82,24 +82,30 @@ export function RouteMiniMap({
     onOpenRef.current = onOpenStopMap;
   }, [onOpenStopMap]);
 
+  const points = buildPreviewPoints(stops);
   const stopsKey = stops
     .map((stop) => `${stop.id}:${stop.lat.toFixed(5)},${stop.lng.toFixed(5)}`)
     .join('|');
 
+  // Initialise the Kakao map once the container node is actually mounted.
+  // Using a callback ref (containerEl) guarantees the effect runs after the
+  // container exists, even though this component renders null until it has
+  // stops to display.
   useEffect(() => {
-    if (!KAKAO_MAP_KEY || !containerRef.current) {
+    if (!KAKAO_MAP_KEY) {
       setMode('fallback');
       return;
     }
+    if (!containerEl || mapRef.current) return;
 
     let active = true;
     setMode('loading');
 
     loadKakaoMaps(KAKAO_MAP_KEY)
       .then((maps) => {
-        if (!active || !containerRef.current) return;
+        if (!active || !containerEl) return;
         mapsRef.current = maps;
-        mapRef.current = new maps.Map(containerRef.current, {
+        mapRef.current = new maps.Map(containerEl, {
           center: new maps.LatLng(37.5665, 126.978),
           level: 6,
         });
@@ -112,9 +118,31 @@ export function RouteMiniMap({
     return () => {
       active = false;
     };
-  }, []);
+  }, [containerEl]);
 
-  // Render numbered markers + polyline and fit the viewport to the stops.
+  const fitToStops = useCallback(() => {
+    const maps = mapsRef.current;
+    const map = mapRef.current;
+    if (!maps || !map) return;
+
+    const positioned = stops.filter(
+      (stop) => Number.isFinite(stop.lat) && Number.isFinite(stop.lng),
+    );
+    if (positioned.length === 0) return;
+
+    if (positioned.length === 1) {
+      map.setCenter(new maps.LatLng(positioned[0]!.lat, positioned[0]!.lng));
+      map.setLevel?.(5);
+      return;
+    }
+
+    if (!map.setBounds) return;
+    const bounds = new maps.LatLngBounds();
+    positioned.forEach((stop) => bounds.extend(new maps.LatLng(stop.lat, stop.lng)));
+    map.setBounds(bounds);
+  }, [stops]);
+
+  // Draw numbered markers + polyline, then fit the viewport to the stops.
   useEffect(() => {
     if (mode !== 'ready') return;
     const maps = mapsRef.current;
@@ -162,14 +190,10 @@ export function RouteMiniMap({
       });
     }
 
-    if (positioned.length === 1) {
-      map.setCenter(path[0]!);
-      map.setLevel?.(5);
-    } else if (map.setBounds) {
-      const bounds = new maps.LatLngBounds();
-      path.forEach((point) => bounds.extend(point));
-      map.setBounds(bounds);
-    }
+    // Relayout guards against the container having had a stale/zero size when
+    // the map was created; fit the bounds afterwards so the route is centred.
+    map.relayout?.();
+    fitToStops();
 
     return () => {
       overlaysRef.current.forEach((overlay) => overlay.setMap(null));
@@ -180,7 +204,31 @@ export function RouteMiniMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, stopsKey, openStopMapLabel]);
 
-  const points = buildPreviewPoints(stops);
+  // Keep the map correctly sized when the container resizes.
+  useEffect(() => {
+    if (mode !== 'ready' || !containerEl) return;
+
+    let frame = 0;
+    const relayout = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        mapRef.current?.relayout?.();
+        fitToStops();
+      });
+    };
+
+    relayout();
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(relayout);
+    observer?.observe(containerEl);
+    window.addEventListener('resize', relayout);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+      window.removeEventListener('resize', relayout);
+    };
+  }, [mode, containerEl, fitToStops]);
+
   if (points.length === 0) return null;
 
   const svgPolyline = points.map((point) => `${point.x},${point.y}`).join(' ');
@@ -198,7 +246,7 @@ export function RouteMiniMap({
 
       <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-[#101827]">
         <div
-          ref={containerRef}
+          ref={setContainerEl}
           className={`absolute inset-0 transition-opacity ${mode === 'ready' ? 'opacity-100' : 'opacity-0'}`}
         />
 
