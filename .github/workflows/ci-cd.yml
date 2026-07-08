@@ -11,8 +11,8 @@ on:
       - hslee
 
 env:
-  # vitest v4+ requires Node 20+
-  NODE_VERSION: '20'
+  # Node 24 recommended on GitHub Actions (Node 20 deprecated Sep 2025)
+  NODE_VERSION: '24'
 
 jobs:
   # 1️⃣ 타입 체크 및 린트
