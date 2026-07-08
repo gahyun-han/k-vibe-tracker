@@ -72,7 +72,7 @@ function toPlace(
     address: place.address ?? addressPending,
     lat: place.lat,
     lng: place.lng,
-    imageUrl: place.image_url ?? undefined,
+    ...(place.image_url && { imageUrl: place.image_url }),
     crowdLevel: toCrowdLevel(place.crowd_level),
     tags: [categoryLabel],
     distanceM: place.distance_m,
