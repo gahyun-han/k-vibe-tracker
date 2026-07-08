@@ -38,23 +38,28 @@ export async function GET(req: Request) {
 
   // Step: call Gemini directly and expose actual HTTP status/error
   const titleOrId = title || 'BKorP55Aqvg';
-  try {
-    const apiKey = process.env['GOOGLE_AI_API_KEY'] ?? '';
-    const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-    const res = await fetch(`${GEMINI_API_BASE}?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `제목: ${titleOrId} — 한국 여행 장소 1개만 JSON으로 반환` }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
-      }),
-      signal: AbortSignal.timeout(15_000),
-    });
-    const responseText = await res.text();
-    steps['6_gemini_http_status'] = res.status;
-    steps['6_gemini_raw_response'] = responseText.slice(0, 800) || '(empty)';
-  } catch (e) {
-    steps['6_gemini_raw_error'] = String(e);
+  const GEMINI_MODELS_DEBUG = ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash-latest'];
+  const apiKey = process.env['GOOGLE_AI_API_KEY'] ?? '';
+  const GEMINI_API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+  for (const model of GEMINI_MODELS_DEBUG) {
+    try {
+      const res = await fetch(`${GEMINI_API_ROOT}/${model}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `제목: ${titleOrId} — 한국 여행 장소 1개만 JSON으로 반환` }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 256 },
+        }),
+        signal: AbortSignal.timeout(15_000),
+      });
+      const responseText = await res.text();
+      steps[`6_${model}_http_status`] = res.status;
+      steps[`6_${model}_response`] = responseText.slice(0, 400);
+      if (res.ok) break; // stop at first success
+    } catch (e) {
+      steps[`6_${model}_error`] = String(e);
+    }
   }
 
   // Step: extract spots using full pipeline

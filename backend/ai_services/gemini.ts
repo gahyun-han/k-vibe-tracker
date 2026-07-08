@@ -1,14 +1,19 @@
 /**
- * Direct Gemini 1.5 Flash integration for the Next.js API layer.
+ * Direct Gemini integration for the Next.js API layer.
  *
  * Used when GOOGLE_AI_API_KEY is set in the environment but an ai-worker
  * is not deployed (e.g. Vercel production).
  *
- * Only requires the API key — no extra npm packages needed.
- * Uses the Gemini REST API via the built-in fetch.
+ * Tries models in order: gemini-2.0-flash → gemini-2.0-flash-lite → gemini-1.5-flash-latest
+ * Falls back to empty string on any error.
  */
 
-const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_ROOT = 'https://generativelanguage.googleapis.com/v1beta/models';
+const GEMINI_MODELS = [
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash-latest',
+];
 const GEMINI_TIMEOUT_MS = 20_000;
 
 interface GeminiCandidate {
@@ -35,36 +40,46 @@ export function isGeminiEnabled(): boolean {
 }
 
 /**
- * Call Gemini 1.5 Flash and return the text response.
- * Returns empty string on any error.
+ * Call Gemini and return the text response.
+ * Tries multiple models in order until one succeeds.
+ * Returns empty string on all failures.
  */
 export async function geminiComplete(prompt: string): Promise<string> {
   const apiKey = getGoogleAiApiKey();
   if (!apiKey) return '';
 
-  try {
-    const res = await fetch(`${GEMINI_API_BASE}?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
-      }),
-      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
-    });
+  for (const model of GEMINI_MODELS) {
+    try {
+      const url = `${GEMINI_API_ROOT}/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+        }),
+        signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+      });
 
-    if (!res.ok) {
-      const err = await res.text().catch(() => '');
-      console.error(`[gemini] API error ${res.status}: ${err}`);
-      return '';
+      if (!res.ok) {
+        const err = await res.text().catch(() => '');
+        console.error(`[gemini] ${model} error ${res.status}: ${err.slice(0, 200)}`);
+        // 429 = quota exhausted, 404 = model not found → try next model
+        if (res.status === 429 || res.status === 404) continue;
+        return '';
+      }
+
+      const data = (await res.json()) as GeminiResponse;
+      const text = data.candidates?.[0]?.content.parts[0]?.text ?? '';
+      if (text) console.log(`[gemini] success with model: ${model}`);
+      return text;
+    } catch (e) {
+      console.error(`[gemini] ${model} fetch failed:`, e);
     }
-
-    const data = (await res.json()) as GeminiResponse;
-    return data.candidates?.[0]?.content.parts[0]?.text ?? '';
-  } catch (e) {
-    console.error('[gemini] fetch failed:', e);
-    return '';
   }
+
+  console.error('[gemini] all models exhausted');
+  return '';
 }
 
 const SPOT_EXTRACTION_PROMPT = `당신은 한국 여행 장소 추천 전문가입니다.
