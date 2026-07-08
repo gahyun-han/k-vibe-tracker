@@ -1,4 +1,4 @@
-import type { NormalizedPlace, NormalizedPlaceDetail } from '@/lib/tourapi';
+import type { NormalizedPlace, NormalizedPlaceDetail } from '@/lib/domain';
 import { requestJson } from '@/frontend/api/client';
 
 type ApiSource = 'mock' | 'tourapi' | 'cache';

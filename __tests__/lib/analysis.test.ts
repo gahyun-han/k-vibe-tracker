@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAnalysisLocalCacheKey, buildMockAnalysis, isAnalysisLocale, type AnalysisLocale } from '@/lib/analysis';
+import { buildAnalysisLocalCacheKey, buildMockAnalysis, isAnalysisLocale, type AnalysisLocale } from '@/lib/domain';
 
 describe('analysis helpers', () => {
   it('localizes deterministic mock analysis results', () => {

@@ -7,7 +7,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import { useToast, type ToastType } from '@/components/common/Toast';
 import { CrowdBadge } from '@/components/route/CrowdBadge';
 import { RouteMiniMap } from '@/components/route/RouteMiniMap';
-import { haversineKm } from '@/lib/haversine';
+import { haversineKm } from '@/lib/features';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import {
   buildGoogleMapsDirectionsUrl,
@@ -28,7 +28,7 @@ import {
   type RoutePlan,
   type RouteStop,
   type RouteTheme,
-} from '@/lib/routes';
+} from '@/lib/domain';
 
 interface RoutePlanMeta {
   id: string;

@@ -1,4 +1,4 @@
-import { isRouteDetailForTheme, isRouteTheme, type RouteTheme } from '@/lib/routes';
+import { isRouteDetailForTheme, isRouteTheme, type RouteTheme } from '@/lib/domain';
 
 export const PERSONA_PREFERENCE_STORAGE_KEY = 'k-vibe-persona-preference';
 

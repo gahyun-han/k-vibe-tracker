@@ -5,13 +5,13 @@ import {
   isFacilityFilter,
   normalizeTourApiFestivalFacilities,
   type FacilityFilter,
-} from '@/lib/facilities';
+} from '@/lib/domain';
 import {
   buildTourApiFestivalUrl,
   isTourApiLocale,
   toTourApiArray,
   type TourApiFestivalItem,
-} from '@/lib/tourapi';
+} from '@/lib/domain';
 import { getTourApiKey } from '@/backend/dependency';
 import { backendConfig } from '@/backend/config/configure';
 import { parseCoordinate } from '@/backend/business_services/guards';

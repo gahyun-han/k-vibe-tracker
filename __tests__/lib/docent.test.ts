@@ -4,7 +4,7 @@ import {
   getDocentSectionIndexForChar,
   joinDocentScript,
   shouldAutoPlayDocentAfterProximityCheck,
-} from '@/lib/docent';
+} from '@/lib/domain';
 
 const copy = {
   sectionIntroTitle: 'Intro',

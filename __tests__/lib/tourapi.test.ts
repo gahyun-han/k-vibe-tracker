@@ -12,7 +12,7 @@ import {
   normalizeTourApiPlaceDetail,
   normalizeTourApiItems,
   toTourApiItemArray,
-} from '@/lib/tourapi';
+} from '@/lib/domain';
 
 describe('tourapi helpers', () => {
   it('builds stable quantized cache keys', () => {

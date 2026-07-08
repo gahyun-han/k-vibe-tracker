@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isCrowdLevel, toCrowdLevel } from '@/lib/crowd';
+import { isCrowdLevel, toCrowdLevel } from '@/lib/domain';
 
 describe('crowd helpers', () => {
   it('maps numeric crowd signals to UI levels', () => {

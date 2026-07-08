@@ -1,4 +1,4 @@
-import { isCrowdLevel, type CrowdLevel } from '@/lib/crowd';
+import { isCrowdLevel, type CrowdLevel } from '@/lib/domain';
 
 export const SAVED_PLACES_STORAGE_KEY = 'k-vibe-saved-places';
 

@@ -1,4 +1,4 @@
-import type { AnalysisResult } from '@/lib/analysis';
+import type { AnalysisResult } from '@/lib/domain';
 import { requestJson } from '@/frontend/api/client';
 
 export interface AnalyzeRequestPayload {

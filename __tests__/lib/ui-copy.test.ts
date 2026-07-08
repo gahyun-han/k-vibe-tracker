@@ -10,8 +10,8 @@ import {
   LANGUAGE_NAMES,
   SUPPORTED_LOCALES,
 } from '@/lib/ui-copy';
-import { ROUTE_THEME_OPTIONS } from '@/lib/routes';
-import { FACILITY_TYPES } from '@/lib/facilities';
+import { ROUTE_THEME_OPTIONS } from '@/lib/domain';
+import { FACILITY_TYPES } from '@/lib/domain';
 
 describe('ui copy', () => {
   it('provides feature copy for every supported locale', () => {

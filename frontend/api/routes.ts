@@ -1,4 +1,4 @@
-import type { RoutePlan, RouteTheme } from '@/lib/routes';
+import type { RoutePlan, RouteTheme } from '@/lib/domain';
 import { requestJson } from '@/frontend/api/client';
 
 export interface GenerateRouteRequestPayload {

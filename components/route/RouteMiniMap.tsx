@@ -1,7 +1,7 @@
 'use client';
 
 import { MapPinned } from 'lucide-react';
-import type { RouteStop } from '@/lib/routes';
+import type { RouteStop } from '@/lib/domain';
 
 interface RouteMiniMapProps {
   stops: RouteStop[];

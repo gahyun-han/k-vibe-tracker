@@ -28,7 +28,7 @@ import { useViewMode } from '@/components/common/useViewMode';
 import { ViewModeToggle } from '@/components/common/ViewModeToggle';
 import { useToast } from '@/components/common/Toast';
 import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
-import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/crowd';
+import { CROWD_DOT_CLASS, CROWD_TEXT_CLASS, toCrowdLevel, type CrowdLevel } from '@/lib/domain';
 import { persistPreferredLocale } from '@/lib/locale-preference';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
@@ -47,7 +47,7 @@ import {
   type SaveablePlace,
   type SavedPlace,
 } from '@/lib/saved-places';
-import type { NormalizedPlace } from '@/lib/tourapi';
+import type { NormalizedPlace } from '@/lib/domain';
 import { LANGUAGE_NAMES, SUPPORTED_LOCALES, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };

@@ -9,7 +9,7 @@ import {
   TrainFront,
   type LucideIcon,
 } from 'lucide-react';
-import type { FacilityType } from '@/lib/facilities';
+import type { FacilityType } from '@/lib/domain';
 
 export interface FacilityTypeUi {
   Icon: LucideIcon;

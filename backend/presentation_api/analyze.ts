@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { buildMockAnalysis, isAnalysisLocale, type AnalysisResult } from '@/lib/analysis';
-import { detectSnsPlatform, extractVideoId } from '@/lib/youtube';
+import { buildMockAnalysis, isAnalysisLocale, type AnalysisResult } from '@/lib/domain';
+import { detectSnsPlatform, extractVideoId } from '@/lib/domain';
 import { getAiWorkerUrl, isAiWorkerAnalysisEnabled } from '@/backend/dependency';
 import { backendConfig } from '@/backend/config/configure';
 import { isRecord } from '@/backend/business_services/guards';

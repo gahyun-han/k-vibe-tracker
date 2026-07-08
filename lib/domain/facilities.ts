@@ -1,5 +1,5 @@
-import { haversineKm } from '@/lib/haversine';
-import type { TourApiFestivalItem, TourApiLocale } from '@/lib/tourapi';
+import { haversineKm } from '@/lib/features';
+import type { TourApiFestivalItem, TourApiLocale } from '@/lib/domain';
 
 export const FACILITY_TYPES = [
   'restroom',

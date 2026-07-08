@@ -16,7 +16,7 @@ import {
   parseRouteProgressState,
   ROUTE_PROGRESS_STORAGE_KEY,
   type RoutePlan,
-} from '@/lib/routes';
+} from '@/lib/domain';
 import {
   parseSavedPlaces,
   SAVED_PLACES_STORAGE_KEY,

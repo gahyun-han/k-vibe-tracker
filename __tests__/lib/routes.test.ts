@@ -17,7 +17,7 @@ import {
   ROUTE_THEME_OPTIONS,
   ROUTE_PROGRESS_STORAGE_KEY,
   type RouteStop,
-} from '@/lib/routes';
+} from '@/lib/domain';
 
 const STOPS: RouteStop[] = [
   {

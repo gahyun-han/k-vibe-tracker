@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Accessibility, ChevronDown, ChevronUp, Clock, MapPin } from 'lucide-react';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
-import type { Facility, FacilityType } from '@/lib/facilities';
+import type { Facility, FacilityType } from '@/lib/domain';
 
 export type { Facility };
 

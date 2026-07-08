@@ -6,7 +6,7 @@ import {
   getMockFacilities,
   normalizeTourApiFestivalFacilities,
   type Facility,
-} from '@/lib/facilities';
+} from '@/lib/domain';
 
 describe('facility helpers', () => {
   it('builds stable cache keys for facility queries', () => {

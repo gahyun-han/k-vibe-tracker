@@ -12,7 +12,7 @@ import {
   type TourApiImageItem,
   type TourApiIntroItem,
   type TourApiLocale,
-} from '@/lib/tourapi';
+} from '@/lib/domain';
 import { getTourApiKey } from '@/backend/dependency';
 import { backendConfig } from '@/backend/config/configure';
 

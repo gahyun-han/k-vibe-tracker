@@ -1,4 +1,4 @@
-import { haversineKm, walkingMinutes } from '@/lib/haversine';
+import { haversineKm, walkingMinutes } from '@/lib/features';
 
 export const ROUTE_THEMES = ['kpop', 'drama', 'mood', 'foodie', 'creator', 'history'] as const;
 export const CURRENT_ROUTE_STORAGE_KEY = 'k-vibe-current-route';

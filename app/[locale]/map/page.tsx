@@ -10,7 +10,7 @@ import { fetchPlaces, type PlacesApiResponse } from '@/frontend/api/places';
 import { CategoryFilter, getCategoryIcon, type Category } from '@/components/map/CategoryFilter';
 import { KakaoMapView } from '@/components/map/KakaoMapView';
 import { PlaceDetailModal, type Place } from '@/components/map/PlaceDetailModal';
-import { CROWD_DOT_CLASS, isCrowdLevel, toCrowdLevel } from '@/lib/crowd';
+import { CROWD_DOT_CLASS, isCrowdLevel, toCrowdLevel } from '@/lib/domain';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
@@ -18,7 +18,7 @@ import {
   CURRENT_ROUTE_STORAGE_KEY,
   type RoutePlan,
   type RouteStop,
-} from '@/lib/routes';
+} from '@/lib/domain';
 import {
   hasSavedPlace,
   parseSavedPlaces,
@@ -28,7 +28,7 @@ import {
   upsertSavedPlace,
   type SavedPlace,
 } from '@/lib/saved-places';
-import type { NormalizedPlace, PlaceCategory } from '@/lib/tourapi';
+import type { NormalizedPlace, PlaceCategory } from '@/lib/domain';
 import { getDataSourceCopy, getLocationStatusCopy, getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };

@@ -1,4 +1,4 @@
-import { haversineKm } from '@/lib/haversine';
+import { haversineKm } from '@/lib/features';
 
 export type PlaceCategory = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay';
 export type TourApiLocale = 'ko' | 'en' | 'ja' | 'zh';

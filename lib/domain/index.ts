@@ -7,5 +7,5 @@ export { toCrowdLevel, CROWD_DOT_CLASS, CROWD_TEXT_CLASS, type CrowdLevel } from
 export { generateDocentCaption } from './docent';
 export { FACILITY_ICONS, FACILITY_NAMES, type FacilityCategory } from './facilities';
 export { generateRouteDirections } from './routes';
-export { extractVideoId } from './youtube';
+export { extractVideoId, detectSnsPlatform, getThumbnailUrl, type SnsPlatform } from './youtube';
 export { fetchTourApiData } from './tourapi';

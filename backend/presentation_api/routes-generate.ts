@@ -4,7 +4,7 @@ import {
   isRouteDetailForTheme,
   isRouteTheme,
   parseStartTime,
-} from '@/lib/routes';
+} from '@/lib/domain';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 import { isRecord } from '@/backend/business_services/guards';
 

@@ -9,8 +9,8 @@ import {
   getDocentSectionIndexForChar,
   joinDocentScript,
   shouldAutoPlayDocentAfterProximityCheck,
-} from '@/lib/docent';
-import { haversineKm } from '@/lib/haversine';
+} from '@/lib/domain';
+import { haversineKm } from '@/lib/features';
 import { getDocentProximityCopy, getUiCopy, normalizeUiLocale, type UiLocale } from '@/lib/ui-copy';
 
 interface DocentPlace {

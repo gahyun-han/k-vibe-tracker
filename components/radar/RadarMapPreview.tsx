@@ -1,7 +1,7 @@
 'use client';
 
 import { Crosshair, LocateFixed } from 'lucide-react';
-import type { Facility, FacilityType } from '@/lib/facilities';
+import type { Facility, FacilityType } from '@/lib/domain';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 
 interface Coordinates {

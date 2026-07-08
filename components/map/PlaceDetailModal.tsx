@@ -7,7 +7,7 @@ import { fetchPlaceDetail } from '@/frontend/api/places';
 import { buildPlaceImageGallery } from '@/lib/place-images';
 import { buildPlaceDetailShareUrl } from '@/lib/place-detail-share';
 import { buildPlaceSeenInStats, formatCompactSocialCount } from '@/lib/place-social-proof';
-import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/tourapi';
+import type { NormalizedPlaceDetail, TourApiLocale } from '@/lib/domain';
 
 export interface Place {
   id: string;

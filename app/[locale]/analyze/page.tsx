@@ -18,14 +18,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
 import { postAnalyze } from '@/frontend/api/analyze';
-import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/youtube';
-import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/analysis';
+import { detectSnsPlatform, extractVideoId, getThumbnailUrl } from '@/lib/domain';
+import { buildAnalysisLocalCacheKey, type AnalysisPlace, type AnalysisResult } from '@/lib/domain';
 import { readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import {
   createLocalRoutePlan,
   CURRENT_ROUTE_STORAGE_KEY,
   type RouteStop,
-} from '@/lib/routes';
+} from '@/lib/domain';
 import { getUiCopy, normalizeUiLocale } from '@/lib/ui-copy';
 
 type AnalysisStatus = 'idle' | 'loading' | 'success' | 'error';

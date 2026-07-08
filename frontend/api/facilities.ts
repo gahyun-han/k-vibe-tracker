@@ -1,4 +1,4 @@
-import type { Facility } from '@/lib/facilities';
+import type { Facility } from '@/lib/domain';
 import { requestJson } from '@/frontend/api/client';
 
 type ApiSource = 'mock' | 'tourapi' | 'cache';

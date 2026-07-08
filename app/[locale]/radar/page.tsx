@@ -10,7 +10,7 @@ import { FacilityCard } from '@/components/radar/FacilityCard';
 import { getFacilityTypeUi } from '@/components/radar/facility-type-ui';
 import { RadarMapPreview } from '@/components/radar/RadarMapPreview';
 import { RadiusSlider } from '@/components/radar/RadiusSlider';
-import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/facilities';
+import { buildGoogleMapsFacilityUrl, type Facility, type FacilityFilter } from '@/lib/domain';
 import { readLastKnownLocation, writeLastKnownLocation } from '@/lib/location-cache';
 import { buildLocalApiCacheKey, readLocalApiCache, writeLocalApiCache } from '@/lib/local-api-cache';
 import { getNextRadarRadius } from '@/lib/radar-radius';

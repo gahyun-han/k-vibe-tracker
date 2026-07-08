@@ -5,7 +5,7 @@ import {
   getThumbnailUrl,
   isInstagramUrl,
   isValidYoutubeUrl,
-} from '@/lib/youtube';
+} from '@/lib/domain';
 
 describe('extractVideoId', () => {
   it('표준 watch URL에서 추출', () => {

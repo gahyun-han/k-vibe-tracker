@@ -23,7 +23,7 @@ import {
   formatDuration,
   type RoutePlan,
   type RouteTheme,
-} from '@/lib/routes';
+} from '@/lib/domain';
 import {
   createPersonaPreference,
   PERSONA_PREFERENCE_STORAGE_KEY,
