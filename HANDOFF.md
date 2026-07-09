@@ -129,6 +129,13 @@ Node runtime. See `scripts/verify.txt` for copy-paste commands. Summary:
 - [x] `app/api/debug/ai-status` refactored to delegate to
   `backend/presentation_api/debug-ai-status.ts` (layer conformance).
 - [x] Structure review: all layers conform to the dependency rules above.
+- [x] **K-content one-day route (hardcoded)** — `lib/domain/k-content.ts`
+  models the DB schema (PERSONA/LOCATION/DOCENT) as seed data;
+  `buildKContentRoutePlan()` turns a persona (BTS/BLACKPINK/NewJeans/K-Drama)
+  into a scheduled `RoutePlan`. Persona picker lives at the top of
+  `app/[locale]/persona/page.tsx` ("홈>루트"). Labels in ui-copy for all
+  4 locales. To add a persona/spot, edit the seed arrays in k-content.ts
+  (include real lat/lng so route legs and the map preview are non-zero).
 
 ## 8. Ideas / next improvements (not yet done)
 
