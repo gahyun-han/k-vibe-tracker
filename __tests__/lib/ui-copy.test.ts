@@ -497,7 +497,7 @@ describe('ui copy', () => {
     const expectedPersonaCopy = {
       en: {
         title: 'Build a K-content day plan',
-        generatorEyebrow: 'Route generator',
+        generatorEyebrow: 'K-content route',
         chooseMood: 'Choose the route mood',
         reviewSelection: 'Review Selection',
         personalizeFeed: 'Personalize Feed',
@@ -512,7 +512,7 @@ describe('ui copy', () => {
       },
       ko: {
         title: 'K-콘텐츠 하루 루트 만들기',
-        generatorEyebrow: '루트 생성기',
+        generatorEyebrow: 'K-콘텐츠 루트',
         chooseMood: '루트 무드 선택',
         reviewSelection: '선택 확인',
         personalizeFeed: '피드 개인화',
@@ -527,7 +527,7 @@ describe('ui copy', () => {
       },
       ja: {
         title: 'Kコンテンツの1日プランを作る',
-        generatorEyebrow: 'ルート生成',
+        generatorEyebrow: 'Kコンテンツルート',
         chooseMood: 'ルートのムードを選択',
         reviewSelection: '選択を確認',
         personalizeFeed: 'フィードを個人化',
@@ -542,7 +542,7 @@ describe('ui copy', () => {
       },
       zh: {
         title: '创建K-content一日路线',
-        generatorEyebrow: '路线生成器',
+        generatorEyebrow: 'K-content路线',
         chooseMood: '选择路线氛围',
         reviewSelection: '确认选择',
         personalizeFeed: '个性化首页',
