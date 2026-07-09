@@ -461,6 +461,7 @@ k-vibe-tracker/
 │   │   ├── analysis.ts                # SNS 분석 로직
 │   │   ├── crowd.ts                   # 혼잡도 계산
 │   │   ├── facilities.ts              # 편의시설 타입/mock
+│   │   ├── k-content.ts                # K-콘텐츠 하루 루트 하드코딩 데이터(PERSONA/LOCATION/DOCENT)
 │   │   ├── routes.ts                  # 루트 템플릿/공유/상태
 │   │   ├── tourapi.ts                 # 한국관광공사 TourAPI
 │   │   └── youtube.ts                 # YouTube 로직
