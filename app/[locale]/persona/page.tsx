@@ -12,6 +12,7 @@ import {
   Share2,
   Sparkles,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useToast } from '@/components/common/Toast';
 import AppLayout from '@/components/layout/AppLayout';
@@ -23,6 +24,7 @@ import {
   buildKContentRoutePlan,
   getKContentPersonas,
   formatDuration,
+  type KPersona,
   type RoutePlan,
   type RouteTheme,
 } from '@/lib/domain';
@@ -34,6 +36,36 @@ import {
 } from '@/lib/ui-state';
 
 type Step = 1 | 2 | 3;
+
+interface PersonaAvatarProps {
+  persona: Pick<KPersona, 'badge' | 'profileImg'>;
+  label: string;
+}
+
+function PersonaAvatar({ persona, label }: PersonaAvatarProps) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (persona.profileImg && !imageFailed) {
+    return (
+      <Image
+        src={persona.profileImg}
+        alt={`${label} profile`}
+        width={40}
+        height={40}
+        unoptimized
+        referrerPolicy="no-referrer"
+        onError={() => setImageFailed(true)}
+        className="h-10 w-10 shrink-0 rounded-xl object-cover"
+      />
+    );
+  }
+
+  return (
+    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-xs font-bold text-[#FF3A5C]">
+      {persona.badge}
+    </div>
+  );
+}
 
 export default function PersonaPage() {
   const router = useRouter();
@@ -285,9 +317,7 @@ export default function PersonaPage() {
                         onClick={() => generateKContentRoute(persona.id)}
                         className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-[#0D0D1A] p-3 text-left transition-all hover:border-[#FF3A5C]/60 hover:bg-[#FF3A5C]/10"
                       >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FF3A5C]/15 text-xs font-bold text-[#FF3A5C]">
-                          {persona.badge}
-                        </div>
+                        <PersonaAvatar persona={persona} label={label} />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <p className="font-semibold text-white">{label}</p>

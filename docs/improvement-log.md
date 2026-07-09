@@ -72,7 +72,7 @@ This log tracks concrete product and implementation improvements made while alig
 - Connected Radar map pins and expanded facility cards to user-clicked Google Maps search URLs. No Google Maps API key, Directions API, or Kakao Mobility call is used.
 - Added facility helper tests for cache keys, radius filtering/sorting, and no-key Google Maps facility handoff URLs.
 - Added a no-cost Docent arrival check that reads route/map `lat` and `lng` query values, asks for browser geolocation only after the user taps the check button, and shows whether the stop is within the root-spec 100m docent radius.
-- Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows hardcoded in English.
+- Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows as fixed English-only text.
 - Added a production-only PWA runtime that updates the document `lang` attribute from the active locale and registers a static service worker for app icons, manifest, static chunks, and a basic navigation fallback.
 - Added a shared 30-minute last-known-location cache in `localStorage`, then connected Map and Radar so they can show the previous GPS position immediately while fresh geolocation is being requested or when GPS fails.
 - Added a shared 1-hour local API response cache for Home feed places, Map places, and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.

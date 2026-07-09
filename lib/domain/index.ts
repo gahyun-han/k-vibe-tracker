@@ -59,10 +59,11 @@ export {
 // YouTube
 export { extractVideoId, detectSnsPlatform, getThumbnailUrl, isValidYoutubeUrl, isInstagramUrl, type SnsPlatform } from './youtube';
 
-// K-Content one-day routes (hardcoded, DB-schema modeled)
+// K-Content one-day routes (DB-schema modeled catalog)
 export {
   K_LOCATIONS,
   K_DOCENTS,
+  K_PERSONA_IMAGES,
   K_PERSONAS,
   getKContentPersonas,
   getKPersona,
@@ -72,6 +73,7 @@ export {
   type LocalizedText,
   type KLocation,
   type KDocent,
+  type KPersonaImage,
   type KPersona,
   type KUser,
   type KUserRoute,

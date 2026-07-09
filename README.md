@@ -115,7 +115,7 @@ YouTube URL
 **API 키 없이도 동작합니다:**
 - `GOOGLE_AI_API_KEY` 미설정 → 목 데이터로 자동 fallback
 - `YOUTUBE_DATA_API_KEY` 미설정 → 자막만으로 분석 (무료)
-- `KAKAO_MAP_REST_KEY` 미설정 → 하드코딩된 좌표 fallback
+- `KAKAO_MAP_REST_KEY` 미설정 → 앱 기본 좌표 fallback
 
 **연동 활성화 방법:**
 1. [Google AI Studio](https://aistudio.google.com/app/apikey)에서 무료 Gemini API 키 발급
@@ -461,7 +461,7 @@ k-vibe-tracker/
 │   │   ├── analysis.ts                # SNS 분석 로직
 │   │   ├── crowd.ts                   # 혼잡도 계산
 │   │   ├── facilities.ts              # 편의시설 타입/mock
-│   │   ├── k-content.ts                # K-콘텐츠 하루 루트 하드코딩 데이터(PERSONA/LOCATION/DOCENT)
+│   │   ├── k-content.ts                # K-콘텐츠 하루 루트 카탈로그(PERSONA/LOCATION/DOCENT)
 │   │   ├── routes.ts                  # 루트 템플릿/공유/상태
 │   │   ├── tourapi.ts                 # 한국관광공사 TourAPI
 │   │   └── youtube.ts                 # YouTube 로직

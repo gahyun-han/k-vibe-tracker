@@ -3,6 +3,7 @@ import {
   buildLocalRouteShareUrl,
   buildGoogleMapsDirectionsUrl,
   buildGoogleMapsPlaceUrl,
+  buildKContentRoutePlan,
   buildRouteMapUrl,
   buildRouteStopDetailUrl,
   calculateRouteLegs,
@@ -13,6 +14,8 @@ import {
   decodeRoutePlanFromShare,
   encodeRoutePlanForShare,
   generateMockRoutePlan,
+  getKContentPersonas,
+  getKLocation,
   parseRouteProgressState,
   ROUTE_THEME_OPTIONS,
   ROUTE_PROGRESS_STORAGE_KEY,
@@ -98,6 +101,44 @@ describe('route helpers', () => {
     expect(foodie.stops[0].startTime).toBe('11:30');
     expect(creator.stops.map((stop) => stop.tags).flat()).toContain('short-form');
     expect(history.stops.map((stop) => stop.tags).flat()).toContain('heritage');
+  });
+
+  it('builds K-content persona routes from the current route catalog', () => {
+    const personas = getKContentPersonas();
+    const plan = buildKContentRoutePlan({ personaId: 'BTS뷔', startTime: '10:00', locale: 'ko' });
+
+    if (!plan) throw new Error('Expected BTS뷔 route plan');
+
+    expect(personas.map((persona) => persona.id)).toEqual(['BTS뷔', '아이유', '제니', '장원영']);
+    expect(personas.every((persona) => Boolean(persona.profileImg))).toBe(true);
+    expect(plan.title).toBe('BTS뷔 하루 루트');
+    expect(plan.stops.map((stop) => stop.name)).toEqual([
+      '남산타워',
+      '경복궁',
+      '익선동 온천집',
+      '성수동 대림창고',
+      '뚝섬한강공원',
+    ]);
+    expect(plan.stops[0].startTime).toBe('10:00');
+    expect(plan.walkingMinutes).toBeGreaterThan(0);
+    expect(plan.shareText).toContain('남산타워 -> 경복궁');
+  });
+
+  it('keeps inactive K-content route entries out of generated plans', () => {
+    const plan = buildKContentRoutePlan({ personaId: '장원영', startTime: '09:30', locale: 'en' });
+
+    if (!plan) throw new Error('Expected Jang Wonyoung route plan');
+
+    expect(getKLocation('잠원한강공원')).toBeTruthy();
+    expect(plan.title).toBe('Jang Wonyoung One-Day Route');
+    expect(plan.stops.map((stop) => stop.name)).toEqual([
+      'Seoul Sky',
+      'Seokchon Lake',
+      'Seongsu Yeonbang',
+      'Sebitseom Banpo',
+    ]);
+    expect(plan.stops).toHaveLength(4);
+    expect(plan.stops.some((stop) => stop.name === 'Jamwon Hangang Park')).toBe(false);
   });
 
   it('builds free Google Maps walking links for route guidance', () => {
