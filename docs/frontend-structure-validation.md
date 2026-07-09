@@ -380,4 +380,4 @@ npm run dev
 
 **작성자**: AI Assistant  
 **최종 검증**: 2026-07-07  
-**관련 문서**: [backend-structure-validation.md](./backend-structure-validation.md)
+**관련 문서**: [architecture-verification.md](./architecture-verification.md) (프론트/백엔드 분리 검증 가이드)

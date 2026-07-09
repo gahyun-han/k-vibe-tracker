@@ -33,6 +33,7 @@
   | 파일 | 내용 |
   |------|------|
   | `README.md` | 프로젝트 개요 + 전체 디렉토리 구조 |
+  | `docs/architecture-verification.md` | 🏗️ **프론트/백엔드 분리 검증 가이드** — 4가지 규칙 + 직접 확인 명령 (구조 리뷰용) |
   | `HANDOFF.md` | 🤝 **인수인계 핵심 문서** — 아키텍처, 레이어 규칙, 환경변수, 주의점, 배포 흐름 |
   | `scripts/verify.txt` | 타입체크·배포·스모크 테스트 명령 모음 |
   | `AGENT-COLLABORATION-GUIDE.md` | 에이전트 협업 가이드 |
