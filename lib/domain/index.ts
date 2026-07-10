@@ -1,0 +1,123 @@
+/**
+ * Domain logic utilities - Business domain logic for features
+ */
+
+// Crowd
+export { toCrowdLevel, isCrowdLevel, CROWD_DOT_CLASS, CROWD_TEXT_CLASS, type CrowdLevel } from './crowd';
+
+// Docent
+export { 
+  buildDocentScriptSections,
+  joinDocentScript,
+  getDocentSectionIndexForChar,
+  shouldAutoPlayDocentAfterProximityCheck,
+  type DocentScriptSectionId,
+  type DocentScriptPlace,
+  type DocentScriptCopy,
+  type DocentScriptSection,
+  type DocentAutoPlayState
+} from './docent';
+
+// Facilities
+export { FACILITY_TYPES, buildFacilitiesCacheKey, getMockFacilities, isFacilityType, isFacilityFilter, normalizeTourApiFestivalFacilities, buildGoogleMapsFacilityUrl, type FacilityType, type FacilityFilter, type Facility } from './facilities';
+
+// Routes
+export { 
+  ROUTE_THEMES, 
+  CURRENT_ROUTE_STORAGE_KEY,
+  ROUTE_PROGRESS_STORAGE_KEY,
+  ROUTE_THEME_OPTIONS,
+  type RouteTheme,
+  type RouteDetailOption,
+  type RouteThemeOption,
+  type RouteStop,
+  type RoutePlan,
+  type RouteLeg,
+  type RouteProgressState,
+  type LocalizedRouteOptionCopy,
+  type LocalizedRoutePlanCopy,
+  isRouteTheme,
+  getRouteDetails,
+  isRouteDetailForTheme,
+  generateMockRoutePlan,
+  calculateWalkingMinutes,
+  calculateRouteLegs,
+  createLocalRoutePlan,
+  encodeRoutePlanForShare,
+  decodeRoutePlanFromShare,
+  buildLocalRouteShareUrl,
+  createRouteProgressState,
+  parseRouteProgressState,
+  buildGoogleMapsDirectionsUrl,
+  buildGoogleMapsPlaceUrl,
+  buildRouteMapUrl,
+  buildRouteStopDetailUrl,
+  formatDuration,
+  parseStartTime
+} from './routes';
+
+// YouTube
+export { extractVideoId, detectSnsPlatform, getThumbnailUrl, isValidYoutubeUrl, isInstagramUrl, type SnsPlatform } from './youtube';
+
+// K-Content one-day routes (DB-schema modeled catalog)
+export {
+  K_LOCATIONS,
+  K_DOCENTS,
+  K_PERSONA_IMAGES,
+  K_PERSONAS,
+  getKContentPersonas,
+  getKPersona,
+  getKLocation,
+  getKDocent,
+  buildKContentRoutePlan,
+  type LocalizedText,
+  type KLocation,
+  type KDocent,
+  type KPersonaImage,
+  type KPersona,
+  type KUser,
+  type KUserRoute,
+} from './k-content';
+
+// Analysis
+export { 
+  buildAnalysisLocalCacheKey,
+  buildMockAnalysis,
+  isAnalysisLocale,
+  shouldCallAiWorker,
+  type AnalysisPlace,
+  type AnalysisResult,
+  type AnalysisLocale
+} from './analysis';
+
+// Tour API
+export { 
+  type PlaceCategory,
+  type TourApiLocale,
+  type NormalizedPlace,
+  type NormalizedPlaceDetail,
+  type TourApiItem,
+  type TourApiFestivalItem,
+  type TourApiCommonItem,
+  type TourApiIntroItem,
+  type TourApiImageItem,
+  PLACE_CATEGORIES,
+  TOUR_API_LOCALES,
+  isPlaceCategory,
+  isTourApiLocale,
+  getTourApiServiceForLocale,
+  getContentTypeIdForCategory,
+  buildPlacesCacheKey,
+  buildPlaceDetailCacheKey,
+  buildTourApiLocationUrl,
+  buildTourApiDetailCommonUrl,
+  buildTourApiDetailIntroUrl,
+  buildTourApiDetailImageUrl,
+  buildTourApiFestivalUrl,
+  normalizeTourApiItems,
+  normalizeTourApiItem,
+  toTourApiItemArray,
+  toTourApiArray,
+  cleanTourApiText,
+  normalizeTourApiPlaceDetail
+} from './tourapi';

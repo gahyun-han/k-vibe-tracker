@@ -1,76 +1,78 @@
 {
   "landing": {
-    "subtitle": "地元の人のように韓国を旅する\nKコンテンツ発 旅行キュレーション",
-    "trending_now": "今韓国でホット",
-    "start_btn": "K-Vibeを探す",
+    "subtitle": "Kコンテンツを活用した旅行キュレーションで、韓国をローカルのように発見しましょう",
+    "trending_now": "韓国でトレンド",
+    "start_btn": "K-Vibeを探索",
     "login_btn": "ログイン",
-    "guest_notice": "ログインなしでも主要機能が利用できます",
-    "feature_map": "ライブマップ",
+    "guest_notice": "主要機能はログインなしで利用できます",
+    "feature_map": "ライブ地図",
     "feature_analyze": "SNS分析",
     "feature_persona": "マイルート",
-    "feature_docent": "AIガイド",
+    "feature_docent": "AIドーセント",
     "feature_radar": "レーダー"
   },
   "map": {
-    "title": "K-Vibeマップ",
+    "title": "K-Vibe地図",
     "filter_all": "すべて",
     "filter_cafe": "カフェ",
-    "filter_photo": "フォト",
-    "filter_fun": "楽しみ",
+    "filter_photo": "写真",
+    "filter_fun": "遊び",
     "filter_culture": "文化",
-    "trending_spots": "トレンドスポット"
+    "filter_food": "グルメ",
+    "filter_stay": "宿泊",
+    "trending_spots": "人気スポット"
   },
   "analyze": {
     "title": "SNS分析",
-    "guide_title": "Kコンテンツからスポットを探す",
-    "guide_desc": "YouTube旅行ブログやK-pop MVのURLを貼り付けてください。AIが場所を抽出してマップに表示します。",
+    "guide_title": "Kコンテンツのスポットを探す",
+    "guide_desc": "YouTube旅行VlogやK-pop MVのURLを貼り付けると、候補スポットを抽出して地図フローにつなげます。",
     "analyze_btn": "分析する",
     "analyzing": "分析中...",
-    "ai_warmup": "AIが準備中... (初回起動は最大60秒かかる場合があります ☕)",
-    "error_invalid_url": "有効なYouTube URLを入力してください",
-    "result_title": "場所が見つかりました！",
+    "ai_warmup": "AI分析はワーカーとキーが承認された場合のみ有効です。",
+    "error_invalid_url": "有効なYouTube URLを入力してください。",
+    "result_title": "スポットを検出",
     "detected_place": "検出された場所",
     "vibe_tags": "バイブタグ",
-    "show_on_map": "マップで表示",
-    "example_label": "例を試してみる"
+    "show_on_map": "地図で見る",
+    "example_label": "例を試す"
   },
   "persona": {
     "title": "マイルート",
-    "step1_title": "K-スターを選んで",
-    "step1_desc": "ルートのインスピレーションになるKコンテンツペルソナを選んでください",
+    "step1_title": "どのKスターを思い浮かべますか？",
+    "step1_desc": "ルートに着想を与えるKコンテンツのペルソナを選びましょう。",
     "step2_title": "今日の雰囲気は？",
-    "step2_desc": "旅行スタイルに合ったムードを選んでください（複数選択可）",
+    "step2_desc": "旅行スタイルに合うムードを選びましょう。",
     "step3_title": "何をしたいですか？",
-    "step3_desc": "K-Vibeな1日のアクティビティを選んでください",
+    "step3_desc": "K-Vibeの一日に合うアクティビティを選びましょう。",
     "next_btn": "次へ",
-    "generate_btn": "ルートを生成"
+    "generate_btn": "マイルートを作成"
   },
   "route": {
     "title": "マイルート",
     "empty_title": "まだルートがありません",
-    "empty_desc": "あなたの気分に合ったK-Vibeルートを作成しましょう",
-    "create_btn": "ルートを作成",
-    "start_nav": "ナビを開始"
+    "empty_desc": "ムードに合わせたK-Vibeルートを作成しましょう。",
+    "create_btn": "ルート作成",
+    "start_nav": "ナビ開始"
   },
   "radar": {
     "title": "施設レーダー",
-    "guide_title": "近くの施設を探す",
-    "guide_desc": "現在地周辺のトイレ、薬局、便利な施設を韓国語なしで簡単に見つけられます",
+    "guide_title": "周辺施設を探す",
+    "guide_desc": "トイレ、薬局、便利な施設を現在地周辺で探します。",
     "filter_all": "すべて",
-    "navigate_btn": "案内する"
+    "navigate_btn": "ナビ"
   },
   "profile": {
     "title": "プロフィール",
-    "login_required_title": "ログインして旅を保存",
-    "login_required_desc": "アカウントを作成するとルート保存、共有、履歴確認ができます",
+    "login_required_title": "ログインして旅行を保存",
+    "login_required_desc": "アカウントを作成すると、ルート保存、旅程共有、履歴確認ができます。",
     "login_btn": "Googleでログイン",
-    "guest_features": "マップ・分析・ルートはログインなしで利用可能",
-    "saved_routes": "保存したルート",
-    "no_routes": "まだ保存したルートはありません",
-    "create_route_hint": "ルートを生成してここに保存しましょう",
-    "language": "言語設定",
-    "notifications": "通知設定",
-    "offline_mode": "オフラインマップ",
+    "guest_features": "地図、分析、ルートはログインなしで使えます",
+    "saved_routes": "保存済みルート",
+    "no_routes": "保存されたルートはまだありません",
+    "create_route_hint": "ルートを作成してここに保存しましょう",
+    "language": "言語",
+    "notifications": "通知",
+    "offline_mode": "オフライン地図",
     "logout": "ログアウト"
   }
 }

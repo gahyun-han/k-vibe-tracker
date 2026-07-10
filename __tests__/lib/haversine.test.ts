@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { haversineKm, walkingMinutes, totalRouteMinutes } from '@/lib/haversine';
+import { haversineKm, walkingMinutes, totalRouteMinutes } from '@/lib/features';
 
 describe('haversineKm', () => {
   it('같은 좌표는 0km', () => {

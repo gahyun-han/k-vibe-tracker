@@ -1,50 +1,75 @@
 'use client';
 
+import {
+  Building2,
+  Camera,
+  Coffee,
+  Landmark,
+  Map,
+  ShoppingBag,
+  Utensils,
+  type LucideIcon,
+} from 'lucide-react';
+
 export type Category = 'all' | 'cafe' | 'photo' | 'fun' | 'culture' | 'food' | 'stay';
 
 interface CategoryFilterProps {
   selected: Category[];
   onChange: (cats: Category[]) => void;
+  labels?: Readonly<Partial<Record<Category, string>>>;
 }
 
-const CATEGORIES: { id: Category; label: string; emoji: string }[] = [
-  { id: 'all',     label: '전체',    emoji: '🗺️' },
-  { id: 'cafe',    label: '카페',    emoji: '☕' },
-  { id: 'photo',   label: '포토스팟', emoji: '📸' },
-  { id: 'fun',     label: '오락',    emoji: '🎮' },
-  { id: 'culture', label: '문화',    emoji: '🏛️' },
-  { id: 'food',    label: '맛집',    emoji: '🍜' },
-  { id: 'stay',    label: '숙소',    emoji: '🏨' },
-];
+const CATEGORIES = [
+  { id: 'all', label: 'All', icon: Map },
+  { id: 'cafe', label: 'Cafe', icon: Coffee },
+  { id: 'photo', label: 'Photo', icon: Camera },
+  { id: 'fun', label: 'Fun', icon: ShoppingBag },
+  { id: 'culture', label: 'Culture', icon: Landmark },
+  { id: 'food', label: 'Food', icon: Utensils },
+  { id: 'stay', label: 'Stay', icon: Building2 },
+] satisfies { id: Category; label: string; icon: LucideIcon }[];
 
-export function CategoryFilter({ selected, onChange }: CategoryFilterProps) {
+const CATEGORY_ICONS = Object.fromEntries(
+  CATEGORIES.map(({ id, icon }) => [id, icon]),
+) as Record<Category, LucideIcon>;
+
+export function getCategoryIcon(category: string): LucideIcon {
+  return CATEGORY_ICONS[category as Category] ?? Map;
+}
+
+export function CategoryFilter({ selected, onChange, labels }: CategoryFilterProps) {
   function toggle(id: Category) {
     if (id === 'all') {
       onChange(['all']);
       return;
     }
+
     const next = selected.includes(id)
-      ? selected.filter((c) => c !== id)
-      : [...selected.filter((c) => c !== 'all'), id];
+      ? selected.filter((category) => category !== id)
+      : [...selected.filter((category) => category !== 'all'), id];
     onChange(next.length === 0 ? ['all'] : next);
   }
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-      {CATEGORIES.map(({ id, label, emoji }) => {
+      {CATEGORIES.map(({ id, label, icon: Icon }) => {
         const active = selected.includes(id) || (id === 'all' && selected.includes('all'));
+        const displayLabel = labels?.[id] ?? label;
         return (
           <button
             key={id}
+            type="button"
+            data-testid={`category-filter-${id}`}
+            aria-pressed={active}
             onClick={() => toggle(id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all
-              ${active
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium transition-all ${
+              active
                 ? 'bg-[#FF3A5C] text-white shadow-lg shadow-[#FF3A5C]/30'
                 : 'bg-white/10 text-white/70 hover:bg-white/20'
-              }`}
+            }`}
           >
-            <span>{emoji}</span>
-            <span>{label}</span>
+            <Icon size={14} />
+            <span>{displayLabel}</span>
           </button>
         );
       })}

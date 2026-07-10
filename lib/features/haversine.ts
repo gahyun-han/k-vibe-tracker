@@ -1,4 +1,9 @@
 /**
+ * Coordinate pair type
+ */
+type Coordinate = { lat: number; lng: number };
+
+/**
  * Haversine 공식으로 두 좌표 간 직선 거리 계산 (km)
  */
 export function haversineKm(
@@ -12,6 +17,13 @@ export function haversineKm(
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+/**
+ * 두 좌표 간 거리 계산 (km) - coordinate pair 형식 지원
+ */
+export function calculateDistance(coord1: Coordinate, coord2: Coordinate): number {
+  return haversineKm(coord1.lat, coord1.lng, coord2.lat, coord2.lng);
 }
 
 function toRad(deg: number) {
@@ -33,9 +45,12 @@ export function totalRouteMinutes(
 ): number {
   let total = 0;
   for (let i = 0; i < waypoints.length - 1; i++) {
+    const from = waypoints[i];
+    const to = waypoints[i + 1];
+    if (!from || !to) continue;
     const dist = haversineKm(
-      waypoints[i].lat, waypoints[i].lng,
-      waypoints[i + 1].lat, waypoints[i + 1].lng,
+      from.lat, from.lng,
+      to.lat, to.lng,
     );
     total += walkingMinutes(dist);
   }

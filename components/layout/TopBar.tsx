@@ -1,28 +1,41 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { ArrowLeft } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
 import LoginModal from '@/components/auth/LoginModal';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
-import type { User } from '@supabase/supabase-js';
+import { ViewModeToggle } from '@/components/common/ViewModeToggle';
+import { getUiCopy, normalizeUiLocale } from '@/lib/i18n';
+import { createClient } from '@/lib/supabase/client';
+import type { ViewMode } from '@/lib/ui-state';
 
 interface TopBarProps {
   title?: string;
   showBack?: boolean;
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
 }
 
-export default function TopBar({ title, showBack }: TopBarProps) {
+export default function TopBar({ title, showBack, viewMode, onViewModeChange }: TopBarProps) {
   const router = useRouter();
   const params = useParams();
-  const locale = params.locale as string;
+  const locale = normalizeUiLocale(params['locale'] as string);
+  const copy = getUiCopy(locale);
   const [user, setUser] = useState<User | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const fullName = typeof user?.user_metadata?.['full_name'] === 'string' ? user.user_metadata['full_name'] : '';
+  const avatarInitial = (fullName.charAt(0) || user?.email?.charAt(0) || 'U').toUpperCase();
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) return;
+
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
     return () => subscription.unsubscribe();
@@ -30,50 +43,61 @@ export default function TopBar({ title, showBack }: TopBarProps) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 max-w-md mx-auto h-14 bg-[#1A1A2E]/95 backdrop-blur-sm border-b border-[#2E2E4A] flex items-center px-4 z-30 gap-2">
+      <header className="sticky top-0 z-30 flex h-14 w-full shrink-0 items-center gap-2 border-b border-[#2E2E4A] bg-[#1A1A2E]/95 px-4 backdrop-blur-sm">
         {showBack ? (
-          <button onClick={() => router.back()} className="w-8 h-8 flex items-center justify-center text-[#8B8BA8] hover:text-white">
-            ←
+          <button
+            onClick={() => router.back()}
+            aria-label={copy.common.goBack}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#8B8BA8] transition-colors hover:bg-white/10 hover:text-white"
+          >
+            <ArrowLeft size={18} />
           </button>
         ) : (
-          <span className="text-[#FF3A5C] font-black text-lg">K</span>
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}`)}
+            aria-label={copy.common.goHome}
+            title={copy.common.goHome}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-lg font-black text-[#FF3A5C] transition-colors hover:bg-white/10 hover:text-[#FF8BA0]"
+          >
+            K
+          </button>
         )}
 
-        <h1 className="flex-1 text-white font-bold text-sm truncate">
-          {title ?? 'K-Vibe Tracker'}
+        <h1 className="min-w-0 flex-1 truncate text-sm font-bold text-white">
+          {title ?? copy.common.appName}
         </h1>
 
-        {/* 언어 전환 드롭다운 */}
         <LanguageSwitcher />
 
-        {/* 유저 아바타 or 로그인 버튼 */}
+        <ViewModeToggle locale={locale} mode={viewMode} onChange={onViewModeChange} compact />
+
         {user ? (
           <button
             onClick={() => router.push(`/${locale}/profile`)}
-            className="w-8 h-8 rounded-full overflow-hidden border border-[#FF3A5C]/50 shrink-0"
+            aria-label={copy.common.openProfile}
+            className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[#FF3A5C]/50"
           >
-            {user.user_metadata?.avatar_url ? (
+            {user.user_metadata?.['avatar_url'] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.user_metadata.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+              <img src={user.user_metadata['avatar_url']} alt={copy.common.avatarAlt} className="h-full w-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-[#FF3A5C]/20 flex items-center justify-center text-xs text-white font-bold">
-                {(user.user_metadata?.full_name?.[0] ?? user.email?.[0] ?? 'U').toUpperCase()}
+              <div className="flex h-full w-full items-center justify-center bg-[#FF3A5C]/20 text-xs font-bold text-white">
+                {avatarInitial}
               </div>
             )}
           </button>
         ) : (
           <button
             onClick={() => setShowLogin(true)}
-            className="text-xs px-3 py-1.5 rounded-full border border-[#2E2E4A] text-[#8B8BA8] hover:border-[#FF3A5C] hover:text-white transition-colors shrink-0"
+            className="shrink-0 rounded-full border border-[#2E2E4A] px-3 py-1.5 text-xs text-[#8B8BA8] transition-colors hover:border-[#FF3A5C] hover:text-white"
           >
-            Sign in
+            {copy.common.signIn}
           </button>
         )}
       </header>
 
-      {showLogin && (
-        <LoginModal onClose={() => setShowLogin(false)} redirectTo={`/${locale}/map`} />
-      )}
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} redirectTo={`/${locale}/map`} />}
     </>
   );
 }

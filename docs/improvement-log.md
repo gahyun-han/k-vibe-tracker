@@ -1,0 +1,155 @@
+# Improvement Log
+
+Last updated: 2026-06-17
+
+This log tracks concrete product and implementation improvements made while aligning the MVP with the root HTML specifications and the Korea Tourism Organization OpenAPI manuals.
+
+## 2026-06-17
+
+- Fixed the desktop Map screen after Chrome QA. PC mode now uses a left map/right control-panel layout, the view-mode preference synchronizes across same-tab hook instances, place detail sheets expose dialog semantics, and live Kakao mode now renders place pins as Kakao `CustomOverlay` instances with resize-triggered `relayout()` so pins stay attached to the moving map layer instead of floating over the viewport.
+- Added a consolidated QA and launch checklist with the latest no-cost Chrome QA results, deferred live-provider checks, user action items, and current API/service cost estimates for TourAPI, Kakao, Supabase, Upstash, YouTube, OpenAI, Claude, and Instagram/Meta.
+- Added an explicit Mobile/PC view switcher for the home entry and shared app shell. Desktop-width users default to PC mode, the choice is saved locally, app screens switch between bottom-tab mobile chrome and left-rail PC chrome, and the home feed uses a wider PC grid while mobile mode keeps the compact phone layout.
+- Improved the production PWA service worker's offline app-shell cache. It now precaches the main app screens for Korean, English, Japanese, and Simplified Chinese, uses a locale-aware navigation fallback instead of always falling back to `/ko`, and has focused service-worker tests for the cache manifest and offline fallback path.
+- Hardened localized Profile dashboard copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts guest identity labels, saved-place empty states, map/detail CTAs, saved-route empty states, route progress labels, persona labels, and saved-place toggles used by the local guest dashboard.
+- Hardened localized Persona route-generator copy coverage for Korean, English, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts high-visibility generator labels, route-save feedback, route title templates, and representative theme/detail labels used by the no-cost local route preview.
+- Repaired localized Analyze screen copy in Korean, Japanese, and Simplified Chinese, including SNS platform badges, input/validation labels, loading steps, result actions, source badges, estimated-location/confidence labels, local-mode copy, and route-save feedback, with exact UI-copy assertions.
+- Hardened localized Place Detail copy coverage for Korean, Japanese, and Simplified Chinese. The UI-copy test now exactly asserts route/save/share/docent/detail/image/social-proof/crowd labels so the map detail sheet cannot regress into placeholder or mojibake copy unnoticed.
+- Repaired localized Route and Docent core copy in Korean, Japanese, and Simplified Chinese, including route action buttons, travel segment labels, current-distance status, sample stops, local voice controls, captions, and docent fallback/script text, with exact UI-copy assertions.
+- Repaired localized Map and Radar core copy in Korean, Japanese, and Simplified Chinese, including search/location/result labels, map recovery actions, facility filters, facility type names, and empty-state actions, with exact UI-copy assertions.
+- Re-tested the Kakao domain setup in Chrome after the user's latest confirmation. The direct SDK referer probe returned `200 text/javascript` with no auth/domain patterns, and `/ko/map` reached live Kakao mode with 26 rendered tile images, 16 visible app pin buttons, and no console warnings/errors.
+- Repaired localized Home/Landing entry copy in Korean, Japanese, and Simplified Chinese, including language prompts, start/trending labels, home feed story filters, nav labels, and category labels, with exact UI-copy assertions.
+- Repaired localized common app chrome and Login modal copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for sign-in, back/close labels, login titles, guest entry, and no-login availability copy.
+- Repaired localized Profile settings and Docent arrival-check copy in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions for high-visibility settings labels and proximity actions.
+- Repaired localized common status copy for last-known location, data-source labels, offline mode, and the PWA install prompt in Korean, Japanese, and Simplified Chinese, with exact UI-copy assertions.
+- Repaired localized language names and Tutorial guide copy for Korean, Japanese, and Simplified Chinese. The UI copy test now asserts exact language labels and tutorial step titles so these high-visibility onboarding strings do not regress into mojibake.
+- Improved Tutorial guide semantics. The feature guide trigger now announces that it opens a dialog, the six feature shortcuts render as an ordered list, and each shortcut action has a feature-specific accessible label.
+- Added root FilterChips selected-state accessibility. Home story/feed chips and Map category chips now expose `aria-pressed` for active selections, and Map filter buttons explicitly use button semantics.
+- Added S12-style Profile sign-in prompt coverage. When Supabase account sync is configured but the traveler is still in guest mode, Profile now shows a localized login prompt banner while keeping the no-Supabase local guest warning for development.
+- Added root accessibility coverage for main map pins. The clickable Kakao/local map pin buttons now expose accessible labels containing the place name, localized category, and distance, with helper test coverage.
+- Tightened Tutorial keyboard accessibility. The feature guide dialog now links its subtitle/footer as dialog descriptions, marks the backdrop as decorative, and traps Tab/Shift+Tab focus inside the sheet until the guide is closed.
+- Preserved route/map query context during shared language switching. The top-bar language switcher now swaps only the locale prefix while keeping query parameters such as `detail=1`, map coordinates, or local `route=` share payloads, with helper test coverage.
+- Repaired Analyze localized mock result copy and added root S7 estimated-location labels. Korean, Japanese, and Simplified Chinese mock titles, places, and reasons now render as readable locale text, and low-confidence or coordinate-missing result cards show a localized estimated-location badge.
+- Added root S2/S3-style central Analyze CTA treatment to the mobile bottom navigation. The Analyze tab now stands out as the primary SNS spot action while the desktop left rail keeps the existing work-focused navigation.
+- Added root S6/S7 Analyze cache/error toast feedback. Cache hits now announce the loaded previous result and failed analysis requests raise the localized error toast, while keeping the existing local cache, inline retry state, and no-provider fallback.
+- Re-verified the user's Kakao domain setup in Chrome. The direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no domain/auth patterns, and `/ko/map` rendered in live mode with 26 Kakao tiles, 16 visible app pins, and no console warnings/errors.
+- Added root PWA/offline status coverage to the Home entry. The landing/home screen now mounts the shared localized offline banner and install prompt, matching the app screens without adding provider calls.
+- Added root UI-style localized route error recovery. The `/[locale]` segment now has a localized error screen with retry action, covering Home and app screens even outside page-specific error boundaries.
+- Added root S11 Radar refresh-failure toast feedback. When `/api/facilities` refresh fails, Radar now warns that cached facilities are being shown or raises a localized error toast if no cache is available.
+- Added root S3 Map refresh-failure toast feedback. When `/api/places` refresh fails, Map now warns that cached places are being shown or raises a localized error toast if no cache is available.
+- Added root S3-style Map related-search recovery. When a typed search filters all map places out, the empty state now offers localized keyword chips that swap the query locally without adding API calls.
+- Added root S2/S4-style Home feed save feedback. Tapping a feed card heart now raises the same localized saved/removed toast used by place details while keeping the existing localStorage-only saved-place contract.
+- Added root S9 Route shared-link recovery. Invalid or stale `route=` payloads now show a localized warning toast and fall back to the local/starter route instead of silently replacing the user's context.
+- Added root S3-style Map empty-result recovery. When search or category filters remove all nearby places, the bottom sheet now shows localized guidance plus Reset filters and Refresh location actions.
+- Added root S3/S11-style location fallback feedback. Map and Radar now show localized warning toasts when browser geolocation is unavailable, while continuing to use the last-known or Seoul fallback position without adding external providers.
+- Added root S11-style Radar facility-card quick map actions. Facility cards now keep the expandable details area while exposing a localized header map button that opens the existing no-key Google Maps handoff after a user click.
+- Added a root S12-style Profile saved-place empty-state CTA. When no local saved places exist, Profile now offers a localized Open in Map action so users can immediately start saving places.
+- Verified the latest Kakao Maps domain setup in Chrome and fixed visible Map pins. `/ko/map` now reaches Kakao live-map mode with rendered tiles and no console warnings/errors, while the app renders clickable React place pins over the map instead of relying on Kakao `CustomOverlay` DOM insertion.
+- Added root S2-style Home feed empty-state recovery. Empty filtered feeds now show localized guidance plus Show all and Explore map actions, letting users recover without another provider integration.
+- Improved the root S9 Route header and move controls. The route screen now shows the generated plan summary under the title, and the icon-only move-up/move-down controls use localized accessible labels and tooltips for Korean, English, Japanese, and Chinese.
+- Added root S7/S8 toast feedback for Analyze route drafting and Persona route generation. Analyze route saves now report success/failure through the shared localized toast system, while Persona generation, save-for-editing, share/copy, and feed-personalize actions reuse the same feedback path without adding any external provider calls.
+- Re-ran Kakao Maps domain verification after the user's domain-setting confirmation. The direct SDK referer probe returned `200 text/javascript` without domain/auth errors, and Chrome rendered `/ko/map` in live map mode with 26 Kakao tiles and no console warnings/errors.
+- Added root S4-style Place detail toast feedback. Save, unsave, add-to-route, share, copy, and share-failure outcomes now use the shared accessible toast system with localized labels, while keeping the existing local-first storage and share flows.
+- Activated root UI-style Route toast feedback. Route reorder, remove, completion, sharing/copying, directions, and guidance-blocked outcomes now use the shared accessible toast system with localized dismiss labels while keeping the inline status text.
+- Added a root S1-style visible language grid to the Home entry. The first screen now shows localized language names in a 2x2 selector with selected-state semantics instead of relying on EN/KO/JA/ZH codes alone.
+- Improved Tutorial and language-switcher accessibility. The guide trigger now exposes open state, focus moves into the sheet and returns on close, and language controls expose localized labels plus selected/open state for assistive tech.
+- Improved the localized Tutorial sheet viewport behavior. The guide dialog is now bounded to the visible mobile viewport and scrolls internally, so all six localized shortcut steps remain reachable on small screens.
+- Added a root S3-style Map nearby-spots header. The bottom sheet now shows a localized "Nearby spots" label plus the current filtered result count, derived from the already-loaded local/cached place list without another provider call.
+- Added a root S12-style Profile saved-place preview. The saved grid now defaults to four visual tiles and exposes localized See all/Show less controls for longer local saved-place lists without calling Supabase or another provider.
+- Added root S10-style Docent proximity autoplay. After a user-clicked 100m arrival check confirms the stop is nearby, the page now starts local browser `speechSynthesis` when supported and idle, while keeping background GPS polling and provider TTS approval-gated.
+- Re-tested Kakao Maps after the user's follow-up domain setup confirmation. A direct SDK referer probe returned `200 text/javascript` with `kakao.maps` and no auth/domain error patterns, and Chrome loaded `/ko/map` in live map mode with 26 Kakao tile images and no console warnings or errors.
+- Expanded root S11 Radar coverage with no-cost local medical and transit facility types. The new filters, mock results, map pins, card icons, four-locale labels, and API/helper tests complete the wireframe's restroom/ATM/medical/transit immediate-need set without live provider calls.
+- Added root S9-style local transit hints to Route timeline segments. Short legs remain walking, while longer legs show localized transit timing from local distance thresholds without calling Kakao Mobility, Google Directions, or another route provider.
+- Added root S11 ATM support to Radar as a no-cost local facility type. The filter chip, map preview pin, facility card icon, 4-locale labels, and helper tests now cover ATM without calling a live banking/facility provider.
+- Added root S2-style crowd badges to Home feed cards. The existing `/api/places` `crowd_level` signal is mapped locally into localized Quiet/Normal/Busy labels, and the crowd context is preserved through map-detail and saved-place handoffs without another provider call.
+- Added no-cost recovery actions to Analyze and Radar empty states from the root UI design guidance. Analyze empty results can start a sample YouTube analysis, and Radar empty results can expand to the next radius step without adding a new provider.
+- Re-tested Kakao Maps after the latest Kakao domain setup. Chrome loaded `/ko/map` on `http://localhost:3000` in live map mode, rendered Kakao tiles from `mts.daumcdn.net`, and reported no console warnings or errors.
+- Added S7 Analyze confidence bars to result cards. The UI now turns each local/mock confidence score into an accessible progress bar while keeping the existing map and route handoffs.
+- Added 1-hour local API caching and retry/fallback handling to the S2 Home feed. Successful `/api/places` feed responses are cached locally, cached cards can render when live refresh fails, and the error state now has a localized retry action.
+- Added a no-cost S9 Route current-distance panel. It checks distance to the next incomplete stop only after a user taps the button, using browser geolocation and local Haversine math without automatic GPS polling, Kakao Mobility, or Directions API calls.
+- Made the S12 Profile My Routes card itself tappable so saved local routes open `/[locale]/route` from the card body as well as the Continue/Edit buttons, without Supabase or a backend route lookup.
+- Added a no-cost S10 Docent script progress bar and current-section status. It uses local script sections and browser speech state without OpenAI TTS or provider audio.
+- Added a no-cost Radar map preview with radius rings, current-position marker, and typed facility pins, using the existing local/mock facility coordinates.
+- Connected Radar map pins and expanded facility cards to user-clicked Google Maps search URLs. No Google Maps API key, Directions API, or Kakao Mobility call is used.
+- Added facility helper tests for cache keys, radius filtering/sorting, and no-key Google Maps facility handoff URLs.
+- Added a no-cost Docent arrival check that reads route/map `lat` and `lng` query values, asks for browser geolocation only after the user taps the check button, and shows whether the stop is within the root-spec 100m docent radius.
+- Localized the Profile settings section for Korean, English, Japanese, and Chinese instead of leaving the settings rows as fixed English-only text.
+- Added a production-only PWA runtime that updates the document `lang` attribute from the active locale and registers a static service worker for app icons, manifest, static chunks, and a basic navigation fallback.
+- Added a shared 30-minute last-known-location cache in `localStorage`, then connected Map and Radar so they can show the previous GPS position immediately while fresh geolocation is being requested or when GPS fails.
+- Added a shared 1-hour local API response cache for Home feed places, Map places, and Radar facilities. Successful responses are stored in `localStorage`, cached data renders immediately on revisit, and fetch failures fall back to cached content when available.
+- Localized Map and Radar data-source labels for TourAPI, mock, and cache states.
+- Added a localized offline-mode banner in the shared app layout. It listens to browser `online`/`offline` events and tells users that cached places, facilities, and app screens are being shown when available.
+- Persisted the active locale in `localStorage` and the `NEXT_LOCALE` cookie from the language switcher so language choice survives app reloads and future server-side locale reads.
+- Replaced corrupted toast symbols with lucide icons, accessible alert/status roles, and an icon close button.
+- Re-verified Kakao Maps after localhost domain registration in Chrome and fixed the Map screen height so the live Kakao renderer receives a nonzero viewport-sized container.
+- Localized Map category tags, live Kakao overlay labels, and fallback map pin labels so non-English routes no longer leak English category text such as `Food` or `Culture`.
+- Clarified the Chinese language selector label as Simplified Chinese and added test coverage for non-empty, non-placeholder language names.
+- Added a localized no-cost PWA install prompt that listens for the browser `beforeinstallprompt` event, lets users add K-Vibe to the home screen, and remembers dismissals locally.
+- Replaced Radar text abbreviations such as `WC`, `Rx`, and `Pop` with shared lucide facility icons across filters, map pins, and facility cards, and normalized the Radar status separator for more reliable rendering.
+- Added a responsive app shell that keeps the bottom tab bar on mobile and switches to a left navigation rail on desktop, matching the root UI design direction without changing page-level workflow logic.
+- Made the home language buttons persist the selected locale to `localStorage` and the `NEXT_LOCALE` cookie, matching the shared language switcher behavior.
+- Connected the Radar popup facility path to TourAPI `searchFestival2` when `TOUR_API_KEY` is configured. Nearby event/festival results are normalized as `popup` facilities, locale-aware cache keys now separate Radar responses, and the endpoint still falls back to local mock facilities when TourAPI is unavailable or returns no nearby events.
+- Improved the Route editor for the responsive app shell by replacing the viewport-fixed CTA bar with an in-content sticky action bar and adding icon move controls so stops can be reordered without drag-and-drop.
+- Added no-cost local Route sharing. The editor now copies or shares a same-origin URL with an encoded `route` payload, and opening that URL restores the route into the local editor without Supabase, Kakao Mobility, a backend public-link table, or any paid API.
+- Added no-cost Route progress tracking. Travelers can mark stops complete in the local editor, completed stops get a clear check state, progress is stored locally per route, and Start Guidance opens the next incomplete stop instead of always restarting at stop one.
+- Upgraded the guest Profile route card to match the root My Routes direction: it now shows the current local route's progress percentage, completed stop count, next stop, duration, Continue/Edit actions, and a create-first-route CTA when no route exists.
+- Upgraded the no-cost Docent captions into structured script sections for intro, details, tags, and next step. Browser speech boundary events now highlight and scroll the active section while playback runs, keeping the S10 script guidance useful without paid TTS.
+- Localized the no-cost Analyze mock results. `/[locale]/analyze` now sends the active locale to `/api/analyze`, and the deterministic fallback returns translated titles, place names, and reasons for Korean, English, Japanese, and Chinese.
+- Upgraded the Analyze loading and empty states for the root S6/S7 flow. Loading now shows a localized 4-step progress panel with an expected wait and cold-start hint, and zero-place worker responses now get a localized empty-results state.
+- Added no-cost local caching for Analyze results. Same-video, same-locale analysis responses are stored in the shared 1-hour local API cache, cache hits skip the network call, and the result source label changes to a localized previous-result state.
+- Added no-cost SNS platform detection to Analyze. YouTube links continue through the local/mock analysis flow, while Instagram links are detected, labeled, and held behind an approval-gated notice instead of being treated as invalid URLs or calling a provider.
+- Added a root S2-style story topic row to the Home feed. K-Pop, Street Food, Photo Spots, Nature, and Shopping stories filter the existing local/TourAPI feed without making extra provider calls.
+- Refined the Profile saved-place section into a root S12-style square visual grid with image-backed tiles, local gradient fallbacks, category chips, and one-tap map handoff.
+- Enhanced the S4 place detail sheet with a compact TourAPI image gallery, letting users switch the hero image from already-fetched `detailImage2` results without adding any external provider call.
+- Added the root S3 SNS analyzer FAB to the Map screen, giving users an immediate icon-only shortcut from map exploration to `/[locale]/analyze` while keeping the existing current-location FAB.
+- Upgraded S5 Analyze examples into platform-aware cards: YouTube examples now fill the input and immediately enter the local/mock analysis flow, while the Instagram example stays provider-gated with no live extraction call.
+- Connected S7 Analyze result cards to the S4-style place detail flow by sending `detail=1` map handoff links that focus the analyzed coordinates and open the local detail sheet with the analysis reason.
+- Upgraded Persona route generation to a localized 3-step S8 flow: choose route theme, choose mood/detail, then confirm selected inputs before generating the no-cost local preview route.
+- Expanded Persona route generation to cover the root S8 Foodie Explorer, Content Creator, and History Buff directions with new no-cost local route templates and localized detail copy for Korean, English, Japanese, and Chinese.
+- Connected S9 Route stop cards to the S4-style place detail flow. Tapping a stop body now opens the in-app map with `detail=1`, preserves route stop category/address/tags/description context, and leaves explicit Google Maps buttons as separate user-clicked external handoffs.
+- Connected S2 Home feed cards to the S4-style place detail flow. Feed image/text taps and the map CTA now open the in-app map with `detail=1`, preserving category, address, tags, image URL, and TourAPI content identifiers for detail enrichment.
+- Connected S12 Profile saved-place tiles to the S4-style place detail flow. Saved grid taps now open the in-app map with `detail=1`, preserving saved category, address, tags, image, overview, and TourAPI content identifiers when available.
+- Added no-cost S4 place detail sharing. The detail sheet now exposes a localized share action that uses Web Share or clipboard to hand off a same-origin focused map detail URL without Supabase public links, Kakao Mobility, or paid routing APIs.
+- Added no-cost S8 feed personalization. Persona theme/detail choices are stored locally, can return users to a personalized Home feed category, and appear in the Profile hero without calling AI, Supabase, or a recommendation provider.
+- Added the root S9 no-cost Open in Map CTA to the Route screen. The sticky action bar now sends the whole route to the in-app map with `source=route-map`, centered on the first stop, while keeping Google Maps walking directions as a separate user-clicked external handoff.
+- Added root S4-style no-cost Seen in badges to the place detail sheet. YouTube video and Instagram post counts are deterministic local signals from place metadata, localized in Korean, English, Japanese, and Chinese, and do not call live SNS APIs or scraping providers.
+- Added root S9-style no-cost travel segments to the Route timeline. The editor now shows dashed walking legs between stops with estimated duration and distance, derived from local Haversine calculations instead of Kakao Mobility or a paid Directions API.
+
+## 2026-06-16
+
+- Verified the provided TourAPI key through the local Next.js route without exposing the secret in git or logs.
+- Updated `/api/places` to accept `locale=ko|en|ja|zh` and route requests to `KorService2`, `EngService2`, `JpnService2`, or `ChsService2`.
+- Updated TourAPI category mapping for multilingual service content type IDs, using the Korea Tourism Organization multilingual category manual as the reference.
+- Changed TourAPI location search ordering to distance order for nearby map results.
+- Added locale-aware place API cache keys so future Redis caching can safely separate Korean and multilingual responses.
+- Added an always-available feature guide button inside the app shell. The guide explains Map, Analyze, Route, Radar, and Profile capabilities in the active locale.
+- Upgraded the feature guide with per-feature shortcut buttons so users can jump directly into Map, Analyze, Route generation, Route/Docent, Radar, or Profile from the tutorial sheet.
+- Repaired broken Korean, Japanese, and Chinese locale message files and added readable translations for shared MVP copy.
+- Localized visible landing, bottom navigation, language labels, map category filters, and key map state text.
+- Fixed corrupted app metadata and web app manifest descriptions.
+- Generated missing PWA icons, favicon, shortcut icons, and Open Graph image assets referenced by the manifest and metadata.
+- Added Kakao Maps JavaScript SDK scaffolding behind `NEXT_PUBLIC_KAKAO_MAP_KEY`. The app now uses the real map renderer only when a client key exists and otherwise keeps the no-cost local preview map.
+- Connected the home trend chips to focused map views so the first screen behaves more like the wireframed Home Feed instead of a static landing page.
+- Reworked the home entry into a TourAPI-backed Seoul K-spot feed with horizontal cards, category filters, local save controls, and focused map handoff links.
+- Localized the Analyze and Radar user-facing screens through the shared UI copy table so the root 4-language requirement covers the shipped local-first workflows.
+- Localized the Persona and Route user-facing screens through the same shared UI copy table, including route editor status messages, sample stop copy, persona option labels, and generated mock route titles/summaries.
+- Localized shared app chrome and account UI through the same copy table, including the login modal, top bar actions, common error fallback, profile avatar text, map route handoff labels, place detail close/crowd labels, and map refresh controls.
+- Updated `/api/routes/generate` to accept `locale=ko|en|ja|zh` in the request body and use localized route plan copy while keeping the deterministic no-cost mock generator.
+- Connected Analyze results to downstream workflows: individual detected places can open the map, and the full candidate set can draft an editable local route.
+- Added a no-cost local AI Docent page. Route stops now open captions and browser `speechSynthesis` playback without calling a paid TTS provider.
+- Added a TourAPI-backed place detail endpoint using `detailCommon2`, `detailIntro2`, and `detailImage2`, with mock fallback and cache-key preparation.
+- Updated the map place detail sheet to lazy-load real overview, image gallery, phone, operating time, rest day, and parking data, then launch the local Docent flow from that enriched detail.
+- Added local saved places with a heart control on place detail sheets, a shared `k-vibe-saved-places` contract, and a guest-mode profile saved-place grid.
+- Added dialog semantics to the login modal so browser automation and assistive tech can identify the localized account sheet.
+- Added a no-cost route mini map preview and Google Maps walking directions handoff to the route screen, matching the root HTML route-navigation direction without using Kakao Mobility or another paid routing API.
+- Localized route crowd badges by passing the active locale labels into the shared `CrowdBadge` component.
+
+## Still Gated Or Larger Scope
+
+- Kakao Maps JavaScript SDK is configured and verified for `http://localhost:3000`; `127.0.0.1` must still be registered separately in Kakao Developers if that host should load the SDK.
+- Kakao Mobility routing remains gated; the current route screen uses user-clicked Google Maps URLs for no-key walking directions.
+- Supabase auth persistence and server-backed public route links require project credentials and OAuth/storage setup. The current Route share link is local encoded URL state only.
+- Redis/Upstash caching requires credentials; cache keys are prepared but no external cache is connected.
+- AI analysis, AI route generation, and provider-generated AI docent narration remain local/mock-first until model/provider keys and any cost approval are explicit.
+- Automatic background GPS polling, push notifications, and paid/provider TTS for the Docent flow remain gated. The current arrival check is user-clicked and uses only browser geolocation plus local distance calculation.
+- IndexedDB POI data packs, offline map tiles, and offline synced route/place history remain larger-scope work beyond the current static PWA shell cache, install prompt, offline banner, 30-minute last-known-location cache, and 1-hour API response cache.
+- A richer Home Feed, Supabase sync for saved places/routes, and production-grade TourAPI/Redis caching are still larger-scope follow-ups from the root wireframes.

@@ -1,0 +1,29 @@
+# CODEOWNERS
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Global reviewer for all changes
+* @hslee1026
+
+# CI/CD 및 인프라 변경
+.github/ @hslee1026
+docker/ @hslee1026
+Dockerfile.dev @hslee1026
+compose.yaml @hslee1026
+
+# 백엔드 API 레이어
+backend/ @hslee1026
+app/api/ @hslee1026
+
+# 프론트엔드 API 레이어
+frontend/ @hslee1026
+
+# AI Worker
+ai-worker/ @hslee1026
+
+# 공유 라이브러리
+lib/ @hslee1026
+types/ @hslee1026
+
+# 국제화
+messages/ @hslee1026
+lib/i18n/ @hslee1026

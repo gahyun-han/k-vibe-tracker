@@ -1,0 +1,76 @@
+====================================================================
+ K-Vibe Tracker — Verify / Build / Deploy commands (Windows PowerShell)
+====================================================================
+
+This environment has NO node/npm/npx on PATH. Use VS Code's bundled
+Electron as a Node runtime for tsc/eslint. Copy-paste the blocks below.
+
+--------------------------------------------------------------------
+0. Common setup (run once per shell)
+--------------------------------------------------------------------
+cd c:\Users\Public\Documents\k-vibe-tracker\repo
+$code = "C:\Users\User\AppData\Local\Programs\Microsoft VS Code\Code.exe"
+$env:ELECTRON_RUN_AS_NODE = "1"
+
+--------------------------------------------------------------------
+1. Type-check (AUTHORITATIVE gate — must be exit code 0)
+--------------------------------------------------------------------
+& $code "node_modules\typescript\bin\tsc" "--noEmit" "-p" "tsconfig.json"
+Write-Output "EXITCODE: $LASTEXITCODE"
+# EXITCODE: 0  => pass
+
+--------------------------------------------------------------------
+2. ESLint (optional; ignore false-positive import/no-unresolved)
+--------------------------------------------------------------------
+& $code "node_modules\eslint\bin\eslint.js" "components" "app" "backend" "frontend" "lib" "--ext" ".ts,.tsx"
+# NOTE: `import/no-unresolved` errors here are FALSE POSITIVES (missing
+# unrs-resolver native binding under Electron). Only fix real rule
+# violations: import/order, prefer-optional-chain, no-duplicate-imports, etc.
+
+--------------------------------------------------------------------
+3. Tests  (NOTE: Vitest CANNOT run in this environment)
+--------------------------------------------------------------------
+# Missing @rollup/rollup-win32-x64-msvc native binding => vitest fails to load.
+# On a machine WITH node installed, tests run normally:
+#   npm ci
+#   npm run type-check
+#   npm run test
+#   npm run build
+
+--------------------------------------------------------------------
+4. Git commit + push to hslee (deploys to Vercel)
+--------------------------------------------------------------------
+# Use GitKraken git MCP tools if available. Equivalent CLI:
+git add -A
+git commit -m "your message
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push origin hslee
+# EVERY commit MUST carry the Co-authored-by trailer above.
+
+--------------------------------------------------------------------
+5. Production smoke tests (wait ~90-120s after push for Vercel)
+--------------------------------------------------------------------
+$base = "https://k-vibe-tracker-lemon.vercel.app"
+(Invoke-WebRequest "$base/ko/route" -UseBasicParsing).StatusCode   # expect 200
+(Invoke-WebRequest "$base/ko/map"   -UseBasicParsing).StatusCode   # expect 200
+
+# Full AI pipeline trace (JSON, step-by-step diagnostic):
+Invoke-RestMethod "$base/api/debug/ai-status?url=https://youtu.be/BKorP55Aqvg"
+# Look for 1_groq_key_set:true, 8_extracted_spots_count > 0, 9_final_result:"AI"
+
+--------------------------------------------------------------------
+6. Quick checks that the deployed bundle has the map fix
+--------------------------------------------------------------------
+# Confirm the route chunk contains Kakao map code (Polyline/relayout/CustomOverlay).
+# Fetch /ko/route HTML, find the route chunk JS, then grep it for those symbols.
+
+====================================================================
+ Environment key facts
+====================================================================
+- Working branch : hslee  (Vercel auto-deploy)
+- Prod URL       : https://k-vibe-tracker-lemon.vercel.app
+- AI             : Groq llama-3.3-70b-versatile (returns spots WITH lat/lng)
+- Maps           : Kakao JS SDK via components/map/kakaoLoader.ts
+- Env vars       : GROQ_API_KEY, NEXT_PUBLIC_KAKAO_MAP_KEY (see HANDOFF.md #3)
+- CI             : action_required (manual approval) — won't auto-run on PRs
